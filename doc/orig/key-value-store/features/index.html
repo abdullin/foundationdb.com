@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app0.us.archive.org";archive_analytics.values.server_ms=169;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Key-Value Store Features &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/features' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003203/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href="/web/20150325003203cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003203cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='features' id='key_value'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/features/";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/features/" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003203" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20140828104444/https://foundationdb.com/key-value-store/features" title="28 Aug 2014">AUG</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:03 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150426032729/https://foundationdb.com/key-value-store/features" title="26 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20140828104444/https://foundationdb.com/key-value-store/features" title="10:44:44 Aug 28, 2014"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:03 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325010122/https://foundationdb.com/key-value-store/features" title="1:01:22 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:03 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003203*/https://foundationdb.com/key-value-store/features/" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">28 Aug 14 - 26 Apr 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000010000_2015:2:002100000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003203/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003203/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003203/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003203/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003203/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003203/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003203/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003203/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003203/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003203/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='sectioned'>
+<section id='intro'>
+<div class='container'>
+<h1>The Key-Value Store has an ordered transactional API with useful properties and strong guarantees.</h1>
+<p>
+Features in the core are deliberately kept to a minimum; data models and other abilities are exposed
+<a href='/web/20150325003203/https://foundationdb.com/key-value-store/architecture'>via "layers."</a>
+</p>
+</div>
+</section>
+<section class='feature-list' id='foundation-list'>
+<div id='jump-to'>
+<span>Jump to:</span>
+<a href='#foundation-list'>The Foundation</a>
+<a href='#performance-list'>Performance</a>
+<a href='#concurrency-list'>Concurrency</a>
+<a href='#operations-list'>Operations</a>
+</div>
+<div class='container'>
+<h1>The Foundation</h1>
+<ul>
+<li>
+<div class='circle'><img alt="Scalability" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/scalability-cdfe06e140a2c0a360136c6c79f06289.png" /></div>
+<h3>Scalable</h3>
+<p>
+FoundationDB adapts to efficiently support applications with diverse performance requirements. By using a shared-nothing distributed architecture, FoundationDB
+<em>scales out</em>
+by adding more machines to a cluster rather than just
+<em>scaling up</em>
+by increasing the capacity of a single machine. Best of all, the hard work of managing data redundancy, partitioning, caching, etc., is all handled automatically.
+</p>
+<a href='/web/20150325003203/https://foundationdb.com/key-value-store/white-papers/scalability'>Read more about our scalability &rarr;</a>
+</li>
+<li>
+<div class='circle'><img alt="Acid" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/acid-7f0b0771558025acb770624fe1785c55.png" /></div>
+<h3>ACID transactions</h3>
+<p>All reads and writes in FoundationDB are accomplished using transactions. These transactions are fully ACID (Atomic, Consistent, Isolated, and Durable) and span multiple machines with high performance. FoundationDB's isolation is the highest available&mdash;transactions appear to occur sequentially. FoundationDB's durability is the strongest&mdash;all transactions are redundantly stored to disk before they are considered committed.</p>
+<a class='external' href='/web/20150325003203/http://en.wikipedia.org/wiki/ACID' target='_blank'>See Wikipedia for more on ACID</a>
+</li>
+<li>
+<div class='circle'><img alt="Fault-tolerance" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/fault-tolerance-4fe5393c87fb8b659971889c903bb79d.png" /></div>
+<h3>Fault tolerance</h3>
+<p>A system designed to be distributed across many machines must be highly fault tolerant because the likelihood of hardware and network failures increases with the number of machines involved. FoundationDB has been designed and relentlessly tested to provide exceptionally high levels of fault tolerance. We've gone much further than designing for "no single point of failure". FoundationDB has also been designed and tested to guarantee that all ACID properties are preserved, even under catastrophic failures.</p>
+<a href='/web/20150325003203/https://foundationdb.com/key-value-store/white-papers/fault-tolerance'>Read more about our fault tolerance &rarr;</a>
+</li>
+<li>
+<div class='circle'><img alt="Replicated-storage" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/replicated-storage-5302492e48ec6bd3657369a6aead41c5.png" /></div>
+<h3>Replicated Storage</h3>
+<p>FoundationDB stores each piece of data on multiple servers. If a server containing one of the copies is lost, FoundationDB will automatically heal, finding a new location for the lost copy. For read operations, clients communicate directly to the servers with the replicas, requesting a specific version to ensure a consistent view of the data.</p>
+</li>
+<li>
+<div class='circle'><img alt="Ordered-kv" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/ordered-kv-a0132ea344442a503f4d60e9f1fdf774.png" /></div>
+<h3>Ordered Key-Value API</h3>
+<p>Simple can be powerful. FoundationDB uses an ordered key-value data model (and richer data models are exposed via <a href="/web/20150325003203/https://foundationdb.com/layers">layers</a>). Each "row" within the database consists of a key that is used to reference the row and a value which stores data associated with the key. No specific format for the keys or values is required; they are simply binary data. Because keys are kept in lexicographical (sorted) order, ranges of key-value pairs can be read efficiently.</p>
+</li>
+<li>
+<div class='circle'><img alt="Watches" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/watches-6b949c0bcab3f1268430fa0c82416f08.png" /></div>
+<h3>Watches</h3>
+<p>Clients can create transactional watches on keys to ensure that they are notified if the value changes. After a watch is registered, FoundationDB efficiently pushes change notifications to clients without polling.</p>
+</li>
+<li>
+<div class='circle'><img alt="Atomic-ops" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/atomic-ops-0571811482f4a458ff90280ced1280ba.png" /></div>
+<h3>Atomic Operations</h3>
+<p>FoundationDB includes support for specific "atomic operations" (e.g. Add) within a transaction to manipulate the value of a key without requiring the client to actually read the value. This makes these operations "zero-latency" and enables a variety of advanced data structures to be implemented more efficiently as layers.</p>
+</li>
+<li>
+<div class='circle'><img alt="Oltp-olap" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/oltp-olap-7d1779f1842596198305290fe357280c.png" /></div>
+<h3>OLTP and OLAP</h3>
+<p>
+FoundationDB is optimized for online transaction processing (OLTP) workloads consisting of many small reads and writes. However, because it is an
+<em>ordered</em>
+key-value store, FoundationDB can use range reads to efficiently scan large swaths of data. Thus, FoundationDB can be effectively used for online analytical processing (OLAP) workloads as well.
+</p>
+</li>
+<li class='anti'>
+<div class='circle'><img alt="No-disconnected-operations" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/no-disconnected-operations-dc5b06a0df55880996b6679e9eb9d7f9.png" /></div>
+<img alt="X" class="x" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/x-9eb8547e34bebd7577ee5297ebe99ec3.png" />
+<h3>
+<strong>NO</strong>
+Disconnected Operation
+</h3>
+<p>FoundationDB is designed to keep working as long as some network connectivity remains. If a client becomes completely disconnected from the network, the database will not be available&mdash;to remain available would sacrifice ACID properties. We believe the database is the wrong tier to implement disconnected operation.</p>
+</li>
+<li class='anti'>
+<div class='circle'><img alt="No-query-language" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/no-query-language-cddd3bfbda2c4d181a37108cc8209175.png" /></div>
+<img alt="X" class="x" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/x-9eb8547e34bebd7577ee5297ebe99ec3.png" />
+<h3>
+<strong>NO</strong>
+Query Language
+</h3>
+<p>
+The FoundationDB core exposes a robust and powerful API but includes no separate query language. FoundationDB empowers developers to employ a broad range of data models and use the query languages best suited to their applications, implemented as
+<a href='/web/20150325003203/https://foundationdb.com/layers'>layers.</a>
+</p>
+</li>
+</ul>
+</div>
+</section>
+<section class='feature-list' id='performance-list'>
+<div class='container'>
+<h1>Performance</h1>
+<ul>
+<li>
+<div class='circle'><img alt="Low-latency" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/low-latency-58193f1922e09ab74526b28b8bcb1533.png" /></div>
+<h3>Low, predictable latencies</h3>
+<p>FoundationDB provides predictable throughput and low-latency random IO, even under workloads with unusual or erratically changing access patterns. Further, both FoundationDB's API and implementation have been designed to make it possible to understand the costs of the operations being executed. For example, clearing any range, even the entire database, is a fast operation.</p>
+<a href='/web/20150325003203/https://foundationdb.com/key-value-store/performance'>Read more about performance &rarr;</a>
+</li>
+<li>
+<div class='circle'><img alt="Load-balancing" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/load-balancing-2c7274b3d71104690abdd93d6c1138a2.png" /></div>
+<h3>Load balancing</h3>
+<p>FoundationDB achieves full utilization of a cluster under variable real-world workloads by using two major techniques. First, individual chunks of data are continuously moved from machine to machine to balance the load minute-to-minute. Second, on a faster time scale, individual requests can be redirected from a busy machine to a less-busy peer that also has a copy of the data. These techniques work together to optimize both throughput and latency.</p>
+</li>
+<li>
+<div class='circle'><img alt="Bursting" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/bursting-f14abc07e61f0e0aa2217f321b86e915.png" /></div>
+<h3>Bursting</h3>
+<p>By deferring background work for later, FoundationDB can provide higher burst write speeds, often up to triple the steady-state speed. This ability to efficiently "absorb" work can last several minutes. The capability to buffer bursts of work allows FoundationDB to be provisioned without worrying about instantaneous load peaks, and to keep latencies low even when pushing "above 100%" load.</p>
+</li>
+<li>
+<div class='circle'><img alt="Distributed-caching" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/distributed-caching-7f8c201512656d2f5182468bd204b44e.png" /></div>
+<h3>Distributed Caching</h3>
+<p>When your database scales out, you don't need a separate distributed caching layer: you already have one. FoundationDB uses the aggregate memory of the entire cluster to cache commonly accessed data. Unlike a caching tier such as memcached, FoundationDB's cache is completely synchronized to the database and provides all ACID guarantees.</p>
+</li>
+<li class='anti'>
+<div class='circle'><img alt="No-long-running-transactions" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/no-long-running-transactions-4f55d7e8ddc494c03a1b13426c69603b.png" /></div>
+<img alt="X" class="x" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/x-9eb8547e34bebd7577ee5297ebe99ec3.png" />
+<h3>
+<strong>NO</strong>
+Long-running Transactions
+</h3>
+<p>
+FoundationDB does not support
+<a href='/web/20150325003203/https://foundationdb.com/key-value-store/documentation/known-limitations.html#long-transactions'>long-running transactions.</a>
+The system employs multiversion concurrency control and maintains older versions for limited time. A transaction that is kept for too long will not be able to commit. Data models and applications that rely on long-running transactions will need to decompose those transactions into shorter ones.
+</p>
+</li>
+<li class='anti'>
+<div class='circle'><img alt="No-sub-geographic" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/no-sub-geographic-5481da531d402495c3961d80e1ab48f8.png" /></div>
+<img alt="X" class="x" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/x-9eb8547e34bebd7577ee5297ebe99ec3.png" />
+<h3>
+<strong>NO</strong>
+Write Latencies Lower than the Geographic Latency
+</h3>
+<p>The FoundationDB core does not locate data in a geographically-aware manner in order to provide low write latencies (e.g., under 5 milliseconds) over clusters spanning large geographic distances.</p>
+</li>
+</ul>
+</div>
+</section>
+<section class='feature-list' id='concurrency-list'>
+<div class='container'>
+<h1>Concurrency</h1>
+<ul>
+<li>
+<div class='circle'><img alt="Non-blocking" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/non-blocking-476ba3a0e02a434c0bce1f0d5bcfc8e7.png" /></div>
+<h3>Non-blocking</h3>
+<p>FoundationDB uses multiversion concurrency control to provide transactionally isolated reads without locking data or blocking writes. Optimistic concurrency control ensures that deadlocks are impossible and that slow or failing clients cannot interfere with the operation of the database.</p>
+</li>
+<li>
+<div class='circle'><img alt="Concurrent-connections" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/concurrent-connections-a3b86918926143f186dd5e0e465e1b66.png" /></div>
+<h3>Concurrent Connections</h3>
+<p>FoundationDB is not slowed by large numbers of concurrent client connections. Because it uses a threadless communications and concurrency model, FoundationDB does not have to create a thread per connection. This allows full performance even with hundreds of thousands of in-flight requests.</p>
+</li>
+<li>
+<div class='circle'><img alt="Interactive-transactions" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/interactive-transactions-f394ffe9b5511df3c7a7961e57d7dc7e.png" /></div>
+<h3>Interactive Transactions</h3>
+<p>FoundationDB transactions are true interactive sessions, unlike distributed databases that require stored procedures. This means that client code can make an iterative series of reads and writes over the network to execute complex transactions.</p>
+</li>
+</ul>
+</div>
+</section>
+<section class='feature-list' id='operations-list'>
+<div class='container'>
+<h1>Operations</h1>
+<ul>
+<li>
+<div class='circle'><img alt="Elastic" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/elastic-e0d1eb143d5ddcd9ab804ca0de61806b.png" /></div>
+<h3>Elastic</h3>
+<p>A FoundationDB database can start on a single machine and be expanded to a cluster as load and circumstances require. Adding a machine is as easy as running another FoundationDB process, even during database operation and without any extra administration. Data is continuously re-partitioned in the background; no manual data distribution or sharding is required.</p>
+</li>
+<li>
+<div class='circle'><img alt="Datacenter-failover" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/datacenter-failover-d97a1c18a8ce3025bf26bce7b7eeb29d.png" /></div>
+<h3>Datacenter Failover</h3>
+<p>FoundationDB can be configured to run multiple live redundant clusters in geographically diverse datacenters. Each datacenter contains a complete and fully up-to-date copy of all data in the system, allowing for minimal downtime even when an entire datacenter becomes unavailable.</p>
+</li>
+<li>
+<div class='circle'><img alt="Self-tuning" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/self-tuning-7e1dfc7db4c6a46f28e6bbce4b9ec950.png" /></div>
+<h3>Self Tuning</h3>
+<p>FoundationDB has been designed so that many functions (such as data distribution, fault tolerance, incorporation of new nodes, performance tuning, etc.) are done automatically and require minimal management. Management tools allow configuration of parameters like replication policy, cluster topology, and data directories. A status monitoring tool lets you monitor cluster health and utilization of the cluster's physical resources.</p>
+</li>
+<li>
+<div class='circle'><img alt="Deploy-anywhere" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/deploy-anywhere-f93684944a82ee5de1fe916a4c7f6a52.png" /></div>
+<h3>Deploy Anywhere</h3>
+<p>
+Because it can scale linearly by adding new machines, FoundationDB is an ideal database for deployment in public or private cloud environments.
+<br>
+For best performance in cloud environments with limited I/O, FoundationDB can be configured to use a durable in-memory storage engine instead of its default SSD-optimized storage engine.
+</p>
+</li>
+<li>
+<div class='circle'><img alt="Backup" src="/web/20150325003203im_/https://d3glfbbr3jeumb.cloudfront.net/assets/key-value-store/features/backup-56b2fcb10197b2ffe5b6480620000b25.png" /></div>
+<h3>Backup</h3>
+<p>
+An integrated backup system provides a true "moment-in-time" snapshot backup of the entire distributed database stored to a remote file system on a schedule. Although FoundationDB itself is fault tolerant, this capability is useful for recovering from disasters or unintentional modification of the database.
+</p>
+</li>
+</ul>
+</div>
+</section>
+<section class='more'>
+<h1>See how easy it is to operate.</h1>
+<a class='button' href='/web/20150325003203/https://foundationdb.com/key-value-store/operations'>Operational Ease &rarr;</a>
+</section>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003203/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003203/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003203/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003203/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003203js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:03 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:36:53 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=112;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Administration
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Admin/administration.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003257/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href="/web/20150325003257cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003257cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Admin/administration.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Admin/administration.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003257" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:57 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150427175731/https://foundationdb.com/layers/sql/documentation/Admin/administration.html" title="27 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:57 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150427175731/https://foundationdb.com/layers/sql/documentation/Admin/administration.html" title="17:57:31 Apr 27, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:57 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003257*/https://foundationdb.com/layers/sql/documentation/Admin/administration.html" title="See a list of every capture for this URL">3 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003257/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003257/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/administration.html" class="active">Administration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003257/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="administration">
+<span id="fdbsql-administration"></span><h1>Administration<a class="headerlink" href="#administration" title="Permalink to this headline">∞</a></h1>
+<p>This document covers the administration of an existing FoundationDB SQL Layer instance. We recommend you read this document before setting up a cluster for performance testing or production use.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In FoundationDB, a &#8220;SQL Layer instance&#8221; refers to one SQL Layer process installed on one physical or virtual machine. It is possible to deploy multiple SQL Layer instances against a single FoundationDB Key-Value cluster, and each SQL Layer instance can have its own configuration.</p>
+</div>
+<p>To administer a SQL Layer instance, you need to understand basic system tasks. You should begin with how to <a class="reference internal" href="#fdbsql-administration-startstop"><em>start and stop the SQL Layer</em></a> and how to <a class="reference internal" href="#fdbsql-administration-jvm-warmup"><em>warm-up the JVM</em></a>. Next, you should review <a class="reference internal" href="#fdbsql-administration-user-sessions"><em>management of user sessions</em></a> with a SQL Layer instance. You should be familiar with <a class="reference internal" href="#fdbsql-administration-logfile"><em>viewing the log file</em></a> as a common way of analyzing problems. Finally, you should know how to <a class="reference internal" href="#fdbsql-administration-removing"><em>uninstall</em></a> or <a class="reference internal" href="#fdbsql-administration-upgrading"><em>upgrade</em></a> the database.</p>
+<div class="section" id="starting-and-stopping">
+<span id="fdbsql-administration-startstop"></span><h2>Starting and stopping<a class="headerlink" href="#starting-and-stopping" title="Permalink to this headline">∞</a></h2>
+<p>After installation, the SQL Layer is set to start automatically as an operating system service. You can manually start and stop the database with the commands shown below.</p>
+<p>These commands start and stop the SQL Layer instance but have no effect whatsoever on the FoundationDB Key-Value cluster.</p>
+<div class="section" id="linux">
+<h3>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">∞</a></h3>
+<p>On Ubuntu and RHEL/CentOS 6.x, the SQL Layer is started and stopped using the <tt class="docutils literal"><span class="pre">service</span></tt> command as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo service fdb-sql-layer start
+$ sudo service fdb-sql-layer stop
+</pre></div>
+</div>
+<p>The following is a sample output displayed by checking the status of the FoundationDB SQL Layer service on an Ubuntu system:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo service fdb-sql-layer status
+* FoundationDB SQL Layer is running
+</pre></div>
+</div>
+<p>On RHEL/CentOS 7.x, the SQL Layer is started and stopped using the <tt class="docutils literal"><span class="pre">systemctl</span></tt> command as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo systemctl start fdb-sql-layer
+$ sudo systemctl stop fdb-sql-layer
+</pre></div>
+</div>
+<p>The following is a sample output displayed by checking the status of the FoundationDB SQL Layer service on a CentOS 7.0 system:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fdb-sql-layer.service - FoundationDB SQL Layer
+    Loaded: loaded (/usr/lib/systemd/system/fdb-sql-layer.service; enabled)
+    Active: active (running) since Mon 2014-12-22 22:36:18 UTC; 2min 9s ago
+   Process: 18929 ExecStart=/usr/sbin/fdbsqllayer -H /usr/share/foundationdb/sql -c /etc/foundationdb/sql -p /var/run/fdb-sql-layer/fdb-sql-layer.pid -q (code=exited, status=0/SUCCESS)
+  Main PID: 18934 (java)
+    CGroup: /system.slice/fdb-sql-layer.service
+            └─18934 java -ea -Xms512M -Xmx512M -Djava.net.preferIPv4Stack=true -XX:-OmitStackTraceInFastThrow -Dfdbsql.pidfile=/var/run/fdb-sql-layer/fdb-sql-layer.p...
+</pre></div>
+</div>
+<p>On Ubuntu, it can be prevented from starting at boot as follows (without stopping the service):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo update-rc.d fdb-sql-layer disable
+</pre></div>
+</div>
+<p>On RHEL/CentOS 6.x, it can be prevented from starting at boot as follows (without stopping the service):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo chkconfig fdb-sql-layer off
+</pre></div>
+</div>
+<p>On RHEL/CentOS 7.x, it can be prevented from starting at boot as follows (without stopping the service):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ /usr/bin/systemctl disable fdb-sql-layer
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">∞</a></h3>
+<p>As with any other Windows service,  the <tt class="docutils literal"><span class="pre">fdbsqllayer</span></tt> service can be started, stopped, and disabled using the <a class="reference external" href="/web/20150325003257/http://technet.microsoft.com/en-us/library/cc757797(v=ws.10).aspx">Windows Services Snap-in</a>.</p>
+<p>The SQL Layer can also be started and stopped through with the <tt class="docutils literal"><span class="pre">net</span></tt> command (when run with <a class="reference external" href="/web/20150325003257/http://technet.microsoft.com/en-us/library/cc947813%28v=WS.10%29.aspx">elevated privileges</a>):</p>
+<div class="highlight-python"><div class="highlight"><pre>C:\Windows\system32&gt; net start fdbsqllayer
+The FoundationDB SQL Layer  service is starting..
+The FoundationDB SQL Layer  service was started successfully.
+
+C:\Windows\system32&gt; net stop fdbsqllayer
+The FoundationDB SQL Layer  service was stopped successfully.
+</pre></div>
+</div>
+<p>It can be prevented from starting at boot by the following command (without stopping the service):</p>
+<div class="highlight-python"><div class="highlight"><pre>C:\Windows\system32&gt;sc config fdbsqllayer start= demand
+[SC] ChangeServiceConfig SUCCESS
+</pre></div>
+</div>
+<p>The SQL Layer is installed with reasonable default configuration values. On Windows, it also exposes a dialog screen that controls its startup properties such as Service display name and description, logging configuration, JVM settings and more:</p>
+<img alt="../_images/windows.service.monitor.png" src="/web/20150325003257im_/https://foundationdb.com/layers/sql/documentation/_images/windows.service.monitor.png" />
+<p>You can launch it by running the <tt class="docutils literal"><span class="pre">fdbsqllayer</span> <span class="pre">monitor</span></tt> command, right-clicking the new icon in the task bar and selecting <tt class="docutils literal"><span class="pre">Configure...</span></tt>.</p>
+</div>
+<div class="section" id="os-x">
+<h3>OS X<a class="headerlink" href="#os-x" title="Permalink to this headline">∞</a></h3>
+<p>On OS X, FoundationDB is started and stopped using <tt class="docutils literal"><span class="pre">launchctl</span></tt> as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo launchctl load /Library/LaunchDaemons/com.foundationdb.layer.sql.plist
+$ sudo launchctl unload /Library/LaunchDaemons/com.foundationdb.layer.sql.plist
+</pre></div>
+</div>
+<p>It can be stopped and prevented from starting at boot as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo launchctl unload -w /Library/LaunchDaemons/com.foundationdb.layer.sql.plist
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="installing-client-tools">
+<span id="fdbsql-install-client-tools"></span><h2>Installing Client Tools<a class="headerlink" href="#installing-client-tools" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer Client Tools package contains the SQL Layer command line tools <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html#fdbsqlcli"><em>fdbsqlcli</em></a>, <a class="reference internal" href="backup.html#fdbsqlload"><em>fdbsqlload</em></a>, <a class="reference internal" href="backup.html#fdbsqldump"><em>fdbsqldump</em></a>, <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlprotod.html#fdbsqlprotod"><em>fdbsqlprotod</em></a>, and the <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html#app-integration-drivers"><em>JDBC driver</em></a>. It is intended for any machine that needs to communicate with a remote SQL Layer and does not have a local SQL Layer installed. The packages are available for download from the FoundationDB website for the following platforms:</p>
+<ul>
+<li><p class="first">Ubuntu</p>
+<p>Download the SQL Layer Client Tools <tt class="docutils literal"><span class="pre">deb</span></tt> package from <a class="reference external" href="/web/20150325003257/https://foundationdb.com/get">Get FoundationDB</a> and install using <tt class="docutils literal"><span class="pre">dpkg</span></tt>:</p>
+<pre class="literal-block">
+$ sudo dpkg -i fdb-sql-layer-client-tools_2.1.2-1_all.deb
+</pre>
+</li>
+<li><p class="first">RHEL/CentOS 6.x</p>
+<p>Download the SQL Layer Client Tools <tt class="docutils literal"><span class="pre">rpm</span></tt> package from <a class="reference external" href="/web/20150325003257/https://foundationdb.com/get">Get FoundationDB</a> and install using <tt class="docutils literal"><span class="pre">rpm</span></tt>:</p>
+<pre class="literal-block">
+$ sudo rpm -i fdb-sql-layer-client-tools-2.1.2-1.el6.noarch.rpm
+</pre>
+</li>
+<li><p class="first">RHEL/CentOS 7.x</p>
+<p>Download the SQL Layer Client Tools <tt class="docutils literal"><span class="pre">rpm</span></tt> package from <a class="reference external" href="/web/20150325003257/https://foundationdb.com/get">Get FoundationDB</a> and install using <tt class="docutils literal"><span class="pre">rpm</span></tt>:</p>
+<pre class="literal-block">
+$ sudo rpm -i fdb-sql-layer-client-tools-2.1.2-1.el7.noarch.rpm
+</pre>
+</li>
+</ul>
+<p>The installation will check that the dependencies have been met and begin the install process.</p>
+</div>
+<div class="section" id="jvm-warmup">
+<span id="fdbsql-administration-jvm-warmup"></span><h2>JVM Warmup<a class="headerlink" href="#jvm-warmup" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB SQL Layer is a Java application which runs within a Java Virtual Machine. Modern JVM&#8217;s use just in time (JIT) compilation techniques to speed up execution. A JIT compiler only compiles a code path when it knows that code path is about to be executed.</p>
+<p>Typically, after the FoundationDB SQL Layer starts up, a query will not execute at the fastest possible speed. After the first few executions of a query, the execution times will stabilize. This is similar to the effect that a clean cache has on local databases like MySQL or Oracle at start up. This is <strong>not</strong> an issue for a long running FoundationDB SQL Layer process; it only affects the performance shortly after a SQL Layer instance is started.</p>
+<p>If you have a specific use case that represents the real-time workload of your system, we recommend running it through throw the SQL Layer as a script immediately upon startup to warm up the JVM.</p>
+</div>
+<div class="section" id="managing-user-sessions">
+<span id="fdbsql-administration-user-sessions"></span><h2>Managing User Sessions<a class="headerlink" href="#managing-user-sessions" title="Permalink to this headline">∞</a></h2>
+<p>One of the tables in the <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/index.html#information-schema-index"><em>information_schema</em></a> is
+<a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/information_schema/server_sessions.html#is-server-sessions"><em>server_sessions</em></a>. This table shows the current activity on the system.</p>
+<p>For example, on an idle system with only the user connected, run the following commands in <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html#fdbsqlcli"><em>fdbsqlcli</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre>    caoi=&gt; select session_id,start_time,remote_address,last_query_executed,query_start_time from information_schema.server_sessions;
+ session_id |     start_time      | remote_address |               last_query_executed                |  query_start_time
+------------+---------------------+----------------+--------------------------------------------------+---------------------
+         50 | 2013-09-16 11:53:53 | 127.0.0.1      | SELECT * FROM information_schema.server_sessions | 2013-09-16 11:35:53
+(1 row)
+</pre></div>
+</div>
+<p>On a system that has a session loading some data:</p>
+<div class="highlight-python"><div class="highlight"><pre>    caoi=&gt; select session_id,start_time,remote_address,last_query_executed,query_start_time from information_schema.server_sessions;
+session_id |     start_time      | remote_address |                                    last_query_executed                                     |  query_start_time
+-----------+---------------------+----------------+--------------------------------------------------------------------------------------------+---------------------
+        50 | 2013-09-16 11:53:53 | 127.0.0.1      | INSERT INTO employees.salaries VALUES(10144, 71280, DATE &#39;1990-10-13&#39;, DATE &#39;1991-10-13&#39;); | 2013-09-16 11:35:53
+        51 | 2013-09-16 11:53:53 | 127.0.0.1      | SELECT * FROM information_schema.server_sessions                                           | 2013-09-16 11:35:53
+(1 row)
+</pre></div>
+</div>
+<p>Each line in the result represents an active user session and the <tt class="docutils literal"><span class="pre">last_sql_executed</span></tt> attribute holds the currently or latest running SQL statement.</p>
+<p>To terminate a running sessions use the <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.server.html#alter-server-stmt"><em>ALTER SERVER statement</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER SERVER KILL SESSION 51;
+</pre></div>
+</div>
+<p>To interrupt a session, which aborts the currently running query but keeps the session open:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER SERVER INTERRUPT SESSION 51;
+</pre></div>
+</div>
+<p>Finally, you can terminate or interrupt all active session by using the <tt class="docutils literal"><span class="pre">ALL</span></tt> keyword instead of the session ID:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER SERVER INTERRUPT SESSION ALL;
+</pre></div>
+</div>
+<p>For more details check out the <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.server.html#alter-server-stmt"><em>ALTER SERVER statement</em></a> documentation page.</p>
+</div>
+<div class="section" id="using-the-log-file">
+<span id="fdbsql-administration-logfile"></span><h2>Using the LOG file<a class="headerlink" href="#using-the-log-file" title="Permalink to this headline">∞</a></h2>
+<p>Every SQL Layer instance writes a local log file that contains information about the activities within the system, ranging from startup and shutdown to DDL statements and errors encountered by the system. It is therefore a good place to check for errors when running queries from an application or when the command line does not provide enough information to understand the full context of the problem.</p>
+<p>Log files are rolled every 10MB by default. These files are valuable to the FoundationDB SQL Layer development team for diagnostic purposes and should be retained in case you need support from FoundationDB. Old trace files are automatically deleted; by default there are no more than 100 MB worth of log files per SQL Layer instance. Both the log size and the maximum total size of the log files are configurable on a per instance basis in the <a class="reference internal" href="configuration.html#fdbsql-config-logging"><em>log files configuration options</em></a>.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>The location of the log file and related configuration options is covered in the <a class="reference internal" href="configuration.html#fdbsql-directory-structure"><em>directory structure</em></a> section of the Configuration guide. It is generally as follows:</p>
+<ul class="last simple">
+<li><tt class="docutils literal"><span class="pre">/var/log/foundationdb/sql/</span></tt> on Linux</li>
+<li><tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb\sql\</span></tt> on modern versions of Windows (see <a class="reference internal" href="configuration.html#fdbsql-windows-paths"><em>here</em></a> for other versions)</li>
+<li><tt class="docutils literal"><span class="pre">/usr/local/foundationdb/logs/sql/</span></tt> on OS X</li>
+</ul>
+</div>
+<p>The log file is a great place to track startup and shutdown activities of the system. For example the first few lines of the log file can be displayed using the head command:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host:/var/log/foundationdb/sql$ head --lines=10 layer.log
+</pre></div>
+</div>
+<p>This would show the startup sequence of the system started with the Service Manager:</p>
+<div class="highlight-python"><div class="highlight"><pre>INFO [main] 2013-06-17 15:39:37,278 GuicedServiceManager.java (line 64) Starting services.
+INFO [main] ...
+</pre></div>
+</div>
+<p>Another good use is tracking queries that fail for any reason. Let&#8217;s take as an example a query that runs in the wrong schema:</p>
+<div class="highlight-python"><div class="highlight"><pre>caoi=&gt; select * from employees;
+ERROR:  Cannot find the table `caoi`.`employees`
+LINE 1: select * from employees;
+                      ^
+caoi=&gt;
+</pre></div>
+</div>
+<p>The command line error message is quite comprehensible: there is no <tt class="docutils literal"><span class="pre">employees</span></tt> table in the <tt class="docutils literal"><span class="pre">caoi</span></tt> schema. The error will also be record in the log file:</p>
+<div class="highlight-python"><div class="highlight"><pre>WARN [PostgresServer_Session-51] 2013-09-23 11:57:41,269 PostgresServerConnection.java (line 360) Error in query select * from employees;
+</pre></div>
+</div>
+<p>This shows that the system logged a WARN-ing along with a time stamp, the originating query, The exact exception (NoSuchTableException), followed by a detail message.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Query logging that records queries flowing through the SQL Layer is covered elsewhere in the <a class="reference internal" href="configuration.html#query-logging"><em>query logging section</em></a> of the Configuration guide.</p>
+</div>
+<div class="section" id="installing-more-than-one-sql-layers-instance-per-machine">
+<span id="fdbsql-administration-install-two-sql-layers-on-one-machine"></span><h3>Installing more than one SQL Layers instance per machine<a class="headerlink" href="#installing-more-than-one-sql-layers-instance-per-machine" title="Permalink to this headline">∞</a></h3>
+<p>A sufficiently large machine may warrant installing more than one SQL Layer instance to fully saturate. This is done by deploying multiple SQL Layers on the machine, each using a dedicated FoundationDB Key-Value client, and then load balancing the work between them.</p>
+<p>To set up a second SQL Layer:</p>
+<ul>
+<li><p class="first">Make a copy of the <a class="reference internal" href="configuration.html#fdbsql-directory-structure"><em>configuration directory</em></a> (<tt class="docutils literal"><span class="pre">/etc/foundationdb/sql</span></tt>), e.g. to end up with <tt class="docutils literal"><span class="pre">/etc/foundationdb/sql1</span></tt> and <tt class="docutils literal"><span class="pre">/etc/foundationdb/sql2</span></tt>.</p>
+</li>
+<li><p class="first">In each of the directories there is a <a class="reference internal" href="configuration.html#fdbsql-server-properties"><em>SQL Layer server configuration file (server.properties)</em></a>, that defines two ports:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="configuration.html#fdbsql-postgres-port"><em>fdbsql.postgres.port</em></a> = 15432</li>
+<li><a class="reference internal" href="configuration.html#fdbsql-http-port"><em>fdbsql.http.port</em></a> = 8091</li>
+</ul>
+</div></blockquote>
+<p>Change the port settings for at least one of the SQL Layers instances so that they are unique.</p>
+</li>
+<li><p class="first">In each of the directories there is a <a class="reference internal" href="configuration.html#fdbsql-config-logging"><em>Logging configuration file (log4j.properties)</em></a>. Assign a unique log file name to the <tt class="docutils literal"><span class="pre">log4j.appender.rollingFile.File</span></tt> property, e.g. <tt class="docutils literal"><span class="pre">/var/log/foundationdb/sql/layer1.log</span></tt> and <tt class="docutils literal"><span class="pre">/var/log/foundationdb/sql/layer2.log</span></tt>.</p>
+</li>
+<li><p class="first">If you wish for both SQL Layer instances to start automatically, make a copy of the <a class="reference internal" href="configuration.html#fdbsql-directory-structure"><em>init script directory</em></a>, and make sure the Process ID <tt class="docutils literal"><span class="pre">.pid</span></tt>  files are unique. For fast testing, in Linux you can launch the SQL layer by hand: <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">-u</span> <span class="pre">foundationdb</span> <span class="pre">sh</span> <span class="pre">-c</span> <span class="pre">'/usr/sbin/fdbsqllayer</span> <span class="pre">-H</span> <span class="pre">/usr/share/foundationdb/sql</span> <span class="pre">-c</span> <span class="pre">/etc/foundationdb/sql2</span> <span class="pre">-p</span> <span class="pre">/var/run/fdb-sql-layer2.pid</span> <span class="pre">-q</span> <span class="pre">&gt;&gt;/var/log/foundationdb/sql/stdout2.log</span> <span class="pre">2&gt;&amp;1'</span></tt>.</p>
+</li>
+<li><p class="first">Set up your application&#8217;s connection pool to alternate which port it connects to, so that it uses both.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="uninstalling">
+<span id="fdbsql-administration-removing"></span><h2>Uninstalling<a class="headerlink" href="#uninstalling" title="Permalink to this headline">∞</a></h2>
+<p>To uninstall FoundationDB SQL Layer:</p>
+<ol class="arabic simple">
+<li>Uninstall the packages.</li>
+</ol>
+<blockquote>
+<div><ul>
+<li><p class="first">On Ubuntu use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get remove fdb-sql-layer
+</pre></div>
+</div>
+</li>
+<li><p class="first">On RHEL/CentOS use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo yum remove fdb-sql-layer
+</pre></div>
+</div>
+</li>
+<li><p class="first">On OS X use:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo /usr/local/foundationdb/uninstall-FoundationDB-SQL_Layer.sh
+</pre></div>
+</div>
+</li>
+<li><p class="first">On Windows use the <a class="reference external" href="/web/20150325003257/http://windows.microsoft.com/en-US/windows7/Uninstall-or-change-a-program">Programs and Features</a> control panel.</p>
+</li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Delete all the data and configuration files stored by FoundationDB in the <a class="reference internal" href="configuration.html#fdbsql-directory-structure"><em>appropriate folders</em></a>.</li>
+</ol>
+</div>
+<div class="section" id="upgrading">
+<span id="fdbsql-administration-upgrading"></span><h2>Upgrading<a class="headerlink" href="#upgrading" title="Permalink to this headline">∞</a></h2>
+<p>When a SQL Layer package is installed on a machine that already has a previous version, the package will upgrade the SQL Layer to the newer version. For recent versions, the upgrade will preserve all previous data and configuration settings. (See the <a class="reference internal" href="#fdbsql-administration-upgrading-versions"><em>notes on specific versions</em></a> for exceptions.)</p>
+<p>For SQL Layer versions that are data compatible, the upgrade can be performed incrementally and without downtime. For data-incompatible releases, as soon as the first SQL Layer instance has been upgraded the remaining will be unusable until they have been upgraded as well.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This section deals with upgrading the SQL Layer only. See <a class="reference external" href="/web/20150325003257/https://foundationdb.com/documentation/3.0/administration.html#upgrading-foundationdb" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Upgrading FoundationDB</em></a> for upgrading the Key-Value Store. Be sure to restart the SQL Layer after any Key-Value update.</p>
+</div>
+<div class="section" id="stage-the-packages">
+<h3>Stage the packages<a class="headerlink" href="#stage-the-packages" title="Permalink to this headline">∞</a></h3>
+<p>Go to Get FoundationDB and select the appropriate system. Download the SQL Layer and/or client tools packages and copy them to each machine you will be upgrading.</p>
+</div>
+<div class="section" id="perform-the-upgrade">
+<h3>Perform the upgrade<a class="headerlink" href="#perform-the-upgrade" title="Permalink to this headline">∞</a></h3>
+<p>All of the commands below will stop the SQL Layer service, perform the upgrade and, unless the system has been configured otherwise, start the new version of the SQL Layer.</p>
+<p>For <strong>Ubuntu</strong>, perform the upgrade using the dpkg command:</p>
+<pre class="literal-block">
+user&#64;host$ sudo dpkg -i fdb-sql-layer_2.1.2-1_all.deb \
+fdb-sql-layer-client-tools_2.1.2-1_all.deb
+</pre>
+<p>For <strong>RHEL/CentOS 6.x</strong>, perform the upgrade using the rpm command:</p>
+<pre class="literal-block">
+user&#64;host$ sudo rpm --upgrade fdb-sql-layer-2.1.2-1.el6.noarch.rpm \
+fdb-sql-layer-client-tools-2.1.2-1.el6.noarch.rpm
+</pre>
+<p>For <strong>RHEL/CentOS 7.x</strong>, perform the upgrade using the rpm command:</p>
+<pre class="literal-block">
+user&#64;host$ sudo rpm --upgrade fdb-sql-layer-2.1.2-1.el7.noarch.rpm \
+fdb-sql-layer-client-tools-2.1.2-1.el7.noarch.rpm
+</pre>
+<p>For <strong>Windows</strong>, double-click fdb-sql-layer-2.1.2-1.exe and run through the installer.</p>
+</div>
+<div class="section" id="test-the-database">
+<h3>Test the database<a class="headerlink" href="#test-the-database" title="Permalink to this headline">∞</a></h3>
+<p>Test the database to verify that it is operating normally by running <tt class="docutils literal"><span class="pre">SELECT</span> <span class="pre">VERSION();</span></tt> from <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html#fdbsqlcli"><em>fdbsqlcli</em></a>.</p>
+</div>
+<div class="section" id="restart-your-application-or-clients">
+<h3>Restart your application or clients<a class="headerlink" href="#restart-your-application-or-clients" title="Permalink to this headline">∞</a></h3>
+<p>The upgrade process restarted the SQL Layer. Any application that does not handle connection resets automatically should be restarted now.</p>
+</div>
+<div class="section" id="version-specific-notes-on-upgrading">
+<span id="fdbsql-administration-upgrading-versions"></span><h3>Version-specific notes on upgrading<a class="headerlink" href="#version-specific-notes-on-upgrading" title="Permalink to this headline">∞</a></h3>
+<div class="section" id="upgrading-from-2-1-x">
+<h4>Upgrading from 2.1.x<a class="headerlink" href="#upgrading-from-2-1-x" title="Permalink to this headline">∞</a></h4>
+<p>Upgrades from 2.1.x will keep all your old data and configuration settings.</p>
+</div>
+<div class="section" id="upgrading-from-2-0-x">
+<h4>Upgrading from 2.0.x<a class="headerlink" href="#upgrading-from-2-0-x" title="Permalink to this headline">∞</a></h4>
+<p>Upgrades from 2.0.x will keep all your old data and configuration settings.</p>
+<p>Note that 2.1.x requires Key-Value Store 3.0, which is an increase from previous releases. Be sure to read the <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/2.1.0.html#behavior-changes"><em>Behavior Changes</em></a> for additional details.</p>
+</div>
+<div class="section" id="upgrading-from-1-9-x">
+<h4>Upgrading from 1.9.x<a class="headerlink" href="#upgrading-from-1-9-x" title="Permalink to this headline">∞</a></h4>
+<p>The data stored by SQL Layer 1.9.x is not compatible with the current release and the package contents has changed. Existing data must be backed up and packages completely removed before installing the current release.</p>
+<p>Additional upgrade steps:</p>
+<ol class="arabic simple">
+<li>Backup data with <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> as outlined in <a class="reference internal" href="backup.html#fdbsql-backup"><em>Backup and Restoration</em></a>.</li>
+<li>Delete existing data by adding <tt class="docutils literal"><span class="pre">fdbsql.fdb.clear_incompatible_data=true</span></tt> to the server.properties <a class="reference internal" href="configuration.html#fdbsql-server-properties"><em>runtime options</em></a> file.</li>
+<li>Completely <a class="reference internal" href="#fdbsql-administration-removing"><em>uninstall</em></a> the current version.</li>
+<li>Perform the upgrade steps outlined above.</li>
+<li>Remove the property from step two from <tt class="docutils literal"><span class="pre">server.properties</span></tt>.</li>
+<li>Restore data from step one with <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> as outlined in <a class="reference internal" href="backup.html#fdbsql-backup"><em>Backup and Restoration</em></a>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="downgrading">
+<h2>Downgrading<a class="headerlink" href="#downgrading" title="Permalink to this headline">∞</a></h2>
+<p>Downgrades of the SQL Layer are not supported. Please contact <a class="reference external" href="mailto:sql%40foundationdb.com">sql<span>&#64;</span>foundationdb<span>&#46;</span>com</a> if you believe a downgrade is needed.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Administration</a><ul><li><a class="reference internal" href="#starting-and-stopping">Starting and stopping</a><ul><li><a class="reference internal" href="#linux">Linux</a></li><li><a class="reference internal" href="#windows">Windows</a></li><li><a class="reference internal" href="#os-x">OS X</a></li></ul></li><li><a class="reference internal" href="#installing-client-tools">Installing Client Tools</a></li><li><a class="reference internal" href="#jvm-warmup">JVM Warmup</a></li><li><a class="reference internal" href="#managing-user-sessions">Managing User Sessions</a></li><li><a class="reference internal" href="#using-the-log-file">Using the LOG file</a><ul><li><a class="reference internal" href="#installing-more-than-one-sql-layers-instance-per-machine">Installing more than one SQL Layers instance per machine</a></li></ul></li><li><a class="reference internal" href="#uninstalling">Uninstalling</a></li><li><a class="reference internal" href="#upgrading">Upgrading</a><ul><li><a class="reference internal" href="#stage-the-packages">Stage the packages</a></li><li><a class="reference internal" href="#perform-the-upgrade">Perform the upgrade</a></li><li><a class="reference internal" href="#test-the-database">Test the database</a></li><li><a class="reference internal" href="#restart-your-application-or-clients">Restart your application or clients</a></li><li><a class="reference internal" href="#version-specific-notes-on-upgrading">Version-specific notes on upgrading</a><ul><li><a class="reference internal" href="#upgrading-from-2-1-x">Upgrading from 2.1.x</a></li><li><a class="reference internal" href="#upgrading-from-2-0-x">Upgrading from 2.0.x</a></li><li><a class="reference internal" href="#upgrading-from-1-9-x">Upgrading from 1.9.x</a></li></ul></li></ul></li><li><a class="reference internal" href="#downgrading">Downgrading</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003257/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003257/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003257js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:57 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:47 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

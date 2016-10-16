@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=292;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SQL Layer Concepts
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/index.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003235/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="JHB610nEmDjYaqX8Y56HaZy7AUTceNFjyp16WqXCWco=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003235/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003235/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003235/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=index.html class="active">Concepts</a>
+<ul>
+<li><a href=features.html>Features</a></li>
+<li><a href=architecture.html>Physical Architecture</a></li>
+<li><a href=table.groups.html>Table-Groups</a></li>
+<li><a href=mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=known.limitations.html>Known Limitations</a></li>
+<li><a href=glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="sql-layer-concepts">
+<h1>SQL Layer Concepts<a class="headerlink" href="#sql-layer-concepts" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer is a <strong>fault tolerant</strong> and <strong>scalable</strong> RDBMS with distinct features aimed at making operational SQL truly effective in a distributed architecture. It is built as a <a class="reference external" href=../../../index.html>Layer</a> above the FoundationDB K/V store.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="features.html"><em>Features</em></a> highlights the unique capabilities underlying the architecture as well the main drawbacks.</p>
+</div>
+<div class="section" id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="architecture.html"><em>The architecture</em></a> includes FoundationDB K/V nodes that maintain data and SQL Layer nodes that translate SQL statements into efficient operations against the K/V store.</p>
+</div>
+<div class="section" id="table-groups">
+<h2>Table-Groups<a class="headerlink" href="#table-groups" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="table.groups.html"><em>Table-Groups</em></a> bridge the gap between objects and relational data by <em>logically</em> arranging tables in hierarchies and <em>physically</em> arranging rows of data in nested hierarchical form, that mirrors the logical hierarchy.</p>
+</div>
+<div class="section" id="query-execution">
+<h2>Query Execution<a class="headerlink" href="#query-execution" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="query.execution.html"><em>Query Execution</em></a> describes the techniques used to efficiently execute a query.</p>
+</div>
+<div class="section" id="mapping-sql-to-k-v-store">
+<h2>Mapping SQL to K/V store<a class="headerlink" href="#mapping-sql-to-k-v-store" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="mapping.sql.to.kv.html"><em>Mapping SQL data to K/V store</em></a> explains how the SQL Layer serializes data and stores it in the FoundationDB K/V store.</p>
+</div>
+<div class="section" id="known-limitations">
+<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="known.limitations.html"><em>Known Limitations</em></a> describes both long-term design limitations of the SQL Layer and short-term limitations applicable to the current version.</p>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<p>Once you&#8217;re done with the concepts and ready to get started with the SQL Layer, we recommend the <a class="reference internal" href=../../index.html><em>Getting Started</em></a> section</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SQL Layer Concepts</a><ul><li><a class="reference internal" href="#features">Features</a></li><li><a class="reference internal" href="#architecture">Architecture</a></li><li><a class="reference internal" href="#table-groups">Table-Groups</a></li><li><a class="reference internal" href="#query-execution">Query Execution</a></li><li><a class="reference internal" href="#mapping-sql-to-k-v-store">Mapping SQL to K/V store</a></li><li><a class="reference internal" href="#known-limitations">Known Limitations</a></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003235/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:35 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:27:22 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

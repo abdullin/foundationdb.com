@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=120;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Multimaps (java) &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/multimaps/java' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325004205/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='language' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325004205/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Overview</a></li>
+<li><a href=../../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004205/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004205/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325004205/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Multimaps</h1>
+<div class='languages'>
+<a href=../index.html class="python">python</a>
+<a href=../go/index.html class="go">go</a>
+<a href=index.html class="java active">java</a>
+<a href=../ruby/index.html class="ruby">ruby</a>
+</div>
+</header>
+<div id='body'> <h2></h2><h2>Goal</h2><p>       Create an <a href=../../../../../https:/web.archive.org/web/20150325004205/http:/en.wikipedia.org/wiki/Multimap>multimap</a> data structure with <a href=../../../../../https:/web.archive.org/web/20150325004205/http:/en.wikipedia.org/wiki/Multiset>multiset</a> values.</p><h2>Challenge</h2><p>         Support efficient operations on multimaps, including random addition, removal, and retrieval of indexed values.</p><h2>Explanation</h2><p>         Multimaps are a generalization of dictionaries (a.k.a. maps or associative arrays) in which each index can have multiple values. Multimaps can be further generalized by allowing a value to be present more than once for a given index, so that each index is associated with a multiset. These structures have a simple and efficient representation as FoundationDB's key-value pairs.</p><h2>Ordering</h2><p>         We store all values of a given index using adjacent key-value pairs. This allows all values of an index to be retrieved with a single range read.</p><h2>Pattern</h2><p>         We store all values in the multimap within a subspace, which takes care of packing our keys into byte strings.</p> <pre>static {
+    multi = new Subspace(Tuple.from("M"));
+}
+</pre><p>         Because we need to store multiple values per index, we'll store them within keys, with each (index, value) pair in its own key. To implement the multiset we’ll record the number of occurrences of each value. This is done by storing a positive integer with the key using an atomic addition. Each addition of a given value for an index will increment the count by 1:</p> <pre>ByteBuffer b = ByteBuffer.allocate(8);
+b.order(ByteOrder.LITTLE_ENDIAN);
+b.putLong(1l);	
+tr.mutate(MutationType.ADD, key, b.array());
+</pre><p>         By using a read-free atomic addition, FoundationDB guarantees that the addition operation will not conflict. As a result, values can be frequently added by multiple clients.</p><p>         Subtracting values, on the other hand, requires a read to ensure that the value count does not fall below 0. (Hence, unlike additions, subtractions will be subject to conflicts.) We'll just delete the key if a subtraction reduces the count to 0 in order to keep the representation sparse.</p><h2>Extensions</h2><h3>Negative value counts</h3><p>         We can generalize the representation further by allowing the count to be an arbitrary integer rather than restricting it to a positive integer. This extension may be useful for applications that record a deficit or debt of some resource. In this case, the code becomes even simpler and more efficient: we can simply remove the read and test from subtraction, making it conflict-free like the addition operation.</p><h2>Code</h2><p>         Here’s a simple implementation of multimaps with multisets as described:</p> <pre>import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+public class MicroMulti {
+    private static final FDB fdb;
+    private static final Database db;
+    private static final Subspace multi;
+    private static final int N = 100;
+    
+    static {
+        fdb = FDB.selectAPIVersion(200);
+        db = fdb.open();
+        multi = new Subspace(Tuple.from("M"));
+    }
+    
+    private static void addHelp(TransactionContext tcx, final byte[] key, final long amount){
+        tcx.run(new Function&lt;Transaction,Void&gt;() {
+            public Void apply(Transaction tr){
+                ByteBuffer b = ByteBuffer.allocate(8);
+                b.order(ByteOrder.LITTLE_ENDIAN);
+                b.putLong(amount);
+                
+                tr.mutate(MutationType.ADD, key, b.array());
+                
+                return null;
+            }
+        });
+    }
+    
+    private static long getLong(byte[] val){
+        ByteBuffer b = ByteBuffer.allocate(8);
+        b.order(ByteOrder.LITTLE_ENDIAN);
+        b.put(val);
+        return b.getLong(0);
+    }
+    
+    public static void add(TransactionContext tcx, final String index, 
+                            final Object value){
+        tcx.run(new Function&lt;Transaction,Void&gt;() {
+            public Void apply(Transaction tr){
+                addHelp(tr, multi.subspace(Tuple.from(index,value)).getKey(),1l);
+                return null;
+            }
+        });
+    }
+    
+    public static void subtract(TransactionContext tcx, final String index,
+                                final Object value){
+        tcx.run(new Function&lt;Transaction,Void&gt;() {
+            public Void apply(Transaction tr){
+                Future&lt;byte[]&gt; v = tr.get(multi.subspace(
+                                        Tuple.from(index,value)).getKey());
+                
+                if(v.get() != null &amp;&amp;  getLong(v.get()) &gt; 1l){
+                    addHelp(tr, multi.subspace(Tuple.from(index,value)).getKey(), -1l);
+                } else {
+                    tr.clear(multi.subspace(Tuple.from(index,value)).getKey());
+                }
+                return null;
+            }
+        });
+    }
+    
+    public static ArrayList&lt;Object&gt; get(TransactionContext tcx, final String index){
+        return tcx.run(new Function&lt;Transaction,ArrayList&lt;Object&gt; &gt;() {
+            public ArrayList&lt;Object&gt; apply(Transaction tr){
+                ArrayList&lt;Object&gt; vals = new ArrayList&lt;Object&gt;();
+                for(KeyValue kv : tr.getRange(multi.subspace(
+                                    Tuple.from(index)).range())){
+                    vals.add(multi.unpack(kv.getKey()).get(1));
+                }
+                return vals;
+            }
+        });
+    }
+    
+    public static HashMap&lt;Object,Long&gt; getCounts(TransactionContext tcx, 
+                                                final String index){
+        return tcx.run(new Function&lt;Transaction,HashMap&lt;Object,Long&gt; &gt;() {
+            public HashMap&lt;Object,Long&gt; apply(Transaction tr){
+                HashMap&lt;Object,Long&gt; vals = new HashMap&lt;Object,Long&gt;();
+                for(KeyValue kv : tr.getRange(multi.subspace(
+                                        Tuple.from(index)).range())){
+                    vals.put(multi.unpack(kv.getKey()).get(1), 
+                            getLong(kv.getValue()));
+                }
+                return vals;
+            }
+        });
+    }
+    
+    public static boolean isElement(TransactionContext tcx, final String index,
+                                final Object value){
+        return tcx.run(new Function&lt;Transaction,Boolean&gt;() {
+            public Boolean apply(Transaction tr){
+                return tr.get(multi.subspace(
+                        Tuple.from(index, value)).getKey()).get() != null;
+            }
+        });
+    }
+}</pre><p>        Happy multimapping!</p> </div>
+</div>
+<div id='more'>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004205/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:42:05 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:35:31 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

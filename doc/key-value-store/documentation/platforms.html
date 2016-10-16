@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app8.us.archive.org";archive_analytics.values.server_ms=238;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Platform Issues
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/platforms.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003225/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="SSFAJLb8sTG3FrCM9nzF7xfqfUL5btEDgRjcflL3rjw=" name="csrf-token" />
+<link href=../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003225/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../index.html>Overview</a></li>
+<li><a href=index.html>Documentation</a></li>
+<li><a href=../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../https:/web.archive.org/web/20150325003225/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003225/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../about/index.html>About Us</a></li>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+<li><a href=../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=index.html>Summary</a></li>
+<li><a href=index.html>Getting Started</a></li>
+<li><a href=tutorials.html>Tutorials</a></li>
+<li><a href=developer-guide.html>Developer Guide</a></li>
+<li><a href=data-modeling.html>Data Modeling</a></li>
+<li><a href=../recipes/index.html>Design Recipes</a></li>
+<li>
+<a href=api-reference.html>API Reference</a>
+<ul>
+<li><a href=api-python.html>Python API</a></li>
+<li><a href=api-ruby.html>Ruby API</a></li>
+<li><a href=api-node.html>Node.js API</a></li>
+<li><a href=api-php.html>PHP API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003225/https:/foundationdb.com/key-value-store/documentation/javadoc/index.html>Java API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003225/http:/godoc.org/github.com/FoundationDB/fdb-go/fdb>Go API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003225/https:/github.com/Doxense/foundationdb-dotnet-client>.NET API</a></li>
+<li><a href=api-c.html>C API</a></li>
+</ul>
+</li>
+<li><a href=building-cluster.html>Building a Cluster</a></li>
+<li><a href=configuration.html>Configuration</a></li>
+<li><a href=administration.html>Administration</a></li>
+<li><a href=command-line-interface.html>Command Line Interface</a></li>
+<li><a href=mr-status.html>Machine-Readable Status</a></li>
+<li><a href=tls.html>Transport Layer Security</a></li>
+<li><a href=backups.html>Backup and Restoration</a></li>
+<li><a href=known-limitations.html>Known Limitations</a></li>
+<li><a href=platforms.html class="active">Platform Issues</a></li>
+<li><a href=release-notes.html>Release Notes</a></li>
+<li><a href=older/index.html>Older Versions</a></li>
+<li><a href=../white-papers/index.html>White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href=search.html>
+      <img alt="Magnifying-glass" src=../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="platform-issues">
+<h1>Platform Issues<a class="headerlink" href="#platform-issues" title="Permalink to this headline">∞</a></h1>
+<p>This document describes issues on particular platforms that affect the operation of FoundationDB. See <a class="reference internal" href="known-limitations.html"><em>Known Limitations</em></a> for broader limitations relating to FoundationDB&#8217;s design or its current version.</p>
+<div class="section" id="centos-6-2-on-gce">
+<span id="platform-centos-gce"></span><h2>CentOS 6.2 on GCE<a class="headerlink" href="#centos-6-2-on-gce" title="Permalink to this headline">∞</a></h2>
+<p>In a newly created instance, the CentOS 6.2 image on Google Compute Engine fails to mount the /dev/shm filesystem (used to implement POSIX shared memory) but still reports it as mounted. This bug causes any application that requires access to shared memory, including FoundationDB, to fail to function.</p>
+<p>To resolve this issue, you may do one of the following:</p>
+<ul class="simple">
+<li>Reboot the newly created instance.</li>
+<li>Attempt to unmount the /dev/shm filesystem with <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">umount</span> <span class="pre">/dev/shm</span></tt>, which will report that the filesystem is not mounted, and then mount the /dev/shm filesystem with <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">mount</span> <span class="pre">/dev/shm</span></tt>, which will succeed.</li>
+<li>Specify a machine ID in the <a class="reference internal" href="configuration.html#foundationdb-conf-fdbserver"><em>foundationdb.conf</em></a> file, at which point FoundationDB will not attempt to use shared memory.</li>
+</ul>
+</div>
+<div class="section" id="ubuntu-12-x">
+<span id="platform-ubuntu-12"></span><h2>Ubuntu 12.x<a class="headerlink" href="#ubuntu-12-x" title="Permalink to this headline">∞</a></h2>
+<p>Because of a <a class="reference external" href=../../https:/web.archive.org/web/20150325003225/https:/bugzilla.kernel.org/show_bug.cgi?id=43260>bug in the Linux kernel</a>, <strong>FoundationDB might deadlock when running on Ubuntu 12.04 or 12.10</strong> using the default ext4 filesystem. This was fixed in the 3.7 kernel (released 12/10/2012) thanks to the <a class="reference external" href=../../https:/web.archive.org/web/20150325003225/http:/lkml.indiana.edu/hypermail/linux/kernel/1210.0/03434.html>hard work of Dmitry Monakhov</a>. Versions of Ubuntu 12.04 starting at 12.04.3 use the fixed kernel and are safe to use.</p>
+</div>
+<div class="section" id="virtualbox">
+<span id="platform-virtual-box"></span><h2>VirtualBox<a class="headerlink" href="#virtualbox" title="Permalink to this headline">∞</a></h2>
+<p>Running FoundationDB on VirtualBox may result in high idle CPU usage.</p>
+</div>
+<div class="section" id="windows">
+<span id="platform-windows"></span><h2>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="non-english-windows-oss">
+<h3>Non-English Windows OSs<a class="headerlink" href="#non-english-windows-oss" title="Permalink to this headline">∞</a></h3>
+<p>Some of the internal commands that FoundationDB uses to gather load statistics (network, CPU, etc.) do not work on non-English versions of Windows. On these versions, incorrect statistics will be shown when viewing cluster status. Database functionality is unaffected.</p>
+</div>
+<div class="section" id="non-unicode-windows-paths">
+<h3>Non-Unicode Windows paths<a class="headerlink" href="#non-unicode-windows-paths" title="Permalink to this headline">∞</a></h3>
+<p>On Windows, all paths (installation directory, log file directory, data directory, cluster file, etc.) must consist entirely of ANSI (US English) characters.</p>
+</div>
+<div class="section" id="old-versions-of-windows">
+<h3>Old Versions of Windows<a class="headerlink" href="#old-versions-of-windows" title="Permalink to this headline">∞</a></h3>
+<p>Windows XP and Windows Server 2003 have a bug in their implementation of thread-local storage that affects dynamically-loaded libraries. This causes FoundationDB language bindings other than the C API to potentially behave in undefined ways.</p>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Platform Issues</a><ul><li><a class="reference internal" href="#centos-6-2-on-gce">CentOS 6.2 on GCE</a></li><li><a class="reference internal" href="#ubuntu-12-x">Ubuntu 12.x</a></li><li><a class="reference internal" href="#virtualbox">VirtualBox</a></li><li><a class="reference internal" href="#windows">Windows</a><ul><li><a class="reference internal" href="#non-english-windows-oss">Non-English Windows OSs</a></li><li><a class="reference internal" href="#non-unicode-windows-paths">Non-Unicode Windows paths</a></li><li><a class="reference internal" href="#old-versions-of-windows">Old Versions of Windows</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../https:/web.archive.org/web/20150325003225/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:25 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:29:19 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

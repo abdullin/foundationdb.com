@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app17.us.archive.org";archive_analytics.values.server_ms=231;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Graph &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/graph' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003515/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="z4hP7zN1qp7rkvEf4RB2TGig8BK66EyNm6Z3xX0kxUc=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003515/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Graph</h1>
+<div class='languages'>
+<a href=index.html class="python active">python</a>
+<a href=go/index.html class="go">go</a>
+<a href=java/index.html class="java">java</a>
+<a href=ruby/index.html class="ruby">ruby</a>
+</div>
+</header>
+<div id='body'><h2></h2><h2>Goal</h2><p>     Create a <a href=../../../../https:/web.archive.org/web/20150325003515/http:/en.wikipedia.org/wiki/Directed_graph>directed graph</a> data structure.</p><h2>Challenge</h2><p>                     Represent a directed graph in a manner that supports efficient  retrieval of neighboring nodes in either inward or outward directions.</p><h2>Explanation</h2><p>                     We can capture the structure of a graph by representing each edge in a  key-value pair. We'll also represent the directional inverse of each  edge in order to support both forward and backward traversal of the  graph.</p><h2>Ordering</h2><p>                     We store all edges coming out of a given node using adjacent keys.  This allows all neighbors of a node to be retrieved with a single range  read.</p><h2>Pattern</h2><p>                     We'll construct a key for a given edge from a tuple containing the  identifiers of the source and target nodes. The lexicographic order of  tuples and keys will let us efficiently retrieve all outbound neighbors  of node using a single range read. We'll also construct a second key for  the edge in which the target node is placed first, giving us efficient  access to the inbound neighbors of a node.</p><p>                     We can create a subspace for the graph, and within it create  subspaces for the source and target identifiers. Setting an edge would  look like:</p> <pre>tr[edge[node][neighbor]] = ''
+tr[inverse[neighbor][node]] = ''
+</pre><h2>Extensions</h2><h3>Weighted graphs</h3><p>                     In a weighted directed graph, each edge is assigned a numeric value  or weight. For integer-valued weights, the above model can be easily  extended by assigning a packed integer as the value of the edge keys.  Building on the above example, this would look like:</p> <pre>tr[edge[node][neighbor]] = struct.pack('&lt;q', 1)
+tr[inverse[neighbor][node]] = struct.pack('&lt;q', 1)
+</pre><p>                     Furthermore, atomic addition can be used to support concurrent incrementing of edge weights with minimal conflicts:</p> <pre>tr.add(edge[node][neighbor], struct.pack('&lt;q', 1))
+tr.add(inverse[neighbor][node], struct.pack('&lt;q', 1))
+</pre><h3>Indexing Neighbors of Neighbors</h3><p>                     A common access pattern is to retrieve all neighbors of neighbors of   a given node, i.e., all nodes reachable by a path of length two. We can  index these by storing a key of the form path_two[a][c] whenever we  have edge[a][b] and edge[b][c]. This would look like:</p> <pre>tr[edge[node][neighbor]] = ''
+tr[edge[node][neighbors_neighbor]] = ''
+</pre><h3>Property graphs</h3><p>                     In the property graph model, both nodes and edges are treated as  first-class entities that can have associated properties in addition to  their graph structure. Property graphs can easily be mapped to  FoundationDB by adding key-value pairs for the properties.</p><h2>Code</h2><p>                    Here's a simple implementation of the basic graph pattern:</p> <pre>graph = fdb.Subspace(('G',))
+
+edge = graph['E']
+inverse = graph['I']
+
+@fdb.transactional
+def set_edge(tr, node, neighbor):
+    tr[edge[node][neighbor]] = ''     
+    tr[inverse[neighbor][node]] = ''
+
+@fdb.transactional
+def del_edge(tr, node, neighbor):
+    del tr[edge[node][neighbor]]
+    del tr[inverse[neighbor][node]]
+
+@fdb.transactional
+def get_out_neighbors(tr, node):
+    return [edge.unpack(k)[1] for k, _ in tr[edge[node].range()]]
+
+@fdb.transactional
+def get_in_neighbors(tr, node):
+    return [inverse.unpack(k)[1] for k, _ in tr[inverse[node].range()]]
+</pre><p>              For a more complete implementation using the property graph model, take a look at a <a href=../../../../https:/web.archive.org/web/20150325003515/https:/github.com/wwilson/blueprints-foundationdb-graph>FoundationDB implementation of Blueprints</a>.</p><p>                     Happy graphing!</p></div>
+</div>
+<div id='more'>
+<a class='previous button' href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes/developer/bulk-loading'>&larr; Previous: Bulk Loading</a>
+<a class='next button' href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes/developer/hierarchical-documents'>Next: Hierarchical Documents &rarr;</a>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:35:15 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:31:22 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

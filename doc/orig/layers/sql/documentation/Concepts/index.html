@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=292;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SQL Layer Concepts
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/index.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003235/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003235im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="JHB610nEmDjYaqX8Y56HaZy7AUTceNFjyp16WqXCWco=" name="csrf-token" />
+<link href="/web/20150325003235cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003235cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Concepts/index.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Concepts/index.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003235" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:35 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150427193216/https://foundationdb.com/layers/sql/documentation/Concepts/index.html" title="27 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:35 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150427193216/https://foundationdb.com/layers/sql/documentation/Concepts/index.html" title="19:32:16 Apr 27, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:35 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003235*/https://foundationdb.com/layers/sql/documentation/Concepts/index.html" title="See a list of every capture for this URL">3 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003235/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003235im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003235/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003235/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003235/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003235/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003235/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003235/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003235/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003235/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/index.html" class="active">Concepts</a>
+<ul>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003235/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003235im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="sql-layer-concepts">
+<h1>SQL Layer Concepts<a class="headerlink" href="#sql-layer-concepts" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer is a <strong>fault tolerant</strong> and <strong>scalable</strong> RDBMS with distinct features aimed at making operational SQL truly effective in a distributed architecture. It is built as a <a class="reference external" href="/web/20150325003235/https://foundationdb.com/layers">Layer</a> above the FoundationDB K/V store.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="features.html"><em>Features</em></a> highlights the unique capabilities underlying the architecture as well the main drawbacks.</p>
+</div>
+<div class="section" id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="architecture.html"><em>The architecture</em></a> includes FoundationDB K/V nodes that maintain data and SQL Layer nodes that translate SQL statements into efficient operations against the K/V store.</p>
+</div>
+<div class="section" id="table-groups">
+<h2>Table-Groups<a class="headerlink" href="#table-groups" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="table.groups.html"><em>Table-Groups</em></a> bridge the gap between objects and relational data by <em>logically</em> arranging tables in hierarchies and <em>physically</em> arranging rows of data in nested hierarchical form, that mirrors the logical hierarchy.</p>
+</div>
+<div class="section" id="query-execution">
+<h2>Query Execution<a class="headerlink" href="#query-execution" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="query.execution.html"><em>Query Execution</em></a> describes the techniques used to efficiently execute a query.</p>
+</div>
+<div class="section" id="mapping-sql-to-k-v-store">
+<h2>Mapping SQL to K/V store<a class="headerlink" href="#mapping-sql-to-k-v-store" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="mapping.sql.to.kv.html"><em>Mapping SQL data to K/V store</em></a> explains how the SQL Layer serializes data and stores it in the FoundationDB K/V store.</p>
+</div>
+<div class="section" id="known-limitations">
+<h2>Known Limitations<a class="headerlink" href="#known-limitations" title="Permalink to this headline">∞</a></h2>
+<p><a class="reference internal" href="known.limitations.html"><em>Known Limitations</em></a> describes both long-term design limitations of the SQL Layer and short-term limitations applicable to the current version.</p>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<p>Once you&#8217;re done with the concepts and ready to get started with the SQL Layer, we recommend the <a class="reference internal" href="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html"><em>Getting Started</em></a> section</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003235/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SQL Layer Concepts</a><ul><li><a class="reference internal" href="#features">Features</a></li><li><a class="reference internal" href="#architecture">Architecture</a></li><li><a class="reference internal" href="#table-groups">Table-Groups</a></li><li><a class="reference internal" href="#query-execution">Query Execution</a></li><li><a class="reference internal" href="#mapping-sql-to-k-v-store">Mapping SQL to K/V store</a></li><li><a class="reference internal" href="#known-limitations">Known Limitations</a></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003235/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003235/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003235/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003235/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003235js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:35 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:27:22 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

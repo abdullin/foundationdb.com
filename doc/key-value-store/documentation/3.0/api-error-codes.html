@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=318;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Error Codes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/3.0/api-error-codes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003634/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003634/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li><a href=../index.html>Getting Started</a></li>
+<li><a href=../tutorials.html>Tutorials</a></li>
+<li><a href=../developer-guide.html>Developer Guide</a></li>
+<li><a href=../data-modeling.html>Data Modeling</a></li>
+<li><a href=../../recipes/index.html>Design Recipes</a></li>
+<li>
+<a href=../api-reference.html>API Reference</a>
+<ul>
+<li><a href=../api-python.html>Python API</a></li>
+<li><a href=../api-ruby.html>Ruby API</a></li>
+<li><a href=../api-node.html>Node.js API</a></li>
+<li><a href=../api-php.html>PHP API</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/https:/foundationdb.com/key-value-store/documentation/javadoc/index.html>Java API</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/http:/godoc.org/github.com/FoundationDB/fdb-go/fdb>Go API</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/https:/github.com/Doxense/foundationdb-dotnet-client>.NET API</a></li>
+<li><a href=../api-c.html>C API</a></li>
+</ul>
+</li>
+<li><a href=../building-cluster.html>Building a Cluster</a></li>
+<li><a href=../configuration.html>Configuration</a></li>
+<li><a href=../administration.html>Administration</a></li>
+<li><a href=../command-line-interface.html>Command Line Interface</a></li>
+<li><a href=../mr-status.html>Machine-Readable Status</a></li>
+<li><a href=../tls.html>Transport Layer Security</a></li>
+<li><a href=../backups.html>Backup and Restoration</a></li>
+<li><a href=../known-limitations.html>Known Limitations</a></li>
+<li><a href=../platforms.html>Platform Issues</a></li>
+<li><a href=../release-notes.html>Release Notes</a></li>
+<li><a href=../older/index.html>Older Versions</a></li>
+<li><a href=../../white-papers/index.html>White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="building-with-the-api.html">Building with the API</a> &raquo;
+    <a href="api-reference.html">API Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../latest/search.html>
+      <img alt="Magnifying-glass" src=../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="error-codes">
+<span id="developer-guide-error-codes"></span><h1>Error Codes<a class="headerlink" href="#error-codes" title="Permalink to this headline">∞</a></h1>
+<p>FoundationDB may return the following error codes from API functions. If you need to check for specific errors (for example, to implement custom retry logic), you must use the numerical code, since the other fields are particularly likely to change unexpectedly. Error handling logic should also be prepared for new error codes which are not listed here.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="5%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Code</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>success</td>
+<td>0</td>
+<td>Success</td>
+</tr>
+<tr class="row-odd"><td>operation_failed</td>
+<td>1000</td>
+<td>Operation failed</td>
+</tr>
+<tr class="row-even"><td>timed_out</td>
+<td>1004</td>
+<td>Operation timed out</td>
+</tr>
+<tr class="row-odd"><td>past_version</td>
+<td>1007</td>
+<td>Version no longer available</td>
+</tr>
+<tr class="row-even"><td>future_version</td>
+<td>1009</td>
+<td>Request for future version</td>
+</tr>
+<tr class="row-odd"><td>not_committed</td>
+<td>1020</td>
+<td>Transaction not committed</td>
+</tr>
+<tr class="row-even"><td>commit_unknown_result</td>
+<td>1021</td>
+<td>Transaction may or may not have committed</td>
+</tr>
+<tr class="row-odd"><td>transaction_cancelled</td>
+<td>1025</td>
+<td>Operation aborted because the transaction was cancelled</td>
+</tr>
+<tr class="row-even"><td>transaction_timed_out</td>
+<td>1031</td>
+<td>Operation aborted because the transaction timed out</td>
+</tr>
+<tr class="row-odd"><td>too_many_watches</td>
+<td>1032</td>
+<td>Too many watches are currently set</td>
+</tr>
+<tr class="row-even"><td>watches_disabled</td>
+<td>1034</td>
+<td>Disabling read your writes also disables watches</td>
+</tr>
+<tr class="row-odd"><td>operation_cancelled</td>
+<td>1101</td>
+<td>Asynchronous operation cancelled</td>
+</tr>
+<tr class="row-even"><td>future_released</td>
+<td>1102</td>
+<td>The future has been released</td>
+</tr>
+<tr class="row-odd"><td>platform_error</td>
+<td>1500</td>
+<td>A platform error occurred</td>
+</tr>
+<tr class="row-even"><td>large_alloc_failed</td>
+<td>1501</td>
+<td>Large block allocation failed</td>
+</tr>
+<tr class="row-odd"><td>performance_counter_error</td>
+<td>1502</td>
+<td>QueryPerformanceCounter doesn&#8217;t work</td>
+</tr>
+<tr class="row-even"><td>io_error</td>
+<td>1510</td>
+<td>A disk i/o operation failed</td>
+</tr>
+<tr class="row-odd"><td>file_not_found</td>
+<td>1511</td>
+<td>File not found</td>
+</tr>
+<tr class="row-even"><td>bind_failed</td>
+<td>1512</td>
+<td>Unable to bind to network</td>
+</tr>
+<tr class="row-odd"><td>file_not_readable</td>
+<td>1513</td>
+<td>File could not be read from</td>
+</tr>
+<tr class="row-even"><td>file_not_writable</td>
+<td>1514</td>
+<td>File could not be written to</td>
+</tr>
+<tr class="row-odd"><td>no_cluster_file_found</td>
+<td>1515</td>
+<td>No cluster file found in current directory or default location</td>
+</tr>
+<tr class="row-even"><td>cluster_file_too_large</td>
+<td>1516</td>
+<td>Cluster file too large to be read</td>
+</tr>
+<tr class="row-odd"><td>client_invalid_operation</td>
+<td>2000</td>
+<td>The client made an invalid API call</td>
+</tr>
+<tr class="row-even"><td>commit_read_incomplete</td>
+<td>2002</td>
+<td>Commit with incomplete read</td>
+</tr>
+<tr class="row-odd"><td>test_specification_invalid</td>
+<td>2003</td>
+<td>The test specification is invalid</td>
+</tr>
+<tr class="row-even"><td>key_outside_legal_range</td>
+<td>2004</td>
+<td>The specified key was outside the legal range</td>
+</tr>
+<tr class="row-odd"><td>inverted_range</td>
+<td>2005</td>
+<td>The specified range has a begin key larger than the end key</td>
+</tr>
+<tr class="row-even"><td>invalid_option_value</td>
+<td>2006</td>
+<td>An invalid value was passed with the specified option</td>
+</tr>
+<tr class="row-odd"><td>invalid_option</td>
+<td>2007</td>
+<td>Option not valid in this context</td>
+</tr>
+<tr class="row-even"><td>network_not_setup</td>
+<td>2008</td>
+<td>Action not possible before the network is configured</td>
+</tr>
+<tr class="row-odd"><td>network_already_setup</td>
+<td>2009</td>
+<td>Network can be configured only once</td>
+</tr>
+<tr class="row-even"><td>read_version_already_set</td>
+<td>2010</td>
+<td>Transaction already has a read version set</td>
+</tr>
+<tr class="row-odd"><td>version_invalid</td>
+<td>2011</td>
+<td>Version not valid</td>
+</tr>
+<tr class="row-even"><td>range_limits_invalid</td>
+<td>2012</td>
+<td>getRange limits not valid</td>
+</tr>
+<tr class="row-odd"><td>invalid_database_name</td>
+<td>2013</td>
+<td>Database name not supported in this version</td>
+</tr>
+<tr class="row-even"><td>attribute_not_found</td>
+<td>2014</td>
+<td>Attribute not found in string</td>
+</tr>
+<tr class="row-odd"><td>future_not_set</td>
+<td>2015</td>
+<td>The future has not been set</td>
+</tr>
+<tr class="row-even"><td>future_not_error</td>
+<td>2016</td>
+<td>The future is not an error</td>
+</tr>
+<tr class="row-odd"><td>used_during_commit</td>
+<td>2017</td>
+<td>An operation was issued while a commit was outstanding</td>
+</tr>
+<tr class="row-even"><td>invalid_mutation_type</td>
+<td>2018</td>
+<td>An invalid atomic mutation type was issued</td>
+</tr>
+<tr class="row-odd"><td>incompatible_protocol_version</td>
+<td>2100</td>
+<td>Incompatible protocol version</td>
+</tr>
+<tr class="row-even"><td>transaction_too_large</td>
+<td>2101</td>
+<td>Transaction too large</td>
+</tr>
+<tr class="row-odd"><td>key_too_large</td>
+<td>2102</td>
+<td>Key too large</td>
+</tr>
+<tr class="row-even"><td>value_too_large</td>
+<td>2103</td>
+<td>Value too large</td>
+</tr>
+<tr class="row-odd"><td>connection_string_invalid</td>
+<td>2104</td>
+<td>Connection string invalid</td>
+</tr>
+<tr class="row-even"><td>address_in_use</td>
+<td>2105</td>
+<td>Local address in use</td>
+</tr>
+<tr class="row-odd"><td>invalid_local_address</td>
+<td>2106</td>
+<td>Invalid local address</td>
+</tr>
+<tr class="row-even"><td>tls_error</td>
+<td>2107</td>
+<td>TLS error</td>
+</tr>
+<tr class="row-odd"><td>api_version_unset</td>
+<td>2200</td>
+<td>API version must be set</td>
+</tr>
+<tr class="row-even"><td>api_version_already_set</td>
+<td>2201</td>
+<td>API version may be set only once</td>
+</tr>
+<tr class="row-odd"><td>api_version_invalid</td>
+<td>2202</td>
+<td>API version not valid</td>
+</tr>
+<tr class="row-even"><td>api_version_not_supported</td>
+<td>2203</td>
+<td>API version not supported in this version or binding</td>
+</tr>
+<tr class="row-odd"><td>exact_mode_without_limits</td>
+<td>2210</td>
+<td>EXACT streaming mode requires limits, but none were given</td>
+</tr>
+<tr class="row-even"><td>unknown_error</td>
+<td>4000</td>
+<td>An unknown error occurred</td>
+</tr>
+<tr class="row-odd"><td>internal_error</td>
+<td>4100</td>
+<td>An internal error occurred</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003634/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:34 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:41:51 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app10.us.archive.org";archive_analytics.values.server_ms=101;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Key-Value Store Performance &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/performance' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003200/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="NTPQeHB1sFR6pWzuKmrfRLT89Z3qvHdC7NOnOFP1qxs=" name="csrf-token" />
+<link href=../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='performance' id='key_value'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003200/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../index.html>Overview</a></li>
+<li><a href=../documentation/index.html>Documentation</a></li>
+<li><a href=index.html class="active">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../https:/web.archive.org/web/20150325003200/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003200/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../about/index.html>About Us</a></li>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+<li><a href=../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='content'>
+<section id='intro'>
+<div class='container'>
+<h3>Key-Value Store</h3>
+<h1>Breakthrough performance and scalability.</h1>
+<p>Key-Value Store uses commodity hardware to provide your applications with millions of database operations per penny.</p>
+</div>
+</section>
+<div class='container'>
+<ul id='model'>
+<li>
+<h2>Scaling</h2>
+<p>Key-Value Store has an unmatched ability to scale linearly as you add more cores to a cluster.</p>
+<div class='graph' id='scale'></div>
+<div class='text'>
+<p>
+<span>Here, a cluster of commodity hardware scales to</span>
+<span class='highlighted'>8.2 million</span>
+<span>operations/sec doing a 90% read and 10% write workload.</span>
+</p>
+<p>Make sure to check out our <a href=../../https:/web.archive.org/web/20150325003200/http:/blog.foundationdb.com/databases-at-14.4mhz>blog post about scaling a cluster that reaches 14.4 million writes/second</a>.</p>
+<a class='button' href='#details'>
+<span>+</span>
+<span class='more-less'>More</span>
+<span>about scaling</span>
+</a>
+<div class='details'>
+<p class='hardware'>The scaling graph uses a 24-machine EC2 c3.8xlarge cluster in which each machine has a 16-core processor. We ran a Key-Value Store server process on each core, yielding a 384-process cluster for the largest test, and scaled the cluster down for each smaller test.</p>
+<p>Scaling is the ability to efficiently deliver operations at different scales. For Key-Value Store, the relevant operations are reads and writes, measured in operations per sec. Scale is measured in the number of processes, which will usually track the number of available cores. Key-Value Store offers scalability from partial utilization of a single core on a single machine to full utilization of dozens of powerful multi-core machines in a cluster.</p>
+</div>
+</div>
+</li>
+<li>
+<h2>Latency</h2>
+<p>Key-Value Store has low latencies over a broad range of workloads that only increase modestly as the cluster approaches saturation.</p>
+<div class='graph' id='latency'></div>
+<div class='graph-label'>percentage of 2.7 million ops/sec</div>
+<div class='text'>
+<p>
+<span>When run at less than</span>
+<span class='highlighted'>75% load</span>
+<span>, Key-Value Store typically has the following latencies:</span>
+</p>
+<table>
+<tr>
+<td>Start transaction</td>
+<td>0.3 - 1ms</td>
+</tr>
+<tr>
+<td>Read</td>
+<td>0.1 - 1ms</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>0 (deferred until commit)</td>
+</tr>
+<tr>
+<td>Commit</td>
+<td>1.5 - 2.5ms</td>
+</tr>
+</table>
+<a class='button' href='#details'>
+<span>+</span>
+<span class='more-less'>More</span>
+<span>about latency</span>
+</a>
+<div class='details'>
+<p class='hardware'>The latency graph uses a 12-machine cluster in which each machine has a 4-core (E3-1240) processor and a single Intel SATA SSD. We ran a Key-Value Store server process on each core, yielding a 48-process cluster.</p>
+<p>Latency is the time required to complete a given operation. Latencies in Key-Value Store are typically measured in milliseconds (ms). Like all systems, Key-Value Store operates at low latencies while under low load and increasing latencies as the load approaches the saturation point. Key-Value Store is engineered to keep latencies low even at moderate loads. As loads approach saturation, latencies increase as requests are queued up.</p>
+<p>For Key-Value Store, the significant latencies are those experienced by a Key-Value Store client as it prepares and submits a transaction. Writes incur no latency until the transaction is committed. There are three actions within a transaction that do incur latency:</p>
+<ul>
+<li>
+<strong>Transaction start.</strong>
+<span>This latency will be experienced as part of the first read in a transaction as the read version is obtained. It will typically be a few milliseconds under moderate load, but under high write loads Key-Value Store tries to concentrate most transaction latency here.</span>
+</li>
+<li>
+<strong>Reads.</strong>
+<span>Individual reads should take under 1 ms with moderate loads. If a transaction performs many reads by waiting for each to complete before starting the next, however, these small latencies can add up. You can thus reduce total latency (and potentially conflicts) by doing as many of your reads as possible in parallel. Key-Value Store supports non-blocking reads, so it's easy to perform reads without waiting on them.</span>
+</li>
+<li>
+<strong>Commit.</strong>
+<span>Transactions that perform writes must be committed, and the commit will not succeed until the transaction is durable with full replication. This latency will average under 3 ms with moderate loads. Only a small part of this latency impacts transaction conflicts.</span>
+</li>
+</ul>
+</div>
+</div>
+</li>
+<li>
+<h2>Throughput (per core)</h2>
+<p>Key-Value Store provides good throughput for the full range of read and write workloads, with two fully durable storage engine options.</p>
+<div class='graph' id='throughput'></div>
+<div class='text'>
+<p>
+<span>Key-Value Store offers two <a href=../documentation/configuration.html>storage engines</a>, optimized for distinct use cases, both of which write to disk before reporting transactions committed. For each storage engine, the graph shows throughput of a single Key-Value Store process running on a</span>
+<strong>single core</strong>
+<span>with saturating read/write workloads ranging from 100% reads to 100% writes. Throughput for the unmixed workloads is about:</span>
+</p>
+<table>
+<tr>
+<td></td>
+<td>ssd engine</td>
+<td>memory engine</td>
+</tr>
+<tr>
+<td>Reads</td>
+<td>
+<span class='highlighted'>55,000/sec</span>
+</td>
+<td>
+<span class='highlighted'>90,000/sec</span>
+</td>
+</tr>
+<tr>
+<td>Writes</td>
+<td>
+<span class='highlighted'>20,000/sec</span>
+</td>
+<td>
+<span class='highlighted'>35,000/sec</span>
+</td>
+</tr>
+</table>
+<a class='button' href='#details'>
+<span>+</span>
+<span class='more-less'>More</span>
+<span>about throughput</span>
+</a>
+<div class='details'>
+<p class='hardware'>The throughput graph uses a single Key-Value Store server process on a single core (E3-1240).</p>
+<p>Throughput is the total number of operations successfully completed by a system in a given period of time. For Key-Value Store, we measure throughput in operations, i.e., some mix of read and writes, per second.</p>
+<p>The memory engine is optimized for datasets that entirely fit in memory, with secondary storage used for durable writes but not reads. The SSD engine is optimized for datasets that do not entirely fit in memory, with some percentage of reads being served from secondary storage.</p>
+<p>Because SATA SSDs are only about 50 times slower than memory, they can be combined with memory to achieve throughputs on the same order of magnitude as memory alone as long as cache-hit rates are reasonable. The SSD engine takes advantage of this property. In contrast, spinning disks are 5,000 times slower than memory and radically degrade throughput as soon as cache hits fall appreciably below 100%. Check out our <a href=../white-papers/solid-state-drives/index.html>white paper on Solid-State Drives</a> for more details.</p>
+<p>Key-Value Store will only reach maximum throughputs with a highly concurrent workload. In fact, for a given average latency, concurrency is the main driver of throughput.</p>
+</div>
+</div>
+</li>
+<li>
+<h2>Concurrency</h2>
+<p>Key-Value Store is designed to achieve great performance under high concurrency from a large number of clients.</p>
+<div class='graph' id='concurrency'></div>
+<div class='graph-label'>concurrent transactions</div>
+<div class='text'>
+<p>
+<span>Its asynchronous design allows it to handle very high concurrency, and for a typical workload with 90% reads and 10% writes, maximum throughput is reached at about 200 concurrent operations, achieved with</span>
+<span class='highlighted'>20</span>
+<span>concurrent transactions per Key-Value Store process for a workload using 10 ops/transaction.</span>
+</p>
+<a class='button' href='#details'>
+<span>+</span>
+<span class='more-less'>More</span>
+<span>about concurrency</span>
+</a>
+<div class='details'>
+<p class='hardware'>The concurrency graph uses a single Key-Value Store server process on a single core (E3-1240).</p>
+<p>For a given system, average throughput and latency are related by a ratio known in queuing theory as Little’s Law. The practical application of this law to Key-Value Store states:</p>
+<pre><code>throughput = outstanding requests / latency</code></pre>
+<p>The implication of this relation is that, at a given latency, we can maximize throughput only by concurrently submitting enough outstanding requests. A Key-Value Store cluster might have a commit latency of 2 ms and yet be capable of far more than 500 commits per second. In fact, tens of thousands of commits per second are easily achievable. To achieve this rate, there must be hundreds of requests happening concurrently. Not having enough pending requests is the single biggest reason for low performance.</p>
+</div>
+</div>
+</li>
+<li id='other-effects'>
+<h2>Other Effects</h2>
+<p>A lot of things affect the simple first-order model of performance you see here. For example:</p>
+<ul>
+<li>For short periods, higher write throughputs can be absorbed, giving higher performance and keeping latencies low.</li>
+<li>Most workloads' reads can be cached, giving higher performance.</li>
+<li>Adjacently written keys can be written much faster.</li>
+<li>Large keys make the storage engine slower.</li>
+<li>Large values cost more to read and write than smaller ones.</li>
+<li>Not all CPUs are the same speed.</li>
+<li>To keep up with the performance modeled above, your disk subsystem will need to do a little over 1 IOPS per write, and about 1 IOPS per (uncached) read.</li>
+<li>Network performance tuning at the operating system level can be very important for both latency and throughput, especially in larger clusters.</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../https:/web.archive.org/web/20150325003200/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  render_kv_performance_graphs()
+  handle_key_value_performance_page()
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:00 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:11:15 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

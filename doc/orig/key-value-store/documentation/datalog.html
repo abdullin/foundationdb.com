@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app36.us.archive.org";archive_analytics.values.server_ms=424;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+A Lightweight Query Language
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/datalog.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003221/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003221im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="chualtXDhYrtQ5LtgjGLisFvn8x5TUghVoSgpBelSTs=" name="csrf-token" />
+<link href="/web/20150325003221cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003221cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/datalog.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/datalog.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003221" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20150216182524/https://foundationdb.com/key-value-store/documentation/datalog.html" title="16 Feb 2015">FEB</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:21 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150706064644/https://foundationdb.com/key-value-store/documentation/datalog.html" title="6 Jul 2015"><strong>JUL</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20150216182524/https://foundationdb.com/key-value-store/documentation/datalog.html" title="18:25:24 Feb 16, 2015"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:21 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150706064644/https://foundationdb.com/key-value-store/documentation/datalog.html" title="6:46:44 Jul 6, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:21 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003221*/https://foundationdb.com/key-value-store/documentation/datalog.html" title="See a list of every capture for this URL">3 captures</a>
+           <div class="r" title="Timespan for captures of this URL">16 Feb 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:011000100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003221/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003221im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003221/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003221/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003221/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003221/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003221/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003221/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003221/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003221/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003221/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003221/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="tutorials.html">Tutorials</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003221/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003221im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="a-lightweight-query-language">
+<h1>A Lightweight Query Language<a class="headerlink" href="#a-lightweight-query-language" title="Permalink to this headline">∞</a></h1>
+<p>FoundationDB decouples its data storage technology from data models and query
+languages, implementing them as <a class="reference external" href="/web/20150325003221/https://foundationdb.com/white-papers/the-layer-concept">layers</a>.
+This tutorial illustrates a lightweight query language for FoundationDB in the
+form of a binding for <a class="reference external" href="/web/20150325003221/https://sites.google.com/site/pydatalog/">pyDatalog</a>,
+an open source implementation of <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Datalog">Datalog</a>
+for use within Python.</p>
+<p>Caveat: this layer has not been designed for optimal efficiency. It has deliberately
+been kept simple to show how you can use a small amount of code to bind a powerful
+query language to FoundationDB. The code was implemented in less than a day at a Hackathon
+sponsored by FoundationDB and <a class="reference external" href="/web/20150325003221/http://www.opensourceconnections.com/">Open Source Connections</a>.</p>
+<p>We&#8217;ll be drawing on the <a class="reference internal" href="api-python.html"><em>Python API</em></a>, so you should take a look at that document
+if you&#8217;re not familiar with it. For an introductory tutorial that begins with
+&#8220;Hello world&#8221; and explains the basic concepts used in FoundationDB, take a look
+at our <a class="reference internal" href="class-scheduling.html"><em>class scheduling tutorial</em></a>. We&#8217;ll also be using
+the code from the class scheduling tutorial to generate some sample data.</p>
+<p>Although we&#8217;ll be using Python, the concepts in this tutorial are also applicable
+to the other <a class="reference internal" href="api-reference.html"><em>languages</em></a> supported by FoundationDB.</p>
+<p>If you&#8217;d like to see the code files we&#8217;ll be working with, take
+a look at the <a class="reference internal" href="#datalog-binding-appendix"><em>Appendix: datalog.py</em></a>, <a class="reference internal" href="#datalog-examples-appendix"><em>Appendix: dl_examples.py</em></a>,
+and <a class="reference internal" href="#datalog-query-appendix"><em>Appendix: fdbquery</em></a>.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">∞</a></h2>
+<p>Datalog is a declarative query language within the family of <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Logic_programming">logic programming</a> languages. You can consult
+pyDatalog&#8217;s <a class="reference external" href="/web/20150325003221/https://sites.google.com/site/pydatalog/Online-datalog-tutorial">Online Datalog Tutorial</a>
+to learn more about the version we&#8217;ll be working with.</p>
+<p>Let&#8217;s start with a quick look before going into more detail. One of the nice
+features of the binding is that it can be used to query any data stored in FoundationDB
+using the <a class="reference internal" href="data-modeling.html#data-modeling-tuples"><em>tuple layer</em></a>, whether or not the data was
+stored with Datalog in mind. We&#8217;ll illustrate this feature with the data from the
+class scheduling tutorial.</p>
+<p>To help with interactive querying, we&#8217;ve written a command line tool called <tt class="docutils literal"><span class="pre">fdbquery</span></tt>
+that works with the pyDatalog binding. <tt class="docutils literal"><span class="pre">fdbquery</span></tt> has a query mode and a python mode
+(described further in <a class="reference internal" href="#datalog-query-tool"><em>Query tool</em></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./fdbquery
+pyDatalog version 0.13.0
+
+query&gt;
+</pre></div>
+</div>
+<p>We need some test data to query. We&#8217;ll use the code from the <a class="reference internal" href="class-scheduling.html"><em>Class Scheduling</em></a> tutorial to generate it:</p>
+<div class="highlight-python"><div class="highlight"><pre>query&gt; python
+python&gt; from class_scheduling import *
+python&gt; init(db)
+python&gt; run(10,10)
+Ran 100 transactions
+</pre></div>
+</div>
+<p>The class scheduling data model employs two key-value patterns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># (&#39;attends&#39;, student, class) = &#39;&#39;</span>
+<span class="c"># (&#39;class&#39;, class_name) = seats_available</span>
+</pre></div>
+</div>
+<p>Our binding exposes a <tt class="xref py py-class docutils literal"><span class="pre">Datalog</span></tt> class that can be initialized with any <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>subspace</em></a>. The class scheduling data happens to have been defined with a <tt class="docutils literal"><span class="pre">scheduling</span></tt> subspace. Initializing <tt class="xref py py-class docutils literal"><span class="pre">Datalog</span></tt> with <tt class="docutils literal"><span class="pre">scheduling</span></tt> will make it evaluate queries within that subspace:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; Datalog(scheduling, 10)
+&lt;datalog.Datalog object at 0x10efa0650&gt;
+</pre></div>
+</div>
+<p>The class scheduling code generates more data than we want to dump to the screen,
+but we can easily sample it. The <tt class="docutils literal"><span class="pre">kvp</span></tt> predicate lets us retrieve arbitrary
+key-value pairs, automatically performing range reads or gets as appropriate:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python</span><span class="o">&gt;</span> <span class="n">query</span>
+<span class="n">query</span><span class="o">&gt;</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;attends&#39;</span><span class="p">,</span> <span class="s">&#39;s0008&#39;</span><span class="p">,</span> <span class="n">Class</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;8:00 calc intro&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;6:00 music 301&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;13:00 geometry lab&#39;</span><span class="p">,)]</span>
+<span class="n">query</span><span class="o">&gt;</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;class&#39;</span><span class="p">,</span> <span class="s">&#39;16:00 chem mastery&#39;</span><span class="p">,</span> <span class="n">Attendance</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;99&#39;</span><span class="p">,)]</span>
+</pre></div>
+</div>
+<p>Queries in Datalog are defined using logical predicates, which can express either
+base facts, or conclusions derived from other facts. By convention, predicates
+begin with lower case and logical variables begin with upper case. We can define
+convenience predicates for data of particular interest:</p>
+<div class="highlight-python"><div class="highlight"><pre>query&gt; attending(Student,Class) &lt;= kvp(&#39;attends&#39;,Student,Class,&#39;&#39;)
+&lt;pyDatalog.pyEngine.Clause object at 0x109c79310&gt;
+query&gt; attending(&#39;s0006&#39;,Class)
+[(&#39;10:00 chem 301&#39;,), (&#39;6:00 geometry seminar&#39;,), (&#39;5:00 alg 201&#39;,)]
+</pre></div>
+</div>
+<p>We&#8217;ll examine <tt class="docutils literal"><span class="pre">fdbquery</span></tt> further in <a class="reference internal" href="#datalog-query-tool"><em>Query tool</em></a>.</p>
+</div>
+<div class="section" id="binding-for-pydatalog">
+<h2>Binding for pyDatalog<a class="headerlink" href="#binding-for-pydatalog" title="Permalink to this headline">∞</a></h2>
+<p>Base facts correspond to rows in a relational model. By default,
+pyDatalog stores base facts in an in-memory database, but it also provides
+methods to associate Python generator functions called &#8220;resolvers&#8221; with predicates.
+A resolver can read from an external database and yield the data as predicate
+solutions.</p>
+<p>Predicates are defined to have fixed arity, and their arguments can be naturally
+interpreted as tuples. Our strategy is to map base facts to key-value pairs
+using FoundationDB&#8217;s <a class="reference internal" href="data-modeling.html#data-modeling-tuples"><em>tuple layer</em></a>. There are many
+approaches we could take to this mapping, including optimizations for particular
+data models, but we&#8217;ll focus on a generic approach that makes no assumptions about
+how data is being stored beyond use of the tuple layer. By taking this generic
+approach, we&#8217;ll be able to use the query language with any tuple-encoded FoundationDB
+database.</p>
+<p>Our binding defines a family of predicates, one for each arity <tt class="docutils literal"><span class="pre">n</span></tt>, with the
+form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">kvp</span><span class="p">(</span><span class="n">arg_1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">arg_n</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Each <tt class="docutils literal"><span class="pre">kvp</span></tt> predicate has a resolver that can read arbitrary key-value pairs
+with keys corresponding to <tt class="docutils literal"><span class="pre">(arg_1,</span> <span class="pre">...,</span> <span class="pre">arg_n)</span></tt>. The only restriction on keys
+is they&#8217;ve been encoded with the tuple layer using a subspace you specify when you
+instantiate the Datalog class. We normally create or open a <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>directory</em></a> to obtain an initial subspace:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;app,&#39;</span><span class="p">))</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="n">Datalog</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here&#8217;s the method that creates a resolver for a <tt class="docutils literal"><span class="pre">kvp</span></tt> predicate of a given
+arity:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_resolve_generic_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arity</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">arity</span><span class="p">,</span> <span class="s">&quot;arity mismatch&quot;</span>
+        <span class="n">leftmost_consts</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span>
+                           <span class="n">itertools</span><span class="o">.</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">is_const</span><span class="p">(),</span> <span class="n">args</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="n">prefix_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span>
+        <span class="n">partial_key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">arity</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generic_predicate</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">v</span><span class="p">,)</span>
+
+    <span class="n">str_arity</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">arity</span><span class="p">)</span>
+    <span class="n">pyEngine</span><span class="o">.</span><span class="n">Python_resolvers</span><span class="p">[</span><span class="s">&#39;kvp&#39;</span><span class="o">+</span><span class="n">str_arity</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="n">str_arity</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+</pre></div>
+</div>
+<p>Each resolver is created from the <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Closure_(computer_science)">closure</a> <tt class="xref py py-func docutils literal"><span class="pre">func()</span></tt>. It&#8217;s designed to read from the database as efficiently
+as possible given the data it&#8217;s been passed. It first examines its Datalog arguments
+and determines which have already been bound to values, looking in particular for the
+<em>leftmost</em> prefix of bound values. This information allows it to take
+advantage of FoundationDB&#8217;s prefix range reads, specifying as large a prefix as
+possible per read. Finally, the method registers the closure with pyDatalog
+as a resolver.</p>
+<p>The reads are performed by a transactional method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">_get_generic_predicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">partial_key</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)]:</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">present</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+</pre></div>
+</div>
+<p>If all the Datalog arguments happen to be bound to values, the method further
+optimizes the read by performing a single <tt class="xref py py-func docutils literal"><span class="pre">get()</span></tt> (using the <tt class="docutils literal"><span class="pre">v</span> <span class="pre">=</span> <span class="pre">tr[k]</span></tt>
+syntax) rather than a range read.</p>
+<p>The resolvers are created by a method called during initialization:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_create_generic_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">arity</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_arity</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_generic_fdb</span><span class="p">(</span><span class="n">arity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We created resolvers for arities 1 through 10 when we called <tt class="docutils literal"><span class="pre">Datalog(app,</span> <span class="pre">10)</span></tt>.
+You can set the maximum arity as high as you need; just keep in mind that <a class="reference internal" href="known-limitations.html#large-keys-and-values"><em>keys
+cannot exceed 10K bytes</em></a> in any case.</p>
+<p>That&#8217;s it: three private methods that bind pyDatalog to FoundationDB when you make
+an instance of the Datalog class. The class also contains some methods that let
+you create resolvers for predicates of your choosing (instead of <tt class="docutils literal"><span class="pre">kvp</span></tt>), but
+their logic is similar to the ones we&#8217;ve seen.</p>
+<p>Now, let&#8217;s take a look at some Datalog.</p>
+</div>
+<div class="section" id="basic-relational-algebra">
+<h2>Basic relational algebra<a class="headerlink" href="#basic-relational-algebra" title="Permalink to this headline">∞</a></h2>
+<p>We&#8217;ve seen Datalog retrieving key-value pairs from the database.
+What other kinds of queries can you do? To begin with, we can easily perform the
+basic operations familiar from <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Relational_algebra">relational algebra</a></p>
+<p>Suppose we have a predicate <tt class="docutils literal"><span class="pre">parent(X,Y)</span></tt> indicating that <tt class="docutils literal"><span class="pre">X</span></tt> is the parent
+of <tt class="docutils literal"><span class="pre">Y</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">query</span><span class="o">&gt;</span> <span class="n">parent</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;Henry&#39;</span><span class="p">,</span> <span class="s">&#39;Mark&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Henry&#39;</span><span class="p">,</span> <span class="s">&#39;Karen&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Karen&#39;</span><span class="p">,</span> <span class="s">&#39;Susan&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Mark&#39;</span><span class="p">,</span> <span class="s">&#39;Joe&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;Joe&#39;</span><span class="p">,</span> <span class="s">&#39;Frank&#39;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>We can perform <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Selection_(relational_algebra)">selections</a>
+by supplying values for any argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">query</span><span class="o">&gt;</span> <span class="n">parent</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="s">&#39;Susan&#39;</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;Karen&#39;</span><span class="p">,)]</span>
+</pre></div>
+</div>
+<p>Comparison operators can also be used, as we&#8217;ll see below.</p>
+<p>We can perform
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Projection_(relational_algebra)">projections</a>
+by defining a new predicate from an existing one. For example, we could define a
+unary predicate <tt class="docutils literal"><span class="pre">parent(X)</span></tt> to be true if <tt class="docutils literal"><span class="pre">X</span></tt> has any child:</p>
+<div class="highlight-python"><div class="highlight"><pre>query&gt; parent(X) &lt;= parent(X, Y)
+&lt;pyDatalog.pyEngine.Clause object at 0x1053d1410&gt;
+query&gt; parent(X)
+[(&#39;Joe&#39;,), (&#39;Henry&#39;,), (&#39;Karen&#39;,), (&#39;Mark&#39;,)]
+</pre></div>
+</div>
+<p>We can perform
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Relational_algebra#Joins_and_join-like_operators">joins</a>
+by sharing arguments between predicates:</p>
+<div class="highlight-python"><div class="highlight"><pre>query&gt; school_parent(X, Y, S) &lt;= parent(X, Y) &amp; attends_school(Y, S)
+&lt;pyDatalog.pyEngine.Clause object at 0x1033fa310&gt;
+query&gt; school_parent(X, Y, S)
+[(&#39;Joe&#39;, &#39;Frank&#39;, &#39;Pine Elementary&#39;), (&#39;Karen&#39;, &#39;Susan&#39;, &#39;Pine Elementary&#39;)]
+</pre></div>
+</div>
+</div>
+<div class="section" id="beyond-relational-algebra">
+<h2>Beyond relational algebra<a class="headerlink" href="#beyond-relational-algebra" title="Permalink to this headline">∞</a></h2>
+<p>Datalog is strictly more powerful than relational algebra due to the
+availability of recursion. We&#8217;ll use a few varieties of graph traversal to illustrate
+queries that can be formulated with a couple lines of Datalog.</p>
+<div class="section" id="transitive-closure">
+<h3>Transitive closure<a class="headerlink" href="#transitive-closure" title="Permalink to this headline">∞</a></h3>
+<p>Suppose we have a graph that&#8217;s been stored in the database using tuples of the form
+<tt class="docutils literal"><span class="pre">('edge',</span> <span class="pre">Source,</span> <span class="pre">Target).</span></tt> We&#8217;ll define a predicate <tt class="docutils literal"><span class="pre">edge</span></tt> for convenient access:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Consider finding the <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Transitive_closure">transitive closure</a>
+of the <tt class="docutils literal"><span class="pre">edge</span></tt> relation. Transitive closures arise naturally for many relations.
+For example, if <tt class="docutils literal"><span class="pre">edge</span></tt> represents the <tt class="docutils literal"><span class="pre">parent</span></tt> relation from the previous
+example, then the transitive closure would represent an ancestor relation.</p>
+<p>We can find the transitive closure with the following right-recursive definition:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+<span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Intermediate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">closure</span><span class="p">(</span><span class="n">Intermediate</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The closure of the <tt class="docutils literal"><span class="pre">edge</span></tt> relation represents directed paths in the graph. There
+is a path from <tt class="docutils literal"><span class="pre">Source</span></tt> and <tt class="docutils literal"><span class="pre">Target</span></tt> if there is either an edge from <tt class="docutils literal"><span class="pre">Source</span></tt>
+to <tt class="docutils literal"><span class="pre">Target</span></tt>, or an edge from <tt class="docutils literal"><span class="pre">Source</span></tt> to some <tt class="docutils literal"><span class="pre">Intermediate</span></tt> and a path from
+<tt class="docutils literal"><span class="pre">Intermediate</span></tt> to <tt class="docutils literal"><span class="pre">Target</span></tt>.</p>
+</div>
+<div class="section" id="cyclic-graphs">
+<h3>Cyclic graphs<a class="headerlink" href="#cyclic-graphs" title="Permalink to this headline">∞</a></h3>
+<p>How does the above definition work on cyclic graphs? If pyDatalog were implemented
+using a simple depth-first evaluation strategy, it would go into an infinite loop
+on cyclic graphs. However, pyDatalog uses a more sophisticated strategy incorporating
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Memoization">memoization</a>,
+and the above query works fine for cyclic graphs. We can check using a function
+that creates a single cycle of a specified length:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python</span><span class="o">&gt;</span> <span class="n">set_cycle</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+<span class="n">python</span><span class="o">&gt;</span> <span class="n">closure</span><span class="p">(</span><span class="s">&#39;a0&#39;</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;a6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a8&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a0&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a2&#39;</span><span class="p">,)]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="left-recursion">
+<h3>Left recursion<a class="headerlink" href="#left-recursion" title="Permalink to this headline">∞</a></h3>
+<p>We can also define <tt class="docutils literal"><span class="pre">closure</span></tt> in a
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Left_recursion">left-recursive</a> manner:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+<span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Intermediate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Intermediate</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you know <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Prolog">Prolog</a>, you know that it&#8217;s
+restricted to right-recursive definitions due to its depth-first evaluation strategy.
+The same restriction applies to <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Recursive_descent_parser">recursive-descent parsers</a>. In pyDatalog, memoization lets us freely use
+left-recursion as well. In fact, left-recursion will usually be more efficient than
+the right-recursive equivalent.</p>
+</div>
+<div class="section" id="strongly-connected-components">
+<h3>Strongly connected components<a class="headerlink" href="#strongly-connected-components" title="Permalink to this headline">∞</a></h3>
+<p>Suppose we want to test
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Strongly_connected_component">strong connection</a>
+in a directed graph, where <tt class="docutils literal"><span class="pre">Source</span></tt> is strongly connected to <tt class="docutils literal"><span class="pre">Target</span></tt> if and only if
+there is a directed path from <tt class="docutils literal"><span class="pre">Source</span></tt> to <tt class="docutils literal"><span class="pre">Target</span></tt>, and from <tt class="docutils literal"><span class="pre">Target</span></tt> back
+to <tt class="docutils literal"><span class="pre">Source</span></tt>. This is easy to define in terms of closure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">strongly_connected</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span><span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span><span class="n">Target</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">closure</span><span class="p">(</span><span class="n">Target</span><span class="p">,</span><span class="n">Source</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can illustrate this predicate by constructing a graph with two directed cycles
+connected by a single directed edge. (Imagine the two wheels of a bicycle connected
+by its frame.) Each of the cycles will then form its own strongly connected component:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python</span><span class="o">&gt;</span> <span class="n">set_bicycle</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">python</span><span class="o">&gt;</span> <span class="n">strongly_connected</span><span class="p">(</span><span class="s">&#39;a0&#39;</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;a2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a0&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;a8&#39;</span><span class="p">,)]</span>
+<span class="n">python</span><span class="o">&gt;</span> <span class="n">strongly_connected</span><span class="p">(</span><span class="s">&#39;b0&#39;</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+<span class="p">[(</span><span class="s">&#39;b1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b0&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b8&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="s">&#39;b7&#39;</span><span class="p">,)]</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">'a'</span></tt> cycle has a directed edge to the <tt class="docutils literal"><span class="pre">'b'</span></tt> cycle, but not vice versa.
+Hence, the query starting from <tt class="docutils literal"><span class="pre">'a0'</span></tt> must fully explore the <tt class="docutils literal"><span class="pre">'b'</span></tt> cycle to
+determine that it is not part of the <tt class="docutils literal"><span class="pre">'a'</span></tt> component, which it does correctly.</p>
+</div>
+<div class="section" id="bipartite-graphs">
+<h3>Bipartite graphs<a class="headerlink" href="#bipartite-graphs" title="Permalink to this headline">∞</a></h3>
+<p>Suppose we want to test if a graph is
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Bipartite_graph">bipartite</a>, this time interpreting
+the <tt class="docutils literal"><span class="pre">edge</span></tt> predicate as undirected. We can use the fact that a graph is bipartite
+if and only if it has no odd cycles. We define an <tt class="docutils literal"><span class="pre">odd_path</span></tt> predicate using a minor
+variation of transitive closure to force an odd number of edge traverals:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+<span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Mid1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                            <span class="n">edge</span><span class="p">(</span><span class="n">Mid1</span><span class="p">,</span> <span class="n">Mid2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Mid2</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is an odd <em>cycle</em> in the graph if there is some node <tt class="docutils literal"><span class="pre">X</span></tt> for which
+<tt class="docutils literal"><span class="pre">odd_path(X,X)</span></tt> is true. Therefore, we can test that the graph is bipartite by
+verifying the absence of any odd cycles:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">bipartite</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="o">~</span><span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Source</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;re using pyDatalog&#8217;s <tt class="docutils literal"><span class="pre">~</span></tt> operator for predicate negation. We can test the predicate
+with a couple cycles. A cycle with 50 nodes and edges is bipartite; it yields a successful solution with
+no bound values, indicating true:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; del db[app.range((&#39;edge&#39;,))]
+python&gt; set_cycle(db, 50, &#39;a&#39;)
+python&gt; bipartite()
+[()]
+</pre></div>
+</div>
+<p>A cycle with 51 nodes and edges is not bipartite; it yields no successful solutions,
+indicating false:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; del db[app.range((&#39;edge&#39;,))]
+python&gt; set_cycle(db, 51, &#39;a&#39;)
+python&gt; bipartite()
+[]
+</pre></div>
+</div>
+</div>
+<div class="section" id="indexing">
+<h3>Indexing<a class="headerlink" href="#indexing" title="Permalink to this headline">∞</a></h3>
+<p>A basic data modeling technique in FoundationDB is to
+<a class="reference internal" href="data-modeling.html#data-modeling-indexes"><em>index</em></a> data by storing a tuple in more than one
+order to allow efficient access. Datalog can freely make use of indexes in your
+data model when defining relations.</p>
+<p>For example, suppose we&#8217;re maintaining a family tree database, and the edges of
+our directed graph represent  a <tt class="docutils literal"><span class="pre">parent</span></tt> relation. We also decided to index the
+edges using a <tt class="docutils literal"><span class="pre">child</span></tt> relation. We then encounter a need to define members of
+the same generation within the tree. The recursive definition requires us to move
+both up and down in the tree, which the indexing allows us to do efficiently. Two
+people are members of the same generation if they are the children of the same
+parent, or the children of parents of the same generation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">same_generation</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">child</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Parent</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">parent</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span>
+<span class="n">same_generation</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">same_generation</span><span class="p">(</span><span class="n">Parent1</span><span class="p">,</span> <span class="n">Parent2</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                   <span class="n">child</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Parent2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">parent</span><span class="p">(</span><span class="n">Parent2</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="functions-and-tuples">
+<h3>Functions and tuples<a class="headerlink" href="#functions-and-tuples" title="Permalink to this headline">∞</a></h3>
+<p>pyDatalog supports several extensions beyond strict relations, as described
+in its <a class="reference external" href="/web/20150325003221/https://sites.google.com/site/pydatalog/Online-datalog-tutorial">tutorial</a>.
+One is the use of functions to define unique values for a given set of inputs;
+another is the use of tuples as values for logical variables.</p>
+<p>Let&#8217;s illustrate these extensions with a more data-driven problem that may not be
+fully specified until run time. Consider the following puzzle:</p>
+<div class="highlight-python"><div class="highlight"><pre>When Theseus traveled to Crete, King Minos summoned him to his throne room and taunted
+him with a puzzle devised by Daedalus. &quot;I have a game board,&quot; Minos explained,
+&quot;on which each place is marked by a number. Likewise, each game piece placed on the
+board is marked by a letter. I have a scroll on which is written pairs of numbers
+indicating the places between which pieces may move. Further, a piece may move only to
+an empty place.&quot;
+
+&quot;I will place a number of pieces on the board and tell you how they must be arranged
+in the end. I&#39;ll give you a day to think about the puzzle, and then you must return
+and promptly solve it.&quot;
+
+Theseus wrinkled his brow. &quot;What is the board shaped like, and how may the pieces
+move?&quot; he asked
+
+Minos grinned. &quot;I&#39;m not going to tell you now.&quot;
+
+&quot;How are the pieces arranged at the start, and how must they be arranged in the end?&quot;
+Theseus asked.
+
+&quot;You&#39;ll find out tomorrow,&quot; Minos replied.
+
+Theseus returned to his cell and pondered the puzzle.
+</pre></div>
+</div>
+<p>Before you take a look at the Datalog solution, it might be instructive to
+write a solution in Python or your favorite language. It shouldn&#8217;t be too
+hard: this is just a generalization on the
+<a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/15_puzzle">N-puzzle</a>.
+You don&#8217;t even need to find minimum-length solutions, just good ones.</p>
+<p>Our Datalog solution is an extension of transitive closure. We&#8217;ll assume that
+the contents of Minos&#8217; scroll have been written to the database as tuples. Whatever
+those tuples may be, we know that they generate legal moves when applied to a board
+configuration, where legality requires an empty place for a piece to move
+to. Legal moves form the edges of abstract graph, and transitive closure over those
+edges gives us paths.</p>
+<p>The main extension of transitive closure is to extract the path. We&#8217;ll define <tt class="docutils literal"><span class="pre">path[Start,</span> <span class="pre">End]</span></tt>
+as a function and construct its value as a tuple of moves. The board configurations
+<tt class="docutils literal"><span class="pre">Start</span></tt> and <tt class="docutils literal"><span class="pre">End</span></tt> are tuples of board pieces indexed by place:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Path</span> <span class="o">==</span> <span class="p">(</span><span class="n">Move</span><span class="p">,))</span>
+<span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">Mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Mid</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&amp;</span> \
+                              <span class="p">(</span><span class="n">Path</span> <span class="o">==</span> <span class="n">Path1</span><span class="o">+</span><span class="p">(</span><span class="n">Move</span><span class="p">,))</span>
+</pre></div>
+</div>
+<p>When you make a legal move, your <tt class="docutils literal"><span class="pre">End</span></tt> configuration is just your <tt class="docutils literal"><span class="pre">Start</span></tt> configuration
+with a pair of pieces swapped:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">edge</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">legal_move</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Move</span> <span class="o">==</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span> <span class="o">&amp;</span> \
+                <span class="p">(</span><span class="n">End</span> <span class="o">==</span> <span class="n">Start</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">A</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="p">:</span><span class="n">B</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+</pre></div>
+</div>
+<p>We could inline the definition of <tt class="docutils literal"><span class="pre">legal_move</span></tt> in the definition of <tt class="docutils literal"><span class="pre">edge</span></tt>, but
+creating a separate predicate allows pyDatalog to memoize the legal moves, reducing
+the number of database reads:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">legal_move</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;ll use a <tt class="docutils literal"><span class="pre">'*'</span></tt> to represent an empty place on the board:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can use this definition to solve any number of <a class="reference external" href="/web/20150325003221/http://en.wikipedia.org/wiki/Combination_puzzles">combination puzzles</a>. For example, we can solve
+the <a class="reference external" href="/web/20150325003221/http://uthcode.appspot.com/2013/03/Hashtag-at-pycon">HASHWAG contest</a>
+puzzle from PyCon 13. We&#8217;ll modify their board description slightly to number places from 0 to 8
+rather than 1 to 9 to facilitate tuple indexing. We can then record the operations in the
+database as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_operations</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,))]</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>Solving the puzzle is then easy:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; set_operations(db)
+python&gt; print(path[list(&#39;HAAHS*T*G&#39;), list(&#39;HASHTAG**&#39;)] == Path)
+Path
+------------------------------------------------------------------------
+((4, 5), (6, 7), (1, 4), (1, 2), (2, 5), (4, 5), (4, 7), (7, 8), (6, 7))
+</pre></div>
+</div>
+</div>
+<div class="section" id="aggregation">
+<h3>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">∞</a></h3>
+<p>pyDatalog also supports a number of aggregation functions, described in its <a class="reference external" href="/web/20150325003221/https://sites.google.com/site/pydatalog/Online-datalog-tutorial">tutorial</a>, that allow us to
+count various quantities and order results by these counts.</p>
+<p>For example, suppose we have a dataset of job opportunities and potential candidates.
+The jobs have locations and various required skills. Likewise, the data records where
+candidates live and the skills they possess. We can access the key-value pairs as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">has_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;has_skill&#39;</span><span class="p">,</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Skill</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">lives_in</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">City</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;lives_in&#39;</span><span class="p">,</span> <span class="n">Candidate</span><span class="p">,</span> <span class="n">City</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">in_location</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span><span class="n">City</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;in_location&#39;</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">City</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;requires&#39;</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;d like to do some data exploration by quickly writing queries to match candidates
+with jobs. Ideally, we&#8217;d like to generate rough rankings of candidates for a given
+job and jobs for a given candidate.</p>
+<p>We can build our queries bottom-up. First, we need to check if a candidate and
+a job have a matching skill:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">has_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                         <span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;ll say that a candidate matches a job if the pair have some matching skill and are
+located in the same city (ignoring the possibility of relocation for now):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&amp;</span> \
+                         <span class="n">lives_in</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">City</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">in_location</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">City</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;ll also need to count the number of matching skills for a pair and the number of
+required skills for a job:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">num_matching_skills</span><span class="p">[</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">len_</span><span class="p">(</span><span class="n">Skill</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                        <span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">num_reqs</span><span class="p">[</span><span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">len_</span><span class="p">(</span><span class="n">Skill</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can now assign a score to a match, using the ratio of matching skills to the number
+of required skills:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">Job</span><span class="p">)</span> <span class="o">&amp;</span> \
+                          <span class="p">(</span><span class="n">Score</span> <span class="o">==</span> <span class="n">num_matching_skills</span><span class="p">[</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">]</span><span class="o">/</span><span class="n">num_reqs</span><span class="p">[</span><span class="n">Job</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finally, we can order matches by score to get either the best jobs for a candidate or the
+best candidates for a job:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">best_jobs</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]</span> <span class="o">==</span> <span class="n">concat_</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">Score</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                                          <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">best_candidates</span><span class="p">[</span><span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">concat_</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">Score</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                                          <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We&#8217;ve written some code (available in the <a class="reference internal" href="#datalog-examples-appendix"><em>appendix</em></a>)
+to generate test data. Let&#8217;s give it a try:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; set_job_data()
+python&gt; print(best_jobs[&#39;Henry7&#39;]==Job)
+Job
+-------------------------------------
+Trianon_1,Xanath_9,Zandian_4,Xanath_7
+python&gt; print(best_candidates[&#39;Zandian_4&#39;]==Candidate)
+Candidate
+---------------------------------------------------------
+Susan5,Mark2,Susan7,Henry7,Susan8,Joe1,Joanna0,Mark4,Joe8
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-tool">
+<span id="datalog-query-tool"></span><h2>Query tool<a class="headerlink" href="#query-tool" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB binding for pyDatalog can be used from any Python environment.
+The <tt class="docutils literal"><span class="pre">fdbquery</span></tt> tool is intended to make the binding more convenient for interactive
+use. It supports a python mode and a query mode, which you can freely switch between
+with the commands <tt class="docutils literal"><span class="pre">python</span></tt> or <tt class="docutils literal"><span class="pre">query</span></tt>, respectively:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./fdbquery
+pyDatalog version 0.13.0
+
+query&gt; python
+</pre></div>
+</div>
+<p>The python mode is just a Python environment with the datalog binding imported.
+By default, pyDatalog requires any predicates or logical variables to be declared
+prior to use in order to distinguish them from Python function or variable names:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; pyDatalog.create_atoms(&#39;p, q, X, Y&#39;)
+python&gt; p(X) &lt;= q(X, Y)
+&lt;pyDatalog.pyEngine.Clause object at 0x105e93f50&gt;
+</pre></div>
+</div>
+<p>For interactive querying, having to declare symbols like this would get old pretty
+quickly . The query mode takes care of symbols automatically, so queries can be
+formulated on-the-fly. All lower-case symbols are assumed to be predicates, and all upper-case
+symbols are assumed to be logical variables:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; query
+query&gt; scala_programmer(X) &lt;= kvp(&#39;has_skill&#39;, X, &#39;Scala&#39;,&#39;&#39;)
+&lt;pyDatalog.pyEngine.Clause object at 0x105e88b90&gt;
+query&gt; scala_programmer(X)
+[(&#39;Mark6&#39;,), (&#39;Joanna6&#39;,), (&#39;Joe6&#39;,), (&#39;Joanna4&#39;,), (&#39;Joanna5&#39;,), (&#39;Susan9&#39;,), (&#39;Susan7&#39;,), (&#39;Joe4&#39;,), (&#39;Henry0&#39;,), (&#39;Joe8&#39;,), (&#39;Henry1&#39;,), (&#39;Mark4&#39;,), (&#39;Joanna0&#39;,), (&#39;Henry5&#39;,), (&#39;Mark9&#39;,), (&#39;Joanna8&#39;,), (&#39;Joe3&#39;,), (&#39;Susan4&#39;,), (&#39;Joe5&#39;,), (&#39;Joanna3&#39;,), (&#39;Mark3&#39;,), (&#39;Mark2&#39;,), (&#39;Mark1&#39;,), (&#39;Mark0&#39;,), (&#39;Henry2&#39;,), (&#39;Joanna2&#39;,), (&#39;Henry9&#39;,), (&#39;Henry6&#39;,), (&#39;Susan8&#39;,)]
+</pre></div>
+</div>
+<p>In python mode, you can also escape into query mode (without switching) by prefacing
+a line with <tt class="docutils literal"><span class="pre">qry:</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>python&gt; qry: dc_candidate(X) &lt;= kvp(&#39;lives_in&#39;, X, &#39;DC&#39;, &#39;&#39;)
+&lt;pyDatalog.pyEngine.Clause object at 0x101b70390&gt;
+python&gt; dc_candidate(X)
+[(&#39;Joe4&#39;,), (&#39;Mark7&#39;,), (&#39;Mark6&#39;,), (&#39;Susan0&#39;,), (&#39;Mark5&#39;,), (&#39;Henry1&#39;,), (&#39;Susan2&#39;,), (&#39;Joanna5&#39;,), (&#39;Joanna4&#39;,)]
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">fdbquery</span></tt> also has command-line options for loading files:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">-p</span></tt> imports a Python module that may freely mix Python and pyDatalog. The <tt class="xref py py-func docutils literal"><span class="pre">pyDatalog.create_atoms()</span></tt> function must be called for all Datalog predicates and variables.</li>
+<li><tt class="docutils literal"><span class="pre">-d</span></tt> loads a file with Datalog statements (only). Datalog predicates and variables may be freely used without declaration.</li>
+</ul>
+</div>
+<div class="section" id="future-directions">
+<span id="datalog-future-directions"></span><h2>Future directions<a class="headerlink" href="#future-directions" title="Permalink to this headline">∞</a></h2>
+<p>In this binding, we chose to associate resolvers with generic <tt class="docutils literal"><span class="pre">kvp</span></tt> predicates to
+perform range reads or gets from FoundationDB. There are other approaches that
+would allow for further query optimization.
+If we have an SQL engine with a good query planner, we can take advantage of it by
+translating a subset of our Datalog clauses to SQL.</p>
+<p>While Datalog with recursion is strictly more powerful than relational algebra,
+Datalog without recursion is equivalent. It&#8217;s straightforward to translate non-recursive
+Datalog to either relational algebra or SQL.</p>
+<p>One strategy would be to identify the non-recursive predicates in our clause set (taking
+into account dependencies amongthem) and translate them to SQL. We would then associate
+resolvers with these predicates to pass the SQL to the engine for optimized exection.</p>
+</div>
+<div class="section" id="conclusion">
+<span id="datalog-conclusion"></span><h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB&#8217;s <a class="reference external" href="/web/20150325003221/https://foundationdb.com/white-papers/the-layer-concept">layer concept</a> allows a variety
+of data models and query languages to be mapped to its ordered key-value store with
+small amounts of code. Lightweight query languages like pyDatalog can easily be
+integrated with FoundationDB using our <a class="reference internal" href="api-reference.html"><em>language APIs</em></a>.</p>
+<p>The binding described in this tutorial has been kept simple, mapping base predicates
+to database reads according to a simple pattern that takes advantage of the
+information available at evaluation time. If efficiency is a priority, there are
+more sophisticated optimization strategies that employ global analysis of the query.</p>
+</div>
+<div class="section" id="appendix-datalog-py">
+<span id="datalog-binding-appendix"></span><h2>Appendix: datalog.py<a class="headerlink" href="#appendix-datalog-py" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the datalog binding:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">fdb</span>
+<span class="kn">import</span> <span class="nn">fdb.tuple</span>
+
+<span class="kn">from</span> <span class="nn">pyDatalog</span> <span class="kn">import</span> <span class="n">pyDatalog</span><span class="p">,</span> <span class="n">pyEngine</span>
+
+<span class="n">fdb</span><span class="o">.</span><span class="n">api_version</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;kvp&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Datalog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">max_arity</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span> <span class="o">=</span> <span class="n">subspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_arity</span> <span class="o">=</span> <span class="n">max_arity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_generic_fdb</span><span class="p">()</span>
+
+    <span class="c">#####################################</span>
+    <span class="c">##   Generic FDB Predicates: kvp   ##</span>
+    <span class="c">#####################################</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">_get_generic_predicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">partial_key</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)]:</span>
+                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">present</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span>
+
+    <span class="k">def</span> <span class="nf">_resolve_generic_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arity</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">arity</span><span class="p">,</span> <span class="s">&quot;arity mismatch&quot;</span>
+            <span class="n">leftmost_consts</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span>
+                               <span class="n">itertools</span><span class="o">.</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">is_const</span><span class="p">(),</span> <span class="n">args</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+            <span class="n">prefix_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span>
+            <span class="n">partial_key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">arity</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_generic_predicate</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="n">v</span><span class="p">,)</span>
+
+        <span class="n">str_arity</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">arity</span><span class="p">)</span>
+        <span class="n">pyEngine</span><span class="o">.</span><span class="n">Python_resolvers</span><span class="p">[</span><span class="s">&#39;kvp&#39;</span><span class="o">+</span><span class="n">str_arity</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="n">str_arity</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">_create_generic_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">arity</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_arity</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_generic_fdb</span><span class="p">(</span><span class="n">arity</span><span class="p">)</span>
+
+    <span class="c">################################</span>
+    <span class="c">##   Custom FDB Predicates    ##</span>
+    <span class="c">################################</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">_get_custom_predicate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">partial_key</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)]:</span>
+                <span class="k">yield</span> <span class="n">k</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">prefix_tuple</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">present</span><span class="p">():</span>
+                <span class="k">yield</span> <span class="n">k</span>
+
+    <span class="k">def</span> <span class="nf">_resolve_custom_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">arity</span><span class="p">):</span>
+        <span class="n">str_arity</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">arity</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="n">predicate</span><span class="o">+</span><span class="n">str_arity</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">arity</span><span class="p">,</span> <span class="s">&quot;arity mismatch&quot;</span>
+            <span class="n">leftmost_consts</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span>
+                               <span class="n">itertools</span><span class="o">.</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">is_const</span><span class="p">(),</span> <span class="n">args</span><span class="p">)]</span>
+            <span class="n">prefix_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span>
+            <span class="n">partial_key</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">leftmost_consts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">arity</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_custom_predicate</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">prefix_tuple</span><span class="p">,</span> <span class="n">partial_key</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">subspace</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="n">pyEngine</span><span class="o">.</span><span class="n">Python_resolvers</span><span class="p">[</span><span class="n">prefix</span><span class="o">+</span><span class="s">&#39;/&#39;</span><span class="o">+</span><span class="n">str_arity</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">create_custom_fdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicates</span><span class="p">):</span>
+        <span class="c"># predicates should be a list of form [(&#39;pred_name&#39;, arity)]</span>
+        <span class="k">for</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">arity</span> <span class="ow">in</span> <span class="n">predicates</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_custom_fdb</span><span class="p">(</span><span class="n">predicate</span><span class="p">,</span> <span class="n">arity</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="appendix-dl-examples-py">
+<span id="datalog-examples-appendix"></span><h2>Appendix: dl_examples.py<a class="headerlink" href="#appendix-dl-examples-py" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the tutorial examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">fdb</span>
+<span class="kn">import</span> <span class="nn">fdb.tuple</span>
+
+<span class="kn">from</span> <span class="nn">pyDatalog</span> <span class="kn">import</span> <span class="n">pyDatalog</span>
+<span class="kn">from</span> <span class="nn">datalog</span> <span class="kn">import</span> <span class="n">Datalog</span><span class="p">,</span> <span class="n">kvp</span>
+
+<span class="n">fdb</span><span class="o">.</span><span class="n">api_version</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="c"># app is a subspace for an open directory</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;app,&#39;</span><span class="p">))</span>
+<span class="n">Datalog</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+<span class="c">############################</span>
+<span class="c">##   Relational Algebra   ##</span>
+<span class="c">############################</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;q,r,s,X,Y,Z&#39;</span><span class="p">)</span>
+
+<span class="c"># Select</span>
+<span class="n">r</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+
+<span class="c"># Project</span>
+<span class="n">q</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
+
+<span class="c"># Join</span>
+<span class="n">q</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">s</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span>
+
+<span class="c">###################################</span>
+<span class="c">##   Beyond Relational Algebra   ##</span>
+<span class="c">###################################</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;closure,edge,Source,Target,Intermediate&#39;</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_cycle</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">size</span><span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">last</span><span class="p">):</span>
+        <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">label</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">last</span><span class="p">),</span> <span class="n">label</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="c"># Transitive closure (left-recursive)</span>
+
+<span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+<span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Intermediate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Intermediate</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+
+<span class="c"># Strongly connected components</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;strongly_connected&#39;</span><span class="p">)</span>
+
+<span class="n">strongly_connected</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">closure</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">closure</span><span class="p">(</span><span class="n">Target</span><span class="p">,</span> <span class="n">Source</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_bicycle</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">label1</span><span class="p">,</span> <span class="n">label2</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;edge&#39;</span><span class="p">,))]</span>
+    <span class="n">set_cycle</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">label1</span><span class="p">)</span>
+    <span class="n">set_cycle</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">label2</span><span class="p">)</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;edge&#39;</span><span class="p">,</span> <span class="n">label1</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="n">label2</span><span class="o">+</span><span class="s">&#39;0&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="c"># Bipartite graphs</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;odd_path, bipartite, Mid1, Mid2&#39;</span><span class="p">)</span>
+
+<span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+<span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Mid1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                            <span class="n">edge</span><span class="p">(</span><span class="n">Mid1</span><span class="p">,</span> <span class="n">Mid2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Mid2</span><span class="p">,</span> <span class="n">Target</span><span class="p">)</span>
+
+<span class="n">bipartite</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="o">~</span><span class="n">odd_path</span><span class="p">(</span><span class="n">Source</span><span class="p">,</span> <span class="n">Source</span><span class="p">)</span>
+
+
+<span class="c"># Same generation in genealogy</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;same_generation,child,parent,attends_school&#39;</span><span class="p">)</span>
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;Child,Child1,Child2,Parent,Parent1,Parent2,School&#39;</span><span class="p">)</span>
+
+<span class="n">same_generation</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">child</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Parent</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">parent</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span>
+<span class="n">same_generation</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">same_generation</span><span class="p">(</span><span class="n">Parent1</span><span class="p">,</span> <span class="n">Parent2</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                   <span class="n">child</span><span class="p">(</span><span class="n">Child1</span><span class="p">,</span> <span class="n">Parent2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">parent</span><span class="p">(</span><span class="n">Parent2</span><span class="p">,</span> <span class="n">Child2</span><span class="p">)</span>
+
+<span class="n">child</span><span class="p">(</span><span class="n">Child</span><span class="p">,</span> <span class="n">Parent</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;child&#39;</span><span class="p">,</span> <span class="n">Child</span><span class="p">,</span> <span class="n">Parent</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="n">parent</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">Child</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;parent&#39;</span><span class="p">,</span> <span class="n">Parent</span><span class="p">,</span> <span class="n">Child</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;parent&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">child</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;child&#39;</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">parent</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_genealogy</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;parent&#39;</span><span class="p">,))]</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;child&#39;</span><span class="p">,))]</span>
+
+    <span class="n">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;Henry&#39;</span><span class="p">,</span> <span class="s">&#39;Mark&#39;</span><span class="p">)</span>
+    <span class="n">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;Henry&#39;</span><span class="p">,</span> <span class="s">&#39;Karen&#39;</span><span class="p">)</span>
+    <span class="n">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;Mark&#39;</span><span class="p">,</span> <span class="s">&#39;Joe&#39;</span><span class="p">)</span>
+    <span class="n">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;Karen&#39;</span><span class="p">,</span> <span class="s">&#39;Susan&#39;</span><span class="p">)</span>
+    <span class="n">set_parent_child</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;Joe&#39;</span><span class="p">,</span> <span class="s">&#39;Frank&#39;</span><span class="p">)</span>
+
+<span class="n">attends_school</span><span class="p">(</span><span class="n">Child</span><span class="p">,</span> <span class="n">School</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;attends_school&#39;</span><span class="p">,</span> <span class="n">Child</span><span class="p">,</span> <span class="n">School</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_school</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;attends_school&#39;</span><span class="p">,</span> <span class="s">&#39;Susan&#39;</span><span class="p">,</span> <span class="s">&#39;Pine Elementary&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;attends_school&#39;</span><span class="p">,</span> <span class="s">&#39;Frank&#39;</span><span class="p">,</span> <span class="s">&#39;Pine Elementary&#39;</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="c"># Functions and lists (Daedalus puzzle)</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;path,legal,legal_move&#39;</span><span class="p">)</span>
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;Start,End,Mid,Path,Path1,Move,A,B&#39;</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">edge</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Path</span> <span class="o">==</span> <span class="p">(</span><span class="n">Move</span><span class="p">,))</span>
+<span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">Start</span><span class="p">,</span> <span class="n">Mid</span><span class="p">]</span> <span class="o">==</span> <span class="n">Path1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">edge</span><span class="p">(</span><span class="n">Mid</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&amp;</span> \
+                              <span class="p">(</span><span class="n">Path</span> <span class="o">==</span> <span class="n">Path1</span><span class="o">+</span><span class="p">(</span><span class="n">Move</span><span class="p">,))</span>
+
+<span class="n">edge</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">End</span><span class="p">,</span> <span class="n">Move</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">legal_move</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Move</span> <span class="o">==</span> <span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span> <span class="o">&amp;</span> \
+                <span class="p">(</span><span class="n">End</span> <span class="o">==</span> <span class="n">Start</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">A</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="p">:</span><span class="n">B</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">B</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+
+<span class="n">legal_move</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+
+<span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">Start</span><span class="p">[</span><span class="n">A</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+<span class="n">legal</span><span class="p">(</span><span class="n">Start</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">Start</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_operations</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,))]</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="c"># Example: solve_dedalus(&#39;HAAHS*T*G&#39;, &#39;HASHTAG**&#39;)</span>
+<span class="k">def</span> <span class="nf">solve_dedalus</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">end</span><span class="p">)]</span> <span class="o">==</span> <span class="n">Path</span><span class="p">)</span>
+
+<span class="c"># Aggregation (job matching)</span>
+
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;has_skill,lives_in,in_location,requires,match&#39;</span><span class="p">)</span>
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;matching_skill,num_matching_skills,num_reqs&#39;</span><span class="p">)</span>
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;best_jobs,best_candidates&#39;</span><span class="p">)</span>
+<span class="n">pyDatalog</span><span class="o">.</span><span class="n">create_atoms</span><span class="p">(</span><span class="s">&#39;Candidate,Job,Skill,City,Score&#39;</span><span class="p">)</span>
+
+<span class="n">has_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;has_skill&#39;</span><span class="p">,</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Skill</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">lives_in</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">City</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;lives_in&#39;</span><span class="p">,</span> <span class="n">Candidate</span><span class="p">,</span> <span class="n">City</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">in_location</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span><span class="n">City</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;in_location&#39;</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">City</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+<span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">kvp</span><span class="p">(</span><span class="s">&#39;requires&#39;</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+<span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">has_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                         <span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+
+<span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span> <span class="o">&amp;</span> \
+                        <span class="n">lives_in</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">City</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">in_location</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">City</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">num_matching_skills</span><span class="p">[</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">len_</span><span class="p">(</span><span class="n">Skill</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                        <span class="n">matching_skill</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">num_reqs</span><span class="p">[</span><span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">len_</span><span class="p">(</span><span class="n">Skill</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="n">requires</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">Skill</span><span class="p">)</span>
+
+<span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span><span class="n">Job</span><span class="p">)</span> <span class="o">&amp;</span> \
+                          <span class="p">(</span><span class="n">Score</span> <span class="o">==</span> <span class="n">num_matching_skills</span><span class="p">[</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">]</span><span class="o">/</span><span class="n">num_reqs</span><span class="p">[</span><span class="n">Job</span><span class="p">])</span>
+
+<span class="p">(</span><span class="n">best_jobs</span><span class="p">[</span><span class="n">Candidate</span><span class="p">]</span> <span class="o">==</span> <span class="n">concat_</span><span class="p">(</span><span class="n">Job</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">Score</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                                          <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">best_candidates</span><span class="p">[</span><span class="n">Job</span><span class="p">]</span> <span class="o">==</span> <span class="n">concat_</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="n">Score</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> \
+                                                          <span class="n">match</span><span class="p">(</span><span class="n">Candidate</span><span class="p">,</span> <span class="n">Job</span><span class="p">,</span> <span class="n">Score</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">clear_job_data</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;has_skill&#39;</span><span class="p">,))]</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;lives_in&#39;</span><span class="p">,))]</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;requires&#39;</span><span class="p">,))]</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="s">&#39;in_location&#39;</span><span class="p">,))]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">set_job_record</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">pred</span><span class="p">,</span> <span class="n">entity</span><span class="p">,</span> <span class="n">value</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">set_job_data</span><span class="p">():</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Joe&#39;</span><span class="p">,</span> <span class="s">&#39;Henry&#39;</span><span class="p">,</span> <span class="s">&#39;Susan&#39;</span><span class="p">,</span> <span class="s">&#39;Mark&#39;</span><span class="p">,</span> <span class="s">&#39;Joanna&#39;</span><span class="p">]</span>
+    <span class="n">companies</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Zandian&#39;</span><span class="p">,</span> <span class="s">&#39;Xanath&#39;</span><span class="p">,</span> <span class="s">&#39;Trianon&#39;</span><span class="p">,</span> <span class="s">&#39;Micromoves&#39;</span><span class="p">,</span> <span class="s">&#39;Prionics&#39;</span><span class="p">]</span>
+
+    <span class="n">name_product</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">company_product</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">companies</span><span class="p">,</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">name_product</span><span class="p">]</span>
+    <span class="n">jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">company</span><span class="o">+</span><span class="s">&#39;_&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">company</span><span class="p">,</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">company_product</span><span class="p">]</span>
+
+    <span class="n">skills</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Java&#39;</span><span class="p">,</span> <span class="s">&#39;Scala&#39;</span><span class="p">,</span> <span class="s">&#39;Python&#39;</span><span class="p">,</span> <span class="s">&#39;R&#39;</span><span class="p">,</span> <span class="s">&#39;C++&#39;</span><span class="p">]</span>
+    <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;San Francisco&#39;</span><span class="p">,</span> <span class="s">&#39;DC&#39;</span><span class="p">,</span> <span class="s">&#39;New York City&#39;</span><span class="p">,</span> <span class="s">&#39;Boston&#39;</span><span class="p">,</span> <span class="s">&#39;Austin&#39;</span><span class="p">]</span>
+
+    <span class="n">clear_job_data</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="n">cand_skills</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">skills</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">skills</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">skill</span> <span class="ow">in</span> <span class="n">cand_skills</span><span class="p">:</span>
+            <span class="n">set_job_record</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;has_skill&#39;</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">skill</span><span class="p">)</span>
+        <span class="n">set_job_record</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;lives_in&#39;</span><span class="p">,</span> <span class="n">candidate</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">locations</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobs</span><span class="p">:</span>
+        <span class="n">job_skills</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">skills</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">skills</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">skill</span> <span class="ow">in</span> <span class="n">job_skills</span><span class="p">:</span>
+            <span class="n">set_job_record</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;requires&#39;</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">skill</span><span class="p">)</span>
+        <span class="n">set_job_record</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;in_location&#39;</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">locations</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="appendix-fdbquery">
+<span id="datalog-query-appendix"></span><h2>Appendix: fdbquery<a class="headerlink" href="#appendix-fdbquery" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the query tool:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">code</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">pyDatalog</span> <span class="kn">import</span> <span class="n">pyDatalog</span><span class="p">,</span> <span class="n">pyEngine</span><span class="p">,</span> <span class="n">pyParser</span><span class="p">,</span> <span class="n">util</span>
+<span class="kn">from</span> <span class="nn">datalog</span> <span class="kn">import</span> <span class="n">Datalog</span><span class="p">,</span> <span class="n">kvp</span>
+
+<span class="c">#################################################</span>
+<span class="c">##   Command Line Tool for Interactive Queries ##</span>
+<span class="c">#################################################</span>
+
+<span class="k">def</span> <span class="nf">import_all_from</span><span class="p">(</span><span class="n">module_name</span><span class="p">):</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">member_name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">):</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="n">member_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">member_name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">globalize_atoms</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">code</span><span class="o">.</span><span class="n">co_names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">],</span> <span class="p">(</span><span class="n">pyParser</span><span class="o">.</span><span class="n">Symbol</span><span class="p">,</span> <span class="n">pyParser</span><span class="o">.</span><span class="n">Variable</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">util</span><span class="o">.</span><span class="n">DatalogError</span><span class="p">(</span><span class="s">&quot;Name conflict. Can&#39;t redefine </span><span class="si">%s</span><span class="s"> as atom&quot;</span> <span class="o">%</span>
+                                        <span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">:</span>
+                <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyParser</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pyParser</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">exec_datalog</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;single&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">pyParser</span><span class="o">.</span><span class="n">ProgramContext</span><span class="p">():</span>
+        <span class="n">newglobals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">pyParser</span><span class="o">.</span><span class="n">add_symbols</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">co_names</span><span class="p">,</span> <span class="n">newglobals</span><span class="p">)</span>
+        <span class="n">globalize_atoms</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">exec</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">newglobals</span>
+
+<span class="k">class</span> <span class="nc">fdbqueryConsole</span><span class="p">(</span><span class="n">code</span><span class="o">.</span><span class="n">InteractiveConsole</span><span class="p">):</span>
+    <span class="n">valid_modes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;query&#39;</span><span class="p">,</span> <span class="s">&#39;python&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">fdbqueryConsole</span><span class="o">.</span><span class="n">valid_modes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">ps1</span> <span class="o">=</span> <span class="n">mode</span><span class="o">+</span><span class="s">&#39;&gt; &#39;</span>
+
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="c"># ugly string interpolation</span>
+        <span class="k">return</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">exec_datalog(&#39;&#39;&#39;</span>
+<span class="si">%s</span><span class="s"></span>
+<span class="s">&#39;&#39;&#39;)</span>
+<span class="s">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">source</span>
+
+    <span class="k">def</span> <span class="nf">runsource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;console&#39;</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">fdbqueryConsole</span><span class="o">.</span><span class="n">valid_modes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;query&#39;</span><span class="p">:</span>
+            <span class="n">new_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">source</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;qry:&#39;</span><span class="p">):</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;qry:&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+            <span class="n">new_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_source</span> <span class="o">=</span> <span class="n">source</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">code</span><span class="o">.</span><span class="n">InteractiveConsole</span><span class="o">.</span><span class="n">runsource</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">symbol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+<span class="n">pyEngine</span><span class="o">.</span><span class="n">Auto_print</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&#39;FoundationDB Query Console&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-p&#39;</span><span class="p">,</span> <span class="s">&#39;--python&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;&#39;&#39;Python module to be imported.</span>
+<span class="s">        pyDatalog.create_atoms must be called for any Datalog included.&#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-d&#39;</span><span class="p">,</span> <span class="s">&#39;--datalog&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;&#39;&#39;File with Datalog statements</span>
+<span class="s">        (only) to be loaded. Atoms will be automatically created.&#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">python</span><span class="p">:</span>
+        <span class="n">import_all_from</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">python</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">datalog</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">datalog</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">dl_defs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">closed</span>
+        <span class="n">pyDatalog</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">dl_defs</span><span class="p">)</span>
+        <span class="n">globalize_atoms</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">dl_defs</span><span class="p">,</span> <span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">,</span> <span class="s">&#39;exec&#39;</span><span class="p">))</span>
+
+    <span class="n">console</span> <span class="o">=</span> <span class="n">fdbqueryConsole</span><span class="p">(</span><span class="nb">locals</span><span class="o">=</span><span class="nb">locals</span><span class="p">())</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="s">&#39;query&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">A Lightweight Query Language</a><ul><li><a class="reference internal" href="#introduction">Introduction</a></li><li><a class="reference internal" href="#binding-for-pydatalog">Binding for pyDatalog</a></li><li><a class="reference internal" href="#basic-relational-algebra">Basic relational algebra</a></li><li><a class="reference internal" href="#beyond-relational-algebra">Beyond relational algebra</a><ul><li><a class="reference internal" href="#transitive-closure">Transitive closure</a></li><li><a class="reference internal" href="#cyclic-graphs">Cyclic graphs</a></li><li><a class="reference internal" href="#left-recursion">Left recursion</a></li><li><a class="reference internal" href="#strongly-connected-components">Strongly connected components</a></li><li><a class="reference internal" href="#bipartite-graphs">Bipartite graphs</a></li><li><a class="reference internal" href="#indexing">Indexing</a></li><li><a class="reference internal" href="#functions-and-tuples">Functions and tuples</a></li><li><a class="reference internal" href="#aggregation">Aggregation</a></li></ul></li><li><a class="reference internal" href="#query-tool">Query tool</a></li><li><a class="reference internal" href="#future-directions">Future directions</a></li><li><a class="reference internal" href="#conclusion">Conclusion</a></li><li><a class="reference internal" href="#appendix-datalog-py">Appendix: datalog.py</a></li><li><a class="reference internal" href="#appendix-dl-examples-py">Appendix: dl_examples.py</a></li><li><a class="reference internal" href="#appendix-fdbquery">Appendix: fdbquery</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003221/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003221/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003221/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003221/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003221js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:21 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:30:44 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

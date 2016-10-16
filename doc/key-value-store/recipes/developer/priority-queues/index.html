@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app12.us.archive.org";archive_analytics.values.server_ms=167;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Priority Queues &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/priority-queues' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003515/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="76b0jnKqHl1gIUCB7i3Bcwa9eoRX8i20zhniUvTIYmo=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003515/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Priority Queues</h1>
+<div class='languages'>
+<a href=index.html class="python active">python</a>
+<a href=go/index.html class="go">go</a>
+<a href=java/index.html class="java">java</a>
+<a href=ruby/index.html class="ruby">ruby</a>
+</div>
+</header>
+<div id='body'> <h2></h2><h2>Goal</h2><p>        Create a data structure for <a href=../../../../https:/web.archive.org/web/20150325003515/http:/en.wikipedia.org/wiki/Priority_queue>priority queues</a> supporting operations for push, pop_min, peek_min, pop_max, and peek_max. You may find it helpful to review the <a href=../queues/index.html>Queue </a>recipe before this one.</p><h2>Challenge</h2><p>         Allow efficient operations on a shared priority queue by multiple clients acting concurrently.</p><h2>Explanation</h2><p>         We can model a priority queue using a key formed from a tuple of three elements: an item's priority, an increasing integer encoding the order in which the item was pushed, and a random element to make the key unique. By making keys unique, we can minimize conflicts for concurrent pushes.</p><h2>Ordering</h2><p>         The ordering of keys will sort items first by priority, then by push order, then randomly (to break ties in concurrent pushes). The minimum and maximum priority items will always be at the beginning and end of the queue, respectively, allowing us to efficiently peek or pop them.</p><h2>Pattern</h2><p>         We create a subspace for the priority queue, which takes care of packing our tuples into byte strings.</p> <pre> pq = fdb.Subspace(('P',))
+</pre><p>         Push operations will construct a key-value pair of the form</p> <pre> tr[ pq[ priority ][ count ][ random ] ] = value
+</pre><p>         where priority is supplied by the client, count is an integer that increases by 1 for each item pushed with priority, and random is a randomly generated integer.</p><p>         Items of the same priority that are pushed concurrently may occasionally be assigned the same count, but their keys will still be distinct and ordered (in this case, randomly). The count is derived by reading and incrementing the highest count previously used for a given priority. By using a <a href=../../../documentation/developer-guide.html>snapshot read</a>, we guarantee that pushing is conflict-free.</p><p>         To implement this model, we need an efficient way of finding the first and last key in the queue. (The ordering of keys guarantees that these will always be the proper keys to pop or peek.) FoundationDB's range reads have limit and reverse options that let us accomplish this. Given the range of the subspace:</p> <pre> r = pq.range()
+</pre><p>         we can find the first and last key-value pairs in the range with:</p> <pre> tr.get_range(r.start, r.stop, limit=1) # first
+ tr.get_range(r.start, r.stop, limit=1, reverse=True) # last
+</pre><h2>Extensions</h2><h3>High-Contention Pop Operations </h3><p>         To minimize conflicts during pop operations, we can use a staging technique to service the requests. If a pop operation doesn't initially succeed, it registers a pop request in a semi-ordered set of such requests. It then enters a retry loop in which it attempts to fulfill outstanding requests.</p><h2>Code</h2><p>    Here's a basic implementation of the model:</p> <pre>import os
+ 
+pq = fdb.Subspace(('P',))
+ 
+@fdb.transactional
+def push(tr, value, priority):
+    tr[pq[priority][_next_count(tr, priority)][os.urandom(20)]] = value
+ 
+@fdb.transactional
+def _next_count(tr, priority):
+    r = pq[priority].range()
+    for key, value in tr.snapshot.get_range(r.start, r.stop, limit=1, reverse=True):
+        return pq[priority].unpack(key)[0] + 1
+    return 0
+ 
+@fdb.transactional
+def pop(tr, max=False):
+    r = pq.range()
+    for item in tr.get_range(r.start, r.stop, limit=1, reverse=max):
+        del tr[item.key]
+        return item.value
+ 
+@fdb.transactional
+def peek(tr, max=False):
+    r = pq.range()
+    for item in tr.get_range(r.start, r.stop, limit=1, reverse=max):
+        return item.value
+</pre><p>      The <a href=../../../../https:/web.archive.org/web/20150325003515/https:/github.com/FoundationDB/python-layers/blob/master/lib/priorityqueue.py>linked Python code</a> gives a more complete implementation with high-contention popping.</p><p>       Happy priority queueing!</p> </div>
+</div>
+<div id='more'>
+<a class='previous button' href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes/developer/multimaps'>&larr; Previous: Multimaps</a>
+<a class='next button' href='/web/20150325003515/https://foundationdb.com/key-value-store/recipes/developer/queues'>Next: Queues &rarr;</a>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003515/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:35:15 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:31:33 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

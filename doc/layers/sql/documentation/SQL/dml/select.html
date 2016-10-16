@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=243;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SELECT
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003320/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="LqdUesv2n5lUTap9UCTOOn1UhYs4BCTKWcq6b1swCEU=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003320/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003320/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003320/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../../index.html>Summary</a></li>
+<li>
+<a href=../../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../../Concepts/features.html>Features</a></li>
+<li><a href=../../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../index.html>SQL Reference</a></li>
+<li><a href=../../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../../Admin/configuration.html>Configuration</a></li>
+<li><a href=../../Admin/administration.html>Administration</a></li>
+<li><a href=../../Admin/security.html>Security</a></li>
+<li><a href=../../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../index.html>SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="select">
+<span id="sqlref-select"></span><h1>SELECT<a class="headerlink" href="#select" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">∞</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">SELECT</span></tt> command selects a set of records from one or more tables or views.</p>
+<p>Tables can be joined together with ANSI compatible inner and outer joins.</p>
+<p>There are two versions of the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement:</p>
+<ol class="arabic simple">
+<li>Standard ANSI <tt class="docutils literal"><span class="pre">SELECT</span></tt></li>
+<li><a class="reference internal" href="select_nested_object.html#sqlref-select-nested"><em>Nested object SELECT</em></a></li>
+</ol>
+<p>This page covers the syntax of both versions of the statement but only describes the functionality of the standard ANSI <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">∞</a></h2>
+<pre class="literal-block">
+SELECT [ DISTINCT ] <em>column_expression</em> [ , ... ]
+  [ FROM <em>table_expression</em> [ <em>join_expression</em> [ ... ] ] ]
+  [ WHERE <em>where_expression</em>
+  [ GROUP BY <em>column_expression</em> [ , ... ] ]
+  [ HAVING <em>where_expression</em>
+  [ ORDER BY <em>column_expression</em> [ ASC | DESC ] [ , ... ] ]
+  [ LIMIT { [ <em>offset</em> , ] <em>row_count</em> | <em>row_count</em> [ OFFSET <em>offset</em> ] } ]
+</pre>
+<p>where <em>column_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>column_name</em> | <em>expression</em> } [ [ AS ] <em>column_alias</em> ]
+</pre>
+<p>where <em>table_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>table_name</em> | <em>view_name</em> | ( <em>subquery</em> ) } [ [ AS ] <em>table_alias</em> ]
+</pre>
+<p>where <em>join_expression</em> is:</p>
+<div class="highlight-sql"><div class="highlight"><pre>{
+    *table_expression*
+  | CROSS JOIN *table_expression*
+  | [ INNER | LEFT | RIGHT ] JOIN *table_expression* ON *expression*
+}
+</pre></div>
+</div>
+<p>where <em>where_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>condition</em> [ { AND | OR } <em>condition</em> ] [ ... ] }
+</pre>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">∞</a></h2>
+<dl class="docutils">
+<dt>table_name</dt>
+<dd>The name (optionally schema-qualified) of an existing table.</dd>
+<dt>view_name</dt>
+<dd>The name (optionally schema-qualified) of an eisting view.</dd>
+<dt>subquery</dt>
+<dd>Any valid <tt class="docutils literal"><span class="pre">SELECT</span></tt> query. For column expressions the limitation for the ANSI syntax is that a subquery must return exactly one field and one row. For nested objects multiple columns and multiple rows are allowed.</dd>
+<dt>column_name</dt>
+<dd>The name (optionally schema and table-qualified) of an existing column.</dd>
+<dt>expression</dt>
+<dd><p class="first">Any valid expression. Valid expressions can only include column names that are available in the context of the query. Expressions can include column names, literals, functions and subqueries. Subqueries used in expressions in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> part of the statement are not allowed to produce more than one row and one column except if the nested object syntax is used. Aggregate functions should only be used in combination with <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt>. If no <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is present the grouping is implicitly on all columns. Two special cases exist for expressions in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> part of the statement:</p>
+<ul class="last simple">
+<li>returns all columns from all tables specified in the <tt class="docutils literal"><span class="pre">FROM</span></tt> (if table-qualified it returns all columns from the specified  table).</li>
+<li>returns all columns from a table including all columns from child tables. See <a class="reference internal" href="select_nested_object.html#sqlref-select-nested"><em>SELECT Nested Objects</em></a> for more details.</li>
+</ul>
+</dd>
+<dt>condition</dt>
+<dd>An expression that returns a value of type boolean. Other types are allowed as long as they can be implicitly cast to the boolean type.</dd>
+<dt><tt class="docutils literal"><span class="pre">DISTINCT</span></tt></dt>
+<dd>Select on rows containing unique values.</dd>
+<dt><tt class="docutils literal"><span class="pre">FROM</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">FROM</span></tt> allows the specification of tables, views and subqueries to select columns from.</dd>
+<dt><tt class="docutils literal"><span class="pre">WHERE</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">WHERE</span></tt> is used to limit the number of rows that is returned in the result set.</dd>
+<dt><tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is used to reduce the result set by grouping together rows that have the same values in the columns specified in the <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> clause. If <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is used, the columns in the SELECT part of the query have to be either included in the grouping columns or aggregate functions. If a column is specified that is not included in the grouping and no aggregate function is specified, the aggregate function <tt class="docutils literal"><span class="pre">FIRST</span></tt> is implied.</dd>
+<dt><tt class="docutils literal"><span class="pre">HAVING</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">HAVING</span></tt> is used to limit the number of rows produced by a grouping query by placing conditions on the grouped or aggregated values. <tt class="docutils literal"><span class="pre">HAVING</span></tt> is different from <tt class="docutils literal"><span class="pre">WHERE</span></tt> because it is executed after the grouping has taken place. Aggregate functions are allowed as part of the <tt class="docutils literal"><span class="pre">HAVING</span></tt> clause.</dd>
+<dt><tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> is used to order the result set based on the specified column expressions. For each expression, <tt class="docutils literal"><span class="pre">ASC</span></tt> or <tt class="docutils literal"><span class="pre">DESC</span></tt> can optionally be specified to order the results in either ascending or descending order. If the order is not specified, the default order for each column is ascending. The collation for each column is used to determine the sort order.</dd>
+<dt><tt class="docutils literal"><span class="pre">LIMIT</span></tt>, <tt class="docutils literal"><span class="pre">OFFSET</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">LIMIT</span></tt> is used to limit the number of rows being output by the query. The <cite>row_count</cite> determines how many rows will be selected and the <cite>offset</cite> determines the starting point in the result set. A <cite>row_count</cite> of 10 and an <cite>offset</cite> of 5 will result in rows 5 through 14 being returned if they are available.</dd>
+</dl>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">∞</a></h2>
+<p>Using <tt class="docutils literal"><span class="pre">LIMIT</span></tt> can result in much better query performance in some cases because rows only need to be evaluated until offset + row_count is reached. The use of grouping and/or ordering can cause all records to be evaluated even if <tt class="docutils literal"><span class="pre">LIMIT</span></tt> is used. See the section on <a class="reference internal" href=../../Concepts/query.execution.html><em>Optimizer and Query Execution</em></a> for more information.</p>
+<p>Using <tt class="docutils literal"><span class="pre">DISTINCT</span></tt> is the same as using <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> on all selected columns.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h2>
+<p>Select all columns from all records in the orders table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">orders</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Select the number of customers with last name of Smith that placed an order on October 17th, 2012:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">distinct</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span>
+<span class="k">FROM</span>   <span class="n">customers</span>
+       <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">orders</span> <span class="k">ON</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">order_id</span>
+<span class="k">WHERE</span>  <span class="n">customers</span><span class="p">.</span><span class="n">last_name</span> <span class="o">=</span> <span class="s1">&#39;Smith&#39;</span>
+  <span class="k">AND</span>  <span class="n">orders</span><span class="p">.</span><span class="n">order_date</span> <span class="o">=</span> <span class="s1">&#39;2012-10-17&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SELECT</a><ul><li><a class="reference internal" href="#purpose">Purpose</a></li><li><a class="reference internal" href="#syntax">Syntax</a></li><li><a class="reference internal" href="#parameters">Parameters</a></li><li><a class="reference internal" href="#notes">Notes</a></li><li><a class="reference internal" href="#examples">Examples</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003320/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:20 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:42:08 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

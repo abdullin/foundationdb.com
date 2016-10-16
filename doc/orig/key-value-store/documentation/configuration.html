@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=141;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Configuration
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/configuration.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003225/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003225im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="5E/v4Yva1Mt4ku27VBWNioxpxyCDLOf0zBDZ2e4Jilc=" name="csrf-token" />
+<link href="/web/20150325003225cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003225cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/configuration.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/configuration.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003225" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20140828103937/https://foundationdb.com/key-value-store/documentation/configuration.html" title="28 Aug 2014">AUG</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:25 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150706062156/https://foundationdb.com/key-value-store/documentation/configuration.html" title="6 Jul 2015"><strong>JUL</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20140828103937/https://foundationdb.com/key-value-store/documentation/configuration.html" title="10:39:37 Aug 28, 2014"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:25 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325014528/https://foundationdb.com/key-value-store/documentation/configuration.html" title="1:45:28 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:25 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003225*/https://foundationdb.com/key-value-store/documentation/configuration.html" title="See a list of every capture for this URL">5 captures</a>
+           <div class="r" title="Timespan for captures of this URL">28 Aug 14 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000010000_2015:2:003000100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003225/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003225im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003225/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003225/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003225/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003225/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003225/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003225/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003225/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003225/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003225/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003225/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/configuration.html" class="active">Configuration</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003225/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003225im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">∞</a></h1>
+<p>This document contains <em>reference</em> information for configuring a new FoundationDB cluster. We recommend that you read this document before setting up a cluster for performance testing or production use. For <em>step-by-step instructions</em> to follow when setting up a cluster, see <a class="reference internal" href="building-cluster.html"><em>Building a Cluster</em></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In FoundationDB, a &#8220;cluster&#8221; refers to one or more FoundationDB processes spread across one or more physical machines that together host a FoundationDB database.</p>
+</div>
+<p>To plan an externally accessible cluster, you need to understand some basic aspects of the system. You can start by reviewing the <a class="reference internal" href="#system-requirements"><em>system requirements</em></a>, then how to <a class="reference internal" href="#configuration-choosing-coordination-servers"><em>choose</em></a> and <a class="reference internal" href="#configuration-changing-coordination-servers"><em>change coordination servers</em></a>. Next, you should look at the <a class="reference internal" href="#foundationdb-conf"><em>configuration file</em></a>, which controls most other aspects of the system. Then, you should understand how to <a class="reference internal" href="#configuration-choosing-redundancy-mode"><em>choose a redundancy mode</em></a> and <a class="reference internal" href="#configuration-configuring-storage-subsystem"><em>configure the storage subsystem</em></a>. Finally, there are some configurations you can adjust to improve performance if your <a class="reference internal" href="#configuration-large-cluster-performance"><em>cluster is large</em></a>.</p>
+<div class="section" id="system-requirements">
+<span id="id1"></span><h2>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">∞</a></h2>
+<ul>
+<li><p class="first">One of the following 64-bit operating systems:</p>
+<ul class="simple">
+<li>A supported Linux distribution:<ul>
+<li>RHEL/CentOS 6.x</li>
+<li>Ubuntu 12.04 or later (but see <a class="reference internal" href="platforms.html#platform-ubuntu-12"><em>Platform Issues for Ubuntu 12.x</em></a>)</li>
+</ul>
+</li>
+<li>Or, an unsupported Linux distribution with:<ul>
+<li>Kernel version between 2.6.33 and 3.0.x (inclusive) or 3.7 or greater</li>
+<li>Works with .deb or .rpm packages</li>
+</ul>
+</li>
+<li>Or, Windows XP or later (but see <a class="reference internal" href="platforms.html#platform-windows"><em>Platform Issues for Windows</em></a>)</li>
+<li>Or, Mac OS X 10.7 or later</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The Mac OS X version of the FoundationDB server is intended for use on locally accessible development machines only. Other uses are not supported.</p>
+</div>
+</li>
+<li><p class="first">4GB <strong>ECC</strong> RAM (per fdbserver process)</p>
+</li>
+<li><p class="first">Storage</p>
+<ul class="simple">
+<li>SSDs are required when storing data sets larger than memory (using the <tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine).</li>
+<li>HDDs are OK when storing data sets smaller than memory (using the <tt class="docutils literal"><span class="pre">memory</span></tt> storage engine).</li>
+<li>For more information, see <a class="reference internal" href="#configuration-configuring-storage-subsystem"><em>Configuring the storage subsystem</em></a>.</li>
+</ul>
+</li>
+</ul>
+<p>For a description of issues on particular platforms that affect the operation of FoundationDB, see <a class="reference internal" href="platforms.html"><em>Platform Issues</em></a>.</p>
+</div>
+<div class="section" id="screencast">
+<h2>Screencast<a class="headerlink" href="#screencast" title="Permalink to this headline">∞</a></h2>
+<div class="screencast container">
+<p>This video quickly walks through the basics of how to configure your cluster. For full details, make sure to read the documentation below.</p>
+<div class="url container">
+<a class="reference external" href="/web/20150325003225/https://vimeo.com/77433299">https://vimeo.com/77433299</a></div>
+</div>
+</div>
+<div class="section" id="choosing-coordination-servers">
+<span id="configuration-choosing-coordination-servers"></span><h2>Choosing coordination servers<a class="headerlink" href="#choosing-coordination-servers" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB uses a set of <em>coordination servers</em> (or <em>coordinators</em> for short) to maximize the fault tolerance (and, in particular, the availability) of the cluster. The coordinators work by communicating and storing a small amount of shared state. If one or more machines are down or unable to communicate with the network, the cluster may become partitioned. In that event, FoundationDB selects the partition in which a majority of coordinators are reachable as the one that will remain available.</p>
+<p>Any FoundationDB process can be used as a coordinator for any set of clusters. The performance impact of acting as a coordinator is negligible. The coordinators aren&#8217;t involved at all in committing transactions.</p>
+<p>Administrators should choose the number and physical location of coordinators to maximize fault tolerance. Most configurations should follow these guidelines:</p>
+<ul class="simple">
+<li>Choose an odd number of coordinators.</li>
+<li>Use enough coordinators to complement the <a class="reference internal" href="#configuration-choosing-redundancy-mode"><em>redundancy mode</em></a> of the cluster, often 3 or 5.</li>
+<li>Place coordinators in different racks, circuits, or datacenters with independence of failure.</li>
+<li>It is OK to place coordinators in distant datacenters; in normal operation the latency to a coordinator does not affect system latency.</li>
+</ul>
+<p>The set of coordinators is stored on each client and server in the <a class="reference internal" href="administration.html#foundationdb-cluster-file"><em>cluster file</em></a>.</p>
+</div>
+<div class="section" id="changing-coordination-servers">
+<span id="configuration-changing-coordination-servers"></span><h2>Changing coordination servers<a class="headerlink" href="#changing-coordination-servers" title="Permalink to this headline">∞</a></h2>
+<p>It is sometimes necessary to change the set of coordinators servers. You may want to do so because of changing network conditions, machine failures, or just planning adjustments. You can change coordinators using an automated <tt class="docutils literal"><span class="pre">fdbcli</span></tt> command. FoundationDB will maintain ACID guarantees during the changes.</p>
+<p>You can change coordinators when the following conditions are met:</p>
+<ul class="simple">
+<li>a majority of the current coordinators are available;</li>
+<li>all of the new coordinators are available; and</li>
+<li>client and server cluster files are writable.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">fdbcli</span></tt> supports a <tt class="docutils literal"><span class="pre">coordinators</span></tt> command to specify the new list of coordinators:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbcli
+Using cluster file `/etc/foundationdb/fdb.cluster&#39;.
+
+The database is available.
+
+Welcome to the fdbcli. For help, type `help&#39;.
+fdb&gt; coordinators 10.0.4.1:4500 10.0.4.2:4500 10.0.4.3:4500
+Coordinators changed
+</pre></div>
+</div>
+<p>After running this command, you can check that it completed successfully by using the <tt class="docutils literal"><span class="pre">status</span> <span class="pre">details</span></tt> command:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdb&gt; status details
+
+Configuration:
+  Redundancy mode        - triple
+  Storage engine         - ssd
+  License                - See foundationdb.com/license
+  Coordinators           - 3
+
+Cluster:
+  FoundationDB processes - 3
+  Machines               - 3
+  Memory availability    - 4.1 GB per process on machine with least available
+  Fault Tolerance        - 0 machines
+  Server time            - Wed Oct  8 14:41:34 2014
+
+Data:
+  Replication health     - Healthy
+  Moving data            - 0.000 GB
+  Sum of key-value sizes - 0 MB
+
+Operating space:
+  Storage server         - 1.0 GB free on most full server
+  Transaction log        - 1.0 GB free on most full server
+
+Workload:
+  Read rate              - 2 Hz
+  Write rate             - 0 Hz
+  Transactions started   - 2 Hz
+  Transactions committed - 0 Hz
+  Conflict rate          - 0 Hz
+
+Process performance details:
+  10.0.4.1:4500       ( 3% cpu;  2% machine; 0.004 Gbps;  0% disk; 2.5 GB / 4.1 GB RAM  )
+  10.0.4.2:4500       ( 1% cpu;  2% machine; 0.004 Gbps;  0% disk; 2.5 GB / 4.1 GB RAM  )
+  10.0.4.3:4500       ( 1% cpu;  2% machine; 0.004 Gbps;  0% disk; 2.5 GB / 4.1 GB RAM  )
+
+Coordination servers:
+  10.0.4.1:4500
+  10.0.4.2:4500
+  10.0.4.3:4500
+
+Client time: Thu Nov 20 09:50:45 2014
+</pre></div>
+</div>
+<p>The list of coordinators verifies that the coordinator change succeeded. A few things might cause this process to not go smoothly:</p>
+<ul class="simple">
+<li>If any of the new coordination servers fail before you run the <tt class="docutils literal"><span class="pre">coordinators</span></tt> command, the change will not occur, and the database will continue to use the old coordinators.</li>
+<li>If a majority of the new coordination servers fail during or after the change, the database will not be available until a majority of them are available again.</li>
+<li>If a majority of the old coordination servers fail before the change is completed, the database will be unavailable until a majority of them are available again. Consequently, the <tt class="docutils literal"><span class="pre">coordinators</span></tt> command cannot be used to repair a database which is unavailable because its coordinators are down.</li>
+</ul>
+<p>Once the change is complete, database servers and clients need to communicate with the old coordinators in order to update their cluster file to point to the new coordinators. (Each database server and client will physically re-write their cluster file to reference the new coordinators.) In most cases this process occurs automatically within a matter of seconds.</p>
+<p>If some servers or clients are unable to write to their cluster file or are disconnected during the change of coordinators (and too many of the old coordinators become unavailable before they come back up), an administrator will need to manually copy the new cluster file to each affected machine and restart the database server or client, as if adding a new server or client to the cluster.</p>
+<p>The <tt class="docutils literal"><span class="pre">coordinators</span></tt> command also supports a convenience option, <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt>, that automatically selects a set of coordination servers appropriate for the redundancy mode:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host1$ fdbcli
+Using cluster file `/etc/foundationdb/fdb.cluster&#39;.
+
+The database is available.
+
+Welcome to the fdbcli. For help, type `help&#39;.
+fdb&gt; coordinators auto
+Coordinators changed
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt> will not make any changes if the current coordinators are all available and support the current redundancy level.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt> selects processes based on IP address. If your cluster has processes on the same machine with different IP addresses, <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt> may select a set of coordinators that are not fault tolerant. To ensure maximal fault tolerance, we recommend selecting coordinators according to the criteria in <a class="reference internal" href="#configuration-choosing-coordination-servers"><em>Choosing coordination servers</em></a> and setting them manually.</p>
+</div>
+</div>
+<div class="section" id="changing-the-cluster-description">
+<span id="configuration-setting-cluster-description"></span><h2>Changing the cluster description<a class="headerlink" href="#changing-the-cluster-description" title="Permalink to this headline">∞</a></h2>
+<p>A cluster is named by the <tt class="docutils literal"><span class="pre">description</span></tt> field recorded in the <tt class="docutils literal"><span class="pre">fdb.cluster</span></tt> file (see <a class="reference internal" href="administration.html#cluster-file-format"><em>Cluster file format</em></a>). For convenience of reference, you may want to change the <tt class="docutils literal"><span class="pre">description</span></tt> if you operate more than one cluster on the same machines. (Each cluster must be uniquely identified by the combination of <tt class="docutils literal"><span class="pre">description</span></tt> and <tt class="docutils literal"><span class="pre">ID</span></tt>.)</p>
+<p>You can change the <tt class="docutils literal"><span class="pre">description</span></tt> using the <tt class="docutils literal"><span class="pre">coordinators</span></tt> command within <tt class="docutils literal"><span class="pre">fdbcli</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdb&gt; coordinators description=cluster_b
+Coordination state changed
+</pre></div>
+</div>
+<p>You can also combine a change of <tt class="docutils literal"><span class="pre">description</span></tt> with <a class="reference internal" href="#configuration-changing-coordination-servers"><em>changing coordinators</em></a>, whether by listing the coordinators or with <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdb&gt; coordinators auto description=cluster_c
+Coordination state changed
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-configuration-file">
+<span id="foundationdb-conf"></span><h2>The configuration file<a class="headerlink" href="#the-configuration-file" title="Permalink to this headline">∞</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">fdbserver</span></tt> server process is run and monitored on each server by the <tt class="docutils literal"><span class="pre">fdbmonitor</span></tt> <a class="reference internal" href="administration.html#administration-fdbmonitor"><em>daemon</em></a>. <tt class="docutils literal"><span class="pre">fdbmonitor</span></tt> and <tt class="docutils literal"><span class="pre">fdbserver</span></tt> itself are controlled by the <tt class="docutils literal"><span class="pre">foundationdb.conf</span></tt> file located at:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">/etc/foundationdb/foundationdb.conf</span></tt> on Linux</li>
+<li><tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb\foundationdb.conf</span></tt> on modern versions of Windows (see <a class="reference internal" href="administration.html#windows-paths"><em>here</em></a> for other versions)</li>
+<li><tt class="docutils literal"><span class="pre">/usr/local/etc/foundationdb/foundationdb.conf</span></tt> on OS X</li>
+</ul>
+<p>The <tt class="docutils literal"><span class="pre">foundationdb.conf</span></tt> file contains several sections, detailed below. Note that the presence of individual <tt class="docutils literal"><span class="pre">[fdbserver.&lt;ID&gt;]</span></tt> sections actually cause <tt class="docutils literal"><span class="pre">fdbserver</span></tt> processes to be run.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Whenever the <tt class="docutils literal"><span class="pre">foundationdb.conf</span></tt> file changes, the <tt class="docutils literal"><span class="pre">fdbmonitor</span></tt> daemon automatically detects the changes and starts, stops, or restarts child processes as necessary.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not attempt to stop FoundationDB services by removing the configuration file. Removing the file will not stop the services; it will merely remove your ability to control them in the manner supported by FoundationDB. During normal operation, services can be stopped by commenting out or removing the relevant sections of the configuration file. You can also disable a service at the operating system level or by removing the software.</p>
+</div>
+<div class="section" id="fdbmonitor-section">
+<h3><tt class="docutils literal"><span class="pre">[fdbmonitor]</span></tt> section<a class="headerlink" href="#fdbmonitor-section" title="Permalink to this headline">∞</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span class="c1">## foundationdb.conf</span>
+<span class="c1">##</span>
+<span class="c1">## Configuration file for FoundationDB server processes</span>
+<span class="c1">## Full documentation is available in the FoundationDB Administration document.</span>
+
+<span class="k">[fdbmonitor]</span>
+<span class="na">restart_delay</span> <span class="o">=</span> <span class="s">60</span>
+<span class="na">user</span> <span class="o">=</span> <span class="s">foundationdb</span>
+<span class="na">group</span> <span class="o">=</span> <span class="s">foundationdb</span>
+</pre></div>
+</div>
+<p>Contains basic configuration parameters of the <tt class="docutils literal"><span class="pre">fdbmonitor</span></tt> process. <tt class="docutils literal"><span class="pre">restart_delay</span></tt> specifies the number of seconds that <tt class="docutils literal"><span class="pre">fdbmonitor</span></tt> waits before restarting a failed process. <tt class="docutils literal"><span class="pre">user</span></tt> and <tt class="docutils literal"><span class="pre">group</span></tt> are used on Linux systems to control the privilege level of child processes.</p>
+</div>
+<div class="section" id="general-section">
+<h3><tt class="docutils literal"><span class="pre">[general]</span></tt> section<a class="headerlink" href="#general-section" title="Permalink to this headline">∞</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[general]</span>
+<span class="na">cluster_file</span> <span class="o">=</span> <span class="s">/etc/foundationdb/fdb.cluster</span>
+</pre></div>
+</div>
+<p>Contains settings applicable to all processes (e.g. fdbserver, backup_agent). The main setting of interest is <tt class="docutils literal"><span class="pre">cluster_file</span></tt>, which specifies the location of the cluster file. This file and the directory that contains it must be writable by all processes (i.e. by the user or group set in the [fdbmonitor] section).</p>
+</div>
+<div class="section" id="fdbserver-section">
+<span id="foundationdb-conf-fdbserver"></span><h3><tt class="docutils literal"><span class="pre">[fdbserver]</span></tt> section<a class="headerlink" href="#fdbserver-section" title="Permalink to this headline">∞</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span class="c1">## Default parameters for individual fdbserver processes</span>
+<span class="k">[fdbserver]</span>
+<span class="na">command</span> <span class="o">=</span> <span class="s">/usr/sbin/fdbserver</span>
+<span class="na">public_address</span> <span class="o">=</span> <span class="s">auto:$ID</span>
+<span class="na">listen_address</span> <span class="o">=</span> <span class="s">public</span>
+<span class="na">datadir</span> <span class="o">=</span> <span class="s">/var/lib/foundationdb/data/$ID</span>
+<span class="na">logdir</span> <span class="o">=</span> <span class="s">/var/log/foundationdb</span>
+<span class="c1"># logsize = 10MiB</span>
+<span class="c1"># maxlogssize = 100MiB</span>
+<span class="c1"># machine_id =</span>
+<span class="c1"># datacenter_id =</span>
+<span class="c1"># class =</span>
+<span class="c1"># memory = 8GiB</span>
+<span class="c1"># storage_memory = 1GiB</span>
+</pre></div>
+</div>
+<p>Contains default parameters for all fdbserver processes on this machine. These same options can be overridden for individual processes in their respective <tt class="docutils literal"><span class="pre">[fdbserver.&lt;ID&gt;]</span></tt> sections. In this section, the ID of the individual fdbserver can be substituted by using the <tt class="docutils literal"><span class="pre">$ID</span></tt> variable in the value. For example, <tt class="docutils literal"><span class="pre">public_address</span> <span class="pre">=</span> <span class="pre">auto:$ID</span></tt> makes each fdbserver listen on a port equal to its ID.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Sizes must be specified as a number of bytes followed by one of the multiplicative suffixes B=1, KB=10<sup>3</sup>, KiB=2<sup>10</sup>, MB=10<sup>6</sup>, MiB=2<sup>20</sup>, GB=10<sup>9</sup>, GiB=2<sup>30</sup>, TB=10<sup>12</sup>, or TiB=2<sup>40</sup>.</p>
+</div>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">command</span></tt>: The location of the <tt class="docutils literal"><span class="pre">fdbserver</span></tt> binary.</li>
+<li><tt class="docutils literal"><span class="pre">public_address</span></tt>: The publicly visible IP:Port of the process. If <tt class="docutils literal"><span class="pre">auto</span></tt>, the address will be the one used to communicate with the coordination servers.</li>
+<li><tt class="docutils literal"><span class="pre">listen_address</span></tt>: The IP:Port that the server socket should bind to. If <tt class="docutils literal"><span class="pre">public</span></tt>, it will be the same as the public_address.</li>
+<li><tt class="docutils literal"><span class="pre">datadir</span></tt>: A writable directory (by root or by the user set in the [fdbmonitor] section) where persistent data files will be stored.</li>
+<li><tt class="docutils literal"><span class="pre">logdir</span></tt>: A writable directory (by root or by the user set in the [fdbmonitor] section) where FoundationDB will store log files.</li>
+<li><tt class="docutils literal"><span class="pre">logsize</span></tt>: Roll over to a new log file after the current log file reaches the specified size. The default value is 10MiB.</li>
+<li><tt class="docutils literal"><span class="pre">maxlogssize</span></tt>: Delete the oldest log file when the total size of all log files exceeds the specified size. If set to 0B, old log files will not be deleted. The default value is 100MiB.</li>
+<li><tt class="docutils literal"><span class="pre">machine_id</span></tt>: Machine identifier key. Processes that share a key are considered non-unique for the purposes of data replication. By default, processes on a machine determine a unique key to share. This does not generally need to be set. The ID can be up to 16 hexadecimal digits.</li>
+<li><tt class="docutils literal"><span class="pre">datacenter_id</span></tt>: Data center identifier key. All processes physically located in a data center should share the id. If unset, defaults to a special &#8220;default&#8221; data center. If you are depending on data center based replication this must be set on all processes. The ID can be up to 16 hexadecimal digits.</li>
+<li><tt class="docutils literal"><span class="pre">class</span></tt>: Machine class specifying the roles that will be taken in the cluster. Valid options are <tt class="docutils literal"><span class="pre">storage</span></tt>, <tt class="docutils literal"><span class="pre">transaction</span></tt>, <tt class="docutils literal"><span class="pre">resolution</span></tt>. See <a class="reference internal" href="#configuration-large-cluster-performance"><em>Large cluster performance</em></a> for machine class recommendations in large clusters.</li>
+<li><tt class="docutils literal"><span class="pre">memory</span></tt>: Maximum memory used by the process. The default value is 8GiB. When specified without a unit, MiB is assumed. This parameter does not change the memory allocation of the program. Rather, it sets a hard limit beyond which the process will kill itself and be restarted. The default value of 8GiB is double the intended memory usage in the default configuration (providing an emergency buffer to deal with memory leaks or similar problems). It is <em>not</em> recommended to decrease the value of this parameter below its default value. It may be <em>increased</em> if you wish to allocate a very large amount of storage engine memory or cache. In particular, when the <tt class="docutils literal"><span class="pre">storage_memory</span></tt> parameter is increased, the <tt class="docutils literal"><span class="pre">memory</span></tt> parameter should be increased by an equal amount.</li>
+<li><tt class="docutils literal"><span class="pre">storage_memory</span></tt>: Maximum memory used for data storage. This paramenter is used <em>only</em> with memory storage engine, not the ssd storage engine. The default value is 1GiB. When specified without a unit, MB is assumed. Clusters will be restricted to using this amount of memory per process for purposes of data storage. Memory overhead associated with storing the data is counted against this total. If you increase the <tt class="docutils literal"><span class="pre">storage_memory</span></tt>, you should also increase the <tt class="docutils literal"><span class="pre">memory</span></tt> parameter by the same amount.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In addition to the options above, TLS settings as described for the <a class="reference internal" href="tls.html#configuring-tls-plugin"><em>TLS plugin</em></a> can be specified in the [fdbserver] section.</p>
+</div>
+</div>
+<div class="section" id="fdbserver-id-section-s">
+<h3><tt class="docutils literal"><span class="pre">[fdbserver.&lt;ID&gt;]</span></tt> section(s)<a class="headerlink" href="#fdbserver-id-section-s" title="Permalink to this headline">∞</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span class="c1">## An individual fdbserver process with id 4500</span>
+<span class="c1">## Parameters set here override defaults from the [fdbserver] section</span>
+<span class="k">[fdbserver.4500]</span>
+</pre></div>
+</div>
+<p>Each section of this type represents an <tt class="docutils literal"><span class="pre">fdbserver</span></tt> process that will be run. IDs cannot be repeated. Frequently, an administrator will choose to run one <tt class="docutils literal"><span class="pre">fdbserver</span></tt> per CPU core. Parameters set in this section apply to only a single fdbserver process, and overwrite the defaults set in the <tt class="docutils literal"><span class="pre">[fdbserver]</span></tt> section. Note that by default, the ID specified in this section is also used as the network port and the data directory.</p>
+</div>
+<div class="section" id="backup-agent-sections">
+<h3>Backup agent sections<a class="headerlink" href="#backup-agent-sections" title="Permalink to this headline">∞</a></h3>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[backup_agent]</span>
+<span class="na">command</span> <span class="o">=</span> <span class="s">/usr/lib/foundationdb/backup_agent/backup_agent</span>
+
+<span class="k">[backup_agent.1]</span>
+</pre></div>
+</div>
+<p>These sections run and configure the backup agent process used for <a class="reference internal" href="backups.html"><em>point-in-time backups</em></a> of FoundationDB. These don&#8217;t usually need to be modified. The structure and functionality is similar to the <tt class="docutils literal"><span class="pre">[fdbserver]</span></tt> and <tt class="docutils literal"><span class="pre">[fdbserver.&lt;ID&gt;]</span></tt> sections.</p>
+</div>
+</div>
+<div class="section" id="choosing-a-redundancy-mode">
+<span id="configuration-choosing-redundancy-mode"></span><h2>Choosing a redundancy mode<a class="headerlink" href="#choosing-a-redundancy-mode" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB supports a variety of redundancy modes. These modes define storage requirements, required cluster size, and resilience to failure. To change the redundancy mode, use the <tt class="docutils literal"><span class="pre">configure</span></tt> command <tt class="docutils literal"><span class="pre">fdbcli</span></tt>. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbcli
+Using cluster file `/etc/foundationdb/fdb.cluster&#39;.
+
+The database is available.
+
+Welcome to the fdbcli. For help, type `help&#39;.
+fdb&gt; configure double
+Configuration changed.
+</pre></div>
+</div>
+<p>The available redundancy modes are described below.</p>
+<div class="section" id="single-datacenter-modes">
+<h3>Single datacenter modes<a class="headerlink" href="#single-datacenter-modes" title="Permalink to this headline">∞</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="2%" />
+<col width="21%" />
+<col width="21%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">&nbsp;</th>
+<th class="head">single</th>
+<th class="head">double</th>
+<th class="head">triple</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Best for</td>
+<td>&nbsp;</td>
+<td>1-2 machines</td>
+<td>3-4 machines</td>
+<td>5+ machines</td>
+</tr>
+<tr class="row-odd"><td>Replication</td>
+<td>&nbsp;</td>
+<td>1 copy</td>
+<td>2 copy</td>
+<td>3 copy</td>
+</tr>
+<tr class="row-even"><td># live machines
+to make progress</td>
+<td>&nbsp;</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr class="row-odd"><td>Minimum # of machines
+for fault tolerance</td>
+<td>&nbsp;</td>
+<td>impossible</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr class="row-even"><td>Ideal # of
+coordination servers</td>
+<td>&nbsp;</td>
+<td>1</td>
+<td>3</td>
+<td>5</td>
+</tr>
+<tr class="row-odd"><td># simultaneous failures
+after which data may be lost</td>
+<td>&nbsp;</td>
+<td>any machine</td>
+<td>2+ machines</td>
+<td>3+ machines</td>
+</tr>
+</tbody>
+</table>
+<p>In the three single datacenter redundancy modes, FoundationDB replicates data across the required number of machines in the cluster, but without aiming for datacenter redundancy. Although machines may be placed in more than one datacenter, the cluster will not be tolerant of datacenter-correlated failures.</p>
+<p>FoundationDB will never use processes on the same machine for the replication of any single piece of data. For this reason, references to the number of &#8220;machines&#8221; in the summary table above are the number of physical machines, not the number of <tt class="docutils literal"><span class="pre">fdbserver</span></tt> processes.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">single</span></tt> mode</dt>
+<dd><p class="first"><em>(best for 1-2 machines)</em></p>
+<p class="last">FoundationDB does not replicate data and needs only one physical machine to make progress. Because data is not replicated, the database is not fault-tolerant. This mode is recommended for testing on a single development machine. (<tt class="docutils literal"><span class="pre">single</span></tt> mode <em>will</em> work with clusters of two or more computers and will partition data for increased performance but the cluster will not tolerate the loss of any machines.)</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">double</span></tt> mode</dt>
+<dd><p class="first"><em>(best for 3-4 machines)</em></p>
+<p>FoundationDB replicates data to two machines, so two or more machines are required to make progress. The loss of one machine can be survived without losing data, but if only two machines were present originally, the database will be unavailable until the second machine is restored, another machine is added, or the replication mode is changed.</p>
+<div class="last admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In double redundancy mode, we recommend using three coordinators. In a two machine double redundancy cluster without a third coordinator, the coordination state has no redundancy.  Losing either machine will make the database unavailable, and recoverable only by an unsafe manual recovery of the coordination state.</p>
+</div>
+</dd>
+</dl>
+<dl class="docutils" id="configuration-redundancy-mode-triple">
+<dt><tt class="docutils literal"><span class="pre">triple</span></tt> mode</dt>
+<dd><p class="first"><em>(best for 5+ machines)</em></p>
+<p class="last">FoundationDB replicates data to three machines, and at least three available machines are required to make progress. This is the recommended mode for a cluster of five or more machines in a single datacenter.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="datacenter-aware-mode">
+<h3>Datacenter-aware mode<a class="headerlink" href="#datacenter-aware-mode" title="Permalink to this headline">∞</a></h3>
+<p>In addition to the more commonly used modes listed above, this version of FoundationDB has support for redundancy across multiple datacenters. Although data will always be triple replicated in this mode, it may not be replicated across all datacenters.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When using the datacenter-aware mode, all <tt class="docutils literal"><span class="pre">fdbserver</span></tt> processes should be passed a valid datacenter identifier on the command line.</p>
+</div>
+</div></blockquote>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">three_datacenter</span></tt> mode</dt>
+<dd><p class="first"><em>(for 5+ machines in 3 datacenters)</em></p>
+<p class="last">FoundationDB attempts to replicate data across two datacenters and will stay up with only two available. Data is triple replicated.  For maximum availability, you should use five coordination servers: two in two of the datacenters and one in the third datacenter.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Multiple-datacenter support in this release is immature. If you are considering using multiple datacenters in production, we recommend that you contact us so we can work together for best results.</p>
+</div>
+</div>
+<div class="section" id="changing-redundancy-mode">
+<h3>Changing redundancy mode<a class="headerlink" href="#changing-redundancy-mode" title="Permalink to this headline">∞</a></h3>
+<p>You can change the redundancy mode of a database at any time using <tt class="docutils literal"><span class="pre">fdbcli</span></tt>. For example, after adding more machines to a cluster that was initially configured in <tt class="docutils literal"><span class="pre">single</span></tt> mode, you might increase the redundancy mode to <tt class="docutils literal"><span class="pre">triple</span></tt>. After the change, FoundationDB will replicate your data accordingly (and remain available while it does so).</p>
+<p>If a database is unavailable because it has too few machines to function in its current redundancy mode, you can restore it to operation by changing the redundancy mode to one with lower requirements. For example, if a database configured in <tt class="docutils literal"><span class="pre">triple</span></tt> mode in a 4 server cluster loses two servers, it will stop operating because the configured redundancy is unachievable. It will start working immediately if you configure it to <tt class="docutils literal"><span class="pre">double</span></tt> mode. Consider the consequences of reducing the redundancy level carefully before doing so. If you reduce or eliminate redundancy and there are further hardware failures, your data could be lost permanently. The best option, if available, is to add new hardware to the cluster to restore it to its minimum operating size.</p>
+<p>Similarly, if you change the redundancy mode to a mode that cannot make progress with currently available hardware (for example, to <tt class="docutils literal"><span class="pre">triple</span></tt> when there are only two machines available), the database will immediately become unavailable. Changing the mode back or adding the necessary machines to the cluster will restore it to operation.</p>
+</div>
+</div>
+<div class="section" id="configuring-the-storage-subsystem">
+<span id="configuration-configuring-storage-subsystem"></span><h2>Configuring the storage subsystem<a class="headerlink" href="#configuring-the-storage-subsystem" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="storage-engines">
+<span id="configuration-storage-engine"></span><h3>Storage engines<a class="headerlink" href="#storage-engines" title="Permalink to this headline">∞</a></h3>
+<p>A storage engine is the part of the database that is responsible for storing data to disk. FoundationDB has two storage engines options, <tt class="docutils literal"><span class="pre">ssd</span></tt> and <tt class="docutils literal"><span class="pre">memory</span></tt>.</p>
+<p>For both storage engines, FoundationDB commits transactions to disk with the number of copies indicated by the redundancy mode before reporting them committed. This procedure guarantees the <em>durability</em> needed for full ACID compliance. At the point of the commit, FoundationDB may have only <em>logged</em> the transaction, deferring the work of updating the disk representation. This deferral has significant advantages for latency and burst performance. Due to this deferral, it is possible for disk space usage to continue increasing after the last commit.</p>
+<p>To change the storage engine, use the <tt class="docutils literal"><span class="pre">configure</span></tt> command of <tt class="docutils literal"><span class="pre">fdbcli</span></tt>. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbcli
+Using cluster file `/etc/foundationdb/fdb.cluster&#39;.
+
+The database is available.
+
+Welcome to the fdbcli. For help, type `help&#39;.
+fdb&gt; configure ssd
+Configuration changed.
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="administration.html#storage-space-requirements"><em>storage space requirements</em></a> of each storage engine are discussed in the Administration Guide.</p>
+</div>
+<dl class="docutils" id="configuration-storage-engine-ssd">
+<dt><tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine</dt>
+<dd><p class="first"><em>(optimized for SSD storage)</em></p>
+<p>Data is stored on disk in B-tree data structures optimized for use on <a class="reference internal" href="#ssd-info"><em>SSDs</em></a>. This engine is more robust when the right disk hardware is available, as it can store large amounts of data.</p>
+<p>The <tt class="docutils literal"><span class="pre">ssd</span></tt> engine recovers storage space on a deferred basis after data is deleted from the database. Following a deletion, the engine slowly shuffles empty B-tree pages to the end of the database file and truncates them. This activity is given a low priority relative to normal database operations, so there may be a delay before the database reaches minimum size.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine can be slow to return space from deleted data to the filesystem when the number of free pages is very large. This condition can arise when you have deleted most of the data in your database or greatly increased the number of processes in your cluster. In this condition, the database is still able to reuse the space, but the disk files may remain large for an extended period.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Because the database is able to reuse the space, action is required only if your application requires the space for some non-database purpose. In this case, you can reclaim space by <a class="reference internal" href="administration.html#removing-machines-from-a-cluster"><em>excluding affected server processes</em></a> (either singly or a few at a time) and then including them again. Excluding removes the storage server and its data files completely, and when the server is included again, it uses a fresh database file.</p>
+</div>
+<p class="last">Because this engine is tuned for SSDs, it may have poor performance or even availability problems when run on weaker I/O subsystems such as spinning disks or network attached storage.</p>
+</dd>
+</dl>
+<dl class="docutils" id="configuration-storage-engine-memory">
+<dt><tt class="docutils literal"><span class="pre">memory</span></tt> storage engine</dt>
+<dd><p class="first"><em>(optimized for small databases)</em></p>
+<p>Data is stored in memory and logged to disk. In this storage engine, all data must be resident in memory at all times, and all reads are satisfied from memory. Additionally, all writes are saved to disk to ensure that data is always fully durable. This engine works well with storage subsystems, such as spinning disks, that have good sequential write performance but poor random I/O performance.</p>
+<p>By default, each process using the memory storage engine is limited to storing 1 GB of data (including overhead). This limit can be changed using the <tt class="docutils literal"><span class="pre">storage_memory</span></tt> parameter as documented in <a class="reference internal" href="#foundationdb-conf"><em>foundationdb.conf</em></a>.</p>
+<p class="last">When using the <tt class="docutils literal"><span class="pre">memory</span></tt> engine, especially with a larger memory limit, it can take some time (seconds to minutes) for a storage machine to start up. This is because it needs to reconstruct its in-memory data structure from the logs stored on disk.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="storage-locations">
+<h3>Storage locations<a class="headerlink" href="#storage-locations" title="Permalink to this headline">∞</a></h3>
+<p>Each FoundationDB process stores its state in a subdirectory of the directory supplied to it by the <tt class="docutils literal"><span class="pre">datadir</span></tt> configuration parameter in the <a class="reference internal" href="#foundationdb-conf"><em>configuration file</em></a>. By default this directory is:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">/var/lib/foundationdb/data/&lt;port&gt;</span></tt> on Linux.</li>
+<li><tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb\data\&lt;port&gt;</span></tt> on modern versions of Windows (see <a class="reference internal" href="administration.html#windows-paths"><em>here</em></a> for other versions)</li>
+<li><tt class="docutils literal"><span class="pre">/usr/local/foundationdb/data/&lt;port&gt;</span></tt> on OS X.</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You must always use different <tt class="docutils literal"><span class="pre">datadir</span></tt> settings for different processes!</p>
+</div>
+<p>To use multiple disks for performance and capacity improvements, configure the <tt class="docutils literal"><span class="pre">datadir</span></tt> of individual <tt class="docutils literal"><span class="pre">fdbserver</span></tt> processes to point to different disks, as follows:</p>
+<ol class="arabic">
+<li><p class="first"><a class="reference internal" href="administration.html#administration-running-foundationdb"><em>Stop</em></a> the FoundationDB server processes on a machine.</p>
+</li>
+<li><p class="first">Transfer the contents of the state subdirectories to new directories on the desired disks, and make sure the directories are writable by the <tt class="docutils literal"><span class="pre">fdbserver</span></tt>.</p>
+</li>
+<li><p class="first">Edit <a class="reference internal" href="#foundationdb-conf"><em>foundationdb.conf</em></a> to reference the new directories. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>[fdbserver.4500]
+datadir=/ssd1/foundationdb/4500
+
+[fdbserver.4501]
+datadir=/ssd2/foundationdb/4501
+</pre></div>
+</div>
+</li>
+<li><p class="first"><a class="reference internal" href="administration.html#administration-running-foundationdb"><em>Start</em></a> the FoundationDB server</p>
+</li>
+</ol>
+</div>
+<div class="section" id="ssd-considerations">
+<span id="ssd-info"></span><h3>SSD considerations<a class="headerlink" href="#ssd-considerations" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB is designed to work with SSDs (solid state drives). SSD performance is both highly variable and hard to get good data on from public sources. Since OS configuration, controller, firmware, and driver can each have a large impact on performance (up to an order of magnitude), drives should be tested to make sure the advertised performance characteristics are being achieved. Tests should be conducted with the same load profile as FoundationDB, which typically creates a workload of mixed small reads and writes at a high queue depth.</p>
+<p>SSDs are unlike HDDs in that they fail after a certain amount of wear. FoundationDB will use all of the SSDs in the cluster at approximately the same rate. Therefore, if a cluster is started on brand new SSDs, all of them will fail due to wear at approximately the same time. To prevent this occurrence, rotate new drives into the cluster on a continuous basis and monitor their S.M.A.R.T. attributes to check wear levels.</p>
+<p>Among SSDs in mid-2013, FoundationDB recommends the Intel SSD DC S3700 for best performance. We also recommend the Intel SSD DC S3500, which delivers somewhat lower performance and lower write endurance at a lower price point. The OCZ Vertex 4 with firmware 1.5+ has the best performance among consumer drives, but we have encountered problems with consumer drives failing when subjected to sustained database loads. Many other drives with SandForce controllers also provide acceptable performance. If you are planning a large purchase, contact us for our latest recommendations.</p>
+</div>
+<div class="section" id="filesystem">
+<h3>Filesystem<a class="headerlink" href="#filesystem" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB recommends the ext4 filesystem. (However, see <a class="reference internal" href="platforms.html#platform-ubuntu-12"><em>Platform Issues for Ubuntu 12.x</em></a> for an issue relating to ext4 on that platform.)</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<ul class="last simple">
+<li>FoundationDB requires filesystem support for kernel asynchronous I/O.</li>
+<li>Older filesystems such as ext3 lack important features for operating safely and efficiently with an SSD.</li>
+<li>Copy-on-write type filesystems (such as Btrfs) will likely have poor performance with FoundationDB.</li>
+</ul>
+</div>
+<p>Ext4 filesystems should be mounted with mount options <tt class="docutils literal"><span class="pre">default,noatime,discard</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <tt class="docutils literal"><span class="pre">noatime</span></tt> option disables updating of access times when reading files, an unneeded feature for FoundationDB that increases write activity on the disk. The discard option enables <a class="reference external" href="/web/20150325003225/http://en.wikipedia.org/wiki/TRIM">TRIM</a> support, allowing the operating system to efficiently inform the SSD of erased blocks, maintaining high write speed and increasing drive lifetime.</p>
+</div>
+</div>
+<div class="section" id="durability-and-caching">
+<h3>Durability and caching<a class="headerlink" href="#durability-and-caching" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB relies on the correct operation of <tt class="docutils literal"><span class="pre">fsync()</span></tt> to ensure the durability of transactions in the event of power failures. The combination of the file system, mount options, hard disk controller, and hard disk all need to work together properly to ensure that the operating system is correct when it reports to FoundationDB that data is safely stored.</p>
+<p>If you are unsure about your hardware setup and need to ensure that data durability is maintained in all possible situations, we recommend that you test your hardware. Brad Fitzpatrick has written a tool for this purpose, here: <a class="reference external" href="/web/20150325003225/http://brad.livejournal.com/2116715.html">http://brad.livejournal.com/2116715.html</a></p>
+</div>
+<div class="section" id="disk-partitioning">
+<h3>Disk partitioning<a class="headerlink" href="#disk-partitioning" title="Permalink to this headline">∞</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Modern Linux distributions already adhere to the suggestions below for newly formatted disks. If your system is recently installed this section can be skipped.</p>
+</div>
+<p>For performance reasons, it is critical that partitions on SSDs in Linux be aligned with the Erase Block Size (EBS) of the drive. The value of the EBS is vendor specific, but a value of 1024 KiB is both greater than or equal to and a multiple of any current EBS, so is safe to use with any SSD. (Defaulting to 1024 KiB is how Windows 7 and recent Linux distributions guarantee efficient SSD operation.)
+To verify that the start of the partition is aligned with the EBS of the drive use the <tt class="docutils literal"><span class="pre">fdisk</span></tt> utility:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ sudo fdisk -l /dev/sdb
+
+Disk /dev/sdb: 128.0 GB, 128035676160 bytes
+30 heads, 63 sectors/track, 132312 cylinders, total 250069680 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0xe5169faa
+
+   Device Boot     Start         End      Blocks   Id  System
+     /dev/sdb1      2048   250069679   125033816   83  Linux
+</pre></div>
+</div>
+<p>This output shows a properly partitioned disk in Ubuntu 12.04.</p>
+<p>When creating a partition for use with FoundationDB using the standard Linux fdisk utility, DOS compatibility mode should be disabled (<tt class="docutils literal"><span class="pre">c</span></tt> command in interactive mode) and display units should be set to sectors (<tt class="docutils literal"><span class="pre">u</span></tt> command in interactive mode), rather than cylinders. Again, this is the default mode in recent Linux distributions but must be configured on older systems.</p>
+<p>For an SSD with a single partition, the partition should typically begin at sector 2048 (512 byte sectors yields 1024 KiB alignment).</p>
+</div>
+</div>
+<div class="section" id="large-cluster-performance">
+<span id="configuration-large-cluster-performance"></span><h2>Large cluster performance<a class="headerlink" href="#large-cluster-performance" title="Permalink to this headline">∞</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For small-to-medium clusters (32 processes or fewer), FoundationDB&#8217;s default behavior generally provides the best performance, and you should ignore this section. Further configuration is recommended only for large clusters (&gt; 32 processes) or if you have special latency requirements.</p>
+</div>
+<p>In a FoundationDB cluster, each of the <tt class="docutils literal"><span class="pre">fdbserver</span></tt> processes perform different tasks. FoundationDB automatically assigns each machine in the cluster a <tt class="docutils literal"><span class="pre">class</span></tt> that specifies the tasks it will perform. For large clusters, FoundationDB also provides the ability to tune cluster performance by manually assigning the <tt class="docutils literal"><span class="pre">class</span></tt> of some machines.</p>
+<p>To assign machine classes manually, set the <tt class="docutils literal"><span class="pre">class=transaction</span></tt> parameter in <a class="reference internal" href="#foundationdb-conf"><em>foundationdb.conf</em></a> on all processes on selected machines. The ratio of total processes to <tt class="docutils literal"><span class="pre">class</span></tt>-specified processes should be about 8:1. For example, if you have 64 processes on 16 machines, you would set <tt class="docutils literal"><span class="pre">class=transaction</span></tt> for 8 processes on 2 machines.</p>
+<p>For large clusters with high write workloads (greater than 100,000 writes/second), you can increase performance by increasing the number of proxies, resolvers, and log servers. These are set using <tt class="docutils literal"><span class="pre">fdbcli</span></tt> in equal (1:1:1) proportions among the processes on machines set to <tt class="docutils literal"><span class="pre">class=transaction</span></tt>.</p>
+<p>For example, if you have 384 processes on 96 machines, and a workload greater than 100,000 writes per second, you would set <tt class="docutils literal"><span class="pre">class=transaction</span></tt> for 48 processes on 12 machines. Of the latter, you would set 16 processes on 4 machines each as <em>proxies</em>, <em>resolvers</em>, and <em>log servers</em>. To do so, you would issue the <tt class="docutils literal"><span class="pre">fdbcli</span></tt> commands:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdb&gt; configure proxies=16
+fdb&gt; configure resolvers=16
+fdb&gt; configure logs=16
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the present release, the default value for proxies and log servers is 3 and for resolvers is 1. The ratios discussed above are guidelines; regardless of them, you should not set the value of a process type to less than its default. For example, on clusters ranging from 36 to 60 processes with high write workloads, you may choose to increase the number of resolvers to 2. In this case, you would nevertheless leave the number of proxies and log servers at their default values of 3.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The conflict-resolution algorithm used by FoundationDB is conservative: it guarantees that no conflicting transactions will be committed, but it may fail to commit some transactions that theoretically could have been. The effects of this conservatism may increase as you increase the number of proxies. It is therefore important to employ the recommended techniques for <a class="reference internal" href="developer-guide.html#developer-guide-transaction-conflicts"><em>minimizing conflicts</em></a> when increasing the number of proxies.</p>
+</div>
+<p>Please contact us if you are interested in more details or if you are benchmarking or performance-tuning on large clusters. Also see our <a class="reference external" href="/web/20150325003225/https://foundationdb.com/performance">performance benchmarks</a> for a baseline of how a well-configured cluster should perform.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Configuration</a><ul><li><a class="reference internal" href="#system-requirements">System requirements</a></li><li><a class="reference internal" href="#screencast">Screencast</a></li><li><a class="reference internal" href="#choosing-coordination-servers">Choosing coordination servers</a></li><li><a class="reference internal" href="#changing-coordination-servers">Changing coordination servers</a></li><li><a class="reference internal" href="#changing-the-cluster-description">Changing the cluster description</a></li><li><a class="reference internal" href="#the-configuration-file">The configuration file</a><ul><li><a class="reference internal" href="#fdbmonitor-section"><tt class="docutils literal"><span class="pre">[fdbmonitor]</span></tt> section</a></li><li><a class="reference internal" href="#general-section"><tt class="docutils literal"><span class="pre">[general]</span></tt> section</a></li><li><a class="reference internal" href="#fdbserver-section"><tt class="docutils literal"><span class="pre">[fdbserver]</span></tt> section</a></li><li><a class="reference internal" href="#fdbserver-id-section-s"><tt class="docutils literal"><span class="pre">[fdbserver.&lt;ID&gt;]</span></tt> section(s)</a></li><li><a class="reference internal" href="#backup-agent-sections">Backup agent sections</a></li></ul></li><li><a class="reference internal" href="#choosing-a-redundancy-mode">Choosing a redundancy mode</a><ul><li><a class="reference internal" href="#single-datacenter-modes">Single datacenter modes</a></li><li><a class="reference internal" href="#datacenter-aware-mode">Datacenter-aware mode</a></li><li><a class="reference internal" href="#changing-redundancy-mode">Changing redundancy mode</a></li></ul></li><li><a class="reference internal" href="#configuring-the-storage-subsystem">Configuring the storage subsystem</a><ul><li><a class="reference internal" href="#storage-engines">Storage engines</a></li><li><a class="reference internal" href="#storage-locations">Storage locations</a></li><li><a class="reference internal" href="#ssd-considerations">SSD considerations</a></li><li><a class="reference internal" href="#filesystem">Filesystem</a></li><li><a class="reference internal" href="#durability-and-caching">Durability and caching</a></li><li><a class="reference internal" href="#disk-partitioning">Disk partitioning</a></li></ul></li><li><a class="reference internal" href="#large-cluster-performance">Large cluster performance</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003225/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003225/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003225/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003225/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003225js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:25 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:28:58 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

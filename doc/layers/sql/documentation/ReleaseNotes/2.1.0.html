@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=331;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SQL Layer 2.1.0
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/ReleaseNotes/2.1.0.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003612/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003612/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Community</a></li>
+<li><a href=../../../../courses/index.html>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">Release Notes</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../documentation/latest/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="sql-layer-2-1-0">
+<span id="release-notes-2-1-0"></span><h1>SQL Layer 2.1.0<a class="headerlink" href="#sql-layer-2-1-0" title="Permalink to this headline">∞</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please see the <a class="reference internal" href=../Admin/administration.html><em>Upgrading</em></a> section before installing this release.</p>
+</div>
+<div class="section" id="major-new-features">
+<h2>Major New Features<a class="headerlink" href="#major-new-features" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="relaxed-isolation-levels">
+<h3>Relaxed Isolation Levels<a class="headerlink" href="#relaxed-isolation-levels" title="Permalink to this headline">∞</a></h3>
+<p>In addition to the <tt class="docutils literal"><span class="pre">SERIALIZABLE</span></tt> default, the following relaxed isolation levels can to more finely control the scope and visibility of the data being accessed. See <a class="reference internal" href=../SQL/other/set.html><em>SET</em></a> for usage details.</p>
+<div class="section" id="snapshot">
+<h4>SNAPSHOT<a class="headerlink" href="#snapshot" title="Permalink to this headline">∞</a></h4>
+<p>Perform reads using Key-Value Store <a class="reference external" href=../../../../documentation/3.0/developer-guide.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">snapshot isolation</em></a>. High contention scenarios can benefit from this mode by more precisely controlling the reads that contribute to conflicts.</p>
+</div>
+<div class="section" id="read-committed-no-snapshot">
+<h4>READ COMMITTED NO SNAPSHOT<a class="headerlink" href="#read-committed-no-snapshot" title="Permalink to this headline">∞</a></h4>
+<p>Supports long running, read only queries. Multiple internal transactions are used which allows a statement to run longer than the normal five second window. Query results may include parts from both before and after changes made by another transaction. This is therefore a good choice only when the data is not changing or the result calculation can tolerate some inconsistencies.</p>
+</div>
+</div>
+<div class="section" id="rest-cross-site-request-forgery-csrf-protection">
+<h3>REST Cross Site Request Forgery (CSRF) Protection<a class="headerlink" href="#rest-cross-site-request-forgery-csrf-protection" title="Permalink to this headline">∞</a></h3>
+<p>Referer based CSRF protection for the REST interface available and enabled by default. Along with making all <tt class="docutils literal"><span class="pre">GET</span></tt> resources side-effect free, this basic protection type allows for safer two-tier usage and an added layer of security for traditional deployments. See <a class="reference internal" href=../Admin/configuration.html><em>CSRF Configuration</em></a> for more details.</p>
+</div>
+<div class="section" id="stored-procedure-security-policy">
+<h3>Stored Procedure Security Policy<a class="headerlink" href="#stored-procedure-security-policy" title="Permalink to this headline">∞</a></h3>
+<p>Stored procedures are executed with separation using the standard Java Security Manager and Policy infrastructure. Default limitations restrict access down to only the embedded JDBC client and prevent access, malicious or otherwise, to internal classes or data. See <a class="reference internal" href=../Admin/configuration.html><em>Policy File</em></a> for more details.</p>
+</div>
+<div class="section" id="hash-join">
+<h3>Hash Join<a class="headerlink" href="#hash-join" title="Permalink to this headline">∞</a></h3>
+<p>Execution plans can use use a hash based join strategy via two new operators, <tt class="docutils literal"><span class="pre">Using_Hashtable</span></tt> and <tt class="docutils literal"><span class="pre">HashTableLookup_Default</span></tt>. This is used as an alternative to nested loops when there is an clear advantage, such as when an index could not be used or is not otherwise available.</p>
+</div>
+</div>
+<div class="section" id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="Permalink to this headline">∞</a></h2>
+<ul>
+<li><p class="first">Performance dramatically improved for common cases of <tt class="docutils literal"><span class="pre">DROP</span> <span class="pre">SCHEMA</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1484/index.html>#1484</a>)</p>
+</li>
+<li><p class="first">RHEL/CentOS 6 start-up script will load <tt class="docutils literal"><span class="pre">/etc/sysconfig/fdb-sql-layer</span></tt> if present. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1498/index.html>#1498</a>)</p>
+</li>
+<li><p class="first">Improve error reporting from embedded JDBC. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1517/index.html>#1517</a>)</p>
+</li>
+<li><p class="first">Dedicated error codes for unsupported SQL features. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1520/index.html>#1520</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1531/index.html>#1531</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1558/index.html>#1558</a>)</p>
+</li>
+<li><p class="first">More detail in REST error responses. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1525/index.html>#1525</a>)</p>
+</li>
+<li><p class="first">SQL, REST, Embedded JDBC, and routine security use the plug-in infrastructure. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1541/index.html>#1541</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1542/index.html>#1542</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1550/index.html>#1550</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1582/index.html>#1582</a>)</p>
+</li>
+<li><p class="first">Inner queries can introduce new aggregates for outer scope when unambiguous. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1544/index.html>#1544</a>)</p>
+</li>
+<li><p class="first">Timezone, as specified by <tt class="docutils literal"><span class="pre">user.timezone</span></tt>, is validated and used consistently. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1557/index.html>#1557</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1650/index.html>#1650</a>)</p>
+</li>
+<li><p class="first">Flatten more cases of subqueries into the main plan. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1586/index.html>#1586</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">STATEMENT</span></tt> and <tt class="docutils literal"><span class="pre">STATEMENT_WITH_RANGE_CHECK</span></tt> insert pipelining options. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1588/index.html>#1588</a> | <a class="reference internal" href=../Admin/configuration.html><em>constraintCheckTime</em></a>)</p>
+</li>
+<li><p class="first">Embedded JDBC obeys <tt class="docutils literal"><span class="pre">sql.*</span></tt> and <tt class="docutils literal"><span class="pre">embedded_jdbc.*</span></tt> configuration options. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1594/index.html>#1594</a>)</p>
+</li>
+<li><p class="first">An existing index will be used if possible for servicing referencing side of a <tt class="docutils literal"><span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1605/index.html>#1605</a>)</p>
+</li>
+<li><p class="first">LDAP authentication. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1618/index.html>#1618</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1620/index.html>#1620</a> | <a class="reference internal" href=../Admin/security.html><em>LDAP support</em></a>)</p>
+</li>
+<li><p class="first">Include row counts and errors details for failing statements in the query log. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1624/index.html>#1624</a> | <a class="reference internal" href=../Admin/configuration.html><em>Query Logging Options</em></a>)</p>
+</li>
+<li><p class="first">Instance details periodically written to Status Monitor directory. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1625/index.html>#1625</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">statement_timeout</span></tt> configuration. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1631/index.html>#1631</a> | <a class="reference internal" href=../Admin/configuration.html><em>statement_timeout</em></a>)</p>
+</li>
+<li><p class="first">All client tools</p>
+<blockquote>
+<div><ul class="simple">
+<li>Connect with user name as schema name if one is not otherwise provided. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/108/index.html>#108</a>)</li>
+<li>Obey <tt class="docutils literal"><span class="pre">JAVA_HOME</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/118/index.html>#118</a>)</li>
+<li>Look for Java in default JRE location on Mac OS X. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/118/index.html>#118</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">fdbsqlcli</p>
+<blockquote>
+<div><ul class="simple">
+<li>Ignore comments followed by a statement terminator. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/110/index.html>#110</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">fdbsqldump</p>
+<blockquote>
+<div><ul class="simple">
+<li>Quote all identifiers by default. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1534/index.html>#1534</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/106/index.html>#106</a>)</li>
+<li>Allow <tt class="docutils literal"><span class="pre">=</span></tt> as a command line option separator. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/108/index.html>#108</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">fdbsqlload</p>
+<blockquote>
+<div><ul class="simple">
+<li>Include current encoding in error message after decode failure. (<a class="reference external" href=../../../../FoundationDB/sql-layer-client-tools/pull/114/index.html>#114</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">JDBC</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ResultSetMetaData</span></tt> queries information about the underlying column, when available, to allow schema, table, column, nullability, and auto-increment attributes to be accessed. (<a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/46/index.html>#46</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/47/index.html>#47</a>)</li>
+<li>Use SQL Layer names for <tt class="docutils literal"><span class="pre">ResultSetMetaData#getTypeName()</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/48/index.html>#48</a>)</li>
+<li><a class="reference external" href=../../../../javase/7/docs/api/javax/sql/DataSource.html>DataSource</a> implementations (<tt class="docutils literal"><span class="pre">FDBSimpleDataSource</span></tt>, <tt class="docutils literal"><span class="pre">FDBPoolingDataSource</span></tt>, <tt class="docutils literal"><span class="pre">FDBConnectionPoolDataSource</span></tt>, <tt class="docutils literal"><span class="pre">FDBXADataSource</span></tt>). (<a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/50/index.html>#50</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/51/index.html>#51</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="behavior-changes">
+<span id="id1"></span><h2>Behavior Changes<a class="headerlink" href="#behavior-changes" title="Permalink to this headline">∞</a></h2>
+<p>Please contact us <a class="reference external" href="mailto:sql%40foundationdb.com">sql<span>&#64;</span>foundationdb<span>&#46;</span>com</a> if any of these changes affect your application or you would like more details.</p>
+<ul>
+<li><p class="first">Key-Value Store 3.0 is required.</p>
+</li>
+<li><p class="first">JVM option <tt class="docutils literal"><span class="pre">-XX:-OmitStackTraceInFastThrow</span></tt> used by default to ensure stack traces are present in log messages for serious errors. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1450/index.html>#1450</a>)</p>
+</li>
+<li><p class="first">Column returned when <a class="reference internal" href=../Admin/configuration.html><em>OutputFormat=&#8217;json&#8217;</em></a> uses the json type OID, which many drivers conveniently turn in to native data structures. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1468/index.html>#1468</a>)</p>
+</li>
+<li><p class="first">REST endpoints with side-effects (<tt class="docutils literal"><span class="pre">/call</span></tt>, <tt class="docutils literal"><span class="pre">/sql/query</span></tt>, <tt class="docutils literal"><span class="pre">/sql/explain</span></tt>) changed from <tt class="docutils literal"><span class="pre">GET</span></tt> to <tt class="docutils literal"><span class="pre">POST</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1501/index.html>#1501</a> | <a class="reference internal" href=../REST/rest.api.reference.html><em>REST API Reference</em></a>)</p>
+</li>
+<li><p class="first"><a class="reference internal" href=../Admin/configuration.html><em>http.csrf_protection.type</em></a> defaults to <tt class="docutils literal"><span class="pre">referer</span></tt>, limiting non-<tt class="docutils literal"><span class="pre">GET</span></tt> access to domains in <a class="reference internal" href=../Admin/configuration.html><em>http.csrf_protection.allowed_referers</em></a>.</p>
+</li>
+<li><p class="first">Due to possibility of incorrect results, indexes on <tt class="docutils literal"><span class="pre">BOOLEAN</span></tt> columns are temporarily disallowed.</p>
+</li>
+<li><p class="first">JDBC</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">ResultSetMetaData</span></tt> change brings the library in conformance with the API as specified in Java 6 but does incur an additional query on first access.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="bug-fixes">
+<h2>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">∞</a></h2>
+<ul>
+<li><p class="first">Nested <tt class="docutils literal"><span class="pre">UNION</span></tt> clauses have extra or missing type casts when nested or with query parameters. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1470/index.html>#1470</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1525/index.html>#1525</a>)</p>
+</li>
+<li><p class="first">Index bounds used the type of the index column instead of the actual bound. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1474/index.html>#1474</a>).</p>
+</li>
+<li><p class="first">Slight tweaks to emulated metadata queries as used by PgPool-II. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1481/index.html>#1481</a>)</p>
+</li>
+<li><p class="first">Expression subqueries could not be used as conditions. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1483/index.html>#1483</a>)</p>
+</li>
+<li><p class="first">Significant internal cleanup of intermediate row representations.</p>
+</li>
+<li><p class="first">Mac OS X installer no longer leaves duplicate configuration files. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1499/index.html>#1499</a>)</p>
+</li>
+<li><p class="first">Some complex expression, like subqueries, operations could not be visited when planning. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1504/index.html>#1504</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">EXCEPT</span></tt> could not be explained. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1514/index.html>#1514</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1630/index.html>#1630</a>)</p>
+</li>
+<li><p class="first">Internal error when aggregate used in <tt class="docutils literal"><span class="pre">HAVING</span></tt> clause. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1500/index.html>#1500</a>)</p>
+</li>
+<li><p class="first">Using <tt class="docutils literal"><span class="pre">DISTINCT</span></tt> in subquery caused an error. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1553/index.html>#1553</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">PATCH</span></tt> and <tt class="docutils literal"><span class="pre">DELETE</span></tt> REST did not respond with JSON for errors. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1556/index.html>#1556</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">information_schema.referential_constraints</span></tt> reported incorrect value for <tt class="docutils literal"><span class="pre">match_type</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1554/index.html>#1554</a>)</p>
+</li>
+<li><p class="first">Subqueries were not allowed in <tt class="docutils literal"><span class="pre">VALUES</span></tt> (<a class="reference external" href=../../../../FoundationDB/sql-parser/pull/158/index.html>#158</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1555/index.html>#1555</a>)</p>
+</li>
+<li><p class="first">Outer column could not be referenced from aggregate in subquery (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1559/index.html>#1559</a>)</p>
+</li>
+<li><p class="first">Unify type resolution for <tt class="docutils literal"><span class="pre">COALESCE</span></tt>, <tt class="docutils literal"><span class="pre">IF</span></tt>, <tt class="docutils literal"><span class="pre">IFNULL</span></tt>, and <tt class="docutils literal"><span class="pre">NULLIF</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-parser/pull/159/index.html>#159</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1571/index.html>#1571</a>, <a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1577/index.html>#1577</a>)</p>
+</li>
+<li><p class="first">DDL did not obey <tt class="docutils literal"><span class="pre">restrict_user_schema</span></tt> setting. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1570/index.html>#1570</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">COUNT(*)</span></tt> of a subquery returned number of rows for table in subquery. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1563/index.html>#1563</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> lost in many-to-many queries. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1573/index.html>#1573</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">UNION</span></tt> with query parameters caused AssertionError. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1581/index.html>#1581</a>)</p>
+</li>
+<li><p class="first">Operator cursors not always closed. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1595/index.html>#1595</a>)</p>
+</li>
+<li><p class="first">Constraints could be dropped by their associated index. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1615/index.html>#1615</a>)</p>
+</li>
+<li><p class="first">Constant functions could not be used as conditions. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1623/index.html>#1623</a>)</p>
+</li>
+<li><p class="first">Incorrect index usage for null-tolerant conditions. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1626/index.html>#1626</a>)</p>
+</li>
+<li><p class="first">Could not <tt class="docutils literal"><span class="pre">JOIN</span></tt> a known-<tt class="docutils literal"><span class="pre">NULL</span></tt> table source. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1633/index.html>#1633</a>)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">NULL</span></tt> values could not be loaded with <tt class="docutils literal"><span class="pre">COPY</span></tt>. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1634/index.html>#1634</a>)</p>
+</li>
+<li><p class="first">Integer comparison could wrap producing incorrect results. (<a class="reference external" href=../../../../FoundationDB/sql-layer/pull/1643/index.html>#1643</a>)</p>
+</li>
+<li><p class="first">JDBC</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unclear, internal error was thrown when unsupported aspects of the protocol were encountered. (<a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/49/index.html>#49</a>)</li>
+<li>URL options for Kerberos used the wrong name. (<a class="reference external" href=../../../../FoundationDB/sql-layer-adapter-jdbc/pull/52/index.html>#52</a>)</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SQL Layer 2.1.0</a><ul><li><a class="reference internal" href="#major-new-features">Major New Features</a><ul><li><a class="reference internal" href="#relaxed-isolation-levels">Relaxed Isolation Levels</a><ul><li><a class="reference internal" href="#snapshot">SNAPSHOT</a></li><li><a class="reference internal" href="#read-committed-no-snapshot">READ COMMITTED NO SNAPSHOT</a></li></ul></li><li><a class="reference internal" href="#rest-cross-site-request-forgery-csrf-protection">REST Cross Site Request Forgery (CSRF) Protection</a></li><li><a class="reference internal" href="#stored-procedure-security-policy">Stored Procedure Security Policy</a></li><li><a class="reference internal" href="#hash-join">Hash Join</a></li></ul></li><li><a class="reference internal" href="#new-features">New Features</a></li><li><a class="reference internal" href="#behavior-changes">Behavior Changes</a></li><li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../foundationdb/index.html>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../legal/terms/index.html>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:12 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:33:15 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

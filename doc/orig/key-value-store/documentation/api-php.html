@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app19.us.archive.org";archive_analytics.values.server_ms=244;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+PHP API
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/api-php.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003220/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003220im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="2wH5wBJTQlOB6pY2igwQDsv+USjauG5yahhX9gXt9dA=" name="csrf-token" />
+<link href="/web/20150325003220cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003220cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/api-php.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/api-php.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003220" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:20 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150428170738/https://foundationdb.com/key-value-store/documentation/api-php.html" title="28 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:20 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325022100/https://foundationdb.com/key-value-store/documentation/api-php.html" title="2:21:00 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:20 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003220*/https://foundationdb.com/key-value-store/documentation/api-php.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003220/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003220im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003220/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003220/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003220/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003220/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003220/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003220/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003220/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003220/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-php.html" class="active">PHP API</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003220/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003220/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="building-with-the-api.html">Building with the API</a> &raquo;
+    <a href="api-reference.html">API Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003220/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003220im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="php-api">
+<h1>PHP API<a class="headerlink" href="#php-api" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB PHP API is distributed as a PEAR package. For example, to install from the command line:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">user@host$ sudo pear install foundationdb-3.0.2.tgz</span>
+</pre></div>
+</div>
+<p>After installation, the file <tt class="docutils literal"><span class="pre">fdb.php</span></tt> should available for all scripts to require.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For the language binding to function, FoundationDB client binaries whose version is at least as recent
+must be installed. If you upgrade a language binding to a new version, you may need to upgrade the FoundationDB client binaries as well. See <a class="reference internal" href="api-general.html#installing-client-binaries"><em>Installing FoundationDB client binaries</em></a>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The FoundationDB bindings are supported only for PHP 5.4 and 5.5 on 64-bit Linux.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">PHP is <a class="reference external" href="/web/20150325003220/https://bugs.php.net/bug.php?id=62210">known by its developers to leak memory</a>. As software that throws Exceptions, the developers of this extension have seen this bug manifested. If you see leaks reported by PHP, please be sure to check that the leak is not coming from the core Zend engine.</p>
+</div>
+</div>
+<div class="section" id="namespace-\FDB">
+<span id="api-object"></span><h2>API object<a class="headerlink" href="#namespace-\FDB" title="Permalink to this headline">∞</a></h2>
+<dl class="class">
+<dt id="\FDB\API">
+<em class="property">class </em><tt class="descname">API</tt><a class="headerlink" href="#\FDB\API" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>When you require the <tt class="docutils literal"><span class="pre">fdb.php</span></tt> file, the only useful action is to call the <a class="reference internal" href="#\FDB\API::api_version" title="\FDB\API::api_version"><tt class="xref php php-func docutils literal"><span class="pre">api_version</span></tt></a> function from the <a class="reference internal" href="#\FDB\API" title="\FDB\API"><tt class="xref php php-class docutils literal"><span class="pre">API</span></tt></a> class.</p>
+<dl class="staticmethod">
+<dt id="\FDB\API::api_version">
+<em class="property">static </em><tt class="descclassname">\FDB\API::</tt><tt class="descname">api_version</tt><big>(</big><em>$version</em><big>)</big><a class="headerlink" href="#\FDB\API::api_version" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies the version of the API that the application uses. Returns an instance of <a class="reference internal" href="#\FDB\API" title="\FDB\API"><tt class="xref php php-class docutils literal"><span class="pre">API</span></tt></a>. This function allows future versions of FoundationDB to make API changes without breaking existing programs.  The current version of the API is 300.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You must call <tt class="docutils literal"><span class="pre">\FDB\API::api_version(...)</span></tt> before using any other part of the API.  With the result of this call you have access to the remaining methods of <a class="reference internal" href="#\FDB\API" title="\FDB\API"><tt class="xref php php-class docutils literal"><span class="pre">API</span></tt></a>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">FoundationDB encapsulates multiple versions of its interface by requiring the client to explicitly specify the version of the API it uses. The purpose of this design is to allow you to upgrade the server, client libraries, or bindings without having to modify client code. The client libraries support all previous versions of the API. The API version specified by the client is used to control the behavior of the binding. You can therefore upgrade to more recent packages (and thus receive various improvements) without having to change your code.</p>
+</div>
+<p>After requiring the <tt class="docutils literal"><span class="pre">fdb.php</span></tt> file and selecting an API version, you probably want to open a <a class="reference internal" href="#\FDB\Database" title="\FDB\Database"><tt class="xref php php-class docutils literal"><span class="pre">Database</span></tt></a>. The simplest way of doing this is to use the <a class="reference internal" href="#\FDB\API::open" title="\FDB\API::open"><tt class="xref php php-func docutils literal"><span class="pre">open</span></tt></a> method:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">require_once(&#39;fdb.php&#39;);</span>
+<span class="x">$api = \FDB\API::api_version(300);</span>
+<span class="x">$db = $api-&gt;open();</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="\FDB\API::open">
+<tt class="descclassname">\FDB\API::</tt><tt class="descname">open</tt><big>(</big><em>$cluster_file = NULL</em>, <em>$database_name = NULL</em><big>)</big><a class="headerlink" href="#\FDB\API::open" title="Permalink to this definition">∞</a></dt>
+<dd><p>Initializes the FoundationDB API, connects to the cluster specified by the <a class="reference internal" href="administration.html#foundationdb-cluster-file"><em>cluster file</em></a>, and opens the database with the specified name. This function is often called without any parameters, using only the defaults. If no cluster file is passed, FoundationDB automatically <a class="reference internal" href="administration.html#specifying-a-cluster-file"><em>determines a cluster file</em></a> with which to connect to a cluster.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In this release, db_name must be &#8220;DB&#8221;.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="#\FDB\API::open" title="\FDB\API::open"><tt class="xref php php-func docutils literal"><span class="pre">open</span></tt></a> combines the effect of <a class="reference internal" href="#\FDB\API::start_network" title="\FDB\API::start_network"><tt class="xref php php-func docutils literal"><span class="pre">start_network</span></tt></a> and <a class="reference internal" href="#\FDB\API::create_cluster" title="\FDB\API::create_cluster"><tt class="xref php php-func docutils literal"><span class="pre">create_cluster</span></tt></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\API::start_network">
+<tt class="descclassname">\FDB\API::</tt><tt class="descname">start_network</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\API::start_network" title="Permalink to this definition">∞</a></dt>
+<dd><p>Must be called if not using <a class="reference internal" href="#\FDB\API::open" title="\FDB\API::open"><tt class="xref php php-func docutils literal"><span class="pre">open</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\API::create_cluster">
+<tt class="descclassname">\FDB\API::</tt><tt class="descname">create_cluster</tt><big>(</big><em>$cluster_file = NULL</em><big>)</big><a class="headerlink" href="#\FDB\API::create_cluster" title="Permalink to this definition">∞</a></dt>
+<dd><p>Connects to the cluster specified by <a class="reference internal" href="administration.html#foundationdb-cluster-file"><em>cluster_file</em></a>, or by a <a class="reference internal" href="administration.html#default-cluster-file"><em>default cluster file</em></a> if
+<tt class="docutils literal"><span class="pre">cluster_file</span></tt> is NULL. <a class="reference internal" href="#\FDB\API::start_network" title="\FDB\API::start_network"><tt class="xref php php-func docutils literal"><span class="pre">start_network</span></tt></a> must be called first.</p>
+<p>Returns a <a class="reference internal" href="#\FDB\Cluster" title="\FDB\Cluster"><tt class="xref php php-class docutils literal"><span class="pre">Cluster</span></tt></a> object.</p>
+</dd></dl>
+
+<dl class="attr">
+<dt>
+<tt class="descname">fdb.options</tt></dt>
+<dd><p>A singleton providing options which affect the entire FoundationDB client.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an error to set these options after the first call to <tt class="xref php php-meth docutils literal"><span class="pre">API::open</span></tt> or <tt class="xref php php-meth docutils literal"><span class="pre">API::start_network</span></tt> anywhere in your application.</p>
+</div>
+<dl class="method">
+<dt>
+<tt class="descname">options.set_trace_enable($output_directory = NULL)</tt></dt>
+<dd><p>Enables trace file generation on this FoundationDB client. Trace files will be generated in the specified output directory. If the directory is specified as <tt class="docutils literal"><span class="pre">NULL</span></tt>, then the output directory will be the current working directory.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The specified output directory must be unique to this client. In the present release, trace logging does not allow two clients to share a directory.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">options.set_trace_max_logs_size($bytes)</tt></dt>
+<dd><p>Sets the maximum size in bytes for the sum of this FoundationDB client&#8217;s trace output files in a single log directory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">options.set_trace_roll_size($bytes)</tt></dt>
+<dd><p>Sets the maximum size in bytes of a single trace output file for this FoundationDB client.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The following options are only used when connecting to a <a class="reference internal" href="tls.html"><em>TLS-enabled cluster</em></a>.</p>
+</div>
+<dl class="method">
+<dt>
+<tt class="descname">options.set_tls_plugin($plugin_path_or_name)</tt></dt>
+<dd><p>Sets the <a class="reference internal" href="tls.html#configuring-tls-plugin"><em>TLS plugin</em></a> to load. This option, if used, must be set before any other TLS options.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">options.set_tls_cert_path($path_to_file)</tt></dt>
+<dd><p>Sets the path for the file from which the <a class="reference internal" href="tls.html#tls-certificate-file"><em>certificate chain</em></a> will be loaded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">options.set_tls_key_path($path_to_file)</tt></dt>
+<dd><p>Sets the path for the file from which to load the <a class="reference internal" href="tls.html#tls-key-file"><em>private key</em></a> corresponding to your own certificate.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">options.set_tls_verify_peers($criteria)</tt></dt>
+<dd><p>Sets the <a class="reference internal" href="tls.html#tls-verify-peers"><em>peer certificate field verification criteria</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">fdb.options.set_tls_cert_bytes($bytes)</tt></dt>
+<dd><p>Sets the certificate chain.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">fdb.options.set_tls_key_bytes($bytes)</tt></dt>
+<dd><p>Set the private key corresponding to your own certificate.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="configuration-in-ini-file">
+<h2>Configuration in .ini file<a class="headerlink" href="#configuration-in-ini-file" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">foundationdb.cluster_file</span></tt>: Set a default cluster file for use when one is not passed to <a class="reference internal" href="#\FDB\API::open" title="\FDB\API::open"><tt class="xref php php-func docutils literal"><span class="pre">open</span></tt></a> or <a class="reference internal" href="#\FDB\API::create_cluster" title="\FDB\API::create_cluster"><tt class="xref php php-func docutils literal"><span class="pre">create_cluster</span></tt></a>.</li>
+<li><tt class="docutils literal"><span class="pre">foundationdb.debug_trace_path</span></tt>: Set the path where trace files should go. Note that invalid paths will prevent the networking engine from starting.</li>
+</ul>
+</div>
+<div class="section" id="cluster-objects">
+<h2>Cluster objects<a class="headerlink" href="#cluster-objects" title="Permalink to this headline">∞</a></h2>
+<dl class="class">
+<dt id="\FDB\Cluster">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">Cluster</tt><a class="headerlink" href="#\FDB\Cluster" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Cluster::create_database">
+<tt class="descclassname">\FDB\Cluster::</tt><tt class="descname">create_database</tt><big>(</big><em>$database_name = NULL</em><big>)</big><a class="headerlink" href="#\FDB\Cluster::create_database" title="Permalink to this definition">∞</a></dt>
+<dd><p>Creates a database with the given name.</p>
+<p>Returns a <a class="reference internal" href="#\FDB\Database" title="\FDB\Database"><tt class="xref php php-class docutils literal"><span class="pre">Database</span></tt></a> object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In this release, name <strong>must</strong> be &#8220;DB&#8221;.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="keys-and-values">
+<span id="api-php-keys"></span><h2>Keys and values<a class="headerlink" href="#keys-and-values" title="Permalink to this headline">∞</a></h2>
+<p>Keys and values in FoundationDB are simple byte strings.</p>
+<p>To encode other data types, see <a class="reference internal" href="data-modeling.html#encoding-data-types"><em>Encoding data types</em></a> and the <a class="reference internal" href="#api-php-tuple-layer"><em>tuple layer</em></a>.</p>
+<div class="section" id="as-foundationdb-key-and-as-foundationdb-value">
+<h3><tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt> and <tt class="docutils literal"><span class="pre">as_foundationdb_value</span></tt><a class="headerlink" href="#as-foundationdb-key-and-as-foundationdb-value" title="Permalink to this headline">∞</a></h3>
+<p>In some cases, you may have objects that are used to <em>represent</em> specific keys or values (for example, see <tt class="xref php php-class docutils literal"><span class="pre">Subspace</span></tt>). As a convenience, the language binding API can work seamlessly with such objects if they implement the <tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_key</span></tt> or <tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_value</span></tt> methods, respectively. API methods that accept a key will alternately accept an object that implements the <tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_key</span></tt> method. Likewise, API methods accepting a value will also accept an object that implements the <tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_value</span></tt> method.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_key</span></tt> and <tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_value</span></tt> are not intended to implement serialization protocols for object storage. Use these functions only when your object represents a specific key or value.</p>
+</div>
+</div>
+</div>
+<div class="section" id="key-selectors">
+<h2>Key selectors<a class="headerlink" href="#key-selectors" title="Permalink to this headline">∞</a></h2>
+<dl class="class">
+<dt id="\FDB\KeySelector">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">KeySelector</tt><a class="headerlink" href="#\FDB\KeySelector" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>FoundationDB&#8217;s lexicographically ordered data model permits finding keys based on their order (for example, finding the first key in the database greater than a given key). Key selectors represent a description of a key in the database that could be resolved to an actual key by <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::get_key</span></tt> or used directly as the beginning or end of a range in <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::get_range</span></tt>. For more about how key selectors work, see <a class="reference internal" href="developer-guide.html#key-selectors"><em>Key selectors</em></a>.</p>
+<p>A key selector can be created directly with a specifed reference key, equality flag, and offset:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$key_selector = new KeySelector($key, $or_equal, $offset)</span>
+</pre></div>
+</div>
+<p>However, it is usually more convenient to obtain a key selector with one of the following methods:</p>
+<dl class="staticmethod">
+<dt id="\FDB\KeySelector::last_less_than">
+<em class="property">static </em><tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">last_less_than</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::last_less_than" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a key selector referencing the last (greatest) key in the database less than the specified key.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="\FDB\KeySelector::last_less_or_equal">
+<em class="property">static </em><tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">last_less_or_equal</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::last_less_or_equal" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a key selector referencing the last (greatest) key less than, or equal to, the specified key.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="\FDB\KeySelector::first_greater_than">
+<em class="property">static </em><tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">first_greater_than</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::first_greater_than" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a key selector referencing the first (least) key greater than the specified key.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="\FDB\KeySelector::first_greater_or_equal">
+<em class="property">static </em><tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">first_greater_or_equal</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::first_greater_or_equal" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a key selector referencing the first key greater than, or equal to, the specified key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\KeySelector::add">
+<tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">add</tt><big>(</big><em>$offset</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::add" title="Permalink to this definition">∞</a></dt>
+<dd><p>Adding an integer <tt class="docutils literal"><span class="pre">$offset</span></tt> to a <tt class="docutils literal"><span class="pre">KeySelector</span></tt> returns a key selector referencing a key <tt class="docutils literal"><span class="pre">$offset</span></tt> keys after the original <tt class="docutils literal"><span class="pre">KeySelector</span></tt>.  FoundationDB does not efficiently resolve key selectors with large offsets, so <a class="reference internal" href="known-limitations.html#dont-use-key-selectors-for-paging"><em>Key selectors with large offsets are slow</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\KeySelector::sub">
+<tt class="descclassname">\FDB\KeySelector::</tt><tt class="descname">sub</tt><big>(</big><em>$offset</em><big>)</big><a class="headerlink" href="#\FDB\KeySelector::sub" title="Permalink to this definition">∞</a></dt>
+<dd><p>Subtracting an integer <tt class="docutils literal"><span class="pre">$offset</span></tt> from a <tt class="docutils literal"><span class="pre">KeySelector</span></tt> returns a key selector referencing a key <tt class="docutils literal"><span class="pre">$offset</span></tt> keys before the original <tt class="docutils literal"><span class="pre">KeySelector</span></tt>.  FoundationDB does not efficiently resolve key selectors with large offsets, so <a class="reference internal" href="known-limitations.html#dont-use-key-selectors-for-paging"><em>Key selectors with large offsets are slow</em></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="database-objects">
+<h2>Database objects<a class="headerlink" href="#database-objects" title="Permalink to this headline">∞</a></h2>
+<dl class="class">
+<dt id="\FDB\Database">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">Database</tt><a class="headerlink" href="#\FDB\Database" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>A <tt class="docutils literal"><span class="pre">Database</span></tt> represents a FoundationDB database &#8212; a mutable, lexicographically ordered mapping from binary keys to binary values. Although <tt class="docutils literal"><span class="pre">Database</span></tt> provides convenience methods for reading and writing, modifications to a database are usually via transactions, which are usually created and committed automatically by the <tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt> method.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The convenience methods provided by <tt class="docutils literal"><span class="pre">Database</span></tt> have the same signature as the corresponding methods of <tt class="docutils literal"><span class="pre">Transaction</span></tt>. However, most of the <tt class="docutils literal"><span class="pre">Database</span></tt> methods are fully synchronous. (An exception is the methods for watches.) As a result, the <tt class="docutils literal"><span class="pre">Database</span></tt> methods do not support the use of <a class="reference internal" href="developer-guide.html#developer-guide-programming-with-futures"><em>implicit parallelism with futures</em></a>.</p>
+</div>
+<dl class="method">
+<dt id="\FDB\Database::create_transaction">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">create_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Database::create_transaction" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a> object.  Consider using the <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt></a> method to create transactions instead, since it will automatically provide you with appropriate retry behavior.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::get">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">get</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Database::get" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the value associated with the specified key in the database (or <tt class="docutils literal"><span class="pre">NULL</span></tt> if the key does not exist). This read is fully synchronous.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$db[$key]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$db-&gt;get($key)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Database::get_key">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">get_key</tt><big>(</big><em>$key_selector</em><big>)</big><a class="headerlink" href="#\FDB\Database::get_key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the key referenced by the specified <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>. This read is fully synchronous.</p>
+<p>The key is cached, providing a potential performance benefit. However, the
+value of the key is also retrieved, using network bandwidth.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::get_range">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">get_range</tt><big>(</big><em>$begin</em>, <em>$end</em><span class="optional">[</span>, <em>$limit</em>, <em>$reverse</em>, <em>$streaming_mode</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#\FDB\Database::get_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$begin</span> <span class="pre">&lt;=</span> <span class="pre">$k</span> <span class="pre">&lt;</span> <span class="pre">$end</span></tt>, and their associated values, as an iterator. The result is to be used in a <tt class="docutils literal"><span class="pre">foreach</span></tt> loop. Note the exclusion of <tt class="docutils literal"><span class="pre">$end</span></tt> from the range. This read is fully synchronous.</p>
+<p>Each of <tt class="docutils literal"><span class="pre">$begin</span></tt> and <tt class="docutils literal"><span class="pre">$end</span></tt> may be a key or a <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>. Note that in the case of a <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>, the exclusion of <tt class="docutils literal"><span class="pre">$end</span></tt> from the range still applies.</p>
+<p>If <tt class="docutils literal"><span class="pre">$limit</span></tt> is specified, then only the first <tt class="docutils literal"><span class="pre">$limit</span></tt> keys (and their values) in the range will be returned.</p>
+<p>If <tt class="docutils literal"><span class="pre">$reverse</span></tt> is TRUE, then the last <tt class="docutils literal"><span class="pre">$limit</span></tt> keys in the range will be returned in reverse order.</p>
+<p>If <tt class="docutils literal"><span class="pre">$streaming_mode</span></tt> is specified, it must be a value from the <tt class="docutils literal"><span class="pre">StreamingMode</span></tt> enumeration. It provides a hint to FoundationDB about how to retrieve the specified range. This option should generally not be specified, allowing FoundationDB to retrieve the full range very efficiently.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$db[array($begin,</span> <span class="pre">$end)]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">X</span> <span class="pre">=</span> <span class="pre">$db-&gt;get_range($begin,</span> <span class="pre">$end)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$db[array($begin,</span> <span class="pre">$end,</span> <span class="pre">-1)]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">X</span> <span class="pre">=</span> <span class="pre">$db-&gt;get_range($begin,</span> <span class="pre">$end,</span> <span class="pre">reverse=TRUE)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Database::get_range_starts_with">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">get_range_starts_with</tt><big>(</big><em>$prefix</em><span class="optional">[</span>, <em>$limit</em>, <em>$reverse</em>, <em>$streaming_mode</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#\FDB\Database::get_range_starts_with" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$k</span></tt> starts with <tt class="docutils literal"><span class="pre">$key_prefix</span></tt>, and their associated values, as an iterator. The <tt class="docutils literal"><span class="pre">$limit</span></tt>, <tt class="docutils literal"><span class="pre">$reverse</span></tt> and <tt class="docutils literal"><span class="pre">$streaming_mode</span></tt> parameters have the same meanings as in <a class="reference internal" href="#\FDB\Database::get_range" title="\FDB\Database::get_range"><tt class="xref php php-meth docutils literal"><span class="pre">get_range()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::set">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">set</tt><big>(</big><em>$key</em>, <em>$value</em><big>)</big><a class="headerlink" href="#\FDB\Database::set" title="Permalink to this definition">∞</a></dt>
+<dd><p>Associates the given <tt class="docutils literal"><span class="pre">$key</span></tt> and <tt class="docutils literal"><span class="pre">$value</span></tt>.  Overwrites any prior value associated with <tt class="docutils literal"><span class="pre">$key</span></tt>. This change will be committed immediately, and is fully synchronous.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$db[$key]</span> <span class="pre">=</span> <span class="pre">$value</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$db-&gt;set($key,</span> <span class="pre">$value)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Database::clear">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">clear</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Database::clear" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes the specified $key (and any associated value), if it exists. This change will be committed immediately, and is fully synchronous.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">unset($db[$key])</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$db-&gt;clear($key)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Database::clear_range">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">clear_range</tt><big>(</big><em>$begin</em>, <em>$end</em><big>)</big><a class="headerlink" href="#\FDB\Database::clear_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$begin</span> <span class="pre">&lt;=</span> <span class="pre">$k</span> <span class="pre">&lt;</span> <span class="pre">$end</span></tt>, and their associated values. This change will be committed immediately, and is fully synchronous.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">unset(db[array($begin,</span> <span class="pre">$end)])</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$db-&gt;clear_range($begin,</span> <span class="pre">$end)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Database::clear_range_starts_with">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">clear_range_starts_with</tt><big>(</big><em>$prefix</em><big>)</big><a class="headerlink" href="#\FDB\Database::clear_range_starts_with" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$k</span></tt> starts with <tt class="docutils literal"><span class="pre">$prefix</span></tt>, and their associated values. This change will be committed immediately, and is fully synchronous.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::get_and_watch">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">get_and_watch</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Database::get_and_watch" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns <tt class="docutils literal"><span class="pre">array($value,</span> <span class="pre">$watch)</span></tt>, where <tt class="docutils literal"><span class="pre">$value</span></tt> is the value associated with <tt class="docutils literal"><span class="pre">$key</span></tt> or <tt class="docutils literal"><span class="pre">NULL</span></tt> if the key does not exist, and <tt class="docutils literal"><span class="pre">$watch</span></tt> is a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> that will become ready after <tt class="docutils literal"><span class="pre">$value</span></tt> changes.</p>
+<p>See <a class="reference internal" href="#\FDB\Transaction::watch" title="\FDB\Transaction::watch"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::watch</span></tt></a> for a general description of watches and their limitations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::set_and_watch">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">set_and_watch</tt><big>(</big><em>$key</em>, <em>$value</em><big>)</big><a class="headerlink" href="#\FDB\Database::set_and_watch" title="Permalink to this definition">∞</a></dt>
+<dd><p>Sets <tt class="docutils literal"><span class="pre">$key</span></tt> to <tt class="docutils literal"><span class="pre">$value</span></tt> and returns a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> that will become ready after a subsequent change to <tt class="docutils literal"><span class="pre">value</span></tt>.</p>
+<p>See <a class="reference internal" href="#\FDB\Transaction::watch" title="\FDB\Transaction::watch"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::watch</span></tt></a> for a general description of watches and their limitations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::clear_and_watch">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">clear_and_watch</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Database::clear_and_watch" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes <tt class="docutils literal"><span class="pre">$key</span></tt> (and any associated value) if it exists and returns a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> that will become ready after the value is subsequently set.</p>
+<p>See <a class="reference internal" href="#\FDB\Transaction::watch" title="\FDB\Transaction::watch"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::watch</span></tt></a> for a general description of watches and their limitations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::transact">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">transact</tt><big>(</big><em>$func</em><big>)</big><a class="headerlink" href="#\FDB\Database::transact" title="Permalink to this definition">∞</a></dt>
+<dd><p>The <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt></a> method provides the recommended approach to wrapping a function with logic to automatically create a transaction and retry until success. The method immediately blocks and runs <tt class="docutils literal"><span class="pre">$func</span></tt>. It either returns the result of <tt class="docutils literal"><span class="pre">$func</span></tt> or throws a non-retryable error. <tt class="docutils literal"><span class="pre">$func</span></tt> must take exactly one parameter, a transaction.</p>
+<p>For example:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$result = $db-&gt;transact( function($tr) {</span>
+<span class="x">    $tr-&gt;set(&quot;foo&quot;,&quot;val&quot;);</span>
+<span class="x">    return $tr-&gt;get(&quot;bar&quot;)-&gt;wait();</span>
+<span class="x">});</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::add">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">add</tt><big>(</big><em>$key</em>, <em>$param</em><big>)</big><a class="headerlink" href="#\FDB\Database::add" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::bit_and">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">bit_and</tt><big>(</big><em>$key</em>, <em>$param</em><big>)</big><a class="headerlink" href="#\FDB\Database::bit_and" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::bit_or">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">bit_or</tt><big>(</big><em>$key</em>, <em>$param</em><big>)</big><a class="headerlink" href="#\FDB\Database::bit_or" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database::bit_xor">
+<tt class="descclassname">\FDB\Database::</tt><tt class="descname">bit_xor</tt><big>(</big><em>$key</em>, <em>$param</em><big>)</big><a class="headerlink" href="#\FDB\Database::bit_xor" title="Permalink to this definition">∞</a></dt>
+<dd><p>These atomic operations behave exactly like the <a class="reference internal" href="#api-php-transaction-atomic-operations"><em>associated operations</em></a> on <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a> objects except that the change will immediately be committed and is fully synchronous.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note that since some atomic operations are not idempotent, the implicit use of the <tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt> method could interact with a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>commit_unknown_result</em></a> exception in unpredictable ways. For more information, see <a class="reference internal" href="developer-guide.html#developer-guide-unknown-results"><em>Transactions with unknown results</em></a>.</p>
+</div>
+</dd></dl>
+
+<div class="section" id="database-options">
+<span id="api-php-database-options"></span><h3>Database options<a class="headerlink" href="#database-options" title="Permalink to this headline">∞</a></h3>
+<dl class="class">
+<dt id="\FDB\Database\options">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">options</tt><a class="headerlink" href="#\FDB\Database\options" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>Database options alter the behavior of FoundationDB databases.</p>
+<dl class="method">
+<dt id="\FDB\Database\options::set_location_cache_size">
+<tt class="descclassname">\FDB\Database\options::</tt><tt class="descname">set_location_cache_size</tt><big>(</big><em>$size</em><big>)</big><a class="headerlink" href="#\FDB\Database\options::set_location_cache_size" title="Permalink to this definition">∞</a></dt>
+<dd><p>Set the size of the client location cache. Raising this value can boost performance in very large databases where clients access data in a near-random pattern. This value must be an integer in the range [0, 2<sup>31</sup>-1]. Defaults to 100000.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database\options::set_max_watches">
+<tt class="descclassname">\FDB\Database\options::</tt><tt class="descname">set_max_watches</tt><big>(</big><em>$max_watches</em><big>)</big><a class="headerlink" href="#\FDB\Database\options::set_max_watches" title="Permalink to this definition">∞</a></dt>
+<dd><p>Set the maximum number of watches allowed to be outstanding on a database connection. Increasing this number could result in increased resource usage. Reducing this number will not cancel any outstanding watches. Defaults to 10000 and cannot be larger than 1000000.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database\options::set_machine_id">
+<tt class="descclassname">\FDB\Database\options::</tt><tt class="descname">set_machine_id</tt><big>(</big><em>$id</em><big>)</big><a class="headerlink" href="#\FDB\Database\options::set_machine_id" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the machine ID of a server to be preferentially used for database operations. ID must be a string of up to 16 hexadecimal digits that was used to configure <a class="reference internal" href="configuration.html#foundationdb-conf-fdbserver"><em>fdbserver processes</em></a>. Load balancing uses this option for location-awareness, attempting to send database operations first to servers on a specified machine, then a specified datacenter, then returning to its default algorithm.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Database\options::set_datacenter_id">
+<tt class="descclassname">\FDB\Database\options::</tt><tt class="descname">set_datacenter_id</tt><big>(</big><em>$id</em><big>)</big><a class="headerlink" href="#\FDB\Database\options::set_datacenter_id" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the datacenter ID to be preferentially used for database operations. ID must be a string of up to 16 hexadecimal digits that was used to configure <a class="reference internal" href="configuration.html#foundationdb-conf-fdbserver"><em>fdbserver processes</em></a>. Load balancing uses this option for location-awareness, attempting to send database operations first to servers on a specified machine, then a specified datacenter, then returning to its default algorithm.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="transaction-objects">
+<h2>Transaction objects<a class="headerlink" href="#transaction-objects" title="Permalink to this headline">∞</a></h2>
+<dl class="class">
+<dt id="\FDB\Transaction">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">Transaction</tt><a class="headerlink" href="#\FDB\Transaction" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>A <tt class="docutils literal"><span class="pre">Transaction</span></tt> object represents a FoundationDB database transaction.  All operations on FoundationDB take place, explicitly or implicitly, through a <tt class="docutils literal"><span class="pre">Transaction</span></tt>.</p>
+<p>In FoundationDB, a transaction is a mutable snapshot of a database. All read and write operations on a transaction see and modify an otherwise-unchanging version of the database and only change the underlying database if and when the transaction is committed. Read operations do see the effects of previous write operations on the same transaction. Committing a transaction usually succeeds in the absence of <a class="reference internal" href="developer-guide.html#conflict-ranges"><em>conflicts</em></a>.</p>
+<p>Transactions group operations into a unit with the properties of <em>atomicity</em>, <em>isolation</em>, and <em>durability</em>. Transactions also provide the ability to maintain an application&#8217;s invariants or integrity constraints, supporting the property of <em>consistency</em>. Together these properties are known as <a class="reference internal" href="developer-guide.html#acid"><em>ACID</em></a>.</p>
+<p>Transactions are also causally consistent: once a transaction has been successfully committed, all subsequently created transactions will see the modifications made by it.</p>
+<p>The most convenient way to use transactions is with the <a class="reference internal" href="#\FDB\Transaction::transact" title="\FDB\Transaction::transact"><tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt></a> method.</p>
+<div class="section" id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">∞</a></h3>
+<dl class="attr">
+<dt id="\FDB\Transaction::$db">
+<em class="property">property </em><tt class="descclassname">\FDB\Transaction::$</tt><tt class="descname">db</tt><a class="headerlink" href="#\FDB\Transaction::$db" title="Permalink to this definition">∞</a></dt>
+<dd><p>The <tt class="xref php php-class docutils literal"><span class="pre">Database</span></tt> that this transaction is interacting with.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="reading-data">
+<h3>Reading data<a class="headerlink" href="#reading-data" title="Permalink to this headline">∞</a></h3>
+<dl class="method">
+<dt id="\FDB\Transaction::get">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::get" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a (<a class="reference internal" href="#api-php-future"><em>future</em></a>) <a class="reference internal" href="#\FDB\FutureValue" title="\FDB\FutureValue"><tt class="xref php php-class docutils literal"><span class="pre">FutureValue</span></tt></a> associated with the specified key in the database.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$tr[$key]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$tr-&gt;get($key)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Transaction::get_key">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get_key</tt><big>(</big><em>$key_selector</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::get_key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the (<a class="reference internal" href="#api-php-future"><em>future</em></a>) <a class="reference internal" href="#\FDB\FutureKey" title="\FDB\FutureKey"><tt class="xref php php-class docutils literal"><span class="pre">FutureKey</span></tt></a> referenced by the specified <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>.</p>
+<p>By default, the key is cached for the duration of the transaction, providing
+a potential performance benefit. However, the value of the key is also retrieved,
+using network bandwidth. Invoking <tt class="xref php php-meth docutils literal"><span class="pre">options::set_read_your_writes_disable</span></tt> will avoid
+both the caching and the increased network bandwidth.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::get_range">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get_range</tt><big>(</big><em>$begin</em>, <em>$end</em><span class="optional">[</span>, <em>$limit</em>, <em>$reverse</em>, <em>$streaming_mode</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#\FDB\Transaction::get_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$begin</span> <span class="pre">&lt;=</span> <span class="pre">$k</span> <span class="pre">&lt;</span> <span class="pre">$end</span></tt>, and their associated values, as an iterator. The returned iterator can be used as a PHP associative array. Note the exclusion of <tt class="docutils literal"><span class="pre">$end</span></tt> from the range. For example:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$range = $tr-&gt;get_range(&#39;a&#39;, &#39;d&#39;, 2);</span>
+<span class="x">foreach( $range as $key =&gt; $value ) {</span>
+<span class="x">    echo &quot; -&gt; element $key is &quot; . \FDB\printable($value) . PHP_EOL;</span>
+<span class="x">}</span>
+</pre></div>
+</div>
+<p>Like a <a class="reference internal" href="#api-php-future"><em>Future</em></a> object, the returned iterator issues asynchronous read operations. It fetches the data in one or more efficient batches (depending on the value of the <tt class="docutils literal"><span class="pre">$streaming_mode</span></tt> parameter). However, the iterator will block if iteration reaches a value whose read has not yet completed.</p>
+<p>The returned iterator supports a method <tt class="xref php php-meth docutils literal"><span class="pre">to_array</span></tt> that will block and return an associative array.</p>
+<p>Each of <tt class="docutils literal"><span class="pre">$begin</span></tt> and <tt class="docutils literal"><span class="pre">$end</span></tt> may be a key or a <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>. Note that in the case of a <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>, the exclusion of <tt class="docutils literal"><span class="pre">$end</span></tt> from the range still applies.</p>
+<p>If <tt class="docutils literal"><span class="pre">$limit</span></tt> is specified, then only the first <tt class="docutils literal"><span class="pre">$limit</span></tt> keys (and their values) in the range will be returned.</p>
+<p>If <tt class="docutils literal"><span class="pre">$reverse</span></tt> is TRUE, then the last <tt class="docutils literal"><span class="pre">$limit</span></tt> keys in the range will be returned in reverse order.</p>
+<p>If <tt class="docutils literal"><span class="pre">$streaming_mode</span></tt> is specified, it must be a value from the <tt class="docutils literal"><span class="pre">StreamingMode</span></tt> enumeration. It provides a hint to FoundationDB about how the returned container is likely to be used.  The default is <tt class="docutils literal"><span class="pre">StreamingMode::ITERATOR</span></tt>.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$tr[array($begin,</span> <span class="pre">$end)]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">X</span> <span class="pre">=</span> <span class="pre">tr.get_range($begin,</span> <span class="pre">$end)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">$X</span> <span class="pre">=</span> <span class="pre">$tr[array($begin,</span> <span class="pre">$end,</span> <span class="pre">-1)]</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">X</span> <span class="pre">=</span> <span class="pre">tr.get_range($begin,</span> <span class="pre">$end,</span> <span class="pre">$reverse=TRUE)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Transaction::get_range_starts_with">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get_range_starts_with</tt><big>(</big><em>$prefix</em><span class="optional">[</span>, <em>$limit</em>, <em>$reverse</em>, <em>$streaming_mode</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#\FDB\Transaction::get_range_starts_with" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$k</span></tt> starts with <tt class="docutils literal"><span class="pre">$prefix</span></tt>, and their associated values, as an iterator yielding keys and values (see <a class="reference internal" href="#\FDB\Transaction::get_range" title="\FDB\Transaction::get_range"><tt class="xref php php-meth docutils literal"><span class="pre">get_range</span></tt></a> for a description of the returned iterator).</p>
+<p>The <tt class="docutils literal"><span class="pre">$limit</span></tt>, <tt class="docutils literal"><span class="pre">$reverse</span></tt> and <tt class="docutils literal"><span class="pre">$streaming_mode</span></tt> parameters have the same meanings as in <a class="reference internal" href="#\FDB\Transaction::get_range" title="\FDB\Transaction::get_range"><tt class="xref php php-meth docutils literal"><span class="pre">get_range</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="snapshot-reads">
+<span id="api-php-snapshot-reads"></span><h3>Snapshot reads<a class="headerlink" href="#snapshot-reads" title="Permalink to this headline">∞</a></h3>
+<dl class="attr">
+<dt id="\FDB\Transaction::$snapshot">
+<em class="property">property </em><tt class="descclassname">\FDB\Transaction::$</tt><tt class="descname">snapshot</tt><a class="headerlink" href="#\FDB\Transaction::$snapshot" title="Permalink to this definition">∞</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">$snapshot</span></tt> is a boolean property of a <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a> that, if set to TRUE, will make all reads performed by the <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a> snapshot reads.</p>
+<p>Snapshot reads selectively relax FoundationDB&#8217;s isolation property, reducing <a class="reference internal" href="developer-guide.html#developer-guide-transaction-conflicts"><em>conflicts</em></a> but making it harder to reason about concurrency.</p>
+<p>By default, FoundationDB transactions guarantee <a class="reference internal" href="developer-guide.html#acid"><em>serializable isolation</em></a>, resulting in a state that is <em>as if</em> transactions were executed one at a time, even if they were executed concurrently. Serializability has little performance cost when there are few <a class="reference internal" href="developer-guide.html#developer-guide-transaction-conflicts"><em>conflicts</em></a> but can be expensive when there are many. FoundationDB therefore also permits individual reads within a transaction to be done as snapshot reads.</p>
+<p>Snapshot reads differ from ordinary (serializable) reads by permitting the values they read to be modified by concurrent transactions, whereas serializable reads cause conflicts in that case. Like serializable reads, snapshot reads see the effects of prior writes in the same transaction. For more information on the use of snapshot reads, see <a class="reference internal" href="developer-guide.html#snapshot-isolation"><em>Snapshot reads</em></a>.</p>
+<p>Snapshot reads also interact with transaction commit a little differently than normal reads. If a snapshot read is outstanding when transaction commit is called that read will immediately return an error. (Normally, transaction commit will wait until outstanding reads return before committing.)</p>
+<p>Snapshot reads can be used with any of the following methods: <a class="reference internal" href="#\FDB\Transaction::get" title="\FDB\Transaction::get"><tt class="xref php php-meth docutils literal"><span class="pre">get</span></tt></a>, <a class="reference internal" href="#\FDB\Transaction::get_key" title="\FDB\Transaction::get_key"><tt class="xref php php-meth docutils literal"><span class="pre">get_key</span></tt></a>, <a class="reference internal" href="#\FDB\Transaction::get_range" title="\FDB\Transaction::get_range"><tt class="xref php php-meth docutils literal"><span class="pre">get_range</span></tt></a>, <a class="reference internal" href="#\FDB\Transaction::get_range_starts_with" title="\FDB\Transaction::get_range_starts_with"><tt class="xref php php-meth docutils literal"><span class="pre">get_range_starts_with</span></tt></a>, <a class="reference internal" href="#\FDB\Transaction::get_read_version" title="\FDB\Transaction::get_read_version"><tt class="xref php php-meth docutils literal"><span class="pre">get_read_version</span></tt></a>, and <a class="reference internal" href="#\FDB\Transaction::transact" title="\FDB\Transaction::transact"><tt class="xref php php-meth docutils literal"><span class="pre">transact</span></tt></a>. Apart from performing snapshot reads, the signature and behavior of each of these methods remains the same.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="writing-data">
+<h3>Writing data<a class="headerlink" href="#writing-data" title="Permalink to this headline">∞</a></h3>
+<dl class="method">
+<dt id="\FDB\Transaction::set">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">set</tt><big>(</big><em>$key</em>, <em>$value</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::set" title="Permalink to this definition">∞</a></dt>
+<dd><p>Associates the given <tt class="docutils literal"><span class="pre">key</span></tt> and <tt class="docutils literal"><span class="pre">value</span></tt>.  Overwrites any prior value associated with <tt class="docutils literal"><span class="pre">key</span></tt>. Returns immediately, having modified the snapshot represented by this <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$tr[$key]</span> <span class="pre">=</span> <span class="pre">$value</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$tr-&gt;set($key,</span> <span class="pre">$value)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Transaction::clear">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">clear</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::clear" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes the specified key (and any associated value), if it exists. Returns immediately, having modified the snapshot represented by this <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">unset($tr[$key])</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$tr-&gt;clear($key)</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Transaction::clear_range">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">clear_range</tt><big>(</big><em>$begin</em>, <em>$end</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::clear_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes all keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$begin</span> <span class="pre">&lt;=</span> <span class="pre">$k</span> <span class="pre">&lt;</span> <span class="pre">$end</span></tt>, and their associated values. Returns immediately, having modified the snapshot represented by this <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Unlike in the case of <a class="reference internal" href="#\FDB\Transaction::get_range" title="\FDB\Transaction::get_range"><tt class="xref php php-meth docutils literal"><span class="pre">get_range</span></tt></a>, <tt class="docutils literal"><span class="pre">$begin</span></tt> and <tt class="docutils literal"><span class="pre">$end</span></tt> must be keys (byte strings), not <a class="reference internal" href="#\FDB\KeySelector" title="\FDB\KeySelector"><tt class="xref php php-class docutils literal"><span class="pre">KeySelector</span></tt></a>s.  (Resolving arbitrary key selectors would prevent this method from returning immediately, introducing concurrency issues.)</p>
+</div>
+</dd></dl>
+
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">unset($tr[array($begin,</span> <span class="pre">$end)])</span></tt></dt>
+<dd>Shorthand for <tt class="docutils literal"><span class="pre">$tr-&gt;clear_range($begin,</span> <span class="pre">$end)</span></tt>. The default array <tt class="docutils literal"><span class="pre">$begin</span></tt> is <tt class="docutils literal"><span class="pre">''</span></tt>; the default array <tt class="docutils literal"><span class="pre">$end</span></tt> is <tt class="docutils literal"><span class="pre">'\xFF'</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Transaction::clear_range_startswith">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">clear_range_startswith</tt><big>(</big><em>$prefix</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::clear_range_startswith" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes all the keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$k</span></tt> starts with <tt class="docutils literal"><span class="pre">$prefix</span></tt>, and their associated values. Returns immediately, having modified the snapshot represented by this <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="atomic-operations">
+<span id="api-php-transaction-atomic-operations"></span><h3>Atomic operations<a class="headerlink" href="#atomic-operations" title="Permalink to this headline">∞</a></h3>
+<p>An atomic operation is a single database command that carries out several logical steps: reading the value of a key, performing a transformation on that value, and writing the result. Different atomic operations perform different transformations. Like other database operations, an atomic operation is used within a transaction; however, its use within a transaction will not cause the transaction to conflict.</p>
+<p>Atomic operations do not expose the current value of the key to the client but simply send the database the transformation to apply. In regard to conflict checking, an atomic operation is equivalent to a write without a read. It can only cause <em>other</em> transactions performing reads of the key to conflict.</p>
+<p>By combining these logical steps into a single, read-free operation, FoundationDB can guarantee that the transaction will not conflict due to the operation. This makes atomic operations ideal for operating on keys that are frequently modified. A common example is the use of a key-value pair as a counter.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If a transaction uses both an atomic operation and a serializable read on the same key, the benefits of using the atomic operation (for both conflict checking and performance) are lost.</p>
+</div>
+<p>In each of the methods below, <tt class="docutils literal"><span class="pre">param</span></tt> should be a string appropriately packed to represent the desired value. For example:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x"># wrong</span>
+<span class="x">$tr-&gt;add(&#39;key&#39;, 1)</span>
+
+<span class="x"># right</span>
+<span class="x">$tr-&gt;add(&#39;key&#39;, \pack(&#39;N&#39;, 1))</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="\FDB\Transaction::add">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">add</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::add" title="Permalink to this definition">∞</a></dt>
+<dd><p>Performs an addition of little-endian integers. If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes.  If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+<p>The integers to be added must be stored in a little-endian representation.  They can be signed in two&#8217;s complement representation or unsigned. You can add to an integer at a known offset in the value by prepending the appropriate number of zero bytes to <tt class="docutils literal"><span class="pre">param</span></tt> and padding with zero bytes to match the length of the value. However, this offset technique requires that you know the addition will not cause the integer field within the value to overflow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::bit_and">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">bit_and</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::bit_and" title="Permalink to this definition">∞</a></dt>
+<dd><p>Performs a bitwise &#8220;and&#8221; operation.  If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes.  If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::bit_or">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">bit_or</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::bit_or" title="Permalink to this definition">∞</a></dt>
+<dd><p>Performs a bitwise &#8220;or&#8221; operation.  If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes.  If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::bit_xor">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">bit_xor</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::bit_xor" title="Permalink to this definition">∞</a></dt>
+<dd><p>Performs a bitwise &#8220;xor&#8221; operation.  If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes.  If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::max">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">max</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::max" title="Permalink to this definition">∞</a></dt>
+<dd><p>Sets the value in the database to the larger of the existing value and <tt class="docutils literal"><span class="pre">param</span></tt>. If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes. If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+<p>Both the existing value and <tt class="docutils literal"><span class="pre">param</span></tt> are treated as unsigned integers. (This differs from the behavior of atomic addition.)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::min">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">min</tt><big>(</big><em>key</em>, <em>param</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::min" title="Permalink to this definition">∞</a></dt>
+<dd><p>Sets the value in the database to the smaller of the existing value and <tt class="docutils literal"><span class="pre">param</span></tt>. If the existing value in the database is not present or shorter than <tt class="docutils literal"><span class="pre">param</span></tt>, it is first extended to the length of <tt class="docutils literal"><span class="pre">param</span></tt> with zero bytes. If <tt class="docutils literal"><span class="pre">param</span></tt> is shorter than the existing value in the database, the existing value is truncated to match the length of <tt class="docutils literal"><span class="pre">param</span></tt>.</p>
+<p>Both the existing value and <tt class="docutils literal"><span class="pre">param</span></tt> are treated as unsigned integers. (This differs from the behavior of atomic addition.)</p>
+</dd></dl>
+
+</div>
+<div class="section" id="committing">
+<span id="api-php-committing"></span><h3>Committing<a class="headerlink" href="#committing" title="Permalink to this headline">∞</a></h3>
+<dl class="method">
+<dt id="\FDB\Transaction::transact">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">transact</tt><big>(</big><em>$func</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::transact" title="Permalink to this definition">∞</a></dt>
+<dd><p>Execute $func and return its result. <tt class="docutils literal"><span class="pre">$func</span></tt> must take exactly one parameter, a transaction. This method is intended for use in conjunction with <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">Database::transact</span></tt></a>. Unlike <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">Database::transact</span></tt></a>, there is no retry loop and commit is not called after <tt class="docutils literal"><span class="pre">$func</span></tt> returns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::commit">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">commit</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction::commit" title="Permalink to this definition">∞</a></dt>
+<dd><p>Attempt to commit the changes made in the transaction to the database.  Returns a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> representing the asynchronous result of the commit. You <strong>must</strong> call the <a class="reference internal" href="#\FDB\Future::wait" title="\FDB\Future::wait"><tt class="xref php php-meth docutils literal"><span class="pre">Future::wait</span></tt></a> method on the returned <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a>, which will raise an exception if the commit failed.</p>
+<p>As with other client/server databases, in some failure scenarios a client may be unable to determine whether a transaction succeeded. In these cases, <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit</span></tt> will raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>commit_unknown_result</em></a> exception. The <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt> function treats this exception as retryable, so retry loops that don&#8217;t check for <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>commit_unknown_result</em></a> could execute the transaction twice. In these cases, you must consider the idempotence of the transaction. For more information, see <a class="reference internal" href="developer-guide.html#developer-guide-unknown-results"><em>Transactions with unknown results</em></a>.</p>
+<p>Normally, commit will wait for outstanding reads to return. However, if those reads were snapshot reads or the transaction option for disabling &#8220;read-your-writes&#8221; has been invoked, any outstanding reads will immediately return errors.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Consider using the <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">Database::transact</span></tt></a> method, which not only calls <a class="reference internal" href="#\FDB\Database::create_transaction" title="\FDB\Database::create_transaction"><tt class="xref php php-meth docutils literal"><span class="pre">Database::create_transaction</span></tt></a> and <a class="reference internal" href="#\FDB\Transaction::commit" title="\FDB\Transaction::commit"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit</span></tt></a> for you but also implements the required error handling and retry logic for transactions.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If any operation is performed on a transaction after a commit has been issued but before it has returned, both the commit and the operation will raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>used_during_commit</em></a> exception. In this case, all subsequent operations on this transaction will raise this error until <tt class="xref php php-func docutils literal"><span class="pre">reset</span></tt> is called.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::on_error">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">on_error</tt><big>(</big><em>$exception</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::on_error" title="Permalink to this definition">∞</a></dt>
+<dd><p>Determine whether an exception raised by a <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt></a> method is retryable. Returns a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a>. You <strong>must</strong> call the <a class="reference internal" href="#\FDB\Future::wait" title="\FDB\Future::wait"><tt class="xref php php-meth docutils literal"><span class="pre">Future::wait</span></tt></a> method on the <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a>, which will return after a delay if the exception was retryable, or re-raise the exception if it was not.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Consider using the <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">Database::transact</span></tt></a> method, which calls this method for you.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::reset">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction::reset" title="Permalink to this definition">∞</a></dt>
+<dd><p>Rollback a transaction, completely resetting it to its initial state. This is logically equivalent to destroying the transaction and creating a new one.</p>
+</dd></dl>
+
+<span class="target" id="api-php-cancel"></span><dl class="method">
+<dt id="\FDB\Transaction::cancel">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">cancel</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction::cancel" title="Permalink to this definition">∞</a></dt>
+<dd><p>Cancels the transaction. All pending or future uses of the transaction will raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>transaction_cancelled</em></a> exception. The transaction can be used again after it is <tt class="xref php php-func docutils literal"><span class="pre">reset</span></tt>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Be careful if you are using <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::reset</span></tt> and <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::cancel</span></tt> concurrently with the same transaction. Since they negate each other&#8217;s effects, a race condition between these calls will leave the transaction in an unknown state.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If your program attempts to cancel a transaction after <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit</span></tt> has been called but before it returns, unpredictable behavior will result. While it is guaranteed that the transaction will eventually end up in a cancelled state, the commit may or may not occur. Moreover, even if the call to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit</span></tt> appears to raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>transaction_cancelled</em></a> exception,  the commit may have occurred or may occur in the future. This can make it more difficult to reason about the order in which transactions occur.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="watches">
+<span id="api-php-watches"></span><h3>Watches<a class="headerlink" href="#watches" title="Permalink to this headline">∞</a></h3>
+<dl class="method">
+<dt id="\FDB\Transaction::watch">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">watch</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::watch" title="Permalink to this definition">∞</a></dt>
+<dd><p>Creates a watch and returns a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> that will become ready when the watch reports a change to the value of the specified key.</p>
+<p>A watch&#8217;s behavior is relative to the transaction that created it. A watch will report a change in relation to the key&#8217;s value as readable by that transaction. The initial value used for comparison is either that of the transaction&#8217;s read version or the value as modified by the transaction itself prior to the creation of the watch. If the value changes and then changes back to its initial value, the watch might not report the change.</p>
+<p>Until the transaction that created it has been committed, a watch will not report changes made by <em>other</em> transactions. In contrast, a watch will immediately report changes made by the transaction itself. Watches cannot be created if the transaction has set <tt class="xref php php-meth docutils literal"><span class="pre">options::set_read_your_writes_disable</span></tt>, and an attempt to do so will raise an <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>watches_disabled</em></a> exception.</p>
+<p>If the transaction used to create a watch encounters an exception during commit, then the watch will be set with that exception. A transaction whose <a class="reference internal" href="developer-guide.html#developer-guide-unknown-results"><em>commit result is unknown</em></a> will set all of its watches with the <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>commit_unknown_result</em></a> exception. If an uncommitted transaction is reset or destroyed, then any watches it created will be set with the <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>transaction_cancelled</em></a> exception.</p>
+<p>By default, each database connection can have no more than 10,000 watches that have not yet reported a change. When this number is exceeded, an attempt to create a watch will raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>too_many_watches</em></a> exception. This limit can be changed using <tt class="xref php php-meth docutils literal"><span class="pre">options::set_max_watches</span></tt>. Because a watch outlives the transaction that creates it, any watch that is no longer needed should be cancelled by calling <tt class="xref php php-meth docutils literal"><span class="pre">Future::cancel</span></tt> on its returned future.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="conflict-ranges">
+<span id="api-php-conflict-ranges"></span><h3>Conflict ranges<a class="headerlink" href="#conflict-ranges" title="Permalink to this headline">∞</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Most applications will use the serializable isolation that transactions provide by default and will not need to manipulate conflict ranges.</p>
+</div>
+<p>The following make it possible to add <a class="reference internal" href="developer-guide.html#conflict-ranges"><em>conflict ranges</em></a> to a transaction.</p>
+<dl class="method">
+<dt id="\FDB\Transaction::add_read_conflict_range">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">add_read_conflict_range</tt><big>(</big><em>$begin</em>, <em>$end</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::add_read_conflict_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Adds a range of keys to the transaction&#8217;s read conflict ranges as if you had read the range. As a result, other transactions that write a key in this range could cause the transaction to fail with a conflict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::add_read_conflict_key">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">add_read_conflict_key</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::add_read_conflict_key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Adds a key to the transaction&#8217;s read conflict ranges as if you had read the key. As a result, other transactions that concurrently write this key could cause the transaction to fail with a conflict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::add_write_conflict_range">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">add_write_conflict_range</tt><big>(</big><em>$begin</em>, <em>$end</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::add_write_conflict_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Adds a range of keys to the transaction&#8217;s write conflict ranges as if you had cleared the range. As a result, other transactions that concurrently read a key in this range could fail with a conflict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::add_write_conflict_key">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">add_write_conflict_key</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::add_write_conflict_key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Adds a key to the transaction&#8217;s write conflict ranges as if you had written the key. As a result, other transactions that concurrently read this key could fail with a conflict.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="versions">
+<h3>Versions<a class="headerlink" href="#versions" title="Permalink to this headline">∞</a></h3>
+<p>Most applications should use the read version that FoundationDB determines automatically during the transaction&#8217;s first read and ignore all of these methods.</p>
+<dl class="method">
+<dt id="\FDB\Transaction::set_read_version">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">set_read_version</tt><big>(</big><em>$version</em><big>)</big><a class="headerlink" href="#\FDB\Transaction::set_read_version" title="Permalink to this definition">∞</a></dt>
+<dd><p><em>Infrequently used</em>. Sets the database version that the transaction will read from the database.  The database cannot guarantee causal consistency if this method is used (the transaction&#8217;s reads will be causally consistent only if the provided read version has that property).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::get_read_version">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get_read_version</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction::get_read_version" title="Permalink to this definition">∞</a></dt>
+<dd><p><em>Infrequently used</em>. Returns a <a class="reference internal" href="#\FDB\FutureVersion" title="\FDB\FutureVersion"><tt class="xref php php-class docutils literal"><span class="pre">FutureVersion</span></tt></a> representing the transaction&#8217;s (<a class="reference internal" href="#api-php-future"><em>future</em></a>) read version. You must call the <a class="reference internal" href="#\FDB\Future::wait" title="\FDB\Future::wait"><tt class="xref php php-meth docutils literal"><span class="pre">Future::wait</span></tt></a> method on the returned object to retrieve the version as an integer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction::get_committed_version">
+<tt class="descclassname">\FDB\Transaction::</tt><tt class="descname">get_committed_version</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction::get_committed_version" title="Permalink to this definition">∞</a></dt>
+<dd><p><em>Infrequently used</em>. Gets the version number at which a successful commit modified the database. This must be called only after the successful (non-error) completion of a call to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit</span></tt> on this Transaction, or the behavior is undefined. Read-only transactions do not modify the database when committed and will have a committed version of -1. Keep in mind that a transaction which reads keys and then sets them to their current values may be optimized to a read-only transaction.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="transaction-options">
+<span id="api-php-transaction-options"></span><h3>Transaction options<a class="headerlink" href="#transaction-options" title="Permalink to this headline">∞</a></h3>
+<dl class="class">
+<dt id="\FDB\Transaction\options">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">options</tt><a class="headerlink" href="#\FDB\Transaction\options" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>Transaction options alter the behavior of FoundationDB transactions. FoundationDB defaults to extremely safe transaction behavior, and we have worked hard to make the performance excellent with the default setting, so you should not often need to use transaction options.</p>
+<span class="target" id="api-php-snapshot-ryw"></span><dl class="method">
+<dt id="\FDB\Transaction\options::set_snapshot_ryw_disable">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_snapshot_ryw_disable</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_snapshot_ryw_disable" title="Permalink to this definition">∞</a></dt>
+<dd><p>If this option is set more times in this transction than the enable option, snapshot reads will <em>not</em> see the effects of prior writes in the same transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_snapshot_ryw_enable">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_snapshot_ryw_enable</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_snapshot_ryw_enable" title="Permalink to this definition">∞</a></dt>
+<dd><p>If this option is set an equal or more times in this transaction than the disable option, snapshot reads <em>will</em> see the effects of prior writes in the same transaction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_priority_batch">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_priority_batch</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_priority_batch" title="Permalink to this definition">∞</a></dt>
+<dd><p>This transaction should be treated as low priority (other transactions should be processed first).  Useful for doing potentially saturating batch work without interfering with the latency of other operations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_priority_system_immediate">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_priority_system_immediate</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_priority_system_immediate" title="Permalink to this definition">∞</a></dt>
+<dd><p>This transaction should be treated as extremely high priority, taking priority over other transactions and bypassing controls on transaction queuing.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is intended for the use of internal database functions and low-level tools; use by applications may result in severe database performance or availability problems.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_causal_read_risky">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_causal_read_risky</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_causal_read_risky" title="Permalink to this definition">∞</a></dt>
+<dd><p>This transaction does not require the strict causal consistency guarantee that FoundationDB provides by default.  The read version of the transaction will be a committed version, and usually will be the latest committed, but it might be an older version in the event of a fault or network partition.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_causal_write_risky">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_causal_write_risky</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_causal_write_risky" title="Permalink to this definition">∞</a></dt>
+<dd><p>The application either knows that this transaction will be self-conflicting (at least one read overlaps at least one set or clear), or is willing to accept a small risk that the transaction could be committed a second time after its commit apparently succeeds.  This option provides a small performance benefit.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_next_write_no_write_conflict_range">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_next_write_no_write_conflict_range</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_next_write_no_write_conflict_range" title="Permalink to this definition">∞</a></dt>
+<dd><p>The next write performed on this transaction will not generate a write conflict range. As a result, other transactions which read the key(s) being modified by the next write will not necessarily conflict with this transaction.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Care needs to be taken when using this option on a transaction that is shared between multiple threads. When setting this option, write conflict ranges will be disabled on the next write operation, regardless of what thread it is on.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_read_your_writes_disable">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_read_your_writes_disable</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_read_your_writes_disable" title="Permalink to this definition">∞</a></dt>
+<dd><p>When this option is invoked, a read performed by a transaction will not see any prior mutations that occured in that transaction, instead seeing the value which was in the database at the transaction&#8217;s read version. This option may provide a small performance benefit for the client, but also disables a number of client-side optimizations which are beneficial for transactions which tend to read and write the same keys within a single transaction.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is an error to set this option after performing any reads or writes on the transaction.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_read_ahead_disable">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_read_ahead_disable</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_read_ahead_disable" title="Permalink to this definition">∞</a></dt>
+<dd><p>Disables read-ahead caching for range reads. Under normal operation, a transaction will read extra rows from the database into cache if range reads are used to page through a series of data one row at a time (i.e. if a range read with a one row limit is followed by another one row range read starting immediately after the result of the first).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_access_system_keys">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_access_system_keys</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_access_system_keys" title="Permalink to this definition">∞</a></dt>
+<dd><p>Allows this transaction to read and modify system keys (those that start with the byte <tt class="docutils literal"><span class="pre">0xFF</span></tt>).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Writing into system keys will likely break your database. Further, even for readers, the format of data in the system keys may change from version to version in FoundationDB.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_read_system_keys">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_read_system_keys</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_read_system_keys" title="Permalink to this definition">∞</a></dt>
+<dd><p>Allows this transaction to read system keys (those that start with the byte <tt class="docutils literal"><span class="pre">0xFF</span></tt>).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The format of data in the system keys may change from version to version in FoundationDB.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_retry_limit">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_retry_limit</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_retry_limit" title="Permalink to this definition">∞</a></dt>
+<dd><p>Set a maximum number of retries after which additional calls to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt> will throw the most recently seen error code. (By default, a transaction permits an unlimited number of retries.) Valid parameter values are [-1, INT_MAX]. If set to -1, the transaction returns to the default of unlimited retries.</p>
+<p>Like all transaction options, the retry limit must be reset after a call to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt>. This behavior allows the user to make the retry limit dynamic.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_max_retry_delay">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_max_retry_delay</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_max_retry_delay" title="Permalink to this definition">∞</a></dt>
+<dd><p>Set the maximum backoff delay incurred in the call to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt> if the error is retryable.</p>
+</dd></dl>
+
+<span class="target" id="api-php-timeout"></span><dl class="method">
+<dt id="\FDB\Transaction\options::set_timeout">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_timeout</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_timeout" title="Permalink to this definition">∞</a></dt>
+<dd><p>Set a timeout duration in milliseconds after which the transaction automatically to be cancelled. The time is measured from transaction creation (or the most call to <tt class="xref php php-func docutils literal"><span class="pre">reset</span></tt>, if any). Valid parameter values are [0, INT_MAX]. If set to 0, all timeouts will be disabled. Once a transaction has timed out, all pending or future uses of the transaction will raise a <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>transaction_timed_out</em></a> exception. The transaction can be used again after it is <tt class="xref php php-func docutils literal"><span class="pre">reset</span></tt>.</p>
+<p>Timeouts employ transaction cancellation, so you should note the issues raised by <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::cancel</span></tt> when using timeouts.</p>
+<p>Like all transaction options, a timeout must be reset after a call to <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt>. This behavior allows the user to make the timeout dynamic. Note that resetting this option resets only the timeout <em>duration</em>, not the starting point from which the time is measured.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Transaction\options::set_durability_dev_null_is_web_scale">
+<tt class="descclassname">\FDB\Transaction\options::</tt><tt class="descname">set_durability_dev_null_is_web_scale</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Transaction\options::set_durability_dev_null_is_web_scale" title="Permalink to this definition">∞</a></dt>
+<dd><p>This option has no effect yet, but may make users migrating from MongoDB more comfortable.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="future-objects">
+<span id="api-php-future"></span><h2>Future objects<a class="headerlink" href="#future-objects" title="Permalink to this headline">∞</a></h2>
+<p>Many FoundationDB API functions return &#8220;future&#8221; objects. A brief overview of futures is included in the <a class="reference internal" href="class-scheduling.html"><em>class scheduling tutorial</em></a>. Most future objects behave just like a normal object, but block when you use them for the first time if the asynchronous function which returned the future has not yet completed its action. A future object is considered ready when either a value is available, or when an error has occurred.</p>
+<p id="api-php-block">When a future object &#8220;blocks&#8221;, it will block the thread in which its resides.</p>
+<p>All future objects are a subclass of the <a class="reference internal" href="#\FDB\Future" title="\FDB\Future"><tt class="xref php php-class docutils literal"><span class="pre">Future</span></tt></a> type.</p>
+<dl class="class">
+<dt id="\FDB\Future">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">Future</tt><a class="headerlink" href="#\FDB\Future" title="Permalink to this definition">∞</a></dt>
+<dd><dl class="method">
+<dt id="\FDB\Future::wait">
+<tt class="descname">wait</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Future::wait" title="Permalink to this definition">∞</a></dt>
+<dd><p>Blocks until the object is ready, and returns the object value (or raises an exception if the asynchronous function failed).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Future::is_ready">
+<tt class="descname">is_ready</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Future::is_ready" title="Permalink to this definition">∞</a></dt>
+<dd><p>Immediately returns TRUE if the future object is ready, FALSE otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Future::block_until_ready">
+<tt class="descname">block_until_ready</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Future::block_until_ready" title="Permalink to this definition">∞</a></dt>
+<dd><p>Blocks until the future object is ready.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Future::cancel">
+<tt class="descname">cancel</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Future::cancel" title="Permalink to this definition">∞</a></dt>
+<dd><p>Cancels a <a class="reference internal" href="#api-php-future"><em>future</em></a> and its associated asynchronous operation. If called before the future is ready, attempts to access its value will raise an <a class="reference internal" href="api-error-codes.html#developer-guide-error-codes"><em>operation_cancelled</em></a> exception. Cancelling a future which is already ready has no effect. Note that even if a future is not ready, its associated asynchronous operation may have succesfully completed and be unable to be cancelled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Future::get_error">
+<tt class="descname">get_error</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Future::get_error" title="Permalink to this definition">∞</a></dt>
+<dd><p>Throws the error if there is one. Does not return anything.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Asynchronous methods return one of the following subclasses of <a class="reference internal" href="#\FDB\Future" title="\FDB\Future"><tt class="xref php php-class docutils literal"><span class="pre">Future</span></tt></a>:</p>
+<dl class="class">
+<dt id="\FDB\FutureValue">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FutureValue</tt><a class="headerlink" href="#\FDB\FutureValue" title="Permalink to this definition">∞</a></dt>
+<dd><p>Represents a future string object. You must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future.wait()</span></tt> method on this object to retrieve the value as a string.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="\FDB\FutureKey">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FutureKey</tt><a class="headerlink" href="#\FDB\FutureKey" title="Permalink to this definition">∞</a></dt>
+<dd><p>Represents a future string object. You must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future.wait()</span></tt> method on this object to retrieve the key as a string.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="\FDB\FutureVersion">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FutureVersion</tt><a class="headerlink" href="#\FDB\FutureVersion" title="Permalink to this definition">∞</a></dt>
+<dd><p>Represents a future version (integer). You must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future.wait()</span></tt> method on this object to retrieve the version as an integer.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="\FDB\FutureString">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FutureString</tt><a class="headerlink" href="#\FDB\FutureString" title="Permalink to this definition">∞</a></dt>
+<dd><p>Represents a future array of strings. You must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future.wait()</span></tt> method on this object to retrieve the array of strings.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="\FDB\FutureVoid">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FutureVoid</tt><a class="headerlink" href="#\FDB\FutureVoid" title="Permalink to this definition">∞</a></dt>
+<dd><p>Represents a future returned from asynchronous methods that logically have no return value.</p>
+<p>For a <a class="reference internal" href="#\FDB\FutureVoid" title="\FDB\FutureVoid"><tt class="xref php php-class docutils literal"><span class="pre">FutureVoid</span></tt></a> object returned by <a class="reference internal" href="#\FDB\Transaction::commit" title="\FDB\Transaction::commit"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::commit()</span></tt></a> or <a class="reference internal" href="#\FDB\Transaction::on_error" title="\FDB\Transaction::on_error"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error()</span></tt></a>, you must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future.wait()</span></tt> method, which will either raise an exception if an error occurred during the asynchronous call, or do nothing and return <tt class="docutils literal"><span class="pre">NULL</span></tt>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="streaming-modes">
+<span id="streaming-mode-php"></span><h2>Streaming modes<a class="headerlink" href="#streaming-modes" title="Permalink to this headline">∞</a></h2>
+<p>When using <tt class="xref php php-meth docutils literal"><span class="pre">Transaction::get_range</span></tt> and similar interfaces, API clients can request large ranges of the database to iterate over.  Making such a request doesn&#8217;t necessarily mean that the client will consume all of the data in the range - sometimes the client doesn&#8217;t know how far it intends to iterate in advance.  FoundationDB tries to balance latency and bandwidth by requesting data for iteration in batches.</p>
+<p>Streaming modes permit the API client to customize this performance tradeoff by providing extra information about how the iterator will be used.</p>
+<p>The following streaming modes are available:</p>
+<p>StreamingMode.ITERATOR</p>
+<blockquote>
+<div><p><em>The default.</em>  The client doesn&#8217;t know how much of the range it is likely to used and wants different performance concerns to be balanced.</p>
+<p>Only a small portion of data is transferred to the client initially (in order to minimize costs if the client doesn&#8217;t read the entire range), and as the caller iterates over more items in the range larger batches will be transferred in order to maximize throughput.</p>
+</div></blockquote>
+<p>StreamingMode.WANT_ALL</p>
+<blockquote>
+<div>The client intends to consume the entire range and would like it all transferred as early as possible.</div></blockquote>
+<p>StreamingMode.SMALL</p>
+<blockquote>
+<div><em>Infrequently used</em>. Transfer data in batches small enough to not be much more expensive than reading individual rows, to minimize cost if iteration stops early.</div></blockquote>
+<p>StreamingMode.MEDIUM</p>
+<blockquote>
+<div><em>Infrequently used</em>. Transfer data in batches sized in between small and large.</div></blockquote>
+<p>StreamingMode.LARGE</p>
+<blockquote>
+<div><em>Infrequently used</em>. Transfer data in batches large enough to be, in a high-concurrency environment, nearly as efficient as possible.  If the client stops iteration early, some disk and network bandwidth may be wasted.  The batch size may still be too small to allow a single client to get high throughput from the database, so if that is what you need consider <tt class="docutils literal"><span class="pre">StreamingMode.SERIAL</span></tt>.</div></blockquote>
+<p>StreamingMode.SERIAL</p>
+<blockquote>
+<div>Transfer data in batches large enough that an individual client can get reasonable read bandwidth from the database.  If the client stops iteration early, considerable disk and network bandwidth may be wasted.</div></blockquote>
+<p>StreamingMode.EXACT</p>
+<blockquote>
+<div><em>Infrequently used</em>. The client has passed a specific row limit and wants that many rows delivered in a single batch.  This is not particularly useful in Python because iterator functionality makes batches of data transparent, so use <tt class="docutils literal"><span class="pre">StreamingMode.WANT_ALL</span></tt> instead.</div></blockquote>
+</div>
+<div class="section" id="errors">
+<span id="api-php-release-notes"></span><h2>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">∞</a></h2>
+<p>Errors in the FoundationDB API are raised as exceptions of type <a class="reference internal" href="#\FDB\FDBException" title="\FDB\FDBException"><tt class="xref php php-class docutils literal"><span class="pre">FDBException</span></tt></a>. These errors may be displayed for diagnostic purposes, but generally should be passed to <a class="reference internal" href="#\FDB\Transaction::on_error" title="\FDB\Transaction::on_error"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error</span></tt></a>. When using <a class="reference internal" href="#\FDB\Database::transact" title="\FDB\Database::transact"><tt class="xref php php-meth docutils literal"><span class="pre">Database::transact</span></tt></a>, appropriate errors will be retried automatically.</p>
+<dl class="class">
+<dt id="\FDB\FDBException">
+<em class="property">class </em><tt class="descclassname">\FDB\</tt><tt class="descname">FDBException</tt><a class="headerlink" href="#\FDB\FDBException" title="Permalink to this definition">∞</a></dt>
+<dd></dd></dl>
+
+<p>FDBException.code</p>
+<blockquote>
+<div>An integer associated with the error type.</div></blockquote>
+<p>FDBException.description</p>
+<blockquote>
+<div>A somewhat human-readable description of the error.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You should use only <tt class="xref php php-attr docutils literal"><span class="pre">FDBException::code</span></tt> for programmatic comparisons, as the description of the error may change at any time. Whenever possible, use the <a class="reference internal" href="#\FDB\Transaction::on_error" title="\FDB\Transaction::on_error"><tt class="xref php php-meth docutils literal"><span class="pre">Transaction::on_error()</span></tt></a> method to handle <a class="reference internal" href="#\FDB\FDBException" title="\FDB\FDBException"><tt class="xref php php-class docutils literal"><span class="pre">FDBException</span></tt></a> exceptions.</p>
+</div>
+</div>
+<div class="section" id="namespace-\FDB\Tuple">
+<span id="tuple-layer"></span><span id="api-php-tuple-layer"></span><h2>Tuple layer<a class="headerlink" href="#namespace-\FDB\Tuple" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB API comes with a built-in layer for encoding tuples into keys usable by FoundationDB. The encoded key maintains the same sort order as the original tuple: sorted first by the first element, then by the second element, etc. This makes the tuple layer ideal for building a variety of higher-level data models.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For general guidance on tuple usage, see the discussion in the document on <a class="reference internal" href="data-modeling.html#data-modeling-tuples"><em>Data Modeling</em></a>.</p>
+</div>
+<p>The FoundationDB PHP API resides in the namespace <tt class="docutils literal"><span class="pre">\FDB\Tuple</span></tt>. It defines a tuple as a PHP array of elements of the following data types:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type</th>
+<th class="head">Legal Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">NULL</span></tt></td>
+<td>Any <tt class="docutils literal"><span class="pre">$value</span></tt> such that <tt class="docutils literal"><span class="pre">$value</span> <span class="pre">==</span> <span class="pre">NULL</span></tt></td>
+</tr>
+<tr class="row-odd"><td>Byte string</td>
+<td>Any <tt class="docutils literal"><span class="pre">$value</span></tt> such that <tt class="docutils literal"><span class="pre">is_string($value)</span></tt></td>
+</tr>
+<tr class="row-even"><td>Unicode string</td>
+<td>Instances of <tt class="docutils literal"><span class="pre">\FDB\Tuple\UnicodeString</span></tt>. This class exists to denote the
+contained byte string as containing UTF-8 encoded data.</td>
+</tr>
+<tr class="row-odd"><td>63-bit signed integer</td>
+<td>Any <tt class="docutils literal"><span class="pre">$value</span></tt> such that <tt class="docutils literal"><span class="pre">is_int($value)</span></tt> (these values can only be in the
+range <tt class="docutils literal"><span class="pre">-2**63</span> <span class="pre">&lt;=</span> <span class="pre">value</span> <span class="pre">&lt;=</span> <span class="pre">2**63-1</span></tt>.)</td>
+</tr>
+</tbody>
+</table>
+<p>If T is an array meeting these criteria, then:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">T == \FDB\Tuple\unpack(\FDB\Tuple\pack(T))</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">require_once('fdb.tuple.php');</span></tt></dt>
+<dd>Imports the FoundationDB tuple layer.</dd>
+</dl>
+<dl class="method">
+<dt id="\FDB\Tuple\pack">
+<tt class="descclassname">\FDB\Tuple\</tt><tt class="descname">pack</tt><big>(</big><em>$tuple</em><big>)</big><a class="headerlink" href="#\FDB\Tuple\pack" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a key (byte string) encoding the specified tuple.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Tuple\unpack">
+<tt class="descclassname">\FDB\Tuple\</tt><tt class="descname">unpack</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Tuple\unpack" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the tuple encoded by the given key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Tuple\range">
+<tt class="descclassname">\FDB\Tuple\</tt><tt class="descname">range</tt><big>(</big><em>$tuple</em><big>)</big><a class="headerlink" href="#\FDB\Tuple\range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns an array representing all keys that encode tuples strictly starting with <tt class="docutils literal"><span class="pre">$tuple</span></tt> (that is, all tuples of greater length than tuple of which tuple is a prefix).</p>
+<p>Can be used to directly index a <a class="reference internal" href="#\FDB\Transaction" title="\FDB\Transaction"><tt class="xref php php-class docutils literal"><span class="pre">\FDB\Transaction</span></tt></a> to retrieve a range.  For example:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$tr[\FDB\Tuple\range(array(&#39;A&#39;,2))]</span>
+</pre></div>
+</div>
+<p>returns all key-value pairs in the database whose keys would unpack to tuples like array(&#8216;A&#8217;, 2, x), array(&#8216;A&#8217;, 2, x, y), etc.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="\FDB\Tuple\UnicodeString">
+<em class="property">class </em><tt class="descclassname">\FDB\Tuple\</tt><tt class="descname">UnicodeString</tt><big>(</big><em>$value</em><big>)</big><a class="headerlink" href="#\FDB\Tuple\UnicodeString" title="Permalink to this definition">∞</a></dt>
+<dd><p>A class denoting that the byte data contained (as a string) should be interpreted as UTF8-encoded data. A string encapsulaed in this class will have no special processing applied to it &#8211; rather the exists to denote to the programmer that the data is in UTF8 encoding. The string supplied as <tt class="docutils literal"><span class="pre">$value</span></tt> is stored without modification or interpretation and string functions performed on the internal value will behave as with all other strings in PHP &#8211; that is, they will not be multi-byte aware by default.</p>
+<p>If the PHP developer wants to persist a string into FoundationDB that is to be read in another language as a native UTF8-encoded string (such as Java), that string should be wrapped as <tt class="docutils literal"><span class="pre">new</span> <span class="pre">\FDB\Tuple\UnicodeString($str)</span></tt> before being passed to <tt class="xref php php-meth docutils literal"><span class="pre">Tuple::pack()</span></tt>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="subspaces">
+<span id="api-php-subspaces"></span><h2>Subspaces<a class="headerlink" href="#subspaces" title="Permalink to this headline">∞</a></h2>
+<p>Subspaces provide a convenient way to use the <a class="reference internal" href="#api-php-tuple-layer"><em>tuple layer</em></a> to define namespaces for different categories of data. The namespace is specified by a prefix tuple which is prepended to all tuples packed by the subspace. When unpacking a key with the subspace, the prefix tuple will be removed from the result.</p>
+<p>As a best practice, API clients should use at least one subspace for application data.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For general guidance on subspace usage, see the discussion in the <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>Developer Guide</em></a>.</p>
+</div>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">require_once('fdb.subspace.php');</span></tt></dt>
+<dd>Imports the FoundationDB subspace library.</dd>
+</dl>
+<span class="target" id="namespace-\FDB\Subspace"></span><dl class="class">
+<dt id="\FDB\Subspace\Subspace">
+<em class="property">class </em><tt class="descclassname">\FDB\Subspace\</tt><tt class="descname">Subspace</tt><big>(</big><em>$prefix_tuple = array()</em>, <em>$raw_prefix = ''</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace" title="Permalink to this definition">∞</a></dt>
+<dd><p>Creates a subspace with the specified prefix tuple. If the raw prefix byte string is specified, then it will be prepended to all packed keys. Likewise, the raw prefix will be removed from all unpacked keys.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::key">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">key</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the key encoding the prefix used for the subspace. This is equivalent to packing the empty tuple.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::pack">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">pack</tt><big>(</big><em>$t = array()</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::pack" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the key encoding the specified tuple in the subspace. For example, if you have a subspace with prefix tuple <tt class="docutils literal"><span class="pre">('users')</span></tt> and you use it to pack the tuple <tt class="docutils literal"><span class="pre">('Smith')</span></tt>, the result is the same as if you packed the tuple <tt class="docutils literal"><span class="pre">('users',</span> <span class="pre">'Smith')</span></tt> with the <a class="reference internal" href="#api-php-tuple-layer"><em>tuple layer</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::unpack">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">unpack</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::unpack" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the tuple encoded by the given key, with the subspace&#8217;s prefix tuple and raw prefix removed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::range">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">range</tt><big>(</big><em>$t = array()</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::range" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a range representing all keys in the subspace that encode tuples strictly starting with the specifed tuple.</p>
+<p>The range will be returned as an array of two elements, and may be used with any FoundationDB methods that require a range:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$r = subspace.range([&#39;A&#39;, 2]);</span>
+<span class="x">$rng_itr1 = $tr[$r];</span>
+<span class="x">$rng_itr2 = $tr-&gt;get_range($r[0], $r[1], 1);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::contains">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">contains</tt><big>(</big><em>$key</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::contains" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns true if <tt class="docutils literal"><span class="pre">$key</span></tt> starts with <tt class="xref php php-meth docutils literal"><span class="pre">Subspace.key</span></tt>, indicating that the subspace logically contains <tt class="docutils literal"><span class="pre">$key</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::as_foundationdb_key">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">as_foundationdb_key</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::as_foundationdb_key" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the key encoding the prefix used for the subspace, like <tt class="xref php php-meth docutils literal"><span class="pre">Subspace.key</span></tt>. This method serves to support the <a class="reference internal" href="#api-php-keys"><em>as_foundationdb_key()</em></a> convenience interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Subspace\Subspace::subspace">
+<tt class="descclassname">\FDB\Subspace\Subspace::</tt><tt class="descname">subspace</tt><big>(</big><em>$t</em><big>)</big><a class="headerlink" href="#\FDB\Subspace\Subspace::subspace" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns a new subspace whose prefix extends <tt class="xref php php-meth docutils literal"><span class="pre">Subspace.key</span></tt> with the encoding of <tt class="docutils literal"><span class="pre">$tuple</span></tt>.</p>
+</dd></dl>
+
+<p><tt class="docutils literal"><span class="pre">$x</span> <span class="pre">=</span> <span class="pre">$subspace[$item]</span></tt></p>
+<blockquote>
+<div><p>Shorthand for <tt class="docutils literal"><span class="pre">$x</span> <span class="pre">=</span> <span class="pre">$subspace-&gt;subspace($item)</span></tt>. If $item is not an array, it will be wrapped in an array before calling <tt class="docutils literal"><span class="pre">subspace</span></tt>. This function can be combined with the <a class="reference internal" href="#\FDB\Subspace\Subspace::as_foundationdb_key" title="\FDB\Subspace\Subspace::as_foundationdb_key"><tt class="xref php php-meth docutils literal"><span class="pre">as_foundationdb_key()</span></tt></a> convenience to turn this:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$s = new \FDB\Subspace\Subspace([&#39;x&#39;]);</span>
+<span class="x">$tr[$s-&gt;pack([&#39;foo&#39;, &#39;bar&#39;, 1])] = &#39;&#39;;</span>
+</pre></div>
+</div>
+<p>into this:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">$s = new \FDB\Subspace\Subspace([&#39;x&#39;]);</span>
+<span class="x">$tr[$s[&#39;foo&#39;][&#39;bar&#39;][1]] = &#39;&#39;;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="directories">
+<span id="api-php-directories"></span><h2>Directories<a class="headerlink" href="#directories" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB API provides <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>directories</em></a> as a tool for managing related <a class="reference internal" href="#api-php-subspaces"><em>subspaces</em></a>. Directories are a recommended approach for administering applications. Each application should create or open at least one directory to manage its subspaces.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For general guidance on directory usage, see the discussion in the <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Developer Guide</em></a>.</p>
+</div>
+<p>Directories are identified by hierarchical paths analogous to the paths in a Unix-like file system. A path is represented as an array of strings. Each directory has an associated subspace used to store its content. The directory layer maps each path to a short prefix used for the corresponding subspace. In effect, directories provide a level of indirection for access to subspaces.</p>
+<p>In the PHP bindings, paths can be specified as either a <tt class="docutils literal"><span class="pre">string</span></tt> type or as a <a class="reference internal" href="#\FDB\Tuple\UnicodeString" title="\FDB\Tuple\UnicodeString"><tt class="xref php php-class docutils literal"><span class="pre">\FDB\Tuple\UnicodeString</span></tt></a>. All strings that are used, though, will be interpreted in other languages as Unicode strings.</p>
+<p>Directory operations are transactional. A string-valued <tt class="docutils literal"><span class="pre">$layer</span></tt> option is used as a metadata identifier when opening a directory.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">require_once('fdb.directory.php');</span></tt></dt>
+<dd>Imports the FoundationDB directory layer.</dd>
+</dl>
+<span class="target" id="namespace-\FDB\Directory"></span><dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">$api-&gt;directory</span></tt></dt>
+<dd>The default instance of <a class="reference internal" href="#\FDB\Directory\DirectoryLayer" title="\FDB\Directory\DirectoryLayer"><tt class="xref php php-class docutils literal"><span class="pre">DirectoryLayer</span></tt></a>, where <tt class="docutils literal"><span class="pre">$api</span></tt> is the object returned by a call to <a class="reference internal" href="#\FDB\API::api_version" title="\FDB\API::api_version"><tt class="xref php php-meth docutils literal"><span class="pre">\FDB\API::api_version</span></tt></a>.</dd>
+</dl>
+<dl class="class">
+<dt id="\FDB\Directory\DirectoryLayer">
+<em class="property">class </em><tt class="descclassname">\FDB\Directory\</tt><tt class="descname">DirectoryLayer</tt><big>(</big><em>$node_subspace = null</em>, <em>$content_subspace = null</em>, <em>$allow_manual_prefixes = false</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer" title="Permalink to this definition">∞</a></dt>
+<dd><p>Each instance defines a new root directory. The subspaces <tt class="docutils literal"><span class="pre">$node_subspace</span></tt> and <tt class="docutils literal"><span class="pre">$content_subspace</span></tt> control where the directory metadata and contents, respectively, are stored. The default root directory has a <tt class="docutils literal"><span class="pre">$node_subspace</span></tt> with raw prefix <tt class="docutils literal"><span class="pre">\xFE</span></tt> and a <tt class="docutils literal"><span class="pre">$content_subspace</span></tt> with no prefix. Specifying more restrictive values for <tt class="docutils literal"><span class="pre">$node_subspace</span></tt> and <tt class="docutils literal"><span class="pre">$content_subspace</span></tt> will allow using the directory layer alongside other content in a database. If <tt class="docutils literal"><span class="pre">$allow_manual_prefixes</span></tt> is false, attempts to create a directory with a manual prefix under the directory layer will raise an exception. The default root directory does not allow manual prefixes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::create_or_open">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">create_or_open</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em>, <em>$layer = null</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::create_or_open" title="Permalink to this definition">∞</a></dt>
+<dd><p>Opens the directory with <tt class="docutils literal"><span class="pre">path</span></tt> specified as an array of strings. <tt class="docutils literal"><span class="pre">path</span></tt> can also be a string, in which case it will be automatically wrapped in an array. All string values in a path will be converted to unicode. If the directory does not exist, it is created (creating parent directories if necessary).</p>
+<p>If the string <tt class="docutils literal"><span class="pre">layer</span></tt> is specified and the directory is new, it is recorded as the layer; if <tt class="docutils literal"><span class="pre">layer</span></tt> is specified and the directory already exists, it is compared against the layer specified when the directory was created, and the method will raise an exception if they differ.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In the present release, multiple directories may not be concurrently created within a single transaction. This restriction will be removed in a future release.</p>
+</div>
+<p>Returns the directory and its contents as a <a class="reference internal" href="#api-php-directory-subspace"><em>DirectorySubspace</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::open">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">open</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em>, <em>$layer = null</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::open" title="Permalink to this definition">∞</a></dt>
+<dd><p>Opens the directory with <tt class="docutils literal"><span class="pre">path</span></tt> specified as an array of strings. <tt class="docutils literal"><span class="pre">path</span></tt> can also be a string, in which case it will be automatically wrapped in an array. All string values in a path will be converted to unicode. The method will raise an exception if the directory does not exist.</p>
+<p>If the string <tt class="docutils literal"><span class="pre">layer</span></tt> is specified, it is compared against the layer specified when the directory was created, and the method will raise an exception if they differ.</p>
+<p>Returns the directory and its contents as a <a class="reference internal" href="#api-php-directory-subspace"><em>DirectorySubspace</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::create">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">create</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em>, <em>$layer = null</em>, <em>$prefix = null</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::create" title="Permalink to this definition">∞</a></dt>
+<dd><p>Creates a directory with <tt class="docutils literal"><span class="pre">path</span></tt> specified as an array of strings. <tt class="docutils literal"><span class="pre">path</span></tt> can also be a string, in which case it will be automatically wrapped in an array. All string values in a path will be converted to unicode. Parent directories are created if necessary. The method will raise an exception if the given directory already exists.</p>
+<p>If the string <tt class="docutils literal"><span class="pre">prefix</span></tt> is specified, the directory is created with the given physical prefix; otherwise a prefix is allocated automatically.</p>
+<p>If the string <tt class="docutils literal"><span class="pre">layer</span></tt> is specified, it is recorded with the directory and will be checked by future calls to open.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In the present release, multiple directories may not be concurrently created within a single transaction. This restriction will be removed in a future release.</p>
+</div>
+<p>Returns the directory and its contents as a <a class="reference internal" href="#api-php-directory-subspace"><em>DirectorySubspace</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::move">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">move</tt><big>(</big><em>$db_or_tr</em>, <em>$old_path</em>, <em>$new_path</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::move" title="Permalink to this definition">∞</a></dt>
+<dd><p>Moves the directory at <tt class="docutils literal"><span class="pre">old_path</span></tt> to <tt class="docutils literal"><span class="pre">new_path</span></tt>. There is no effect on the physical prefix of the given directory or on clients that already have the directory open. The method will raise an exception if a directory does not exist at <tt class="docutils literal"><span class="pre">old_path</span></tt>, a directory already exists at <tt class="docutils literal"><span class="pre">new_path</span></tt>, or the parent directory of <tt class="docutils literal"><span class="pre">new_path</span></tt> does not exist.</p>
+<p>Returns the directory at its new location as a <a class="reference internal" href="#api-php-directory-subspace"><em>DirectorySubspace</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::remove">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">remove</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::remove" title="Permalink to this definition">∞</a></dt>
+<dd><p>Removes the directory at <tt class="docutils literal"><span class="pre">path</span></tt>, its contents, and all subdirectories. The method will raise an exception if the directory does not exist.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Clients that have already opened the directory might still insert data into its contents after removal.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::remove_if_exists">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">remove_if_exists</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::remove_if_exists" title="Permalink to this definition">∞</a></dt>
+<dd><p>Checks if the directory at <tt class="docutils literal"><span class="pre">path</span></tt> exists and, if so, removes the directory, its contents, and all subdirectories. Returns <tt class="docutils literal"><span class="pre">true</span></tt> if the directory existed and <tt class="docutils literal"><span class="pre">false</span></tt> otherwise.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Clients that have already opened the directory might still insert data into its contents after removal.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::list_children">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">list_children</tt><big>(</big><em>$db_or_tr</em>, <em>$path = array()</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::list_children" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns an array of the names of the immediate subdirectories of the directory at <tt class="docutils literal"><span class="pre">path</span></tt>. Although returned as a <tt class="docutils literal"><span class="pre">string</span></tt> type, each name is to be interpreted as a unicode encoded string. Each result represents the last component of a subdirectory&#8217;s path.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::exists">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">exists</tt><big>(</big><em>$db_or_tr</em>, <em>$path</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::exists" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns <tt class="docutils literal"><span class="pre">true</span></tt> if the directory at <tt class="docutils literal"><span class="pre">path</span></tt> exists and <tt class="docutils literal"><span class="pre">false</span></tt> otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::get_layer">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">get_layer</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::get_layer" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the layer specified when the directory was created.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::get_path">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">get_path</tt><big>(</big><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::get_path" title="Permalink to this definition">∞</a></dt>
+<dd><p>Returns the path with which the directory was opened.</p>
+</dd></dl>
+
+<div class="section" id="directorysubspace">
+<span id="api-php-directory-subspace"></span><h3>DirectorySubspace<a class="headerlink" href="#directorysubspace" title="Permalink to this headline">∞</a></h3>
+<p>A directory subspace represents a specific directory and its contents. It stores the <tt class="docutils literal"><span class="pre">path</span></tt> with which it was opened and supports all <tt class="xref php php-class docutils literal"><span class="pre">DirectoryLayer</span></tt> methods for operating on itself and its subdirectories. It also implements all <tt class="xref php php-class docutils literal"><span class="pre">Subspace</span></tt> methods for working with the contents of that directory.</p>
+<dl class="method">
+<dt id="\FDB\Directory\DirectoryLayer::move_to">
+<tt class="descclassname">\FDB\Directory\DirectoryLayer::</tt><tt class="descname">move_to</tt><big>(</big><em>$db_or_tr</em>, <em>$new_path</em><big>)</big><a class="headerlink" href="#\FDB\Directory\DirectoryLayer::move_to" title="Permalink to this definition">∞</a></dt>
+<dd><p>Moves this directory to <tt class="docutils literal"><span class="pre">new_path</span></tt>, interpreting <tt class="docutils literal"><span class="pre">new_path</span></tt> absolutely. There is no effect on the physical prefix of the given directory or on clients that already have the directory open. The method will raise an exception if a directory already exists at <tt class="docutils literal"><span class="pre">new_path</span></tt> or the parent directory of <tt class="docutils literal"><span class="pre">new_path</span></tt> does not exist.</p>
+<p>Returns the directory at its new location as a <a class="reference internal" href="#api-php-directory-subspace"><em>DirectorySubspace</em></a>.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="locality-information">
+<span id="api-php-locality"></span><h2>Locality information<a class="headerlink" href="#locality-information" title="Permalink to this headline">∞</a></h2>
+<p>The FoundationDB API comes with a set of functions for discovering the storage locations of keys within your cluster. This information can be useful for advanced users who wish to take into account the location of keys in the design of applications or processes.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">require_once('fdb.locality.php');</span></tt></dt>
+<dd>Imports the FoundationDB locality library.</dd>
+</dl>
+<dl class="function">
+<dt>
+<tt class="descname">\FDB\get_boundary_keys($db_or_tr, $begin, $end)</tt></dt>
+<dd><p>Returns a generator of keys <tt class="docutils literal"><span class="pre">$k</span></tt> such that <tt class="docutils literal"><span class="pre">$begin</span> <span class="pre">&lt;=</span> <span class="pre">$k</span> <span class="pre">&lt;</span> <span class="pre">$end</span></tt> and <tt class="docutils literal"><span class="pre">$k</span></tt> is located at the start of a contiguous range stored on a single server.</p>
+<p>The first parameter to this function may be either a <tt class="xref php php-class docutils literal"><span class="pre">Database</span></tt> or a <tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt>. If it is passed a <tt class="xref php php-class docutils literal"><span class="pre">Transaction</span></tt>, the transaction will not be committed, reset, or modified in any way, nor will its transaction options (such as retry limit) be applied within the function. However, if the database is unavailable prior to the function call, any timeout set on the transaction will still trigger.</p>
+<p>Like a <a class="reference internal" href="#api-php-future"><em>Future</em></a> object, the returned container issues asynchronous read operations to fetch the data in the range and may block while iterating over its values if the read has not completed.</p>
+<p>This method is not transactional. It will return an answer no older than the Transaction or Database object it is passed, but the returned boundaries are an estimate and may not represent the exact boundary locations at any database version.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">\FDB\get_addresses_for_key($tr, $key)</tt></dt>
+<dd><p>Returns a <tt class="xref php php-class docutils literal"><span class="pre">FutureString</span></tt>. You must call the <tt class="xref php php-meth docutils literal"><span class="pre">Future::wait()</span></tt> method on this object to retrieve a list of public network addresses as strings, one for each of the storage servers responsible for storing <tt class="docutils literal"><span class="pre">$key</span></tt> and its associated value.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">PHP API</a><ul><li><a class="reference internal" href="#installation">Installation</a></li><li><a class="reference internal" href="#namespace-\FDB">API object</a></li><li><a class="reference internal" href="#configuration-in-ini-file">Configuration in .ini file</a></li><li><a class="reference internal" href="#cluster-objects">Cluster objects</a></li><li><a class="reference internal" href="#keys-and-values">Keys and values</a><ul><li><a class="reference internal" href="#as-foundationdb-key-and-as-foundationdb-value"><tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt> and <tt class="docutils literal"><span class="pre">as_foundationdb_value</span></tt></a></li></ul></li><li><a class="reference internal" href="#key-selectors">Key selectors</a></li><li><a class="reference internal" href="#database-objects">Database objects</a><ul><li><a class="reference internal" href="#database-options">Database options</a></li></ul></li><li><a class="reference internal" href="#transaction-objects">Transaction objects</a><ul><li><a class="reference internal" href="#attributes">Attributes</a></li><li><a class="reference internal" href="#reading-data">Reading data</a></li><li><a class="reference internal" href="#snapshot-reads">Snapshot reads</a></li><li><a class="reference internal" href="#writing-data">Writing data</a></li><li><a class="reference internal" href="#atomic-operations">Atomic operations</a></li><li><a class="reference internal" href="#committing">Committing</a></li><li><a class="reference internal" href="#watches">Watches</a></li><li><a class="reference internal" href="#conflict-ranges">Conflict ranges</a></li><li><a class="reference internal" href="#versions">Versions</a></li><li><a class="reference internal" href="#transaction-options">Transaction options</a></li></ul></li><li><a class="reference internal" href="#future-objects">Future objects</a></li><li><a class="reference internal" href="#streaming-modes">Streaming modes</a></li><li><a class="reference internal" href="#errors">Errors</a></li><li><a class="reference internal" href="#namespace-\FDB\Tuple">Tuple layer</a></li><li><a class="reference internal" href="#subspaces">Subspaces</a></li><li><a class="reference internal" href="#directories">Directories</a><ul><li><a class="reference internal" href="#directorysubspace">DirectorySubspace</a></li></ul></li><li><a class="reference internal" href="#locality-information">Locality information</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003220/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003220/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003220/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003220/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003220js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:20 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:29:51 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app13.us.archive.org";archive_analytics.values.server_ms=352;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Known Limitations
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003256/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003256/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003256/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003256/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=index.html>Concepts</a>
+<ul>
+<li><a href=features.html>Features</a></li>
+<li><a href=architecture.html>Physical Architecture</a></li>
+<li><a href=table.groups.html>Table-Groups</a></li>
+<li><a href=mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=known.limitations.html class="active">Known Limitations</a></li>
+<li><a href=glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Concepts</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="known-limitations">
+<span id="fdbsql-known-limitations"></span><h1>Known Limitations<a class="headerlink" href="#known-limitations" title="Permalink to this headline">∞</a></h1>
+<p>The FoundationDB SQL Layer has limitations, some of which may be addressed in future versions. If any of these limitations are particularly painful to you, please write us at <a class="reference external" href="mailto:sql%40foundationdb.com">sql<span>&#64;</span>foundationdb<span>&#46;</span>com</a> so that we can target them in the future.</p>
+<p>SQL Layer inherits FoundationDB&#8217;s properties, such as scalability and high-availability as well known limitations, such as long transactions and cluster sizes. See <a class="reference external" href=../../../../key-value-store/documentation/3.0/known-limitations.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">FoundationDB Known Limitations</em></a> and <a class="reference internal" href=../Admin/configuration.html><em>System Requirements</em></a> for additional details.</p>
+<div class="section" id="design-limitations">
+<h2>Design limitations<a class="headerlink" href="#design-limitations" title="Permalink to this headline">∞</a></h2>
+<p>These limitations come from fundamental design decisions and are unlikely to change in the short term. Applications using FoundationDB SQL Layer should plan to work around these limitations.</p>
+<div class="section" id="long-transactions-and-large-transactions">
+<span id="long-transactions"></span><h3>Long transactions and Large transactions<a class="headerlink" href="#long-transactions-and-large-transactions" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB currently does not support transactions running for over five seconds. In particular, a transaction cannot succeed if data older than five seconds is read, or if a commit takes place more than five seconds after the first read. Clients need to avoid these cases. For the design reasons behind this limitation, see the discussion in <a class="reference external" href=../../../../key-value-store/white-papers/anti-features/index.html>Core Anti-features</a>. The SQL Layer uses native FoundationDB transactions and imposes the same limit.</p>
+<p>Additionally, transaction size cannot exceed 10,000,000 bytes of total written keys and values. If any single transaction exceeds one megabyte of writes, consider using a different design. In the current version, these very large transactions can cause performance issues and database availability can (briefly) be impacted.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p>The effect of long and large transactions can be achieved using short and small transactions with a variety of techniques, depending on the desired behavior:</p>
+<ul class="last">
+<li><p class="first">If an application wants long transactions because of an external process in the loop, it can perform optimistic validation itself at a higher layer.</p>
+</li>
+<li><p class="first">If it needs large bulk inserts, it can use a level of indirection to swap in the inserted data quickly. The <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> <a class="reference internal" href=../Admin/backup.html><em>parallel data loading command line tool</em></a> that ships with the SQL Layer provides such functionality.</p>
+</li>
+<li><p class="first">If it needs to run many statements as fast as possible without concern for transactional boundaries, it can set the <tt class="docutils literal"><span class="pre">transactionPeriodicallyCommit</span></tt> run-time configuration option to true by typing the following into <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>:</p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">transactionPeriodicallyCommit</span> <span class="pre">TO</span> <span class="pre">'true'</span></tt></p>
+</div></blockquote>
+<p>This connection setting will auto-commit a set of statements every 2 seconds or 2MB of data, whichever happens first.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="per-query-latency">
+<span id="id1"></span><h3>Per-query latency<a class="headerlink" href="#per-query-latency" title="Permalink to this headline">∞</a></h3>
+<p>Building a distributed database means that higher network latency is traded for benefits in overall system throughput. On good hardware with 1 GigE network, we expect the latency of a simple query to be around 1ms. Although it might be counter-intuitive, the higher the overall transactional load on the system, the shorter that latency gets. This is true because the FoundationDB Key-Value cluster can bundle enough messages in a shorter amount of time to be transported to the transaction processing layer within the Key-Value cluster.</p>
+<p>The SQL Layer trades-off latency for concurrency. A single request will take longer than a local database would, but many more requests can be executed in parallel. For example, loading one million rows serially will be slower than in a traditional database but will be much faster and more scalable when done in parallel. You should take this into account when building your application.</p>
+<p>The SQL Layer query execution engine employs a sophisticated batch pipelining scheme that trades latency for throughput by opening a large, configurable number of intermediate requests against FoundationDB while waiting for the previous requests. In this way, the latency is amortized across all the requests made. This is very effective for almost any query accessing a non-trivial amount of data. However, it will not make an impact on minimal queries like retrieving a single row from a table.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">The effect of latency can be mitigated using parallelism in the application code by opening multiple requests in parallel rather than sequentially opening a request only when the previous one is fulfilled.</p>
+</div>
+<p>Another common source of latency are ORMs that laboriously compose an object from the sum of it&#8217;s rows across many tables using many independent, sequentially called queries. The <a class="reference internal" href=../SQL/dml/select_nested_object.html><em>Nested SQL query</em></a> capabilities can resolve such object retrievals with a single request. A few SQL Layer <a class="reference internal" href=../AppIntegration/index.html><em>ORM drivers</em></a> already integrate these capabilities. If your ORM of choice does not, tell us you&#8217;d like it to.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">You can reduce latency by replacing queries that perform object composition with handcrafted Nested SQL queries.</p>
+</div>
+</div>
+</div>
+<div class="section" id="current-limitations">
+<h2>Current limitations<a class="headerlink" href="#current-limitations" title="Permalink to this headline">∞</a></h2>
+<p>These limitations will likely be resolved or mitigated in future versions. Administrators should be aware of these issues, but longer-term application development should be less driven by them.</p>
+<div class="section" id="long-running-queries">
+<span id="id2"></span><h3>Long-running Queries<a class="headerlink" href="#long-running-queries" title="Permalink to this headline">∞</a></h3>
+<p>Whether implicitly or explicitly, queries take part in a transaction and are therefore subject to the same five seconds limit. A query that runs for over 5 seconds will be automatically rolled back. A query can run long because it operates over large amounts of data or because the SQL Layer instance on which it is run is heavily loaded.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p>The effect of long-running queries can be achieved using short and small queries with a variety of techniques, depending on the desired behavior:</p>
+<ul class="last simple">
+<li>Check if a long-running query can be broken into multiple smaller queries. It can perform optimistic validation itself at a higher layer.</li>
+<li>If it needs a large dump of the data, The <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> <a class="reference internal" href=../Admin/backup.html><em>parallel data dump command line tool</em></a> that ships with the SQL Layer provides such functionality.</li>
+<li><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">TRANSACTION</span> <span class="pre">ISOLATION</span> <span class="pre">LEVEL</span> <span class="pre">READ</span> <span class="pre">COMMITTED</span> <span class="pre">NO</span> <span class="pre">SNAPSHOT</span></tt> will perform database scans in multiple transactions internally. This means that the query results may include parts from both before and after changes made by another transaction. This is therefore a good choice only when the data is not changing or the result calculation can tolerate some inconsistencies.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="single-thread-single-node-query-execution">
+<span id="single-thread"></span><h3>Single thread, single node query execution<a class="headerlink" href="#single-thread-single-node-query-execution" title="Permalink to this headline">∞</a></h3>
+<p>A query in the SQL Layer operates using exactly one thread. The same is true for the FoundationDB client. This places a limit on the the amount of work that can be done by a query in the five second window.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">The workarounds outlined for long-running queries are also applicable here.</p>
+</div>
+</div>
+<div class="section" id="cluster-size">
+<span id="id3"></span><h3>Cluster size<a class="headerlink" href="#cluster-size" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer is stateless, and an unbounded number of SQL Layer instances can be deployed against a single FoundationDB Key-Value cluster. FoundationDB Key-Value Store itself has had limited testing with clusters larger than 96 cores/processes and 48 SSDs on 24 machines. Significantly larger clusters may experience bottlenecks leading to sub-linear scaling or other related issues.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">If you are thinking of testing on a very large cluster (hundreds of processes or more), we encourage you to get in touch with us so that we can work together for best results.  We believe that FoundationDB&#8217;s architecture will scale to much larger clusters in the future, but we recognize that scaling systems requires careful engineering at every step.</p>
+</div>
+</div>
+<div class="section" id="large-keys-and-values">
+<span id="id4"></span><h3>Large keys and values<a class="headerlink" href="#large-keys-and-values" title="Permalink to this headline">∞</a></h3>
+<p>In FoundationDB, keys cannot exceed 10,000 bytes in size. Values cannot exceed 100,000 bytes in size. The SQL Layer respects this limit and will disallow a row or key that surpasses that limit.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<ul class="last simple">
+<li>FoundationDB provides efficient techniques for <a class="reference external" href=../../../../key-value-store/documentation/3.0/largeval.html title="(in FoundationDB v3.0)"><em>Modeling large values</em></a>. If you are trying to store blobs, then using these techniques and pointing to the blobs from the SQL Layer is a good approach.</li>
+<li>If your goal is to load JSON documents into a single VARCHAR field as a way of keeping an object collocated, please make sure to read and understand the underpinning of <a class="reference internal" href="table.groups.html#table-groups-intro"><em>Table-Groups</em></a> as a more elegant solution to the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003256/http:/en.wikipedia.org/wiki/Object-relational_impedance_mismatch>object-relational impedance mismatch</a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="fulltext-indexes">
+<span id="fulltext-indexes-disabled"></span><h3>Fulltext indexes<a class="headerlink" href="#fulltext-indexes" title="Permalink to this headline">∞</a></h3>
+<p>The FoundationDB SQL layer integrates with the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003256/http:/lucene.apache.org>Lucene full-text engine</a> for full-text processing and offloads full-text indexes to it. This capability is currently disabled until Lucene is fully ported to operate on top of FoundationDB. Please contact us when you intend to use the full text search for your project.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">If you find yourself blocked without this feature, please contact us for instructions on enabling it.</p>
+</div>
+</div>
+<div class="section" id="unsupported-sql-syntax">
+<span id="id5"></span><h3>Unsupported SQL syntax<a class="headerlink" href="#unsupported-sql-syntax" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer is ANSI SQL 92 compatible, with the following exceptions:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">DESC</span></tt> columns in Index definition are unsupported</li>
+<li><tt class="docutils literal"><span class="pre">OUTER</span> <span class="pre">JOIN</span></tt> is unsupported</li>
+<li>Only schema-level permissions are supported. Table or column-level permissions are unsupported</li>
+<li><tt class="docutils literal"><span class="pre">ALTER</span> <span class="pre">SEQUENCE</span></tt> is unsupported</li>
+<li><tt class="docutils literal"><span class="pre">RENAME</span> <span class="pre">INDEX</span></tt> is unsupported</li>
+<li><tt class="docutils literal"><span class="pre">RENAME</span> <span class="pre">COLUMN</span></tt> is unsupported for columns that are a part of a Foreign Key definition</li>
+<li>Check Constraints are unsupported</li>
+<li>Indexes with included columns and filtered indexes are unsupported</li>
+<li>XML or JSON datatypes are unsupported</li>
+<li>ANSI SQL <tt class="docutils literal"><span class="pre">CATALOGS</span></tt> <em>(defined as: A catalog is a named collection of SQL-schemas, foreign server descriptors, and foreign data wrapper descriptors in an SQL-environment)</em> are unsupported</li>
+<li>Only <tt class="docutils literal"><span class="pre">SERIALIZABLE</span></tt> isolation level is supported. <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">UNCOMMITTED</span></tt>, <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span></tt> and <tt class="docutils literal"><span class="pre">REPEATABLE</span> <span class="pre">READ</span></tt> isolation levels are unsupported</li>
+<li><tt class="docutils literal"><span class="pre">SELECT</span> <span class="pre">FOR</span> <span class="pre">UPDATE</span></tt> is unsupported</li>
+</ul>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Some more exotic features from later version of ANSI SQL are also unsupported:</p>
+<ul class="simple">
+<li>Window Functions</li>
+<li>CTE’s (SQL Server extensions to the SQL standard)</li>
+<li>CROSS APPLY (SQL Server extensions to the SQL standard)</li>
+<li>MERGE (SQL Server extensions to the SQL standard)</li>
+</ul>
+</div>
+<div class="section" id="system-objects-limitations">
+<span id="system-object-limitations"></span><h3>System objects limitations<a class="headerlink" href="#system-objects-limitations" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Max number of tables: 2^32</li>
+<li>Max number of tables per schema: a few thousand</li>
+<li>Max number of tables in a single Table-Group: no enforced limitation</li>
+<li>Max number of attributes per table: no enforced limitation</li>
+<li>Max number of indexes per table: no enforced limitation</li>
+<li>Max key size of indexes: 2,047 bytes</li>
+<li>Max row size: 100,000 bytes</li>
+<li>Max transaction timeout: 5 seconds</li>
+</ul>
+</div>
+<div class="section" id="drivers-and-orms">
+<span id="partially-functioning-drivers"></span><h3>Drivers and ORMs<a class="headerlink" href="#drivers-and-orms" title="Permalink to this headline">∞</a></h3>
+<p>Some PostgreSQL drivers have not been tested for compatibility with the SQL Layer. They are likely to hit road-bumps as you try to use them. The main reason is that most PostgreSQL drivers or bindings expect to find the PostgreSQL <tt class="docutils literal"><span class="pre">pg_xxx</span></tt> <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003256/http:/www.postgresql.org/docs/9.3/static/catalogs.html>System Catalogs</a> tables. The SQL Layer, however, is guided by ANSI SQL and has a more standard <a class="reference internal" href=../SQL/index.html><em>information_schema</em></a> implementation. Small changes to the metadata queries will usually solve any problems.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">The <a class="reference internal" href=../AppIntegration/index.html><em>Application Integration</em></a> section gives suggestions for overcoming limitations you might find in the drivers.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Known Limitations</a><ul><li><a class="reference internal" href="#design-limitations">Design limitations</a><ul><li><a class="reference internal" href="#long-transactions-and-large-transactions">Long transactions and Large transactions</a></li><li><a class="reference internal" href="#per-query-latency">Per-query latency</a></li></ul></li><li><a class="reference internal" href="#current-limitations">Current limitations</a><ul><li><a class="reference internal" href="#long-running-queries">Long-running Queries</a></li><li><a class="reference internal" href="#single-thread-single-node-query-execution">Single thread, single node query execution</a></li><li><a class="reference internal" href="#cluster-size">Cluster size</a></li><li><a class="reference internal" href="#large-keys-and-values">Large keys and values</a></li><li><a class="reference internal" href="#fulltext-indexes">Fulltext indexes</a></li><li><a class="reference internal" href="#unsupported-sql-syntax">Unsupported SQL syntax</a></li><li><a class="reference internal" href="#system-objects-limitations">System objects limitations</a></li><li><a class="reference internal" href="#drivers-and-orms">Drivers and ORMs</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003256/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:56 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:07 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=190;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Functions
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/functions.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003621/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003621/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003621/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003621/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href="index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="functions">
+<span id="sql-functions"></span><h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">∞</a></h1>
+<p>The following functions are supported in the SQL Layer.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">abs(numeric)</span></tt></td>
+<td>Absolute value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">acos(double)</span></tt></td>
+<td>Inverse cosine.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">acot(double)</span></tt></td>
+<td>Inverse cotangent.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">adddate(d</span> <span class="pre">datetime,</span> <span class="pre">n</span> <span class="pre">numeric)</span></tt></td>
+<td>Add <em>n</em> days to <em>d</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">addtime(t</span> <span class="pre">time,</span> <span class="pre">n</span> <span class="pre">numeric)</span></tt></td>
+<td>Add <em>n</em> seconds to <em>t</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">aes_decrypt(b</span> <span class="pre">binary,</span> <span class="pre">key</span> <span class="pre">string)</span></tt></td>
+<td>Decrypt <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Advanced_Encryption_Standard>AES</a> encoded bytes <em>b</em> with the key <em>key</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">aes_encrypt(s</span> <span class="pre">string,</span> <span class="pre">key</span> <span class="pre">string)</span></tt></td>
+<td>Encrypt <em>s</em> with <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Advanced_Encryption_Standard>AES</a> using the key <em>key</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">and(x</span> <span class="pre">boolean,</span> <span class="pre">y</span> <span class="pre">boolean)</span></tt></td>
+<td>Boolean AND (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">&amp;&amp;</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii(string)</span></tt></td>
+<td>Numeric value of the first byte of a string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">asin(double)</span></tt></td>
+<td>Inverse sine.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">atan(double)</span></tt></td>
+<td>Inverse tangent.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">atan2(x</span> <span class="pre">double,</span> <span class="pre">y</span> <span class="pre">double)</span></tt></td>
+<td>Inverse tangent of <em>x</em> / <em>y</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">avg(numeric)</span></tt></td>
+<td>(Aggregate) Average of all input values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bit_and(integer)</span></tt></td>
+<td>(Aggregate) Bitwise AND all input values.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bit_count(integer)</span></tt></td>
+<td>Count of the number of bits set in an integer.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bit_length(string)</span></tt></td>
+<td>Length of <em>s</em> in bits (8 bits per byte, character set sensitive).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bit_or(integer)</span></tt></td>
+<td>(Aggregate) Bitwise OR all input values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bit_xor(integer)</span></tt></td>
+<td>(Aggregate) Bitwise XOR all input values.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bitand(x</span> <span class="pre">integer,</span> <span class="pre">y</span> <span class="pre">integer)</span></tt></td>
+<td>Bitwise AND (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">&amp;</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bitnot(integer)</span></tt></td>
+<td>Bitwise NOT (<tt class="docutils literal"><span class="pre">~</span> <span class="pre">x</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bitor(x</span> <span class="pre">integer,</span> <span class="pre">y</span> <span class="pre">integer)</span></tt></td>
+<td>Bitwise OR (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">|</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bitxor(x</span> <span class="pre">integer,</span> <span class="pre">y</span> <span class="pre">integer)</span></tt></td>
+<td>Bitwise XOR (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">^</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">blike(s</span> <span class="pre">string,</span> <span class="pre">pattern</span> <span class="pre">string[,</span> <span class="pre">escape</span> <span class="pre">string])</span></tt></td>
+<td>Match <em>pattern</em> against <em>s</em> case-sensitively.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ceil(numeric)</span></tt></td>
+<td>Smallest integer not less than <em>x</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">chr(integer)</span></tt></td>
+<td>Generate a string containing the Unicode character for the given codepoint.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">char_length(string)</span></tt></td>
+<td>Length of string in code points.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">coalesce(p1</span> <span class="pre">any,</span> <span class="pre">p2</span> <span class="pre">any,</span> <span class="pre">...)</span></tt></td>
+<td>First non-NULL argument.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">column_type_string(schema</span> <span class="pre">string,</span> <span class="pre">table</span> <span class="pre">string,</span> <span class="pre">column</span> <span class="pre">string)</span></tt></td>
+<td>String representation of a column&#8217;s data type.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">concat_ws(separator</span> <span class="pre">string,</span> <span class="pre">s1</span> <span class="pre">string,</span> <span class="pre">s2</span> <span class="pre">string,</span> <span class="pre">...)</span></tt></td>
+<td>Combine multiple strings together into one with <em>separator</em> between them.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">concat(s1</span> <span class="pre">string,</span> <span class="pre">s2</span> <span class="pre">string,</span> <span class="pre">...)</span></tt></td>
+<td>Combine multiple strings into one. (alias for <tt class="docutils literal"><span class="pre">concatenate</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">concatenate(s1</span> <span class="pre">string,</span> <span class="pre">s2</span> <span class="pre">string,</span> <span class="pre">...)</span></tt></td>
+<td>Combine multiple strings into one.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">conv(x</span> <span class="pre">integer,</span> <span class="pre">from_base</span> <span class="pre">integer,</span> <span class="pre">to_base</span> <span class="pre">integer)</span></tt></td>
+<td>Convert integers from one base to another.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">convert_tz(x</span> <span class="pre">datetime,</span> <span class="pre">from_tz</span> <span class="pre">string,</span> <span class="pre">to_tz</span> <span class="pre">string)</span></tt></td>
+<td>Convert datetimes from first one timezone to another.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cos(double)</span></tt></td>
+<td>Cosine.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">cosh(double)</span></tt></td>
+<td>Hyperbolic cosine.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cot(double)</span></tt></td>
+<td>Cotangent.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">coth(double)</span></tt></td>
+<td>Hyperbolic cotangent.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">count(any)</span></tt></td>
+<td>(Aggregate) Count the number of input elements.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">create_random_guid()</span></tt></td>
+<td>Generate a type 4 (pseudo-randomly generated) <a class="reference internal" href="datatypes.html#datatypes"><em>GUID</em></a> value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">crc32(string)</span></tt></td>
+<td><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Cyclic_redundancy_check>CRC32</a> value of a string.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">curdate</span></tt></td>
+<td>Current date. (alias for <tt class="docutils literal"><span class="pre">current_date</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">current_date</span></tt></td>
+<td>Current date.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">current_schema</span></tt></td>
+<td>Current schema.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">current_session_id()</span></tt></td>
+<td>Session ID of the current connection.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">current_setting(string)</span></tt></td>
+<td>Value of the given property.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">current_time</span></tt></td>
+<td>Current time.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">current_timestamp</span></tt></td>
+<td>Current timestamp.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">current_user</span></tt></td>
+<td>User name of the current connection.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">currval(schema</span> <span class="pre">string,</span> <span class="pre">sequence</span> <span class="pre">string)</span></tt></td>
+<td>Current value of the given sequence.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">curtime</span></tt></td>
+<td>Current time. (alias for <tt class="docutils literal"><span class="pre">current_time</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">date(datetime)</span></tt></td>
+<td>Extract the date portion of a datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">date_add(x</span> <span class="pre">datetime,</span> <span class="pre">i</span> <span class="pre">interval)</span></tt></td>
+<td>Add an interval to a datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">date_format(d</span> <span class="pre">date,</span> <span class="pre">format</span> <span class="pre">string)</span></tt></td>
+<td>Format a date as the given string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">date_sub(d</span> <span class="pre">datetime,</span> <span class="pre">i</span> <span class="pre">interval)</span></tt></td>
+<td>Subtract an interval from a datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">datediff(x</span> <span class="pre">datetime,</span> <span class="pre">y</span> <span class="pre">datetime)</span></tt></td>
+<td>Number of days between two days.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">datetime(datetime)</span></tt></td>
+<td>Extract datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">day(datetime)</span></tt></td>
+<td>Day from a date.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">dayname(date)</span></tt></td>
+<td>Name of the weekday.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dayofmonth(datetime)</span></tt></td>
+<td>Day from a date. (alias for <tt class="docutils literal"><span class="pre">day</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">dayofweek(datetime)</span></tt></td>
+<td>Day of the week in range 1 to 7.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dayofyear(datetime)</span></tt></td>
+<td>Day of the year in range 1 to 366.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">degrees(double)</span></tt></td>
+<td>Convert radians to degrees.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">describe_expression(expression)</span></tt></td>
+<td>String representation of the return type for <em>e</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">distance_lat_lon(lat_x</span> <span class="pre">numeric,</span> <span class="pre">lon_x</span> <span class="pre">numeric,</span> <span class="pre">lat_y</span> <span class="pre">numeric,</span> <span class="pre">lon_y</span> <span class="pre">numeric)</span></tt></td>
+<td>Distance between two latitude and longitude pairs.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">div(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Integer (truncating) division of <em>x</em> / <em>y</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">divide(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Divide <em>x</em> by <em>y</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">elt(i</span> <span class="pre">integer,</span> <span class="pre">s1</span> <span class="pre">string,</span> <span class="pre">s2</span> <span class="pre">string,</span> <span class="pre">...)</span></tt></td>
+<td>Return the string at index <em>i</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">exp(double)</span></tt></td>
+<td>Raise <em>e</em> (base of natural logarithm) to the argument.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">export_set(i</span> <span class="pre">integer,</span> <span class="pre">on</span> <span class="pre">string,</span> <span class="pre">off</span> <span class="pre">string[,</span> <span class="pre">sep</span> <span class="pre">string[,</span> <span class="pre">num_bits</span> <span class="pre">integer]])</span></tt></td>
+<td>String representation of <em>i</em> where <em>on</em> is used for 1, <em>off</em> is used for 0, <em>sep</em> is used for the separator and <em>num_bits</em> are printed.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">field(needle</span> <span class="pre">string,</span> <span class="pre">s1</span> <span class="pre">string,</span> <span class="pre">s2</span> <span class="pre">string,</span> <span class="pre">...)</span></tt></td>
+<td>Index of the first occurrence of <em>needle</em> or 0 if not found.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">first(any)</span></tt></td>
+<td>(Aggregate) First non-NULL of all input values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">floor(double)</span></tt></td>
+<td>Largest integer not greater than <em>x</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">from_base64(string)</span></tt></td>
+<td>Decode a <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Base64>base64</a> encoded string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">from_days(integer)</span></tt></td>
+<td>Convert a number of days (since year zero) to a datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">from_unixtime(time</span> <span class="pre">integer,</span> <span class="pre">format</span> <span class="pre">string)</span></tt></td>
+<td>Format a <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Unix_time>UNIX Timestamp</a> into a string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">full_text_search(column</span> <span class="pre">identifier,</span> <span class="pre">s</span> <span class="pre">string)</span></tt></td>
+<td>Search for <em>s</em> (<a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/lucene.apache.org/core/3_6_0/queryparsersyntax.html>Lucene Query Syntax</a>) in <em>column</em>. Requires a Full Text Index.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">group_concat(string)</span></tt></td>
+<td>(Aggregate) Combine all input values into a single output string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">hex(string)</span></tt></td>
+<td>Convert each byte of <em>s</em> into a 2-digit hexadecimal number.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">hour(datetime)</span></tt></td>
+<td>Extract the hour from a datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">identity_sequence(schema</span> <span class="pre">string,</span> <span class="pre">table</span> <span class="pre">string,</span> <span class="pre">column</span> <span class="pre">string)</span></tt></td>
+<td>Name of the <tt class="docutils literal"><span class="pre">sequence</span></tt> associated with the given column. (alias for <tt class="docutils literal"><span class="pre">serial_sequence</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">if(x</span> <span class="pre">boolean,</span> <span class="pre">a</span> <span class="pre">any,</span> <span class="pre">b</span> <span class="pre">any)</span></tt></td>
+<td>Output <em>a</em> if <em>x</em> is <tt class="docutils literal"><span class="pre">true</span></tt>, otherwise <em>b</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ifnull(x</span> <span class="pre">any,</span> <span class="pre">y</span> <span class="pre">any)</span></tt></td>
+<td>Output <em>y</em> if <em>x</em> is <tt class="docutils literal"><span class="pre">NULL</span></tt>, otherwise <em>x</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ilike(s</span> <span class="pre">string,</span> <span class="pre">pattern</span> <span class="pre">string[,</span> <span class="pre">escape</span> <span class="pre">string])</span></tt></td>
+<td>Match <em>pattern</em> against <em>s</em> case-insensitively.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">inet_aton(string)</span></tt></td>
+<td>Numeric value of an IPv4 address.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">isfalse(boolean)</span></tt></td>
+<td>Check if <tt class="docutils literal"><span class="pre">false</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">iregex(s</span> <span class="pre">string,</span> <span class="pre">pattern</span> <span class="pre">string,</span> <span class="pre">[options</span> <span class="pre">string])</span></tt></td>
+<td>Find if <em>pattern</em> regular expression is in <em>s</em> string, using <em>options</em> for regex matching, and case-insensitive match.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">isnull(any)</span></tt></td>
+<td>Check if <tt class="docutils literal"><span class="pre">NULL</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">istrue(boolean)</span></tt></td>
+<td>Check if <tt class="docutils literal"><span class="pre">true</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">isunknown(boolean)</span></tt></td>
+<td>Check if <tt class="docutils literal"><span class="pre">unknown</span></tt> (i.e. <cite>null</cite>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">last_day(date)</span></tt></td>
+<td>Last day of the month for month of a date.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">left(s</span> <span class="pre">string,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>First <em>n</em> characters from a string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">leftshift(i</span> <span class="pre">integer,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Bit shift <em>i</em> <em>n</em> places to the left (<tt class="docutils literal"><span class="pre">i</span> <span class="pre">&lt;&lt;</span> <span class="pre">n</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ln(double)</span></tt></td>
+<td>Natural (base-e) logarithm.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">locate(substr</span> <span class="pre">string,</span> <span class="pre">s</span> <span class="pre">string[,</span> <span class="pre">offset</span> <span class="pre">integer])</span></tt></td>
+<td>Find the location of the first occurence of <em>substr</em> in <em>s</em> starting at <em>offset</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">localtime</span></tt></td>
+<td>Current timestamp. (alias for <tt class="docutils literal"><span class="pre">current_timestamp</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">localtimestamp</span></tt></td>
+<td>Current timestamp. (alias for <tt class="docutils literal"><span class="pre">current_timestamp</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">log(double)</span></tt></td>
+<td>Natural (base-e) logarithm. (alias for <tt class="docutils literal"><span class="pre">ln</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">log10(double)</span></tt></td>
+<td>Base-10 logarithm.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">log2(double)</span></tt></td>
+<td>Base-2 logarithm.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lower(string)</span></tt></td>
+<td>Lowercase a string.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lpad(s</span> <span class="pre">string,</span> <span class="pre">len</span> <span class="pre">integer,</span> <span class="pre">pad</span> <span class="pre">string)</span></tt></td>
+<td>Pad the right side of <em>s</em> to a length of <em>len</em> using <em>pad</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ltrim(string)</span></tt></td>
+<td>Remove spaces from the left side of <em>s</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">maketime(hour</span> <span class="pre">integer,</span> <span class="pre">minute</span> <span class="pre">integer,</span> <span class="pre">second</span> <span class="pre">integer)</span></tt></td>
+<td>Create a <tt class="docutils literal"><span class="pre">time</span></tt> value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">max(any)</span></tt></td>
+<td>(Aggregate) Maximum of all input values.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">md5(string)</span></tt></td>
+<td><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/MD5>MD5</a> hash.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mid(s</span> <span class="pre">string,</span> <span class="pre">offset</span> <span class="pre">integer,</span> <span class="pre">len</span> <span class="pre">integer)</span></tt></td>
+<td>Substring <em>s</em> of length <em>len</em> starting at <em>offset</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">min(any)</span></tt></td>
+<td>(Aggregate) Minimum of all input values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">minus(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Subtract <em>y</em> from <em>x</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">minute(datetime)</span></tt></td>
+<td>Extract minute value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mod(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Remainder of <em>x</em> divided by <em>y</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">%</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">month(datetime)</span></tt></td>
+<td>Extract month value.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">monthname(date)</span></tt></td>
+<td>Name of the month from a date.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">nextval(schema</span> <span class="pre">string,</span> <span class="pre">sequence</span> <span class="pre">string)</span></tt></td>
+<td>Next value for the given sequence.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">not(boolean)</span></tt></td>
+<td>Negate (invert) the given value.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">now</span></tt></td>
+<td>Current timestamp. (alias for <tt class="docutils literal"><span class="pre">current_timestamp</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">nullif(x</span> <span class="pre">any,</span> <span class="pre">y</span> <span class="pre">any)</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">NULL</span></tt> if <em>x</em> equals <em>y</em>, otherwise <em>x</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">octet_length(string)</span></tt></td>
+<td>Length of <em>s</em> in bytes (character set sensitive).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">or(x</span> <span class="pre">boolean,</span> <span class="pre">y</span> <span class="pre">boolean)</span></tt></td>
+<td>Boolean OR (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">||</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">period_add(period</span> <span class="pre">integer,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Add the <em>n</em> months to <em>period</em> (period format is <tt class="docutils literal"><span class="pre">YYYMM</span></tt> or <tt class="docutils literal"><span class="pre">YYMM</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">period_diff(x</span> <span class="pre">integer,</span> <span class="pre">x</span> <span class="pre">integer)</span></tt></td>
+<td>Number of months between two periods (period format is <tt class="docutils literal"><span class="pre">YYYYMM</span></tt> or <tt class="docutils literal"><span class="pre">YYMM</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">pi()</span></tt></td>
+<td>Value of π (pi).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">plus(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Add <em>x</em> and <em>y</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">position(substr</span> <span class="pre">string,</span> <span class="pre">s</span> <span class="pre">string[,</span> <span class="pre">offset</span> <span class="pre">integer])</span></tt></td>
+<td>Find the location of the first occurence of <em>substr</em> in <em>s</em> starting at <em>offset</em>. (alias for <tt class="docutils literal"><span class="pre">locate</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">pow(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Raise <em>x</em> to the power <em>y</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">^</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">quarter(date)</span></tt></td>
+<td>Quarter (range 1 to 4) for a date.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">radians(numeric)</span></tt></td>
+<td>Convert degrees to radians.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rand([integer])</span></tt></td>
+<td>Generate a random number the range [0, 1). Starting value is determined by <em>seed</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">regex(s</span> <span class="pre">string,</span> <span class="pre">pattern</span> <span class="pre">string,</span> <span class="pre">[options</span> <span class="pre">string])</span></tt></td>
+<td>Find if <em>pattern</em> regular expression is in <em>s</em> string, using <em>options</em> for regex matching.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">repeat(s</span> <span class="pre">string,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Concatenate <em>s</em> <em>n</em> many times.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">replace(s</span> <span class="pre">string,</span> <span class="pre">from</span> <span class="pre">string,</span> <span class="pre">to</span> <span class="pre">string)</span></tt></td>
+<td>Replace all occurences of <em>from</em> in <em>s</em> with <em>to</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">reverse(string)</span></tt></td>
+<td>Reverse the input string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">right(s</span> <span class="pre">string,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Last <em>n</em> characters from <em>s</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rightshift(i</span> <span class="pre">integer,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Bit shift <em>i</em> to the right <em>n</em> times (<tt class="docutils literal"><span class="pre">i</span> <span class="pre">&gt;&gt;</span> <span class="pre">n</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">round(n</span> <span class="pre">integer[,</span> <span class="pre">d</span> <span class="pre">integer])</span></tt></td>
+<td>Round <em>n</em> to <em>d</em> decimal places.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rtrim(string)</span></tt></td>
+<td>Remove spaces from the left side of <em>s</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">sec_to_time(integer)</span></tt></td>
+<td>Create a <tt class="docutils literal"><span class="pre">time</span></tt> value from a number of seconds.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">second(datetime)</span></tt></td>
+<td>Extract seconds value from a datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">serial_sequence(schema</span> <span class="pre">string,</span> <span class="pre">table</span> <span class="pre">string,</span> <span class="pre">column</span> <span class="pre">string)</span></tt></td>
+<td>Name of the <tt class="docutils literal"><span class="pre">sequence</span></tt> associated with the given column.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">session_user</span></tt></td>
+<td>User name of the current connection. (alias for <tt class="docutils literal"><span class="pre">current_user</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">sign(numeric)</span></tt></td>
+<td>Sign value (-1, 0 or 1) of a number.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sin(double)</span></tt></td>
+<td>Sine.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">sinh(double)</span></tt></td>
+<td>Hyperbolic sine.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sleep(integer)</span></tt></td>
+<td>Sleep (suspend execution) for <em>i</em> milliseconds.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">space(integer)</span></tt></td>
+<td>Create a string consisting of <em>n</em> spaces (&#8216; &#8216;).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sqrt(double)</span></tt></td>
+<td>Square-root.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">stddev_pop(double)</span></tt></td>
+<td>(Aggregate) Population standard deviation of all input values.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">stddev_samp(double)</span></tt></td>
+<td>(Aggregate) Sample standard deviation of all input values.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">strcmp(x</span> <span class="pre">string,</span> <span class="pre">y</span> <span class="pre">string)</span></tt></td>
+<td>Return -1, 0 or 1 if <em>x</em> is less, equal or greater than <em>y</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">subdate(d</span> <span class="pre">datetime,</span> <span class="pre">i</span> <span class="pre">integer)</span></tt></td>
+<td>Subtract <em>i</em> days from <em>d</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">substr(s</span> <span class="pre">string,</span> <span class="pre">offset</span> <span class="pre">integer[,</span> <span class="pre">len</span> <span class="pre">integer])</span></tt></td>
+<td>Return <em>len</em> characters from <em>s</em> starting at <em>offset</em>. (alias for <tt class="docutils literal"><span class="pre">substring</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">substring(s</span> <span class="pre">string,</span> <span class="pre">offset</span> <span class="pre">integer[,</span> <span class="pre">len</span> <span class="pre">integer])</span></tt></td>
+<td>Return <em>len</em> characters from <em>s</em> starting at <em>offset</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">substring_index(s</span> <span class="pre">string,</span> <span class="pre">delimiter</span> <span class="pre">string,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>A string of the characters before the <em>n</em>th occurrences of <em>delimiter</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">subtime(x</span> <span class="pre">time,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Subtract <em>n</em> seconds from <em>x</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">sum(numeric)</span></tt></td>
+<td>(Aggregate) Sum all input values.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sysdate()</span></tt></td>
+<td>Current datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">system_user()</span></tt></td>
+<td>User name the SQL Layer is running as.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tan(double)</span></tt></td>
+<td>Tangent.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">tanh(double)</span></tt></td>
+<td>Hyperbolic tangent.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">time(datetime)</span></tt></td>
+<td>Extract time from datetime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">time_add(t</span> <span class="pre">time,</span> <span class="pre">n</span> <span class="pre">integer)</span></tt></td>
+<td>Add <em>n</em> seconds to <em>t</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">time_to_sec(time)</span></tt></td>
+<td>Convert <tt class="docutils literal"><span class="pre">time</span></tt> to a number of seconds.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">timediff(x</span> <span class="pre">time,</span> <span class="pre">y</span> <span class="pre">time)</span></tt></td>
+<td>Subtract <em>y</em> from <em>x</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">times(x</span> <span class="pre">numeric,</span> <span class="pre">y</span> <span class="pre">numeric)</span></tt></td>
+<td>Multiply <em>x</em> by <em>y</em> (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">timestamp(datetime)</span></tt></td>
+<td>Extract datetime. (alias for <tt class="docutils literal"><span class="pre">datetime</span></tt>)</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">timestampadd(n</span> <span class="pre">integer,</span> <span class="pre">interval</span> <span class="pre">interval,</span> <span class="pre">d</span> <span class="pre">datetime)</span></tt></td>
+<td>Add <em>n</em> <em>interval</em> to <em>d</em>.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">timestampdiff(n</span> <span class="pre">integer,</span> <span class="pre">interval</span> <span class="pre">interval,</span> <span class="pre">d</span> <span class="pre">datetime)</span></tt></td>
+<td>Subtract <em>n</em> <em>interval</em> from <em>ts</em>.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">to_base64(binary)</span></tt></td>
+<td>Encoding <em>b</em> as a <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Base64>base64</a> string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">to_days(datetime)</span></tt></td>
+<td>Number of days, since year 0, for a datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">to_seconds(datetime)</span></tt></td>
+<td>Number of seconds (since year 0) for a dateime.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">trim(string)</span></tt></td>
+<td>Remove leading and trailing spaces.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">truncate(n</span> <span class="pre">numeric,</span> <span class="pre">d</span> <span class="pre">integer)</span></tt></td>
+<td>Truncate <em>n</em> to <em>d</em> decimal places.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">unhex(string)</span></tt></td>
+<td>Interpret <em>s</em> as a hexadecimal string and return a binary value from each pair.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">unicode(string)</span></tt></td>
+<td>First Unicode code point in a string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">unix_timestamp([datetime])</span></tt></td>
+<td><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003621/https:/en.wikipedia.org/wiki/Unix_time>UNIX Timestamp</a> for a datetime.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">upper(string)</span></tt></td>
+<td>Uppercase a string.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">var_pop(double)</span></tt></td>
+<td>(Aggregate) Population variance of all input values (square of the population standard deviation).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">var_samp(double)</span></tt></td>
+<td>(Aggregate) Sample variance of all input values (square of the sample standard deviation).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">version()</span></tt></td>
+<td>SQL Layer version string.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">week(d</span> <span class="pre">datetime[,</span> <span class="pre">mode</span> <span class="pre">integer])</span></tt></td>
+<td>Week number of a date.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">weekday(date)</span></tt></td>
+<td>Weekday for a date.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">weekofyear(date)</span></tt></td>
+<td>Week number of a date (equivalent to <tt class="docutils literal"><span class="pre">WEEK(d,</span> <span class="pre">3)</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">xor(x</span> <span class="pre">boolean,</span> <span class="pre">y</span> <span class="pre">boolean)</span></tt></td>
+<td>Boolean XOR (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">^</span> <span class="pre">y</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">year(date)</span></tt></td>
+<td>Year of a date.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">yearweek(d</span> <span class="pre">date[,</span> <span class="pre">mode</span> <span class="pre">integer])</span></tt></td>
+<td>Year and week (as <tt class="docutils literal"><span class="pre">YYYYWW</span></tt>) for a date.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">znear(lat_x</span> <span class="pre">numeric,</span> <span class="pre">lon_x</span> <span class="pre">numeric,</span> <span class="pre">lat_y</span> <span class="pre">numeric,</span> <span class="pre">lon_y</span> <span class="pre">numeric)</span></tt></td>
+<td>Z-value (nearness estimate) for lat_x/lon_x compared to lat_y/lon_y (requires spatial index).</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003621/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:21 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:41:59 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

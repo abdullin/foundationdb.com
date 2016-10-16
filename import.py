@@ -136,13 +136,13 @@ def clean_wb(lst):
 
 
 ref_regex = re.compile('"(?P<url>\/web\/[\d]+(?P<kind>js_|cs_|im_|)\/(?P<src>.+?))"')
-
+redirect_regex = re.compile('document.location.href = "(?P<url>.+?)"')
 
 
 
 htmls = set()
 
-def download_page(page):
+def download_page(page, level):
     
     mapped = map_local_path(page)
     clean = mapped[0]
@@ -151,24 +151,48 @@ def download_page(page):
     src = join("doc/orig", mapped[1])
 
 
-    print("Downloading",page)
     if page in htmls:
-        print("  skip inc")
         return mapped[1]
+
+    if level > 10:
+        pages.append(page)
+        return mapped[1]
+    
     if "//foundationdb.com" not in page:
-        print("  skip not fdb")
         return page
     if ".pdf" in page:
-        print("   skip pdf")
-        return page
+        ensure_file(page, join("doc", mapped[1]))
+        return mapped[1]
+    if ".png" in page:
+        ensure_file(page, join("doc", mapped[1]))
+        return mapped[1]
     if "javadoc" in page:
         print(" skip javadoc")
+        return page
+    if "courses" in page:
         return page
 
     
     ensure_file(page, src)
     
+
+
+
+    
+    with open(src, 'r') as r:
+        lines = list(r)
+        result = []
+        for i,l in enumerate(lines):
+            r = redirect_regex.search(l)
+            if r:
+                new_url = r.groupdict()["url"].replace("\/","/")
+                
+                return download_page("https://web.archive.org" + new_url, level+1)
+
+
+    
     htmls.add(page)
+        
 
     links = set()
 
@@ -184,14 +208,10 @@ def download_page(page):
         full_url = "https://web.archive.org" + url
 
         if kind == "":
-            print("Recur!!", full_url)
-            full_local = download_page(full_url)
-            print("Map", full_url, "to", full_local)
-             
+            full_local = download_page(full_url, level + 1)
         else:
             full_local = kind + "/" + name
             ensure_file(full_url,"doc/" + full_local)
-            print(full_local)
 
         # matching local path
         return relpath(full_local,dirname(mapped[1]))
@@ -211,4 +231,4 @@ def download_page(page):
         return mapped[1]
             
 for page in pages:
-    download_page(page)
+    download_page(page, 0)

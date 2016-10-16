@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=376;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Application Integration
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003300/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="kbIz4sxFw0kKGOmCBtryUv5Za6Amg7+ALEc8NNLdMwI=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003300/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=index.html class="active">Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="application-integration">
+<span id="fdbsql-app-integration"></span><h1>Application Integration<a class="headerlink" href="#application-integration" title="Permalink to this headline">∞</a></h1>
+<p>This section will guide your use of SQL Layer through programming languages, ORMs and other tools.</p>
+<div class="section" id="orm-support">
+<span id="app-integration-orm"></span><h2>ORM Support<a class="headerlink" href="#orm-support" title="Permalink to this headline">∞</a></h2>
+<p>The preferred way to use SQL Layer is through Object-Relational Mapping layers (ORMs).</p>
+<p>Several ORMs have been tested with SQL Layer and have specific adapters for it. Some of the implementations simply ensure that the SQL syntax and metadata queries are compatible. Others, like the SQLAlchemy dialect, take advantage of the unique <a class="reference internal" href=../Concepts/table.groups.html><em>hierarchical modeling</em></a> and <a class="reference internal" href=../SQL/dml/select_nested_object.html><em>nested SQL querying</em></a> capabilities of SQL Layer to improve their performance by accessing objects in a single query.</p>
+<p>The following ORMs are supported:</p>
+<ul>
+<li><p class="first">Java <a class="reference internal" href=../../index.html><em>Hibernate</em></a></p>
+</li>
+<li><p class="first">Java <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.mybatis.org>MyBatis</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>Note: Requires the <tt class="docutils literal"><span class="pre">driverClassName</span></tt> to be set to <tt class="docutils literal"><span class="pre">com.foundationdb.sql.jdbc.Driver</span></tt>, and the <tt class="docutils literal"><span class="pre">url</span></tt> should be of the form: <tt class="docutils literal"><span class="pre">jdbc:fdbsql://host:15432/mybatis-example</span></tt>. See the <tt class="docutils literal"><span class="pre">dataSource</span></tt> section in <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/mybatis.github.io/mybatis-3/configuration.html>MyBatis Configuration</a> for more details.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">node.js <a class="reference internal" href=../../index.html><em>Waterline</em></a></p>
+</li>
+<li><p class="first">PHP <a class="reference internal" href=../../index.html><em>Doctrine</em></a></p>
+</li>
+<li><p class="first">Python <a class="reference internal" href=../../index.html><em>SQLAlchemy</em></a></p>
+</li>
+<li><p class="first">Python <a class="reference internal" href=../../index.html><em>Django</em></a></p>
+</li>
+<li><p class="first">Ruby <a class="reference internal" href=../../index.html><em>ActiveRecord</em></a></p>
+</li>
+<li><p class="first">Ruby <a class="reference internal" href=../../index.html><em>Sequel</em></a></p>
+</li>
+</ul>
+<p>We are always looking to expand the supported list. Please let us know <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/community.foundationdb.com/questions/4421/looking-for-an-orm-we-dont-officially-support-yet.html>on the community site</a>.</p>
+</div>
+<div class="section" id="client-drivers">
+<span id="app-integration-drivers"></span><h2>Client Drivers<a class="headerlink" href="#client-drivers" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="sql-layer-native-drivers">
+<h3>SQL Layer Native Drivers<a class="headerlink" href="#sql-layer-native-drivers" title="Permalink to this headline">∞</a></h3>
+<p>The official <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/github.com/FoundationDB/sql-layer-adapter-jdbc>JDBC Driver</a> is available from <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/search.maven.org/#search|gav|1|g%3A%22com.foundationdb%22%20AND%20a%3A%22fdb-sql-layer-jdbc%22>Maven Central</a>.</p>
+<p>The official <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/github.com/FoundationDB/sql-layer-adapter-odbc>ODBC Driver</a> is available from <a class="reference external" href=../../../../index.html>Get FoundationDB</a>.</p>
+</div>
+<div class="section" id="postgresql-compatible-drivers">
+<h3>PostgreSQL Compatible Drivers<a class="headerlink" href="#postgresql-compatible-drivers" title="Permalink to this headline">∞</a></h3>
+<p>SQL Layer &#8220;speaks&#8221; the PostgreSQL protocol which allows most existing drivers to be used as-is. Almost every language has such a driver and a complete list is maintained at <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.postgresql.org/download/products/2-drivers-and-interfaces>Software Catalogue - Drivers and interfaces</a>. Be sure to read the <a class="reference internal" href="#fdbsql-app-integration-untested"><em>notes below</em></a> about untested drivers and ORMs.</p>
+<p>Following is a list of drivers that have been tested to work with SQL Layer:</p>
+<ul>
+<li><p class="first">C</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.postgresql.org/docs/9.3/static/libpq.html>libpq</a>, used by <tt class="docutils literal"><span class="pre">psql</span></tt> client and many of the drivers below</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">CommonLisp</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.lispworks.com/documentation/sql-tutorial>CommonSQL</a> (usage <a class="reference internal" href="driver.commonlisp.example.html#fdbsql-commonlisp"><em>example</em></a>)</li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/marijnhaverbeke.nl/postmodern>Postmodern</a> (usage <a class="reference internal" href="driver.commonlisp.example.html#fdbsql-commonlisp"><em>example</em></a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Lua</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/github.com/leafo/pgmoon>pgmoon</a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">node.js</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/npmjs.org/package/pg>pg</a> (usage <a class="reference internal" href="driver.nodejs.example.html#fdbsql-nodejs"><em>example</em></a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">PHP</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.php.net/manual/en/book.pgsql.php>PGSQL</a></li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/php.net/manual/en/ref.pdo-pgsql.php>PDO_PGSQL</a> (usage <a class="reference internal" href="driver.php.example.html#fdbsql-php-pdo"><em>example</em></a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Python</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/initd.org/psycopg>psycopg2</a></li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/pybrary.net/pg8000>pg8000</a></li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/docs.python-requests.org/en/latest>Requests</a> (REST access)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Ruby</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/rubygems.org/gems/pg>pg</a> (usage <a class="reference internal" href="driver.ruby.example.html#fdbsql-ruby"><em>example</em></a>)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Scala</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/github.com/mauricio/postgresql-async>postgresql-async</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>Note: Requires <a class="reference internal" href=../Admin/configuration.html><em>binary_output</em></a> to be set to <tt class="docutils literal"><span class="pre">hex</span></tt></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">.NET</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/npgsql.projects.pgfoundry.org>Npgsql 2.0.13</a></p>
+<blockquote>
+<div><ul class="simple">
+<li>Tested with VisualStudio 11 and .NET 4.5</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="troubleshooting-untested-drivers-and-orms">
+<span id="fdbsql-app-integration-untested"></span><h2>Troubleshooting Untested Drivers and ORMs<a class="headerlink" href="#troubleshooting-untested-drivers-and-orms" title="Permalink to this headline">∞</a></h2>
+<p>It is usually not hard to get an existing driver or binding to work correctly.</p>
+<p>The majority of the problems one might encounter are due to how the driver or ORM query metadata. Many PostgreSQL bindings use the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.postgresql.org/docs/current/static/catalogs.html>System Catalogs</a> directly, whereas SQL Layer only exposes ANSI SQL <a class="reference internal" href=../SQL/index.html><em>information_schema</em></a> tables. Other less common problems include runtime settings, data types, functions, and syntax.</p>
+<p>As you are testing a new integration, keep an eye on the <a class="reference internal" href=../Admin/configuration.html><em>log files</em></a>, where you&#8217;ll see reports of failed queries. For example, failures with the error &#8220;<em>Cannot find the table pg_xxx</em>&#8221; mean that a metadata query needs to be rewritten to use the corresponding information_schema tables. Replace the problem queries in the driver or ORM code and repeat until the system works correctly.</p>
+</div>
+<div class="section" id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">∞</a></h2>
+<p>The following tools have been tested to work with SQL Layer:</p>
+<ul class="simple">
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/squirrel-sql.sourceforge.net>Squirrel SQL</a></li>
+<li>IntelliJ IDEA Database Browser</li>
+<li>RubyMine Database Browser</li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/www.tableau.com>Tableau</a> (<a class="reference internal" href="tool.tableau.html#fdbsql-tableau"><em>setup instructions</em></a>)</li>
+</ul>
+<p>Tools known <strong>not</strong> to work correctly:</p>
+<ul class="simple">
+<li>pgAdmin III</li>
+<li><a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/https:/eggerapps.at/pgcommander>PG Commander</a></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Application Integration</a><ul><li><a class="reference internal" href="#orm-support">ORM Support</a></li><li><a class="reference internal" href="#client-drivers">Client Drivers</a><ul><li><a class="reference internal" href="#sql-layer-native-drivers">SQL Layer Native Drivers</a></li><li><a class="reference internal" href="#postgresql-compatible-drivers">PostgreSQL Compatible Drivers</a></li></ul></li><li><a class="reference internal" href="#troubleshooting-untested-drivers-and-orms">Troubleshooting Untested Drivers and ORMs</a></li><li><a class="reference internal" href="#tools">Tools</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:00 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:26 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

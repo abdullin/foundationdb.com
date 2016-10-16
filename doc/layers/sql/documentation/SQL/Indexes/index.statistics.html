@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app10.us.archive.org";archive_analytics.values.server_ms=271;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Index Statistics
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/Indexes/index.statistics.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003623/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003623/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003623/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003623/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../../index.html>Summary</a></li>
+<li>
+<a href=../../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../../Concepts/features.html>Features</a></li>
+<li><a href=../../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../index.html>SQL Reference</a></li>
+<li><a href=../../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../../Admin/configuration.html>Configuration</a></li>
+<li><a href=../../Admin/administration.html>Administration</a></li>
+<li><a href=../../Admin/security.html>Security</a></li>
+<li><a href=../../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../index.html>SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="id1">
+<h1>Index Statistics<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer has a sophisticated statistics gathering ability that allows the optimizer to make the correct choices when evaluating different execution plans.</p>
+<div class="section" id="generating-and-maintaining-statistics-on-indexes">
+<h2>Generating and Maintaining Statistics on Indexes<a class="headerlink" href="#generating-and-maintaining-statistics-on-indexes" title="Permalink to this headline">∞</a></h2>
+<p>The only maintenance required on indexes is the generation of statistics. To generate statistics use the <a class="reference internal" href=../ddl/alter.table.html><em>ALTER TABLE statement</em></a>:</p>
+<p>For example, to generate statistics for all indexes on a table named <tt class="docutils literal"><span class="pre">customers</span></tt> using <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">caoi</span><span class="o">=&gt;</span> <span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">customers</span> <span class="k">ALL</span> <span class="k">UPDATE</span> <span class="k">STATISTICS</span><span class="p">;</span>
+<span class="k">ROWS</span><span class="p">:</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The SQL Layer will generate statistics when an index is created or when a threshold of change to the cardinality of a table has been reached. This does not mean that statistics generation should be left only at the discretion of the SQl Layer. Use your understanding of the processes in your system to identify when data changes warrant a new generation of statistics. In particular, statistics should be generated when:</p>
+<ol class="arabic simple">
+<li>after loading data into a table</li>
+<li>after dropping data from a table</li>
+<li>the number of rows in a table increases by a large amount (due to bulk load or heavy <cite>INSERT</cite> activity).</li>
+<li>a table using an auto increment primary key to add data to the end of a table and the number of rows added is beyond about 1/32 (about 3%) of the old total.</li>
+<li>a table has more than 3% of its total rows deleted.</li>
+<li>an index/column has highly selective values (e.g. colors) and you start adding new values.</li>
+<li>a column was added to or dropped from a table</li>
+</ol>
+</div>
+<div class="section" id="statistical-information-in-the-sql-layer">
+<h2>Statistical Information in the SQL Layer<a class="headerlink" href="#statistical-information-in-the-sql-layer" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="introduction">
+<h3>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">∞</a></h3>
+<p>The query optimizer needs to estimate the cost of performing a sequence of operators to make better choices. Some of these choices include:</p>
+<ul class="simple">
+<li>Which index to use when no one index matches all the query conditions. In general, an index that matches the fewest number of rows is best because it narrows down the results the fastest.</li>
+<li>What order to perform joins in. Joins within a group are usually treated specially, because there are special operators to do the lookup and joining. However, joins between groups and to non-group tables like VALUES should be done in an order that gets the fewest rows the earliest.<ul>
+<li>When we have different join algorithms from nested loop join, we need to decide when to restrict based on a previous table (outer loop) and when to compute two result sets and join them (merge).</li>
+</ul>
+</li>
+<li>Whether to do partial GROUP BY and DISTINCT earlier in the query to reduce the number of rows before sorting for a final pass.</li>
+</ul>
+<p>The costs that are compared to make this decision consist of two components: the estimated number of rows and how expensive it was to compute them. It&#8217;s the expense that ends up being compared in the end, but in almost all cases the number of rows processed needs to be known to estimate how expensive an operation is.</p>
+</div>
+<div class="section" id="histograms">
+<h3>Histograms<a class="headerlink" href="#histograms" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer maintains index value histograms in order to answer questions about how many rows would be returned between two given keys (with either end optional for extending to the end).</p>
+</div>
+<div class="section" id="selectivity">
+<h3>Selectivity<a class="headerlink" href="#selectivity" title="Permalink to this headline">∞</a></h3>
+<p>Another way of measuring the effectiveness of an index is by how many distinct values it indexes. More or less equivalently, this can be the count of distinct values, the 1 / that count (the density) or the ratio of the total number of rows and the number of distinct rows (or vice versa).
+If there are a small number of distinct values, then a histogram is a perfect representation of this: it gives the number of rows that have each value.
+However, when there is a large number of distinct values, comparable to the number of rows, they do not do as good a job of estimating a narrow range. This is particularly true for an equality constraint.
+For this reason, many databases also maintain samples of how many distinct values there are, or of how many there are in each bucket, or how many as a fraction of the total row count.</p>
+</div>
+<div class="section" id="value-correlation">
+<h3>Value Correlation<a class="headerlink" href="#value-correlation" title="Permalink to this headline">∞</a></h3>
+<p>When several join filters are applied (such as when multiple indexes are intersected, when nested loop joins use a multi-column index to match the outer loop and apply a condition at the same time, or when an explicit Select needs to be done), the simple assumption is that selectivities are independent: each predicate further reduces the set according to its estimate. In fact, most data sets are not entirely independent.
+To solve this, many databases allow statistics to be gathered under some filter. When the optimizer sees a predicate matching this filter, it can use the more accurate statistics for the other conditions.</p>
+</div>
+<div class="section" id="collection-strategy">
+<h3>Collection Strategy<a class="headerlink" href="#collection-strategy" title="Permalink to this headline">∞</a></h3>
+<p>One set of histograms is computed for each left subset of index columns. Each set contains:</p>
+<ul class="simple">
+<li>table_id int</li>
+<li>index_id int</li>
+<li>analysis_timestamp timestamp</li>
+<li>column_count int</li>
+<li>item_number int</li>
+<li>key_string varchar(2048)</li>
+<li>index_row_data varbinary(4096)</li>
+<li>eq_count bigint</li>
+<li>lt_count bigint</li>
+<li>distinct_count bigint</li>
+</ul>
+<p>To populate the buckets from rows, it keep track of two sets: most popular and intervals. When there is a change, it adds to most popular if it&#8217;s not full or the new interval is larger. Then remove the least popular and merge it with its interval. At the very end, decide which to keep of the most popular and intervals to meet the number of samples limit.</p>
+</div>
+<div class="section" id="group-statistics">
+<h3>Group Statistics<a class="headerlink" href="#group-statistics" title="Permalink to this headline">∞</a></h3>
+<p>In order to decide between a GroupLookup and an IndexScan with a foreign key and another condition followed by a random access, there needs to be a cost estimate of the number of children for a given parent table / child table combination. To get cost as well as cardinality, some estimate of the sibling keys that will be ignored is also needed.</p>
+</div>
+<div class="section" id="cost-for-various-operators">
+<h3>Cost for Various Operators<a class="headerlink" href="#cost-for-various-operators" title="Permalink to this headline">∞</a></h3>
+<p>The optimizer also needs to estimate the additional cost of other logical operators. For example, it may trade-off using an index for sorting vs. a different more selective index followed by a tree sort. Down the road, it may compare a nested loop join against a merge or hash join.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="54%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Operator</td>
+<td>Cardinality</td>
+<td>Cost</td>
+</tr>
+<tr class="row-even"><td>Index Scan</td>
+<td>From histograms above</td>
+<td>constant</td>
+</tr>
+<tr class="row-odd"><td>Branch Lookup</td>
+<td>From group statistics</td>
+<td>ignoring extras</td>
+</tr>
+<tr class="row-even"><td>Tree Sort</td>
+<td>same as input</td>
+<td>n log n</td>
+</tr>
+<tr class="row-odd"><td>Select</td>
+<td>selectivity (from non-index stats?)</td>
+<td>n</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Index Statistics</a><ul><li><a class="reference internal" href="#generating-and-maintaining-statistics-on-indexes">Generating and Maintaining Statistics on Indexes</a></li><li><a class="reference internal" href="#statistical-information-in-the-sql-layer">Statistical Information in the SQL Layer</a><ul><li><a class="reference internal" href="#introduction">Introduction</a></li><li><a class="reference internal" href="#histograms">Histograms</a></li><li><a class="reference internal" href="#selectivity">Selectivity</a></li><li><a class="reference internal" href="#value-correlation">Value Correlation</a></li><li><a class="reference internal" href="#collection-strategy">Collection Strategy</a></li><li><a class="reference internal" href="#group-statistics">Group Statistics</a></li><li><a class="reference internal" href="#cost-for-various-operators">Cost for Various Operators</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003623/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:23 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:33:25 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

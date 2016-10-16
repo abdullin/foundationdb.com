@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=322;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Hierarchical Documents (go) &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/hierarchical-documents/go' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325004214/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='language' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325004214/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Overview</a></li>
+<li><a href=../../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004214/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004214/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325004214/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Hierarchical Documents</h1>
+<div class='languages'>
+<a href=../index.html class="python">python</a>
+<a href=index.html class="go active">go</a>
+<a href=../java/index.html class="java">java</a>
+<a href=../ruby/index.html class="ruby">ruby</a>
+</div>
+</header>
+<div id='body'> <h2></h2><h2>Goal</h2><p>   Create a representation for hierarchical <a href=../../../../../https:/web.archive.org/web/20150325004214/http:/en.wikipedia.org/wiki/Document-oriented_database>documents</a>.</p><h2>Challenge</h2><p>        Support efficient storage and retrieval of documents, both as a whole and by subdocuments specified by paths.</p><h2>Explanation</h2><p>        A hierarchical document has a tree-like structure, with the document ID as the root. We'll map the hierarchy to a list of tuples in which each tuple corresponds to a path from the root to a leaf. These tuples will form keys, so each leaf is indexed by the path leading to it.</p><h2>Ordering</h2><p>        Because each tuple represents a path from the document root to a leaf, the lexicographic ordering of tuples guarantees that adjacent paths will be stored in adjacent keys. Each tuple prefix will correspond to a subdocument that can be retrieved using a prefix range read. Likewise, a range read using the root as a prefix will retrieve the entire document.</p><h2>Pattern</h2><p>        A document will consist of a dictionary whose values may be simple data types (e.g., integers or strings), lists, or (nested) dictionaries. Each document will be stored under a unique ID. If a document ID has not already been supplied, we randomly generate one.</p><p>        We convert the document to a list of tuples representing each path from the root to a leaf. Each tuple is used to construct a composite key within a subspace. The document ID becomes the first element after the subspace prefix, followed by the remainder of the path. We store the leaf (the last element of the tuple) as the value, which enables storage of larger data sizes (see <a href=../../../../documentation/data-modeling.html>Key and value sizes</a>).</p><p>        If we're given a serialized JSON object to start with, we just deserialize it before converting it to tuples. To distinguish the list elements in the document (a.k.a. JSON arrays) from dictionary elements and preserve the order of the lists, we include the index of each list element before it in the tuple.</p><p>        We can retrieve any subdocument based on the partial path to its root. The partial path will just be a tuple that the query function uses as a key prefix for a range read. The retrieved data will be a list of tuples. The final step before returning the data is to convert it back to a document.</p><h2> Extensions</h2><h3>Indexing</h3><p>        We could extend the document model to allow selective indexing of keys or values at specified locations with a document.</p><h3>Query language</h3><p>        We could extend the document to support more powerful query capabilities, either with query functions or a full query language. Either would be designed to take advantage of existing indexes.</p><h2>Code</h2><p>        Here’s a basic implementation of the recipe.</p><pre>func _pack(t interface{}) []byte {
+    return tuple.Tuple{t}.Pack()
+}
+func _unpack(t []byte) tuple.Tuple {
+    i, e := tuple.Unpack(t)
+    if e != nil {return nil}
+    return i
+}
+const EmptyObject int = -1
+const EmptyList int = -2
+func ToTuples(item interface{}) []tuple.Tuple {
+    switch i := item.(type) {
+    case []interface{}:
+        if len(i) == 0 {return []tuple.Tuple{tuple.Tuple{EmptyList}}}
+        tuples := make([]tuple.Tuple, 0)
+        for i, v := range i {
+            for _, t := range ToTuples(v) {
+                tuples = append(tuples, append(tuple.Tuple{i}, t...))
+            }
+        }
+        return tuples
+    case map[string]interface{}:
+        if len(i) == 0 {return []tuple.Tuple{tuple.Tuple{EmptyObject}}}
+        tuples := make([]tuple.Tuple, 0)
+        for k, v := range i {
+            for _, t := range ToTuples(v) {
+                tuples = append(tuples, append(tuple.Tuple{k}, t...))
+            }
+        }
+        return tuples
+    default:
+        return []tuple.Tuple{tuple.Tuple{i}}
+    }
+    return nil
+}
+func FromTuples(tuples []tuple.Tuple) interface{} {
+    if len(tuples) == 0 {return nil}
+        first := tuples[0]
+        if len(first) == 1 {return first[0]}
+        if first[0] == EmptyObject {return make(map[string]interface{}, 0)}
+        if first[0] == EmptyList {return make([]interface{}, 0)}
+        group := make(map[string][]tuple.Tuple)
+        for _, t := range tuples {
+            k := string(_pack(t[0]))
+            _, ok := group[k]
+            if !ok {group[k] = make([]tuple.Tuple, 0)}
+            group[k] = append(group[k], t[0:len(t)])
+        }
+        switch first[0].(type) {
+            case int64:
+                res := make([]interface{}, 0)
+                for _, g := range group {
+                    subtup := make([]tuple.Tuple, 0)
+                    for _, t := range g {
+                        subtup = append(subtup, t[1:len(t)])
+                    }
+                    res = append(res, FromTuples(subtup))
+                }
+                return res
+            default:
+                res := make(map[string]interface{})
+                for _, g := range group {
+                    subtup := make([]tuple.Tuple, 0)
+                    for _, t := range g {
+                        subtup = append(subtup, t[1:len(t)])
+                    }
+                    res[g[0][0].(string)] = FromTuples(subtup)
+                }
+                return res
+        }
+}
+type Doc struct {
+    DocSS subspace.Subspace
+}
+func (doc Doc) InsertDoc(trtr fdb.Transactor, docdata []byte) int {
+    var data interface{}
+    json.Unmarshal(docdata, &amp;data)
+    docid := 0
+    switch d := data.(type) {
+        case map[string]interface{}:
+            temp, ok := d["doc_id"]
+            if !ok {
+                docid = doc._GetNewID(trtr)
+                d["doc_id"] = docid
+            } else {
+                docid = temp.(int)
+            }
+            tuples := ToTuples(d)
+            trtr.Transact(func(tr fdb.Transaction) (interface{}, error) {
+                for _, t := range tuples {
+                    tr.Set(doc.DocSS.Pack(append(tuple.Tuple{d["doc_id"]}, t[0:len(t)-1]...)), _pack(t[len(t)-1]))
+                }
+                return nil, nil
+            })
+    }
+    return docid
+}
+func (doc Doc) _GetNewID(trtr fdb.Transactor) int {
+    new_id := rand.Intn(100000007)
+    trtr.Transact(func(tr fdb.Transaction) (interface{}, error) {
+        for true {
+            new_id = rand.Intn(100000007)
+            rp, err := fdb.PrefixRange(doc.DocSS.Pack(tuple.Tuple{new_id}))
+            if err != nil {continue}
+            res, err := tr.GetRange(rp, fdb.RangeOptions{1, -1, false}).GetSliceWithError()
+            if len(res) == 0 {
+                break
+            }
+        }
+        return nil, nil
+    })
+    return new_id
+}
+func (doc Doc) GetDoc(trtr fdb.Transactor, doc_id int) interface{} {
+    tuples := make([]tuple.Tuple, 0)
+    trtr.ReadTransact(func(tr fdb.ReadTransaction) (interface{}, error) {
+        kr, err := fdb.PrefixRange(doc.DocSS.Pack(tuple.Tuple{doc_id}))
+        if err != nil {panic(err)}
+        items := tr.GetRange(kr, fdb.RangeOptions{}).Iterator()
+        for items.Advance() {
+            v := items.MustGet()
+            tup, err := doc.DocSS.Unpack(v.Key)
+            if err != nil {panic(err)}
+            tuples = append(tuples, append(tup[1:len(tup)], _unpack(v.Value)))
+        }
+        return nil, nil
+    })
+    return FromTuples(tuples)
+}
+</pre><p>   That illustrates the basic pattern.</p><p>   Happy documenting!</p> </div>
+</div>
+<div id='more'>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004214/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:42:14 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:35:13 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

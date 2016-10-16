@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=1326;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SQL Layer Features
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/features.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003210/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="X0qjNvl2cycvqsCIaB3ikmOnKfE5Vn63VsUS0lsNolU=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003210/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003210/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003210/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=index.html>Concepts</a>
+<ul>
+<li><a href=features.html class="active">Features</a></li>
+<li><a href=architecture.html>Physical Architecture</a></li>
+<li><a href=table.groups.html>Table-Groups</a></li>
+<li><a href=mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=known.limitations.html>Known Limitations</a></li>
+<li><a href=glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Concepts</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="sql-layer-features">
+<span id="fdbsqllayer-features"></span><h1>SQL Layer Features<a class="headerlink" href="#sql-layer-features" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer is a <strong>fault tolerant</strong> and <strong>scalable</strong> RDBMS for OLTP workloads developed on top of the FoundationDB Key-Value Store. It was <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003210/https:/github.com/FoundationDB/sql-layer>written from scratch</a> to provide robust SQL capabilities in a distributed environment. It is not a mere shim to a NoSQL system.</p>
+<p>To our knowledge, the only database with a similar approach is <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003210/http:/research.google.com/pubs/pub41344.html>Google F1</a>, which was built for the AdWords service on top of <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003210/http:/research.google.com/archive/spanner.html>Google Spanner</a>. Both leverage an underlying scalable and transactional storage substrate to allow unprecedented scalability at both the storage and SQL processing levels. Both leverage hierarchical schemas, arranging tables into a hierarchy that is mirrored in storage by interleaving rows of parents with rows of children. Both systems make the tradeoff that higher latency is acceptable for gaining high throughput at scale. An individual query may take a longer time, but the overall throughput of the system, measured in number of queries completed per unit time, is much higher due to parallelism.</p>
+<p>Architecturally, the system relies on the Key-Value Store at the lowest storage level. It is responsible for all state in the system and provides high availability and strong ACID guarantees. It can (and in production should) be deployed on multiple machines to guarantee fault tolerance. The SQL Layer sits one level above the Key-Value Store and communicates with it using the FoundationDB client. The SQL Layer is <strong>stateless</strong> - it holds no state of its own and delegates all state to the Key-Value Store. As a result, it is easily scaled by adding SQL Layer instances. Above the SQL Layer, application or web servers communicate with the SQL Layer through a standard SQL protocol or a connection pool.</p>
+<a class="reference internal image-reference" href=../_images/architecture-simple.png><img alt="../_images/architecture-simple.png" class="align-center" src=../../../../im_/architecture-simple.png style="width: 600px;" /></a>
+<p>Any production deployment should ensure sufficient redundancy of SQL Layer instances across multiple machines and proper load balancing of the application layer to the SQL Layer. A more detailed discussion is available in the <a class="reference internal" href="architecture.html#fdbsql-architecture"><em>physical architecture</em></a> section.</p>
+<div class="section" id="differences-from-a-traditional-rdbms">
+<h2>Differences from a traditional RDBMS<a class="headerlink" href="#differences-from-a-traditional-rdbms" title="Permalink to this headline">∞</a></h2>
+<p>The following table summarizes the main differences:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="40%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Feature</th>
+<th class="head">Traditional RDBMS</th>
+<th class="head">SQL Layer</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Scaling</td>
+<td>Scale up (i.e. larger machine) or sharding</td>
+<td>Scale out by adding nodes at the K/V level and the SQL level (see <a class="reference internal" href="architecture.html"><em>Architecture</em></a>)</td>
+</tr>
+<tr class="row-odd"><td>Fault tolerance</td>
+<td>Use replication and configure fail-over mechanism by hand</td>
+<td>Any cluster of 5 or more K/V nodes has strong fault tolerance</td>
+</tr>
+<tr class="row-even"><td>Query performance</td>
+<td>Dependent on total data accessed, good as long as most data is in memory</td>
+<td><a class="reference internal" href="#fdbsqllayer-features-batch-pipelining"><em>Batch pipelining</em></a> to parallelize query execution</td>
+</tr>
+<tr class="row-odd"><td>Query timeout</td>
+<td>Configurable</td>
+<td>Up to 5 seconds with full isolation</td>
+</tr>
+<tr class="row-even"><td>Latency</td>
+<td>Low for in-memory data, about 0.1ms for SSD and a few milliseconds for HDD</td>
+<td>A few milliseconds</td>
+</tr>
+<tr class="row-odd"><td>Throughput</td>
+<td>Limited to saturating all cores</td>
+<td>Linear scalability with number of nodes &amp; cores</td>
+</tr>
+<tr class="row-even"><td>Transaction Isolation</td>
+<td>Configurable, usually defaults to <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">SERIALIZABLE</span></tt>, <tt class="docutils literal"><span class="pre">SNAPSHOT</span></tt>, <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span> <span class="pre">NO</span> <span class="pre">SNAPSHOT</span></tt></td>
+</tr>
+<tr class="row-odd"><td>Transaction timeout</td>
+<td>Configurable</td>
+<td>Up to 5 seconds</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="major-features">
+<h2>Major features<a class="headerlink" href="#major-features" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="highly-available">
+<h3>1. Highly available<a class="headerlink" href="#highly-available" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer relies on and inherits from the Key-Value Store a transactional, scalable, highly available, and ordered storage substrate. The Key-Value Store handles lower-level storage issues like persistence, caching, replication, fault tolerance, data sharding and movement, location lookups, and transactions.</p>
+</div>
+<div class="section" id="stateless-scalability">
+<h3>2. Stateless scalability<a class="headerlink" href="#stateless-scalability" title="Permalink to this headline">∞</a></h3>
+<p>Because all state is in the storage substrate, the SQL Layer retains no state of its own. As a result, multiple instances of the SQL Layer can be deployed against a single FoundationDB database.
+Additionally, SQL Layer instances can be easily added or removed, scaling overall SQL capacity. This allows strong scalability and load balancing. A client can communicate with a different SQL Layer instance for each transaction.</p>
+</div>
+<div class="section" id="truly-transactional">
+<h3>3. Truly transactional<a class="headerlink" href="#truly-transactional" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer is strongly consistent and supports true ACID properties even for complex transactions. These properties are inherited from the Key-Value Store itself.</p>
+</div>
+<div class="section" id="hierarchical-schema-a-relational-schema-with-explicit-table-hierarchies">
+<h3>4. Hierarchical schema: a relational schema with explicit table hierarchies<a class="headerlink" href="#hierarchical-schema-a-relational-schema-with-explicit-table-hierarchies" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer heavily relies on clustering related rows from different tables using a concept called <a class="reference internal" href="table.groups.html#table-groups-intro"><em>Table-Groups</em></a>. Table-Groups organize a set of user-defined tables into a hierarchy that reflects an object structure. For example, a <tt class="docutils literal"><span class="pre">CUSTOMERS</span></tt> table could be the parent of an <tt class="docutils literal"><span class="pre">ORDERS</span></tt> table, which could be the parent of the <tt class="docutils literal"><span class="pre">ITEMS</span></tt> table:</p>
+<div class="highlight-python"><div class="highlight"><pre>CUSTOMERS
+    |
+    +--- ORDERS
+             |
+             +--- ITEMS
+</pre></div>
+</div>
+<p>Tables from the logical schema cannot be arbitrarily interleaved: the child table must have a foreign key to its parent table.</p>
+<p>This Table-Group definition is then reflected in the physical organization of data. In particular, rows from child tables are interleaved with rows from their parent tables. For example, a <tt class="docutils literal"><span class="pre">CUSTOMER</span></tt> row would be stored followed by its first <tt class="docutils literal"><span class="pre">ORDER</span></tt> row, followed by that order’s <tt class="docutils literal"><span class="pre">ITEMS</span></tt>, followed by the next <tt class="docutils literal"><span class="pre">ORDER</span></tt> and <tt class="docutils literal"><span class="pre">ITEMS</span></tt> for that customer, reflecting the hierarchy of the tables:</p>
+<div class="highlight-python"><div class="highlight"><pre>CUSTOMER ROW
+   ORDER ROW
+    ITEM ROW
+    ITEM ROW
+   ORDER ROW
+    ITEM ROW
+CUSTOMER ROW
+   ORDER ROW
+    ITEM ROW
+    ...
+</pre></div>
+</div>
+<p>Rows that belong to each logical``CUSTOMER`` object are clustered, effectively pre-joining the data. This clustering is critical to minimizing latency and allows object-centered access as well as standard relational access.</p>
+<p>Taking advantage of hierarchical row storage requires an <a class="reference internal" href="query.execution.html#algebra-execution-optimizer"><em>algebra</em></a> of operators for query execution that are Table-Group aware. Our GroupScan operator efficiently joins a parent table with its descendant tables. Other operators leverage clustering information in indexes, such as the Index Intersection that can intersect indexes from different tables in a Table-Group.</p>
+</div>
+<div class="section" id="sql-and-json-interfaces">
+<h3>5. SQL and JSON interfaces<a class="headerlink" href="#sql-and-json-interfaces" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer provides two ways to access the data in a fully consistent manner: through a traditional <a class="reference internal" href=../SQL/index.html><em>SQL interface</em></a> and through a <a class="reference internal" href=../REST/rest.api.reference.html><em>RESTful JSON-based API</em></a>. Both interfaces are served simultaneously by the same engine, exploiting the hierarchical schema that keeps an object collocated in storage as a series of clustered rows.</p>
+</div>
+<div class="section" id="sophisticated-indexing">
+<h3>6. Sophisticated indexing<a class="headerlink" href="#sophisticated-indexing" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer has a powerful <a class="reference internal" href=../SQL/indexes.html><em>indexing</em></a> subsystem. It includes both ordinary table indexes and also Table-Group <a class="reference internal" href=../SQL/indexes.html><em>multi-table indexes</em></a>, which take columns from multiple tables. A <a class="reference internal" href=../SQL/indexes.html><em>geospatial</em></a> index provides area-bounded and nearest-neighbor queries. Best of all, query execution can take advantage of multiple indexes in parallel.</p>
+</div>
+<div class="section" id="batch-pipelining-for-parallel-query-execution">
+<span id="fdbsqllayer-features-batch-pipelining"></span><h3>7. Batch pipelining for parallel query execution<a class="headerlink" href="#batch-pipelining-for-parallel-query-execution" title="Permalink to this headline">∞</a></h3>
+<p>Traditional relational databases operate on local data and optimize for disk access, which was traditionally the high-contention point. As a result, traditional execution engines approach query processing one row at a time. This is true for almost every major RDBMS today. A very high-bandwidth, over-the-network back end like FoundationDB changes this picture. Each request may incur longer latency, but a very large number of requests can be serviced in parallel (total throughput). The SQL Layer employs an execution technique that batches many parallel requests, amortizing latency and increasing performance. Scheduling many parallel data accesses results in near-linear speedup until the underlying storage system is saturated.</p>
+<p>For example, say a query retrieves the last 500 users who logged into a website. A traditional RDBMS will operate serially:</p>
+<div class="highlight-python"><div class="highlight"><pre>scan the index of login_datetime in DESC order
+for each index entry in the database
+    extract the ID of the original row
+    do a random access to retrieve the original row
+    return to read the next index entry
+</pre></div>
+</div>
+<p>The following diagram illustrates this: the execution oscillates between reading an index entry and fetching it&#8217;s row (lower blue graph). The maximum number of pending disk requests is one (higher grey graph):</p>
+<a class="reference internal image-reference" href=../_images/execution.no.pipelining.png><img alt="../_images/execution.no.pipelining.png" class="align-center" src=../../../../im_/execution.no.pipelining.png style="width: 600px;" /></a>
+<p>With this serial strategy, execution stalls while waiting for a row.</p>
+<p>The SQL Layer is different. It builds upon the Key-Value Store, which can sustain very high parallel throughput. It also needs to mitigate the latency of the network between the SQL Layer node and the Key-Value Store cluster. To achieve high throughput and mitigate the impact of request latency, we use a technique called <em>batch pipelining</em> that introduces parallelism. The technique opens a large number of asynchronous requests in parallel, rather than wait for the first one to return, and keeps a large pipeline of pending requests open at any given point in time. Using batch pipelining, the same query will now execute as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>scan the index of login_datetime in DESC order
+for each index entry in the database
+    extract the ID of the original row
+    asynchronously request the original row
+    return to read the next index entry
+When an asynchronous request for a row returns
+    Continue with that row to the next operator in the execution plan
+</pre></div>
+</div>
+<p>The following diagram illustrates this: the execution oscillates between reading index entries and filling a buffer of requests for rows (lower blue graph), which are then retrieved asynchronously (higher grey graph). The highest number of pending requests in this diagram is seven but is actually set to a much higher number. With this approach, execution doesn&#8217;t stall while waiting for a single row, and many rows are fetched in parallel:</p>
+<a class="reference internal image-reference" href=../_images/execution.batch.pipelining.png><img alt="../_images/execution.batch.pipelining.png" class="align-center" src=../../../../im_/execution.batch.pipelining.png style="width: 600px;" /></a>
+<p>Latency costs are amortized across many open requests, and the SQL Layer is able to leverage the massive throughput available from the Key-Value Store.</p>
+</div>
+</div>
+<div class="section" id="anti-features">
+<h2>Anti-features<a class="headerlink" href="#anti-features" title="Permalink to this headline">∞</a></h2>
+<p>There is also a set of <em>anti-features</em>, i.e., features that the SQL Layer is not designed to provide. (For a detailed list of technical limitations, whether relating to our design or just to the current version, see <a class="reference internal" href="known.limitations.html#fdbsql-known-limitations"><em>Known Limitations</em></a>.)</p>
+<div class="section" id="long-running-transactions">
+<h3>1. Long-running transactions<a class="headerlink" href="#long-running-transactions" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer does not support long-running transactions, currently defined as those lasting over five seconds. The system employs multi-version concurrency control (MVCC) and maintains older versions of the database for a five second period. A transaction that is kept open longer will not be able to commit. If you have a requirement to support large operations, we would be happy to assist you to implement a decomposition strategy that breaks transactions into smaller units. The intent is to disallow <em>transactions that change data</em> to run for long periods of time.</p>
+</div>
+<div class="section" id="purely-analytical-workload">
+<h3>2. Purely analytical workload<a class="headerlink" href="#purely-analytical-workload" title="Permalink to this headline">∞</a></h3>
+<p>Analytic processing of large data sets has become prominent with the advent of relational analytic databases such as Netezza and Vertica and, more recently, in conjunction with Hadoop. These systems are designed to accommodate very long running queries with historical data and generally abandon online transaction processing (OLTP) in favor of batch loading of data via ETL. This use case is outside the scope of the SQL Layer. However, our ultimate goal is to leverage the <a class="reference internal" href="query.execution.html#algebra-execution-optimizer"><em>advances in query optimization and execution</em></a> based on Table-Groups and combine them with parallel execution to allow moderately complex BI and reporting queries to be run in real-time against the operational datastore.</p>
+</div>
+<div class="section" id="schemaless">
+<h3>3. Schemaless<a class="headerlink" href="#schemaless" title="Permalink to this headline">∞</a></h3>
+<p>Schemas are a mechanism for documenting the data. The rigid way in which traditional relational systems define and evolve schemas have generated a sense of frustration and motivated a shift towards schemaless systems. However, most data has a schema, whether it is defined explicitly or implicitly. In the explicit approach, we pre-define a schema for the advantage of easy queries and strong guarantees. In the schemaless approach, schemas remain implicit, for example in a JSON document structure.</p>
+<p>The SQL Layer is designed to have a known schema in order to provide enough information to execute queries and define indexes. Our ultimate goal is to provide a middle ground through online, non-blocking schema evolution and better modeling through Table-Groups.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li>Read the introduction to <a class="reference internal" href="table.groups.html#table-groups-intro"><em>Table-Groups</em></a>. The concept of Table-Groups is central to the function of the SQL Layer.</li>
+<li>Learn more about the <a class="reference internal" href="known.limitations.html#fdbsql-known-limitations"><em>Known Limitations</em></a> of the SQL Layer.</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SQL Layer Features</a><ul><li><a class="reference internal" href="#differences-from-a-traditional-rdbms">Differences from a traditional RDBMS</a></li><li><a class="reference internal" href="#major-features">Major features</a><ul><li><a class="reference internal" href="#highly-available">1. Highly available</a></li><li><a class="reference internal" href="#stateless-scalability">2. Stateless scalability</a></li><li><a class="reference internal" href="#truly-transactional">3. Truly transactional</a></li><li><a class="reference internal" href="#hierarchical-schema-a-relational-schema-with-explicit-table-hierarchies">4. Hierarchical schema: a relational schema with explicit table hierarchies</a></li><li><a class="reference internal" href="#sql-and-json-interfaces">5. SQL and JSON interfaces</a></li><li><a class="reference internal" href="#sophisticated-indexing">6. Sophisticated indexing</a></li><li><a class="reference internal" href="#batch-pipelining-for-parallel-query-execution">7. Batch pipelining for parallel query execution</a></li></ul></li><li><a class="reference internal" href="#anti-features">Anti-features</a><ul><li><a class="reference internal" href="#long-running-transactions">1. Long-running transactions</a></li><li><a class="reference internal" href="#purely-analytical-workload">2. Purely analytical workload</a></li><li><a class="reference internal" href="#schemaless">3. Schemaless</a></li></ul></li><li><a class="reference internal" href="#next-steps">Next steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003210/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:10 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:27:27 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

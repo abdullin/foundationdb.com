@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=441;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Managing Large Values and Blobs
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/3.0/largeval.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003610/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href="/web/20150325003610cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003610cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/3.0/largeval.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/3.0/largeval.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003610" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:36:10 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:36:10 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:36:10 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003610*/https://foundationdb.com/key-value-store/documentation/3.0/largeval.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003610/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003610/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003610/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003610/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="tutorials.html">Tutorials</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003610/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="managing-large-values-and-blobs">
+<h1>Managing Large Values and Blobs<a class="headerlink" href="#managing-large-values-and-blobs" title="Permalink to this headline">∞</a></h1>
+<p>This tutorial illustrates techniques for storing and managing large values in FoundationDB. We&#8217;ll look at using the blob (binary large object) layer, which provides a simple interface for storing unstructured data. We&#8217;ll be drawing on <a class="reference internal" href="data-modeling.html"><em>Data Modeling</em></a> and <a class="reference internal" href="api-python.html"><em>Python API</em></a>, so you should take a look at those documents if you&#8217;re not familiar with them.</p>
+<p>For an introductory tutorial that begins with &#8220;Hello world&#8221; and explains the basic concepts used in FoundationDB, take a look at our <a class="reference internal" href="class-scheduling.html"><em>class scheduling tutorial</em></a>.</p>
+<p>Although we&#8217;ll be using Python, the concepts in this tutorial are also applicable to the other <a class="reference internal" href="api-reference.html"><em>languages</em></a> supported by FoundationDB.</p>
+<p>If you&#8217;d like to see the finished version of the code we&#8217;ll be working with, take a look at the <a class="reference internal" href="#largeval-appendix"><em>Appendix: FileLib.py</em></a>.</p>
+<div class="section" id="modeling-large-values">
+<span id="largeval-modeling"></span><h2>Modeling large values<a class="headerlink" href="#modeling-large-values" title="Permalink to this headline">∞</a></h2>
+<p>For key-value pairs stored in FoundationDB, values are limited to a size of 100 kB (see <a class="reference internal" href="known-limitations.html#large-keys-and-values"><em>Known Limitations</em></a>). Furthermore, you&#8217;ll usually get the best performance by keeping value sizes below 10 kb, as discussed in our <a class="reference internal" href="data-modeling.html#data-modeling-performance-guidelines"><em>performance guidelines</em></a>.</p>
+<div class="section" id="splitting-structured-values">
+<span id="largeval-splitting"></span><h3>Splitting structured values<a class="headerlink" href="#splitting-structured-values" title="Permalink to this headline">∞</a></h3>
+<p>These factors lead to an obvious question: what should you do if your first cut at a data model results in values that are larger than those allowed by the above guidelines?</p>
+<p>The answer depends on the nature and size of your values. If your values have some internal structure, consider revising your data model to split the values across multiple keys. For example, suppose you&#8217;re recording a directed graph of users who &#8220;follow&#8221; other users to receive status updates. Your initial thought may be to have a single key for each <tt class="docutils literal"><span class="pre">userID</span></tt> and store the users being followed as its value, using something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>tr[fdb.tuple.pack((&#39;hasFollowed&#39;, userID))] = &#39;/&#39;.join((userID2,userID3, . . .))
+</pre></div>
+</div>
+<p>However, if the number of users being followed is large or if you&#8217;ll often need to access only one of them at a time, it may be better to store them as part of the key:</p>
+<div class="highlight-python"><div class="highlight"><pre>tr[fdb.tuple.pack((&#39;hasFollowed&#39;, userID, userID2))] = &#39;&#39;
+tr[fdb.tuple.pack((&#39;hasFollowed&#39;, userID, userID3))] = &#39;&#39;
+. . .
+</pre></div>
+</div>
+<p>Similarly, suppose you&#8217;d like to store a serialized JSON object. Instead of storing the object as the value of a single key, you could construct a key for each path in the object, as described for <a class="reference internal" href="data-modeling.html#data-modeling-documents"><em>documents</em></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In general, you should consider splitting your values if their sizes are above 10kb, or if they are above 1kb and you only use a part of each value after reading it.</p>
+</div>
+</div>
+<div class="section" id="binary-large-objects">
+<span id="largeval-binary-large-object"></span><h3>Binary large objects<a class="headerlink" href="#binary-large-objects" title="Permalink to this headline">∞</a></h3>
+<p>Sometimes, revising your data model using the above approach is not sufficient or even feasible. Some data, even after splitting, would result in values that are still too large. <a class="reference external" href="/web/20150325003610/http://en.wikipedia.org/wiki/Unstructured_data">Unstructured data</a> may not have elements that can naturally serve as keys. <a class="reference external" href="/web/20150325003610/http://en.wikipedia.org/wiki/Binary_large_object">Binary large objects (blobs)</a> are common examples of the latter sort.</p>
+</div>
+</div>
+<div class="section" id="using-the-blob-layer">
+<span id="largeval-bloblayer"></span><h2>Using the blob layer<a class="headerlink" href="#using-the-blob-layer" title="Permalink to this headline">∞</a></h2>
+<p>You can store large values as binary large objects using our <a class="reference external" href="/web/20150325003610/https://github.com/FoundationDB/python-layers/blob/master/lib/blob.py">example blob layer</a>. This layer provides an abstraction for random reads and writes of a blob, allowing it to be partially accessed or streamed. Sequential reads and writes are also supported. The implementation automatically splits a blob into chunks and stores it using an efficient, sparse representation.</p>
+<p>The blob layer contains a class with the methods below.</p>
+<dl class="class">
+<dt id="Blob">
+<em class="property">class </em><tt class="descname">Blob</tt><a class="headerlink" href="#Blob" title="Permalink to this definition">∞</a></dt>
+<dd><p>An instance of <tt class="docutils literal"><span class="pre">Blob</span></tt> is used to read and write a single blob in the database. It&#8217;s initialized with a <tt class="docutils literal"><span class="pre">Subspace</span></tt> that defines the <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>subspace of keys</em></a> the database will use to store the blob. We normally create or open a <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>directory</em></a> to obtain an initial subspace:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">my_space</span> <span class="o">=</span> <span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,))</span>
+<span class="n">my_blob</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="n">my_space</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.delete">
+<tt class="descclassname">Blob.</tt><tt class="descname">delete</tt><big>(</big><em>tr</em><big>)</big><a class="headerlink" href="#Blob.delete" title="Permalink to this definition">∞</a></dt>
+<dd><p>Delete all key-value pairs associated with the blob.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.get_size">
+<tt class="descclassname">Blob.</tt><tt class="descname">get_size</tt><big>(</big><em>tr</em><big>)</big><a class="headerlink" href="#Blob.get_size" title="Permalink to this definition">∞</a></dt>
+<dd><p>Get the size of the blob in bytes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.read">
+<tt class="descclassname">Blob.</tt><tt class="descname">read</tt><big>(</big><em>tr</em>, <em>offset</em>, <em>n</em><big>)</big><a class="headerlink" href="#Blob.read" title="Permalink to this definition">∞</a></dt>
+<dd><p>Read from the blob, starting at <tt class="docutils literal"><span class="pre">offset</span></tt>, retrieving up to <tt class="docutils literal"><span class="pre">n</span></tt> bytes. Fewer than <tt class="docutils literal"><span class="pre">n</span></tt> bytes will be returned if the end of the blob is reached.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.write">
+<tt class="descclassname">Blob.</tt><tt class="descname">write</tt><big>(</big><em>tr</em>, <em>offset</em>, <em>data</em><big>)</big><a class="headerlink" href="#Blob.write" title="Permalink to this definition">∞</a></dt>
+<dd><p>Write <tt class="docutils literal"><span class="pre">data</span></tt> to the blob, starting at <tt class="docutils literal"><span class="pre">offset</span></tt> and overwriting any existing data at that location. The length of the blob will be increased if necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.append">
+<tt class="descclassname">Blob.</tt><tt class="descname">append</tt><big>(</big><em>tr</em>, <em>data</em><big>)</big><a class="headerlink" href="#Blob.append" title="Permalink to this definition">∞</a></dt>
+<dd><p>Append the contents of <tt class="docutils literal"><span class="pre">data</span></tt> onto the end of the blob.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Blob.truncate">
+<tt class="descclassname">Blob.</tt><tt class="descname">truncate</tt><big>(</big><em>tr</em>, <em>new_length</em><big>)</big><a class="headerlink" href="#Blob.truncate" title="Permalink to this definition">∞</a></dt>
+<dd><p>Change the blob length to <tt class="docutils literal"><span class="pre">new_length</span></tt>, erasing any data when shrinking, and filling new bytes with 0 when growing.</p>
+</dd></dl>
+
+<p>Before looking at a larger example, let&#8217;s do a quick check by writing and reading back a million bytes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_space</span> <span class="o">=</span> <span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_blob</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="n">my_space</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_blob</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size_in</span> <span class="o">=</span> <span class="mi">1000000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_blob</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="o">*</span><span class="n">size_in</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size_out</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_blob</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">size_in</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">size_out</span> <span class="o">==</span> <span class="n">size_in</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="file-libraries">
+<span id="largeval-filelib"></span><h2>File libraries<a class="headerlink" href="#file-libraries" title="Permalink to this headline">∞</a></h2>
+<p>Suppose you have files that you&#8217;d like to store and manage in the database. The file content could be anything: text, audio, video clips, etc. You might want to group the files into named libraries and record some metadata for each file when you store it.</p>
+<p>Let&#8217;s use the blob layer to implement a class with the basic methods we&#8217;d need to manage this kind of library. The class <tt class="docutils literal"><span class="pre">FileLibrary</span></tt> is initialized with a subspace that it extends to store metadata on the files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FileLibrary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="n">space</span><span class="p">[</span><span class="s">&#39;attr&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The class internally uses transactional methods to add or retrieve metadata attributes or to delete all attributes for file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">_add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">print</span> <span class="s">&#39;Added&#39;</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="s">&#39;=&gt;&#39;</span><span class="p">,</span> <span class="n">value</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">_get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">_delete_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">filename</span><span class="p">,))]</span>
+</pre></div>
+</div>
+<p>The class exposes methods to import a file into a library, export a file, and remove a file from the library.</p>
+<p>To import a file, it would be simple to read it in its entirety and write it to a blob, but let&#8217;s assume we may be reading from a CD or DVD that&#8217;s subject to damage. We can handle minor damage by reading the file in small chunks with error-checking that replaces a chunk with 0&#8217;s if it proves unreadable, but otherwise preserving the file content.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">import_file()</span></tt> method initializes an empty blob and begins to read the file in chunks specified by <tt class="docutils literal"><span class="pre">CHUNK_SIZE</span></tt>. (We can adjust <tt class="docutils literal"><span class="pre">CHUNK_SIZE</span></tt> according to our knowledge of the media we&#8217;re working with.) Good chunks are directly appended to the blob, while bad chunks are replaced by 0&#8217;s before being appended. Finally, we record the condition of the file with its metadata and return the blob:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_space</span><span class="p">[</span><span class="n">filename</span><span class="p">])</span>
+    <span class="n">target</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">damaged</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">position</span> <span class="o">&lt;</span> <span class="n">file_size</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">CHUNK_SIZE</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span> <span class="k">break</span><span class="p">;</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+                <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">file_size</span> <span class="o">-</span> <span class="n">position</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">CHUNK_SIZE</span><span class="p">:</span>
+                    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">CHUNK_SIZE</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">file_size</span> <span class="o">-</span> <span class="n">position</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\0</span><span class="s">&quot;</span> <span class="o">*</span> <span class="nb">bytes</span><span class="p">)</span>
+                <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+                <span class="nb">input</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                <span class="n">damaged</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_attributes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&quot;Adding attributes for&quot;</span><span class="p">,</span> <span class="n">filename</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="s">&#39;damaged&#39;</span> <span class="k">if</span> <span class="n">damaged</span> <span class="k">else</span> <span class="s">&#39;intact&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s">&#39;condition&#39;</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">target</span>
+</pre></div>
+</div>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">export_file()</span></tt> method reads successive chunks of <tt class="docutils literal"><span class="pre">CHUNK_SIZE</span></tt> from the blob and writes them out to a file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">export_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">position</span> <span class="o">&lt;</span> <span class="n">source</span><span class="o">.</span><span class="n">get_size</span><span class="p">(</span><span class="n">db</span><span class="p">)):</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">CHUNK_SIZE</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+</pre></div>
+</div>
+<p>The reason <tt class="xref py py-func docutils literal"><span class="pre">export_file()</span></tt> reads in chunks is not to do error-checking: unlike a CD or DVD, FoundationDB will not lose bits of your data. However, the blob&#8217;s <tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt> method is transactional, and the intent of the blob layer is to allow blobs to be large. Transactions in FoundationDB <a class="reference internal" href="known-limitations.html#long-transactions"><em>cannot be long</em></a> (currently defined as over five seconds) and are best kept under one second. You might be tempted to read a blob from the database in a single transaction, like so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">size</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get_size</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>but doing so with an arbitrary blob may well result in a long transaction. Hence, <tt class="xref py py-func docutils literal"><span class="pre">export_file()</span></tt> reads from the database with one transaction per chunk.</p>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">remove_file()</span></tt> method deletes the file&#8217;s blob and its metadata:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">remove_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="n">stored</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_space</span><span class="p">[</span><span class="n">filename</span><span class="p">])</span>
+    <span class="n">stored</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_attributes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="text-files">
+<span id="largeval-text"></span><h3>Text files<a class="headerlink" href="#text-files" title="Permalink to this headline">∞</a></h3>
+<p>Let&#8217;s try out the import method on a text file. We can grab a plain text copy of <em>Hamlet</em> from <a class="reference external" href="/web/20150325003610/http://www.gutenberg.org/">Project Gutenberg</a> and save it locally as <tt class="docutils literal"><span class="pre">hamlet.txt</span></tt>. Before we import the file, we&#8217;ll use <tt class="docutils literal"><span class="pre">grep</span> <span class="pre">-b</span></tt> in the shell to find the byte location of something easy to recognize:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ grep -b &#39;To be, or not to be&#39; hamlet.txt
+85829:To be, or not to be,--that is the question:--
+</pre></div>
+</div>
+<p>Now, we import the file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_space</span> <span class="o">=</span> <span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shakespeare</span> <span class="o">=</span> <span class="n">FileLibrary</span><span class="p">(</span><span class="n">my_space</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shakespeare</span><span class="o">.</span><span class="n">list_files</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hamlet</span> <span class="o">=</span> <span class="n">shakespeare</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="s">&#39;hamlet.txt&#39;</span><span class="p">)</span>
+<span class="go">Adding attributes for hamlet.txt</span>
+<span class="go">Added condition =&gt; intact</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shakespeare</span><span class="o">.</span><span class="n">list_files</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+<span class="go">[&#39;hamlet.txt&#39;]</span>
+</pre></div>
+</div>
+<p>As a quick check that the layer is preserving the byte order of the data as we&#8217;d expect, we can read from the blob beginning at byte 85829:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hamlet</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">85829</span><span class="p">,</span><span class="mi">45</span><span class="p">)</span>
+<span class="go">&#39;To be, or not to be,--that is the question:--&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mp3-metadata">
+<span id="largeval-mp3"></span><h3>MP3 metadata<a class="headerlink" href="#mp3-metadata" title="Permalink to this headline">∞</a></h3>
+<p><tt class="docutils literal"><span class="pre">FileLibrary</span></tt> and <tt class="docutils literal"><span class="pre">Blob</span></tt> treat the data to be stored as uninterpreted binary data. Many standard data formats have well-defined metadata that you might want to record.</p>
+<p>Let&#8217;s say you want to store MP3 files in a library. Most MP3&#8217;s contain metadata in one of the <a class="reference external" href="/web/20150325003610/http://en.wikipedia.org/wiki/ID3">ID3</a> formats, with ID3v2 being the most popular. We&#8217;ll use <a class="reference external" href="/web/20150325003610/http://www.liquidx.net/pytagger/">pytagger</a>, one of the many Python modules available for <a class="reference external" href="/web/20150325003610/http://wiki.python.org/moin/UsefulModules#ID3_Handling">ID3 handling</a>, to capture ID3v2 metadata:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">tagger</span> <span class="kn">import</span> <span class="n">ID3v2</span><span class="p">,</span> <span class="n">ID3Exception</span>
+</pre></div>
+</div>
+<p>We can define an <tt class="docutils literal"><span class="pre">MP3Library</span></tt> class as a subclass of <tt class="docutils literal"><span class="pre">FileLibrary</span></tt>, extending the <tt class="xref py py-func docutils literal"><span class="pre">import_file()</span></tt> method to grab ID3v2 tags. It will use an <tt class="xref py py-func docutils literal"><span class="pre">_id3v2()</span></tt> method that scans for the tags and adds them as attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MP3Library</span><span class="p">(</span><span class="n">FileLibrary</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_id3v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">id3</span> <span class="o">=</span> <span class="n">ID3v2</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">id3</span><span class="o">.</span><span class="n">tag_exists</span><span class="p">():</span>
+                <span class="k">print</span> <span class="s">&#39;Unable to find ID3v2 tags in&#39;</span><span class="p">,</span> <span class="n">filename</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s">&#39;tag version&#39;</span><span class="p">,</span>
+                                    <span class="nb">str</span><span class="p">(</span><span class="n">id3</span><span class="o">.</span><span class="n">version</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">id3</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">strings</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">val</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">fid</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ID3Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;ID3v2 exception&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MP3Library</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id3v2</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target</span>
+</pre></div>
+</div>
+<p>Let&#8217;s try out the extended import method. We&#8217;ll use an MP3 from <a class="reference external" href="/web/20150325003610/http://librivox.org/">LibraVox&#8217;s</a> readings of works in the public domain:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mp3_lib</span> <span class="o">=</span> <span class="n">MP3Library</span><span class="p">(</span><span class="n">my_space</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stored</span> <span class="o">=</span> <span class="n">mp3_lib</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="s">&#39;reddeath.mp3&#39;</span><span class="p">)</span>
+<span class="go">Adding attributes for reddeath.mp3</span>
+<span class="go">Added condition =&gt; intact</span>
+<span class="go">Added tag version =&gt; 2.3</span>
+<span class="go">Added TSSE =&gt; LAME 64bits version 3.98.4 (http://www.mp3dev.org/)</span>
+<span class="go">Added TPE1 =&gt; Edgar Allen Poe</span>
+<span class="go">Added TIT2 =&gt; 12 - The Masque Of The Red Death</span>
+<span class="go">Added TALB =&gt; LibriVox Short Story Collection Vol. 051</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="conclusion">
+<span id="largeval-conclusion"></span><h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">∞</a></h2>
+<p>The flexibility of FoundationDB&#8217;s ordered key-value store allows it to model a wide variety of data. The goal of <a class="reference internal" href="data-modeling.html"><em>data modeling</em></a> is to design a mapping of data to keys and values that efficiently supports the operations you need. In the case of large data objects, a good model will usually map a single object to multiple key-value pairs.</p>
+<p>With structured data, you can often design a good model by encoding selected data elements into keys in a way that splits an object. With unstructured data, whether text or a binary large object, you can take advantage of the simple but powerful interface provided by the blob layer.</p>
+</div>
+<div class="section" id="appendix-filelib-py">
+<span id="largeval-appendix"></span><h2>Appendix: FileLib.py<a class="headerlink" href="#appendix-filelib-py" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the large value tutorial:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">fdb</span>
+<span class="kn">import</span> <span class="nn">fdb.tuple</span>
+<span class="kn">from</span> <span class="nn">blob</span> <span class="kn">import</span> <span class="n">Blob</span>
+
+<span class="kn">from</span> <span class="nn">tagger</span> <span class="kn">import</span> <span class="n">ID3v2</span><span class="p">,</span> <span class="n">ID3Exception</span>
+
+<span class="n">fdb</span><span class="o">.</span><span class="n">api_version</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+<span class="c">##################</span>
+<span class="c">## File Library ##</span>
+<span class="c">##################</span>
+
+<span class="n">CHUNK_SIZE</span> <span class="o">=</span> <span class="mi">16384</span>  <span class="c"># roughly 1 second of audio in an MP3</span>
+
+
+<span class="k">class</span> <span class="nc">FileLibrary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_space</span> <span class="o">=</span> <span class="n">space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr</span> <span class="o">=</span> <span class="n">space</span><span class="p">[</span><span class="s">&#39;attr&#39;</span><span class="p">]</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">_add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">print</span> <span class="s">&#39;Added&#39;</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="s">&#39;=&gt;&#39;</span><span class="p">,</span> <span class="n">value</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">_get_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">filename</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">_delete_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">del</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">filename</span><span class="p">,))]</span>
+
+    <span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_space</span><span class="p">[</span><span class="n">filename</span><span class="p">])</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">input</span><span class="p">:</span>
+            <span class="n">file_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">st_size</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">damaged</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">position</span> <span class="o">&lt;</span> <span class="n">file_size</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">chunk</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">CHUNK_SIZE</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span> <span class="k">break</span><span class="p">;</span>
+                    <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+                    <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">file_size</span> <span class="o">-</span> <span class="n">position</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">CHUNK_SIZE</span><span class="p">:</span>
+                        <span class="nb">bytes</span> <span class="o">=</span> <span class="n">CHUNK_SIZE</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">bytes</span> <span class="o">=</span> <span class="n">file_size</span> <span class="o">-</span> <span class="n">position</span>
+                    <span class="n">target</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\0</span><span class="s">&quot;</span> <span class="o">*</span> <span class="nb">bytes</span><span class="p">)</span>
+                    <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+                    <span class="nb">input</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+                    <span class="n">damaged</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delete_attributes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">&quot;Adding attributes for&quot;</span><span class="p">,</span> <span class="n">filename</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="s">&#39;damaged&#39;</span> <span class="k">if</span> <span class="n">damaged</span> <span class="k">else</span> <span class="s">&#39;intact&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s">&#39;condition&#39;</span><span class="p">,</span> <span class="n">condition</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target</span>
+
+    <span class="k">def</span> <span class="nf">export_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">position</span> <span class="o">&lt;</span> <span class="n">source</span><span class="o">.</span><span class="n">get_size</span><span class="p">(</span><span class="n">db</span><span class="p">)):</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">CHUNK_SIZE</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="n">position</span> <span class="o">+=</span> <span class="n">CHUNK_SIZE</span>
+
+    <span class="k">def</span> <span class="nf">remove_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">stored</span> <span class="o">=</span> <span class="n">Blob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_space</span><span class="p">[</span><span class="n">filename</span><span class="p">])</span>
+        <span class="n">stored</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delete_attributes</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+    <span class="nd">@fdb.transactional</span>
+    <span class="k">def</span> <span class="nf">list_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">):</span>
+        <span class="n">KVs</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">range</span><span class="p">(())]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">_attr</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">KVs</span><span class="p">})</span>
+
+
+<span class="k">class</span> <span class="nc">MP3Library</span><span class="p">(</span><span class="n">FileLibrary</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_id3v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">id3</span> <span class="o">=</span> <span class="n">ID3v2</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">id3</span><span class="o">.</span><span class="n">tag_exists</span><span class="p">():</span>
+                <span class="k">print</span> <span class="s">&#39;Unable to find ID3v2 tags in&#39;</span><span class="p">,</span> <span class="n">filename</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s">&#39;tag version&#39;</span><span class="p">,</span>
+                                    <span class="nb">str</span><span class="p">(</span><span class="n">id3</span><span class="o">.</span><span class="n">version</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">id3</span><span class="o">.</span><span class="n">frames</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">strings</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">val</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_attribute</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">fid</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ID3Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;ID3v2 exception&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">MP3Library</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_id3v2</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">target</span>
+
+
+<span class="k">def</span> <span class="nf">test_MP3</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">test_space</span> <span class="o">=</span> <span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,))</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">MP3Library</span><span class="p">(</span><span class="n">test_space</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Files present in library:&#39;</span><span class="p">,</span> <span class="n">lib</span><span class="o">.</span><span class="n">list_files</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">stored</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Files present in library:&#39;</span><span class="p">,</span> <span class="n">lib</span><span class="o">.</span><span class="n">list_files</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">export_file</span><span class="p">(</span><span class="n">stored</span><span class="p">,</span> <span class="s">&#39;new_&#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="n">lib</span><span class="o">.</span><span class="n">remove_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Files present in library:&#39;</span><span class="p">,</span> <span class="n">lib</span><span class="o">.</span><span class="n">list_files</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Managing Large Values and Blobs</a><ul><li><a class="reference internal" href="#modeling-large-values">Modeling large values</a><ul><li><a class="reference internal" href="#splitting-structured-values">Splitting structured values</a></li><li><a class="reference internal" href="#binary-large-objects">Binary large objects</a></li></ul></li><li><a class="reference internal" href="#using-the-blob-layer">Using the blob layer</a></li><li><a class="reference internal" href="#file-libraries">File libraries</a><ul><li><a class="reference internal" href="#text-files">Text files</a></li><li><a class="reference internal" href="#mp3-metadata">MP3 metadata</a></li></ul></li><li><a class="reference internal" href="#conclusion">Conclusion</a></li><li><a class="reference internal" href="#appendix-filelib-py">Appendix: FileLib.py</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003610/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003610/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003610js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:10 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:41:48 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

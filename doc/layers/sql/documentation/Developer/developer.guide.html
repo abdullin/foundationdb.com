@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app8.us.archive.org";archive_analytics.values.server_ms=296;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Developer Guide
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003258/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="JTa23HmhvfVuK986S22W13vqC0eEmmHMLXpPBh5pyRs=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003258/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=index.html>Developers</a>
+<ul>
+<li><a href=developer.guide.html class="active">Developer Guide</a></li>
+<li><a href=client.tools.html>Client tools</a></li>
+<li><a href=performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Developer Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="developer-guide">
+<h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer inherits the FoundationDB Key-Value Store&#8217;s <em>scalability</em> and <em>fault-tolerance</em>, making it an ideal back end for the operation of critical applications. This document will guide you as you start developing with the SQL Layer and offer advice on how to adapt your development style to take advantage of its unique capabilities and architecture. Specifically, we will discuss the following:</p>
+<ul class="simple">
+<li>ORMs are the easiest way to <a class="reference internal" href=../../index.html><em>get started</em></a>.</li>
+<li>Parallelization is key to good performance and scalability. It should be applied to everything from loading data to running queries.</li>
+<li>Transactions are capped at 5 seconds. Queries with full isolation are also capped to 5 seconds.</li>
+<li>Be aware of <a class="reference internal" href=../Concepts/known.limitations.html><em>Known Limitations</em></a>. For example, blobs are currently limited to 100K.</li>
+</ul>
+<p>The next document, <a class="reference internal" href="performance.guide.html"><em>Performance Guide</em></a>, provides advice on best practices in development, configuration, deployment architecture and data modeling for optimal performance.</p>
+<div class="section" id="connecting-to-the-sql-layer">
+<h2>Connecting to the SQL Layer<a class="headerlink" href="#connecting-to-the-sql-layer" title="Permalink to this headline">∞</a></h2>
+<p>The complete list of supported drivers and ORMs is in <a class="reference internal" href=../Admin/index.html><em>SQL Layer Operations</em></a>.</p>
+<div class="section" id="fdbsqlcli">
+<h3><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt><a class="headerlink" href="#fdbsqlcli" title="Permalink to this headline">∞</a></h3>
+<p><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> is the SQL Layer command line interface (CLI) for interactive work. It will allow you to view metadata and query tables.</p>
+<p>Let&#8217;s start <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>:</p>
+<div class="highlight-sql"><div class="highlight"><pre>$ fdbsqlcli
+</pre></div>
+</div>
+<p>You will be presented with a prompt similar to:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">schema_name</span><span class="o">=&gt;</span>
+</pre></div>
+</div>
+<p>You can now type an valid SQL command or use several <a class="reference internal" href="fdbsqlcli.html#fdbsqlcli-meta-commands"><em>meta-commands</em></a>. Let&#8217;s first create a table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">hello</span><span class="p">.</span><span class="n">world</span> <span class="p">(</span><span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">somedata</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">17</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>And list the tables by typing:</p>
+<div class="highlight-sql"><div class="highlight"><pre>\lt
+</pre></div>
+</div>
+<p>You will see a response listing the table(s):</p>
+<div class="highlight-sql"><div class="highlight"><pre> <span class="k">Schema</span> <span class="o">|</span> <span class="n">Name</span>  <span class="o">|</span> <span class="k">Group</span> <span class="n">Path</span>
+<span class="c1">--------+-------+-------------</span>
+ <span class="n">hello</span>  <span class="o">|</span> <span class="n">world</span> <span class="o">|</span> <span class="n">hello</span><span class="p">.</span><span class="n">world</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, to exit <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>, type <tt class="docutils literal"><span class="pre">\q</span></tt>.</p>
+<p>See the complete <a class="reference internal" href="fdbsqlcli.html"><em>fdbsqlcli Command Line Tool</em></a> documentation for details.</p>
+</div>
+</div>
+<div class="section" id="application-development">
+<h2>Application Development<a class="headerlink" href="#application-development" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="use-orms">
+<h3>Use ORMs<a class="headerlink" href="#use-orms" title="Permalink to this headline">∞</a></h3>
+<p>The most effective way to get started with the SQL Layer is through the use of an <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/en.wikipedia.org/wiki/Object-relational_mapping>Object-relational mapping</a> (ORM) such as ActiveRecord or Hibernate. ORMs provide strong abstraction from the details of the SQL Layer syntax and get you going quickly. The SQL Layer has adapters for many ORMs. They are listed in <a class="reference internal" href=../../index.html><em>Getting Started</em></a>.</p>
+</div>
+<div class="section" id="parallelization-is-key">
+<h3>Parallelization is key<a class="headerlink" href="#parallelization-is-key" title="Permalink to this headline">∞</a></h3>
+<p>Traditional SQL RDBMS operate in a single node, providing low latency for in-memory operations, but limiting total throughput. In contrast, the SQL Layer is a distributed system and inherits FoundationDB&#8217;s higher <a class="reference internal" href=../Concepts/known.limitations.html><em>latency</em></a> coupled with massive throughput. The most significant development adaptation is shifting from the traditional, serial execution to parallel execution.</p>
+<p><strong>As a developer using the SQL Layer, your goal is to run as much as possible in parallel.</strong></p>
+<p>You can do this in two ways: the first is to allow many transactions to run in parallel, and the second is to breakdown transactions into smaller components that can be parallelized. Applications often use transactions to populate pages, run processes, or record interactions. While some actions in transactions are dependent on others, it is often the case that actions are independent. Your goal is to decouple as much as possible into distinct transactions that run in parallel.</p>
+<p>In practice, most modern applications allow for parallel requests, e.g., nginx fronting a unicorn pool for a Ruby app, or a client-side Javascript page sending many parallel requests using client-side templating and scripting in order to render the page. Whatever your specific setup, try to maximize the amount of work done in parallel (see <a class="reference internal" href="performance.guide.html#fdbsql-developer-guide-throughput"><em>throughput discussion</em></a>).</p>
+<p>Remember that the scalable nature of the FoundationDB SQL Layer makes <strong>purposefully wasteful execution an acceptable approach.</strong> For example, if your code runs one query and uses its results to decide whether to run another, consider running both in parallel.</p>
+</div>
+</div>
+<div class="section" id="handling-transactions">
+<h2>Handling Transactions<a class="headerlink" href="#handling-transactions" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB provides global <a class="reference external" href=../../../../key-value-store/documentation/3.0/developer-guide.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">ACID transactions</em></a> with serializable isolation using optimistic concurrency. Specifically:</p>
+<ol class="arabic simple">
+<li>Data is never lost once a transaction is committed successfully.</li>
+<li>Transactions that conflict will cause rollbacks.</li>
+<li>Transactions are limited at 5 seconds; Transactions that are open for longer will fail and rollback.</li>
+</ol>
+<p>You will need to respond to conflicts with retry loops and learn how to handle transaction timeouts:</p>
+<div class="section" id="transaction-timeout">
+<h3>Transaction timeout<a class="headerlink" href="#transaction-timeout" title="Permalink to this headline">∞</a></h3>
+<p>By design, transactions in FoundationDB are capped at 5 seconds and 100MB (see <a class="reference internal" href=../Concepts/known.limitations.html><em>anti-features</em></a>). While this forces good system design, you are likely to encounter transaction timeouts manifested through the following <a class="reference external" href=../../../../key-value-store/documentation/3.0/api-error-codes.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">errors</em></a>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ERROR:</span> <span class="pre">FoundationDB</span> <span class="pre">transaction</span> <span class="pre">open</span> <span class="pre">too</span> <span class="pre">long:</span> <span class="pre">1007</span> <span class="pre">-</span> <span class="pre">past_version</span></tt> indicates that a request for data can no longer be serviced because the transaction is open for more than 5 seconds.</li>
+<li><tt class="docutils literal"><span class="pre">ERROR:</span> <span class="pre">FoundationDB</span> <span class="pre">transaction</span> <span class="pre">needed</span> <span class="pre">future</span> <span class="pre">version:</span> <span class="pre">1009</span> <span class="pre">-</span> <span class="pre">future_version</span></tt> indicates that the request seeks data is is not yet available.</li>
+<li><tt class="docutils literal"><span class="pre">ERROR:</span> <span class="pre">FoundationDB</span> <span class="pre">commit</span> <span class="pre">aborted:</span> <span class="pre">1020</span> <span class="pre">-</span> <span class="pre">not_committed</span></tt> indicates a COMMIT was issued but did not succeed because the transaction was open for too long or because it conflicted with another transaction.</li>
+<li><tt class="docutils literal"><span class="pre">ERROR:</span> <span class="pre">FoundationDB</span> <span class="pre">commit</span> <span class="pre">unknown:</span> <span class="pre">1021</span> <span class="pre">-</span> <span class="pre">commit_unknown_result</span></tt> indicates a COMMIT was issued but may not have succeeded.</li>
+</ul>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">For the complete list of SQL Layer error codes, query the <tt class="docutils literal"><span class="pre">information_schema.error_codes</span></tt> table. Every code that starts with 40xxx, such as the four listed above, is considered a retryable error.</p>
+</div>
+<p>These errors are all considered &#8220;retryable&#8221; and are commonly encountered in the following circumstances:</p>
+<ol class="arabic simple">
+<li><strong>Debugging.</strong> While stepping through your code in debug mode, it is common to <tt class="docutils literal"><span class="pre">BEGIN</span></tt> a transaction that would normally complete quickly, and hold it open for longer than 5 seconds, resulting in an error for a subsequent action. To avoid this try to encapsulate transactions and, unless necessary, execute the full transaction at once in your IDE.</li>
+<li><strong>Loading data.</strong> Loading a large quantity of data will likely take more than 5 seconds. Use the <a class="reference internal" href=../Admin/backup.html><em>fdbsqlload</em></a> and <a class="reference internal" href=../Admin/backup.html><em>fdbsqldump</em></a> command line tools instead.</li>
+<li><strong>Running long queries.</strong>   See <a class="reference internal" href=../Concepts/known.limitations.html><em>advice in the known limitations section</em></a> and consider whether reduced isolation can be used.</li>
+<li><strong>Reformatting data.</strong> It is common to apply formatting actions to datasets, such as de-normalizing or re-normalizing tables. On large datasets, these actions are likely to exceed the transaction window and fail. <strong>Wherever possible, use DDL statements, as they employ an Online DDL mechanism that executes in the background and is not time limited</strong>. If you can&#8217;t convert the operation to DDL, break it down to smaller operations on subsets of the data and run each operation as an independent transaction.</li>
+</ol>
+</div>
+<div class="section" id="retry-loops">
+<h3>Retry loops<a class="headerlink" href="#retry-loops" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB implements <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/en.wikipedia.org/wiki/Optimistic_concurrency_control>optimistic concurrency control</a>, which avoids locks, but introduces more potential conflicts. A conflict causes at least one of the transactions in question to rollback. These conflicts are discovered at commit time and, as a result, the transaction will simply return a <tt class="docutils literal"><span class="pre">not</span> <span class="pre">committed</span> <span class="pre">error</span></tt>. Remember that a query that reads a lot of data before committing is more likely to encounter a contention with another query.</p>
+<p><strong>Prepare for transaction conflicts and rollback by using retry loops that are able to re-submit the transaction</strong></p>
+<p>In addition to simple retries, you can use an <em>exponential backoff</em> algorithm for better flow control. Exponential backoff uses progressively longer waits between retries for consecutive error responses. You should implement a maximum delay interval, as well as a maximum number of retries. You should also consider randomizing the exact delay interval to prevent successive collisions. The maximum delay interval and maximum number of retries are not necessarily fixed values, and should be set based on the operation being performed.</p>
+<p>See similar patterns in the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/code.google.com/p/google-http-java-client/wiki/ExponentialBackoff>Google HTTP Client Library for Java</a>.</p>
+</div>
+</div>
+<div class="section" id="managing-data">
+<h2>Managing Data<a class="headerlink" href="#managing-data" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="loading-data">
+<h3>Loading data<a class="headerlink" href="#loading-data" title="Permalink to this headline">∞</a></h3>
+<p>To load a large amount of data, you must take both parallelization and transaction timeouts into account. Remember that a single thread loading data has the network to traverse for each insertion. However, the overall ingestion rate increases almost linearly with the number of threads and SQL Layers. Additionally trying to load a large set of data in a single transaction will fail. You must divide the work into smaller units and load each unit in a single transaction. Done correctly, your algorithm will load small chunks of data using many threads split across SQL Layers.</p>
+<p>These techniques are all used in the existing <a class="reference internal" href=../Admin/backup.html><em>fdbsqlload Command Line Tool</em></a>. <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> can parallelize loads across threads and machines, and bundles chunks of the data into transactionable chunks.</p>
+<p>If you are planning to build loading functionality yourself, you can look at the code for <tt class="docutils literal"><span class="pre">fdbqslload</span></tt> on <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/https:/github.com/FoundationDB/sql-layer-client-tools/tree/master/src/main/java/com/foundationdb/sql/client/dump>github</a> as a reference implementation.</p>
+</div>
+<div class="section" id="backing-up-data">
+<h3>Backing up data<a class="headerlink" href="#backing-up-data" title="Permalink to this headline">∞</a></h3>
+<p>Backup must also take into account parallelization and transaction timeouts. Two tools are available for backing up your data.</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href=../Admin/backup.html><em>fdbsqldump</em></a>  command line tool can back up specific tables and schemas. It has a <tt class="docutils literal"><span class="pre">--commit</span> <span class="pre">auto</span></tt> mode that dumps the data in multiple transactions, but the output <em>is not guaranteed to be in a consistent snapshot</em>, as data may change in between transaction. It is therefore a good solution for fast transport of a static system.</li>
+<li><a class="reference external" href=../../../../key-value-store/documentation/3.0/backups.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">fdbbackup</em></a> command line tool makes a <em>consistent, point-in-time backup of a FoundationDB database without downtime</em>. This provides a level of protection by supporting recovery from disasters or unintentional modification of the database.</li>
+</ol>
+<p>For a consistent dump of a single table, you can also use Online DDL. Copy the table into another temporary table using <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">TABLE</span> <span class="pre">temp_table</span> <span class="pre">AS</span> <span class="pre">SELECT</span> <span class="pre">*</span> <span class="pre">FROM</span> <span class="pre">source_table</span> <span class="pre">WITH</span> <span class="pre">DATA</span></tt> (see <a class="reference internal" href=../SQL/ddl/create.table.html><em>reference</em></a>) and then use <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> to safely dump the temporary table.</p>
+</div>
+<div class="section" id="clearing-data">
+<h3>Clearing data<a class="headerlink" href="#clearing-data" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>To clear all data in the FoundationDB Key_value Store, use the <tt class="docutils literal"><span class="pre">clearrange</span> <span class="pre">&quot;&quot;</span> <span class="pre">\xff</span></tt> command in the <tt class="docutils literal"><span class="pre">fdbcli</span></tt> tool and restart the SQL Layer(s). <strong>Warning: this is the equivalent of rm -rf for FoundationDB</strong>.</li>
+<li>To clear only SQL Layer data, add the following configuration option: <tt class="docutils literal"><span class="pre">fdbsql.fdb.clear_incompatible_data=true</span></tt> to the <a class="reference internal" href=../Admin/configuration.html><em>Server Properties</em></a> file and restart the SQL Layer(s). Don&#8217;t forget to remove the property from the <a class="reference internal" href=../Admin/configuration.html><em>Server Properties</em></a> file after restarting, to avoid wiping all SQL data again upon your next restart.</li>
+<li>Use <a class="reference internal" href=../SQL/ddl/drop.schema.html><em>DROP SCHEMA</em></a>, <a class="reference internal" href=../SQL/ddl/drop.group.html><em>DROP GROUP</em></a>, and <a class="reference internal" href=../SQL/ddl/drop.table.html><em>DROP TABLE</em></a> to drop a schema, Table-Group or table information respectively. If a table is within a Table-Group you should first <a class="reference internal" href=../Concepts/table.groups.html><em>remove it from the Table-Group</em></a> and then use the <tt class="docutils literal"><span class="pre">DROP</span> <span class="pre">TABLE</span></tt> command.</li>
+<li>To delete the content of a table, use the <a class="reference internal" href=../SQL/ddl/truncate.table.html><em>TRUNCATE TABLE</em></a> statement. If the table is too large for a single transaction to commit, <a class="reference internal" href=../Concepts/table.groups.html><em>remove the table from any Table-Group</em></a>, <a class="reference internal" href=../SQL/ddl/drop.table.html><em>DROP</em></a> it, and recreate it again.</li>
+</ul>
+</div>
+<div class="section" id="applying-schema-changes-through-online-ddl">
+<h3>Applying schema changes through Online DDL<a class="headerlink" href="#applying-schema-changes-through-online-ddl" title="Permalink to this headline">∞</a></h3>
+<p>DDL commands are executed as Online DDL, meaning they are executed by a background process and committed in a single transaction.</p>
+</div>
+<div class="section" id="restructuring-data">
+<h3>Restructuring data<a class="headerlink" href="#restructuring-data" title="Permalink to this headline">∞</a></h3>
+<p>Restructuring tables is an uncommon operation that usually occurs only in major releases of an application. It refers to changing tables structurally by denormalizing or renormalizing data. This type of operation is not a DDL action and not covered by Online DDL. As a result, you will need to break the restructuring process into small parts, each fitting within a single transaction.</p>
+<p>As an example, consider a column called <em>gender</em> in a large <em>users</em> table, defined as VARCHAR(6) containing the words FEMALE and MALE. It could prove advantageous to create a lookup table using:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">gender</span> <span class="p">(</span><span class="n">id</span> <span class="nb">INT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">Gender</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>and insert the MALE and FEMALE rows.</p>
+<p>In order to point the <em>users</em> table such that each user points to the new gender table, you should first create a new column called gender_id that will be executed in the background using Online DDL:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">gender_id</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Now, we must translate the gender column to gender_id column:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">UPDATE</span> <span class="n">users</span> <span class="k">SET</span> <span class="n">gender_id</span> <span class="o">=</span> <span class="n">if</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="s1">&#39;FEMALE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Now, this is tricky part. Assuming the users table is large, this statement will fail with a <tt class="docutils literal"><span class="pre">past_version</span></tt> error. Therefore, we need to divide this into segments of work:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">UPDATE</span> <span class="n">users</span> <span class="k">SET</span> <span class="n">gender_id</span> <span class="o">=</span> <span class="n">if</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="s1">&#39;FEMALE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="k">BETWEEN</span> <span class="mi">1</span> <span class="k">AND</span> <span class="mi">1000</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">users</span> <span class="k">SET</span> <span class="n">gender_id</span> <span class="o">=</span> <span class="n">if</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="s1">&#39;FEMALE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="k">BETWEEN</span> <span class="mi">1001</span> <span class="k">AND</span> <span class="mi">2000</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">users</span> <span class="k">SET</span> <span class="n">gender_id</span> <span class="o">=</span> <span class="n">if</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="s1">&#39;FEMALE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">id</span> <span class="k">BETWEEN</span> <span class="mi">2001</span> <span class="k">AND</span> <span class="mi">3000</span><span class="p">;</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>The final step is to drop the original <em>gender</em> column, which is no longer used. This is again handled by Online DDL:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">DROP</span> <span class="k">COLUMN</span> <span class="n">gender</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="quoting-and-case-sensitivity">
+<h2>Quoting and Case sensitivity<a class="headerlink" href="#quoting-and-case-sensitivity" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="quoting-data">
+<h3>Quoting Data<a class="headerlink" href="#quoting-data" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer follows the SQL standard regarding quotes. Single quotes identify data and double quotes identify areas where the reserved meanings of words should be ignored and case preserved.</p>
+<p>For example, the statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">NOW</span> <span class="k">FROM</span> <span class="n">mytable</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>will select from a column named <tt class="docutils literal"><span class="pre">now</span></tt> (lower case). The statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="ss">&quot;NOW&quot;</span> <span class="k">FROM</span> <span class="n">mytable</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>will select from a column named <tt class="docutils literal"><span class="pre">NOW</span></tt> (upper case). The statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="s1">&#39;NOW&#39;</span> <span class="k">FROM</span> <span class="n">mytable</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>will fill a column in the output with the string NOW.</p>
+</div>
+<div class="section" id="case-sensitivity">
+<h3>Case sensitivity<a class="headerlink" href="#case-sensitivity" title="Permalink to this headline">∞</a></h3>
+<p>Following the SQL standard, string comparisons in the SQL Layer are case sensitive, but table naming is not. Table names are assumed to be lower case unless quoted. Thus:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">MyTable</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>will select all columns from <tt class="docutils literal"><span class="pre">mytable</span></tt> but:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="ss">&quot;MyTable&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>will select all columns from <tt class="docutils literal"><span class="pre">MyTable</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">∞</a></h2>
+<p>The <a class="reference internal" href=../Concepts/known.limitations.html><em>full list of limitation</em></a> is available in the Concepts section.</p>
+<div class="section" id="blob-size-limit">
+<h3>Blob size limit<a class="headerlink" href="#blob-size-limit" title="Permalink to this headline">∞</a></h3>
+<p>Currently, blobs are written as part of the row and are subject to the FoundationDB maximum value size limit of 100k. If you need to support larger blobs, please follow <a class="reference internal" href=../Concepts/known.limitations.html><em>this advice</em></a> and consider using the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/https:/github.com/FoundationDB/java-layers/blob/master/src/Blob.java>Java blob layer</a> alongside the SQL Layer. Removing this limitation is on our roadmap, so let us know if you care about it.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li>If you haven&#8217;t already, follow one of the <a class="reference internal" href=../../index.html><em>getting started</em></a> options</li>
+<li>For operational advice on how to setup and maintain a FoundationDB SQL Layer cluster, see <a class="reference internal" href=../Admin/index.html><em>SQL Layer Operations</em></a>.</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Developer Guide</a><ul><li><a class="reference internal" href="#connecting-to-the-sql-layer">Connecting to the SQL Layer</a><ul><li><a class="reference internal" href="#fdbsqlcli"><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt></a></li></ul></li><li><a class="reference internal" href="#application-development">Application Development</a><ul><li><a class="reference internal" href="#use-orms">Use ORMs</a></li><li><a class="reference internal" href="#parallelization-is-key">Parallelization is key</a></li></ul></li><li><a class="reference internal" href="#handling-transactions">Handling Transactions</a><ul><li><a class="reference internal" href="#transaction-timeout">Transaction timeout</a></li><li><a class="reference internal" href="#retry-loops">Retry loops</a></li></ul></li><li><a class="reference internal" href="#managing-data">Managing Data</a><ul><li><a class="reference internal" href="#loading-data">Loading data</a></li><li><a class="reference internal" href="#backing-up-data">Backing up data</a></li><li><a class="reference internal" href="#clearing-data">Clearing data</a></li><li><a class="reference internal" href="#applying-schema-changes-through-online-ddl">Applying schema changes through Online DDL</a></li><li><a class="reference internal" href="#restructuring-data">Restructuring data</a></li></ul></li><li><a class="reference internal" href="#quoting-and-case-sensitivity">Quoting and Case sensitivity</a><ul><li><a class="reference internal" href="#quoting-data">Quoting Data</a></li><li><a class="reference internal" href="#case-sensitivity">Case sensitivity</a></li></ul></li><li><a class="reference internal" href="#limitations">Limitations</a><ul><li><a class="reference internal" href="#blob-size-limit">Blob size limit</a></li></ul></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:58 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:16 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app36.us.archive.org";archive_analytics.values.server_ms=95;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Queues (ruby) &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/queues/ruby' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325004203/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='language' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325004203/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Overview</a></li>
+<li><a href=../../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004203/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004203/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325004203/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Queues</h1>
+<div class='languages'>
+<a href=../index.html class="python">python</a>
+<a href=../go/index.html class="go">go</a>
+<a href=../java/index.html class="java">java</a>
+<a href=index.html class="ruby active">ruby</a>
+</div>
+</header>
+<div id='body'> <h2>Challenge</h2><p>   Allow efficient operations on a shared queue by multiple clients acting concurrently.</p><h2>Explanation</h2><p>   We can model a queue by assigning increasing integers that encode the order of items. To minimize conflicts for concurrent operations, we combine the integers in a tuple with a random element to make the final key unique.</p><h2>Ordering</h2><p>   The ordering of keys preserves the FIFO order of items and therefore lets us identify the next item to be dequeued without maintaining a pointer to it.</p><h2>Pattern</h2><p>   We store each item in the queue within a subspace, which takes care of packing our integer indexes into byte strings.</p> <pre>@queue = FDB::Subspace.new(['Q'])
+</pre><p>   As a first cut, we could store each item with a single key-value pair using increasing integer indexes for subsequent items:</p> <pre># (queue, index) = value
+</pre><p>   However, this would leave concurrent enqueue operations vulnerable to conflicts. To minimize these conflicts, we can add a random integer to the key.</p> <pre># (queue, index, random) = value
+</pre><p>   With this data model, items enqueued concurrently may be assigned the same index, but the keys as a whole will still be ordered (in this case, randomly). By using a <a href=../../../../documentation/developer-guide.html>snapshot read</a>, we guarantee that enqueuing will be conflict-free.</p><p>   To implement this model, we need an efficient way of finding the first and last index presently in use. FoundationDB's range reads have limit and reverse options that let us accomplish this. We can find the first and last key-value pairs in the range of the @queue subspace with:</p> <pre>tr.get_range(*@queue.range(), :limit =&gt; 1)                   # first
+tr.get_range(*@queue.range(), :limit =&gt; 1, :reverse =&gt; true) # last
+</pre><h2>Extensions</h2><h3>High-Contention Dequeue Operations </h3><p>   To minimize conflicts during dequeue operations, we can use a staging technique to service the requests. If a dequeue operation doesn't initially succeed, it registers a dequeue request in a semi-ordered set of such requests. It then enters a retry loop in which it attempts to fulfill outstanding requests.</p><h2>Code</h2><p>   The following is a simple implementation of the basic pattern:</p> <pre>require 'securerandom'
+
+@queue = FDB::Subspace.new(['Q'])
+
+def dequeue(db)
+  db.transact do |tr|
+    item = first_item(tr)
+    next nil if item.nil?
+    tr.clear(item.key)
+    item.value
+  end
+end
+
+def enqueue(db,value)
+  db.transact do |tr|
+    tr[@queue[last_index(tr) + 1][SecureRandom.hex(20)]] = value
+  end
+end
+
+def last_index(db)
+  value = 0
+  db.transact do |tr|
+    tr.snapshot.get_range(*@queue.range(), :limit =&gt; 1, :reverse =&gt; true) do |kv|
+      value = @queue.unpack(kv.key)[0]
+    end
+  end
+  value
+end
+
+def first_item(db)
+  pair = nil
+  db.transact do |tr|
+    tr.get_range(*@queue.range(), :limit=&gt;1) do |kv|
+      pair = kv
+    end
+  end
+  pair
+end
+</pre><p>You may also want to review the <a href=../../priority-queues/ruby/index.html>priority queue</a> recipe.</p><p>   Happy queuing!</p> </div>
+</div>
+<div id='more'>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004203/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:42:03 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:35:47 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

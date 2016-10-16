@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=319;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Table Groups
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003256/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003256im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="+oVode0cFCq3BxnLv+ASj5uVJjz2IdmkmeqPgVJGJG4=" name="csrf-token" />
+<link href="/web/20150325003256cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003256cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003256" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:56 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150427133207/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html" title="27 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:56 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325014415/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html" title="1:44:15 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:56 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003256*/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003256/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003256im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003256/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003256/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003256/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003256/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003256/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003256/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003256/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003256/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html" class="active">Table-Groups</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Concepts</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003256/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003256im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="table-groups">
+<span id="table-groups-intro"></span><h1>Table Groups<a class="headerlink" href="#table-groups" title="Permalink to this headline">∞</a></h1>
+<p>Table-Groups bridge the gap between objects and relational data.</p>
+<p>Most databases force you to make a decision: are you going to store data as JSON documents or as tabular data. The FoundationDB SQL Layer does away with that distinction by leveraging a new concept called <strong>Table-Groups</strong> that fuses objects and tables into a unified storage structure, and provides views to the same data as both a document and as tables.</p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">∞</a></h2>
+<p>Imagine a user in Amazon with associated information such as <tt class="docutils literal"><span class="pre">orders</span></tt>, <tt class="docutils literal"><span class="pre">items</span> <span class="pre">of</span> <span class="pre">interest</span></tt>, <tt class="docutils literal"><span class="pre">visits</span></tt>, <tt class="docutils literal"><span class="pre">credit-cards</span></tt>, <tt class="docutils literal"><span class="pre">addresses</span></tt>, <tt class="docutils literal"><span class="pre">payments</span></tt>, etc. Alternatively, imagine a patient with related information in an electronic medical record. Many applications manage rich objects, yet depend on relational databases that only handle flat tables. <strong>In a relational database, object data must be broken into rows in different physical tables every time it&#8217;s written</strong> and repeatedly <a class="reference external" href="/web/20150325003256/http://en.wikipedia.org/wiki/Join_(SQL)">joined</a> back together to support online transactions and queries.</p>
+<p>This mismatch between objects in object-oriented applications and relational databases is known as the <a class="reference external" href="/web/20150325003256/http://en.wikipedia.org/wiki/Object-relational_impedance_mismatch">object-relational impedance mismatch</a>.</p>
+<p>NoSQL stores embrace object complexity by storing documents directly in a hierarchical format like JSON, but lack some of the basic guarantees and querying capabilities that relational database users have grown accustomed to. Users are often left with a dilemma: while they have a NoSQL database that is incrementally easier to develop with, they then have to write complex programs to manage it and to execute non-trivial queries.</p>
+<p>As applications scale, data sizes grow, and schemas become more complex, joins are often the limiting factor. In a distributed architecture, latency is higher, making joins even more expensive. Table-Groups eliminate this basic bottleneck in classic relational databases by keeping object data together. With Table-Groups, you get the best of both world, accessing objects when you want them and accessing SQL when you need to query.</p>
+</div>
+<div class="section" id="what-is-a-table-group">
+<h2>What is a Table-Group?<a class="headerlink" href="#what-is-a-table-group" title="Permalink to this headline">∞</a></h2>
+<p>In essence, a Table-Group represents an object as a nested, hierarchical set of rows.</p>
+<div class="section" id="hierarchical-schema">
+<h3>Hierarchical schema<a class="headerlink" href="#hierarchical-schema" title="Permalink to this headline">∞</a></h3>
+<p>Table-Groups organize a set of user-defined &#8220;relational&#8221; tables into an explicit table hierarchy that reflects an object structure. For example, a <tt class="docutils literal"><span class="pre">customers</span></tt> table will be the parent of <tt class="docutils literal"><span class="pre">orders</span></tt> table, which will be the parent of the <tt class="docutils literal"><span class="pre">items</span></tt> table. The hierarchy tree can be arbitrarily wide and deep. A <tt class="docutils literal"><span class="pre">customer</span></tt> may have other tables related to it like an <tt class="docutils literal"><span class="pre">address</span></tt> table. The resulting hierarchy might look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>    customers (root table)
+     /    \
+  orders  address
+   /
+items
+</pre></div>
+</div>
+</div>
+<div class="section" id="clustered-storage">
+<h3>Clustered storage<a class="headerlink" href="#clustered-storage" title="Permalink to this headline">∞</a></h3>
+<p>The Table-Group definition is reflected in the physical organization of data. <strong>Table-Groups define the way physical data is stored and deeply impact the way in which the SQL Layer operates</strong>. Related rows from the tables are stored in a hierarchy, interleaved according to the Table-Group structure, e.g. a <tt class="docutils literal"><span class="pre">customer</span></tt> row is stored followed by its first <tt class="docutils literal"><span class="pre">order</span></tt> row, followed by that order’s <tt class="docutils literal"><span class="pre">items</span></tt>, followed by the next <tt class="docutils literal"><span class="pre">order</span></tt> and <tt class="docutils literal"><span class="pre">items</span></tt> for that customer, thereby reflecting the hierarchy of the tables. In this way, objects and tabular data are all mapped to the same data structure:</p>
+<div class="highlight-python"><div class="highlight"><pre>customer row (Key:C1)
+   order row (Key:C1,O20)
+    item row (Key:C1,O20,I300)
+    item row (Key:C1,O20,I301)
+    item row (Key:C1,O20,I302)
+   order row (Key:C1,O21)
+    item row (Key:C1,O21,I303)
+    item row (Key:C1,O21,I304)
+ address row (Key:C1,A17)
+ address row (Key:C1,A18)
+customer row (Key:C2)
+   order row (Key:C2,O22)
+    item row (Key:C2,O22,I305)
+ address row (Key:C2,A18)
+ ...
+</pre></div>
+</div>
+</div>
+<div class="section" id="advantages">
+<h3>Advantages<a class="headerlink" href="#advantages" title="Permalink to this headline">∞</a></h3>
+<p>The interleaving of rows carries the same benefit as the hierarchy expressed within an object or JSON document, yet <strong>each row remains completely atomic and independent</strong>. Each row can be accessed directly without accessing its parents. This approach of <strong>pre-joining the rows in the physical data structure</strong> provides predictable sequential access for most reads and writes. This is especially important in a distributed database where different tables or key-ranges can exist on different nodes. Interleaving embeds the joined information in the physical data structures, results in two main advantages:</p>
+<ol class="arabic simple">
+<li><strong>Native objects:</strong> Objects can be accessed in full or in part from a single physical location.</li>
+<li><strong>Efficient queries:</strong> Query joins are free to execute.</li>
+</ol>
+<p>Unlike <a class="reference external" href="/web/20150325003256/http://en.wikipedia.org/wiki/Denormalization">denormalization</a>, no redundancy or data explosion is incurred. In a sense, table groups represent semantic information about object structure that is lost during the <a class="reference external" href="/web/20150325003256/https://en.wikipedia.org/wiki/Database_normalization">relational normalization process</a>. A Table-Group retains the semantic meaning by arranging tables such that they reflect the structure of the entity, even though it has been logically normalized into multiple tables. In this way, the original intent of the tables and relationships is retained.</p>
+</div>
+<div class="section" id="difference-from-traditional-relational-databases">
+<h3>Difference from traditional relational databases<a class="headerlink" href="#difference-from-traditional-relational-databases" title="Permalink to this headline">∞</a></h3>
+<p>Classic relational databases define physical structures, like indexes and the table itself, from a single logical table. In contrast all data structures in the FoundationDB SQL Layer, including the table-group and indexes, are derived from a Table-Group.</p>
+<p>Classic relational databases have the following hierarchy of objects:</p>
+<div class="highlight-python"><div class="highlight"><pre>Schema --&gt; Table --&gt; Column
+</pre></div>
+</div>
+<p>Table-Group extend this to form:</p>
+<div class="highlight-python"><div class="highlight"><pre>Schema --&gt; Table-Group --&gt; Table --&gt; Column
+</pre></div>
+</div>
+<p><strong>Table-Groups replace tables as the fundamental physical unit in the FoundationDB SQL layer</strong>. Table-Groups define the storage structures, guide the query optimization process, and enable a unique set of <a class="reference internal" href="query.execution.html#fdbsql-query-execution"><em>algebraic operations</em></a>. The relational <strong>logical schema</strong> remains unchanged in its definition of tables, and the data can be queried through the SQL.</p>
+</div>
+</div>
+<div class="section" id="visualizing-table-groups">
+<h2>Visualizing Table-Groups<a class="headerlink" href="#visualizing-table-groups" title="Permalink to this headline">∞</a></h2>
+<p>Consider the slightly richer <a class="reference external" href="/web/20150325003256/http://www.tpc.org/tpcc/spec/tpcc_current.pdf">TPC-C schema</a> containing the nine tables, namely <tt class="docutils literal"><span class="pre">Warehouse</span></tt>, <tt class="docutils literal"><span class="pre">District</span></tt>, <tt class="docutils literal"><span class="pre">Customer</span></tt>, <tt class="docutils literal"><span class="pre">History</span></tt>, <tt class="docutils literal"><span class="pre">New-Order</span></tt>, <tt class="docutils literal"><span class="pre">Order</span></tt>, <tt class="docutils literal"><span class="pre">Order-Line</span></tt>, <tt class="docutils literal"><span class="pre">Item</span></tt>, and <tt class="docutils literal"><span class="pre">Stock</span></tt>. Arranging these tables into Table-Groups highlights the <tt class="docutils literal"><span class="pre">Warehouse</span></tt> top-level entity, referred to as the <em>root table</em>, forming the root of the <tt class="docutils literal"><span class="pre">Warehouse</span></tt> Table-Group. The <tt class="docutils literal"><span class="pre">Item</span></tt> table is not a part of the Warehouse Table-Group and forms its own single-table Table-Group (you can click on the image to view it in higher resolution):</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/_images/TPCC.single.table.group.png"><img alt="../_images/TPCC.single.table.group.png" src="/web/20150325003256im_/https://foundationdb.com/layers/sql/documentation/_images/TPCC.single.table.group.png" style="width: 600px;" /></a>
+</div>
+<p>The horizontal physical layout for <strong>Warehouse Table-Group</strong> of figure 1 interleaves related rows, such that a <tt class="docutils literal"><span class="pre">Warehouse</span></tt> row is followed by its <tt class="docutils literal"><span class="pre">District</span></tt> rows, each <tt class="docutils literal"><span class="pre">District</span></tt> followed by a set of <tt class="docutils literal"><span class="pre">Customer</span></tt> rows, every <tt class="docutils literal"><span class="pre">Customer</span></tt> row will be followed by <tt class="docutils literal"><span class="pre">History</span></tt> rows as a first level child, followed by <tt class="docutils literal"><span class="pre">Orders</span></tt> as a first level child, and each Order row in turn is followed by <tt class="docutils literal"><span class="pre">OrderLine</span> <span class="pre">rows</span></tt> as second level child, as well as <tt class="docutils literal"><span class="pre">NewOrder</span> <span class="pre">rows</span></tt> as second level child. This hierarchy is represented below:</p>
+<div class="highlight-python"><div class="highlight"><pre>Warehouse row W1
+  District row D1
+        Customer row C1
+           History row H1 related to C1
+           History row H2 related to C1
+           Order row O1 related to C1
+              OrderLine OL1 related to O1
+              OrderLine OL2 related to O1
+              NewOrder NO1 related to O1
+           Order row O2 related to C1
+              OrderLine OL3 related to O2
+              NewOrder NO2 related to O2
+        Customer row C2
+           History row H3 related to C2
+           Order row O3 related to C2
+              OrderLine OL4 related to O3
+        Customer row C3
+           ...
+</pre></div>
+</div>
+<p>The order in which tables in each level of the group are arranged is immaterial as long as the overall hierarchy remains intact. <tt class="docutils literal"><span class="pre">History</span></tt> rows may follow a <tt class="docutils literal"><span class="pre">Customer</span></tt> row before any <tt class="docutils literal"><span class="pre">Order</span></tt> rows, or the other way around. This layout permits accessing an object (or group instance) using a short sequential scan over a sequential range of key-value space.</p>
+</div>
+<div class="section" id="deciding-how-to-arrange-tables-into-table-groups">
+<span id="how-to-table-group"></span><h2>Deciding how to arrange tables into Table-Groups<a class="headerlink" href="#deciding-how-to-arrange-tables-into-table-groups" title="Permalink to this headline">∞</a></h2>
+<p>There is no single correct way to compose tables into Table-Group.</p>
+<p>One way to think about arranging existing tables into Table-Groups is to identify the main entities within a schema. For each entity, identify the Table at its core as a root table and attach or &#8220;group&#8221; child tables related to it in a recursive fashion. Tables from the logical schema cannot be arbitrarily interleaved: a child table must have a foreign key to its parent table. In most cases, multiple table-groups exist in a given schema, each describing an object in the system.</p>
+<p>Another good way to identify entities and decide on the devision of tables into Table-Groups is to use the information already present within your ORM.</p>
+<div class="section" id="general-approach">
+<h3>General approach<a class="headerlink" href="#general-approach" title="Permalink to this headline">∞</a></h3>
+<p>The following is a recommended approach:</p>
+<p><strong>Key Entities:</strong> Start by identifying the key entities in the schema. Most operational systems have a small set of entities that are the key or central data containers. These entities generally will have many relationships - some with type definition entities and many attributed relationships linking entities. Many of these relationships will be identifiable via the foreign keys on the key entities.
+The actual number of key entities depends on the complexity of the schema, but something in the range of 3-10 would be typical. Most key-entities will become the roots of a Table-Group.</p>
+<p><strong>Lookup Tables:</strong> Many tables in a typical schema define data (e.g. name, description, type, sort order, order value, etc.) that is static or changes infrequently in comparison to the key entities. While naming conventions vary widely, table names with <em>type</em>, <em>definition</em>, or <em>constant</em> can also help identify lookup tables. These may also have a single relationship to a key entity or have a small number of rows in the database (2-1000).</p>
+<p><strong>Leftovers:</strong> Many schemas have leftover entities - backup copies, prior generation, etc. These entities should not be grouped with anything. Rather they should remain with a single entity per group.</p>
+<p><strong>Many-to-Many relationships:</strong> Inspect the many-to-many relationship table. It will have two foreign keys, each pointing to a key-entity. If one foreign key is more tightly coupled than the others, group along the relationship that will cost the most.</p>
+<p><strong>Cardinality:</strong> Connecting two tables in a Table-Group requires a one-to-many relationship. Many-to-one relationships should be evaluated to determine if the left entity can be classified as a lookup table. Do so wherever possible. Entities that differ by three or more orders of magnitude in row counts should be candidates for separate groups. Cardinality differences in the 100-500 range define the threshold where separate grouping could be appropriate.</p>
+<p><strong>Queries:</strong> Inspect application queries to assess which tables are frequently joined together. Tables that are never used together should not be joined.</p>
+<p><strong>Growth Rate:</strong> Entities that grow faster might appropriately be grouped separately.</p>
+<p>Another way to visualize the process of &#8220;grouping&#8221; tables into Table-Groups is to imagine a directed graph where tables are nodes and relationships form edges between table nodes. As we observe usage of the system, some of the relationship edges will experience higher traffic than others, this traffic representing the frequency and cost of joining on the relationship. The goal is to choose an arrangement of tables into Table-Groups, such that the total cost of joins in the system is minimal.</p>
+</div>
+<div class="section" id="hard-rules">
+<h3>Hard rules<a class="headerlink" href="#hard-rules" title="Permalink to this headline">∞</a></h3>
+<p>The following rules must be upheld:</p>
+<ol class="arabic simple">
+<li>A Table-Group is composed of one or more tables.</li>
+<li>A Table-Group with more than one table is a strict hierarchy with a single root table, and one-to-many relationships between each parents table and every one of its children, forming a directed acyclic graph (DAG).</li>
+<li>Each table exists in exactly one Table-Group, even if its the only table in the Table-Group.</li>
+<li>Tables that describe many-to-many relationships between Table-Groups must exist in only one of the Table-Groups they point to. A classic example is a bug-tracking system that has two main tables called <tt class="docutils literal"><span class="pre">Projects</span></tt> and <tt class="docutils literal"><span class="pre">Developers</span></tt>, and a many-to-many table called <tt class="docutils literal"><span class="pre">bugs</span></tt> that has a relationship to both. Each bug in the <tt class="docutils literal"><span class="pre">bugs</span></tt> table points to the project it belongs to and to the developer it was assigned to. The <tt class="docutils literal"><span class="pre">bugs</span></tt> table will be &#8220;grouped&#8221; as a child table in the <tt class="docutils literal"><span class="pre">Developers</span></tt> Table-Group, or the <tt class="docutils literal"><span class="pre">Projects</span></tt> Table-Group, but not in both.</li>
+</ol>
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">∞</a></h3>
+<p>An alternative composition of the TPC-C tables into Table-Groups is shown below:</p>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/_images/TPCC.multiple.table.groups.png"><img alt="../_images/TPCC.multiple.table.groups.png" src="/web/20150325003256im_/https://foundationdb.com/layers/sql/documentation/_images/TPCC.multiple.table.groups.png" style="width: 600px;" /></a>
+</div>
+<p>In this instance, the <tt class="docutils literal"><span class="pre">Customer</span></tt> table is considered a root table with its own Table-Group. The <tt class="docutils literal"><span class="pre">Warehouse</span></tt> table is still a root, but of a much smaller Table-group, containing only the <tt class="docutils literal"><span class="pre">District</span></tt> table as its child, and having very little data in it. This may be a better approach for a use case where the information about Warehouse&#8217;s is not often used within the handling of customers, or where clustering customers by Warehouse does not make sense.</p>
+</div>
+</div>
+<div class="section" id="defining-and-managing-table-groups">
+<span id="manage-table-group"></span><h2>Defining and Managing Table-Groups<a class="headerlink" href="#defining-and-managing-table-groups" title="Permalink to this headline">∞</a></h2>
+<p>Managing Table-Groups is accomplished using dedicated statements and techniques.</p>
+<div class="section" id="adding-tables-to-a-table-group">
+<h3>Adding tables to a Table-Group<a class="headerlink" href="#adding-tables-to-a-table-group" title="Permalink to this headline">∞</a></h3>
+<p>As described above, defining a Table-Group is accomplished by arranging related tables into a hierarchy that matches a user’s intuitive concept of an object. A special type of foreign key, called the <tt class="docutils literal"><span class="pre">GROUPING</span> <span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt>, is used to identify the hierarchical relationships between tables. Each table will have exactly zero or one foreign key that is marked as its <tt class="docutils literal"><span class="pre">GROUPING</span> <span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt>, pointing to it’s parent table. If a table has zero <tt class="docutils literal"><span class="pre">GROUPING</span> <span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt>, it is considered a root table and forms a group of it’s own.</p>
+<p>The following table definitions arrange the <tt class="docutils literal"><span class="pre">Customers</span></tt> table as the <strong>root</strong> of a Table-Group and the <tt class="docutils literal"><span class="pre">Orders</span></tt> table as its descendent <strong>child</strong> in the Table-Group structure:</p>
+<div class="highlight-python"><div class="highlight"><pre>CREATE TABLE customers
+( 
+   customer_id   INT NOT NULL PRIMARY KEY,
+   rand_id       INT,
+   name          VARCHAR(20),
+   customer_info VARCHAR(100),
+   birthdate     DATE,
+   INDEX (birthdate)   
+);
+</pre></div>
+</div>
+<p>and</p>
+<div class="highlight-python"><div class="highlight"><pre>CREATE TABLE orders
+(
+   order_id    INT NOT NULL PRIMARY KEY,
+   customer_id INT NOT NULL,
+   order_info  VARCHAR(200),
+   order_date  DATETIME NOT NULL,
+   GROUPING FOREIGN KEY (customer_id) REFERENCES customers
+);
+</pre></div>
+</div>
+<p>Notice the <tt class="docutils literal"><span class="pre">GROUPING</span> <span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt> definition, in the last line of the <tt class="docutils literal"><span class="pre">orders</span></tt> table:</p>
+<div class="highlight-python"><div class="highlight"><pre>GROUPING FOREIGN KEY(customer_id) REFERENCES customers
+</pre></div>
+</div>
+<p>It is responsible for the Table-Group structure definition. To add a Table-Group defining a foreign key after the tables have already been created, use the <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.group.html#alter-group-stmt"><em>ALTER GROUP</em></a> statement or the equivalent <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.table.html#alter-table-stmt"><em>ALTER TABLE</em></a> statement:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER GROUP
+   ADD TABLE orders (customer_id) TO customers (customer_id);
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER TABLE orders
+       ADD GROUPING FOREIGN KEY (customer_id) REFERENCES customers (customer_id);
+</pre></div>
+</div>
+<p>Adding a table that has data in it to a Table-Group means that the full set of rows will be moved and interleaved within the Table-Group data structure.</p>
+</div>
+<div class="section" id="removing-a-table-from-a-table-group">
+<span id="remove-table-group"></span><h3>Removing a table from a Table-Group<a class="headerlink" href="#removing-a-table-from-a-table-group" title="Permalink to this headline">∞</a></h3>
+<p>In order to remove a table from a Table-Group use:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER GROUP
+   DROP TABLE orders;
+</pre></div>
+</div>
+<p>or the equivalent:</p>
+<div class="highlight-python"><div class="highlight"><pre>ALTER TABLE orders
+       DROP GROUPING FOREIGN KEY &quot;caoi/customers/customer_id/caoi/caoi.orders/customer_id&quot;;
+</pre></div>
+</div>
+<p>For more details about the exact syntax, see the <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.table.html#alter-table-stmt"><em>ALTER TABLE syntax</em></a> and <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.group.html#alter-group-stmt"><em>ALTER GROUP syntax</em></a>.</p>
+<p>You can only remove leaf tables. Leaf tables are tables that have no children of their own. To remove a table that has child tables, all child tables must be recursively removed first, working from the leaf level up.</p>
+<p>Removing a table that has data in it from a Table-Group means that the full set of rows will be removed from their interleaved positions in the Table-Group data structure and placed in a new area that will contain only the data for that table.</p>
+</div>
+<div class="section" id="altering-the-structure-of-a-table-group">
+<h3>Altering the structure of a Table-Group<a class="headerlink" href="#altering-the-structure-of-a-table-group" title="Permalink to this headline">∞</a></h3>
+<p>Operations on non-leaf tables are not supported directly and so must be done in steps. For example: if you wish to add a non-leaf table to a group:</p>
+<ul class="simple">
+<li>remove all tables in the group below the level where the new table will be added</li>
+<li>add the new table to the group</li>
+<li>re-add the tables removed from the group with their new relationship</li>
+</ul>
+<p>For example, assume you currently have the following group structure deployed (t1, t2, t3 and t4 are tables):</p>
+<div class="highlight-python"><div class="highlight"><pre>t1
+ -&gt; t2
+ -&gt; t3
+</pre></div>
+</div>
+<p>But you wish to deploy the following:</p>
+<div class="highlight-python"><div class="highlight"><pre>t1
+ -&gt; t4
+   -&gt; t2
+   -&gt; t3
+</pre></div>
+</div>
+<p>Then the steps to follow would be:</p>
+<ul class="simple">
+<li>remove t2 and t3 from the group</li>
+<li>add t4 to group</li>
+<li>add t2 and t3 to the group with t4 as their parent</li>
+</ul>
+</div>
+<div class="section" id="removing-a-table-group">
+<h3>Removing a Table-Group<a class="headerlink" href="#removing-a-table-group" title="Permalink to this headline">∞</a></h3>
+<p>To drop a Table-Group, use the <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/ddl/drop.group.html#drop-group-stmt"><em>DROP GROUP</em></a> statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">DROP</span> <span class="k">GROUP</span> <span class="n">customers</span>
+</pre></div>
+</div>
+<p>If you are only interested in removing some but not all of the tables of a Table-Group, start with dropping the leaf tables in a group and then proceed up the Table-Group hierarchy until all tables are removed.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">items</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">orders</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">address</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">customers</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="how-are-table-groups-implemented">
+<h2>How are Table-Groups implemented<a class="headerlink" href="#how-are-table-groups-implemented" title="Permalink to this headline">∞</a></h2>
+<p>At the heart of Table-Groups implementation is a segmented key-structure called <em>hKeys</em>. Data is added to a table-group by assigning an <em>hKey</em> that captures its ancestors composite primary keys and locates it correctly within the hierarchy. This mechanism is employed at the physical level to achieve the interleaving, and is invisible to the user. The order achieved by the <em>hKeys</em> is called ‘group order’ because data is pre-sorted according to the relationships that define the group. Every row in the Table-Group can be independently referenced and accessed, avoiding <a class="reference external" href="/web/20150325003256/http://c2.com/cgi/wiki?AccessPathIndependence">access-path-dependence</a> (Access-path-dependence describes a situation where access to a dependent row is possible only through the containing one). This approach retains the full power of SQL and normalization.</p>
+<p>A more detailed discussion of how Table-Groups work and how SQL queries operate on top of the new structure is found in the <a class="reference internal" href="query.execution.html#fdbsql-query-execution"><em>query execution</em></a> section.</p>
+</div>
+<div class="section" id="query-execution">
+<h2>Query execution<a class="headerlink" href="#query-execution" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="executing-sql-queries">
+<h3>Executing SQL queries<a class="headerlink" href="#executing-sql-queries" title="Permalink to this headline">∞</a></h3>
+<p>A classic relational database stores table data in row-wise or column-wise fashion. Operations across tables require that either the database system or the application join related information from different tables. As discussed earlier, joins are expensive and much work has been invested in their optimization. Joins become increasingly expensive as a schema develops in complexity and in data volume.</p>
+<p>Joins that are a part of the Table-Group definition are pre-computed in the data structure itself and are as cheap to execute as accessing a single table in a classic relational system.</p>
+<p>Additionally, Table-Groups introduce unique possibilities for database indexes that span multiple tables and enable intersecting indexes from different tables in a Table-Group. While impractical or impossible using a traditional relational database, these ideas are a native part of the SQL Layer query optimizer.</p>
+<p>For example a query that asks to join <tt class="docutils literal"><span class="pre">customers</span></tt> with <tt class="docutils literal"><span class="pre">orders</span></tt> and <tt class="docutils literal"><span class="pre">items</span></tt> will execute without any joins:</p>
+<div class="highlight-python"><div class="highlight"><pre>SELECT *
+FROM customers
+  INNER JOIN orders on customers.customer_id = orders.customer_id
+  INNER JOIN items on orders.order_id = items.order_id;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To run this query, first follow the <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/GettingStarted/SQL.html#getting-started-sql"><em>Getting Started with SQL</em></a> guide to create and populate the dataset.</p>
+</div>
+</div>
+<div class="section" id="accessing-objects">
+<h3>Accessing Objects<a class="headerlink" href="#accessing-objects" title="Permalink to this headline">∞</a></h3>
+<p><a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html#sqlref-select-nested-details"><em>Nested Queries</em></a> and nested resultsets are our terms for the ability to return data as objects rather than in tabular form. This has the potential to alleviate much of the pain in the object-relational impedance mismatch. There are currently two alternate ways for querying nested data. The first through an extension to SQL that allows nesting in the query and the result:</p>
+<div class="highlight-python"><div class="highlight"><pre>SELECT *,
+  (SELECT * FROM orders WHERE customers.customer_id = orders.customer_id) AS cust_orders
+FROM customers
+WHERE customer_id = 1;
+</pre></div>
+</div>
+<p>The second is a document-style <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/GettingStarted/REST.html#getting-started-rest"><em>REST object API</em></a>. For example to return customer number 1 from the <tt class="docutils literal"><span class="pre">customers</span></tt> Table-Group, you would write something similar to:</p>
+<div class="highlight-python"><div class="highlight"><pre>HTTP GET http://localhost:8091/v1/entity/caoi.customers/1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<p>Now that you have a good understanding of Table-Groups, go back to the <a class="reference internal" href="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html#getting-started"><em>getting started</em></a> section to start building your application or to migrate existing data.</p>
+<p>If you haven&#8217;t already, also take a minute to familiarize yourself with the SQL Layer <a class="reference internal" href="features.html#fdbsqllayer-features"><em>features</em></a>.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003256/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Table Groups</a><ul><li><a class="reference internal" href="#problem">Problem</a></li><li><a class="reference internal" href="#what-is-a-table-group">What is a Table-Group?</a><ul><li><a class="reference internal" href="#hierarchical-schema">Hierarchical schema</a></li><li><a class="reference internal" href="#clustered-storage">Clustered storage</a></li><li><a class="reference internal" href="#advantages">Advantages</a></li><li><a class="reference internal" href="#difference-from-traditional-relational-databases">Difference from traditional relational databases</a></li></ul></li><li><a class="reference internal" href="#visualizing-table-groups">Visualizing Table-Groups</a></li><li><a class="reference internal" href="#deciding-how-to-arrange-tables-into-table-groups">Deciding how to arrange tables into Table-Groups</a><ul><li><a class="reference internal" href="#general-approach">General approach</a></li><li><a class="reference internal" href="#hard-rules">Hard rules</a></li><li><a class="reference internal" href="#example">Example</a></li></ul></li><li><a class="reference internal" href="#defining-and-managing-table-groups">Defining and Managing Table-Groups</a><ul><li><a class="reference internal" href="#adding-tables-to-a-table-group">Adding tables to a Table-Group</a></li><li><a class="reference internal" href="#removing-a-table-from-a-table-group">Removing a table from a Table-Group</a></li><li><a class="reference internal" href="#altering-the-structure-of-a-table-group">Altering the structure of a Table-Group</a></li><li><a class="reference internal" href="#removing-a-table-group">Removing a Table-Group</a></li></ul></li><li><a class="reference internal" href="#how-are-table-groups-implemented">How are Table-Groups implemented</a></li><li><a class="reference internal" href="#query-execution">Query execution</a><ul><li><a class="reference internal" href="#executing-sql-queries">Executing SQL queries</a></li><li><a class="reference internal" href="#accessing-objects">Accessing Objects</a></li></ul></li><li><a class="reference internal" href="#next-steps">Next steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003256/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003256/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003256/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003256/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003256js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:56 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:27:47 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

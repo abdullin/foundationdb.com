@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app13.us.archive.org";archive_analytics.values.server_ms=135;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Leveraging your SQL Investments in a Cloud-Driven World &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/sql-in-a-cloud-world' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003232/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='sql_cloud_world' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003232/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003232/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Leveraging your SQL Investments in a Cloud-Driven World</h1>
+<p>Over the years, your business has invested tremendous resources in existing applications built around a relational data model and developed internal skillsets on database and ops teams to manage those database systems.</p>
+<p>That said, platform migrations, cost of scaling, and uptime concerns are likely becoming a bigger portion of your team’s time and your infrastructure budget. The appeal of a fault-tolerant system that is quickly deployable, horizontally scalable, and highly adaptive is irrefutable. What’s more, the ‘what’ and ‘how’ of migrating to the cloud involves an array of strategic and technical decisions, especially when you have existing powerful and complex relational database technology in use.</p>
+<p>So even though exploring NoSQL databases and Big Data solutions could provide some tremendous benefits, the ideal solution would allow you to leverage your existing investments in relational, SQL-oriented databases so that your team could make an easy and quick transition due to its familiar interface but also gain significant operational benefits that impact your infrastructure costs. There are many organizations that have done just that - maintained their investment in traditional relational, “SQL-based” databases while adding NoSQL and Big Data databases to their infrastructure.</p>
+<p>This paper walks through the most common pain points businesses face with SQL-oriented databases and looks at a new solution for leveraging the relational model in a cloud-based world.</p>
+<h2>Cost</h2>
+<p>Traditional relational databases are implemented alongside applications as single, monolithic systems. These databases are designed to be scaled vertically--adding more and more processing power and RAM to a single machine--which can get very expensive and extremely difficult to manage because it’s a single point of failure in your infrastructure. Common workarounds include read-only replicas, which may sacrifice consistency and don’t help scale write operations, and application-level sharding, which turns a single database into many disjointed versions that are exposed to the application. But these aren’t really solving the problems associated with vertical scaling--cost and fault tolerance. It would be more cost effective to support your applications with a “horizontal” scaling technique that allows you to add inexpensive commodity machines to your infrastructure as they’re needed to support your workload.</p>
+<p>The majority of NoSQL solutions are designed with this approach--to scale horizontally and change your infrastructure based on workload-- to provide cost-effective scaling, but the individual implementations vary considerably. So whether you use open-source relational databases in your infrastructure or have been paying Oracle for expensive solutions, horizontal scaling to build “out” instead of “up” can be an effective and economical approach that saves your organization money.</p>
+<h2>Attempting to scale SQL</h2>
+<p>Scalability is widely recognized as an essential property for successful applications. The ever-increasing need for scalability and new application requirements have created new challenges for traditional relational databases.</p>
+<p>The solution developed in the market is a new generation of low-cost, high-performance databases designed to challenge dominance of relational databases. A big reason for the so-called “NoSQL” movement is that different implementations of web, enterprise, and cloud-computing applications have different database requirements—for example, not every application requires rigid data consistency--and the database should be flexible enough to accommodate those different requirements.</p>
+<h2>Availablility</h2>
+<p>Imagine an application that seamlessly handles machine failures and prevents you from losing data. These are powerful claims that benefit all users and developers. Many database vendors claim to provide these benefits or merely say their systems are “available” without actually discussing the spectrum of failure modes and how their system behaves. Failures range from small, unremarkable, expected events like network packet collisions, which happen all the time, to unexpected, catastrophic events like power failure of an entire cluster or datacenter. Fault tolerance is characterized by the amount, duration, and likelihood of data and service loss that may occur.</p>
+<p>For high-volume websites like Google, Twitter, or Facebook, scalability and high availability are essential requirements that cannot be compromised. For these companies and many others like them, even the slightest outage can have significant financial consequences and impact customer trust. Unfortunately, achieving the level of fault tolerance needed to support these highly available applications is extremely difficult and is one of the main reasons why NoSQL solutions emerged in the first place.</p>
+<p>Considering these common pain points with traditional SQL databases, what’s the best way forward? How can you stick with your existing SQL applications and expertise but get the scale and cost benefits of NoSQL to support your growing business?</p>
+<h2>Leveraging the relational model in a cloud-based world</h2>
+<p>The FoundationDB SQL Layer takes a different approach than traditional relational databases. With FoundationDB’s solution, you can have fault tolerance and scale built into your infrastructure, but your team can work with the database through an ANSI SQL interface. It is a general-purpose, OLTP database that you can use on a single machine, but the architecture is optimized for scale (and high availability) as a distributed database cluster.</p>
+<p>By building on top of FoundationDB Key-Value Store, SQL Layer becomes a stateless translator for your SQL-based applications that inherits scalability, fault-tolerance, and ACID transactions while adding an ANSI SQL interface to maintain compatibility with existing applications. You can get the benefits of NoSQL systems like scalability and low cost with your own hardware or in the cloud while retaining something familiar. Voila!</p>
+<p>There are many options for SQL on a single machine but very few that provide horizontal scalability and fault- tolerance, all while maintaining full data consistency. FoundationDB does just that. Additionally, the <a href=../../../layers/sql/index.html>SQL Layer</a> project is fully open source. If you’re interested in learning more, email us at <a href="mailto:sql@foundationdb.com">sql@foundationdb.com</a> or ask us questions on our <a href=../../../https:/web.archive.org/web/20150325003232/http:/community.foundationdb.com>community site</a>.</p>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:32 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:38:36 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

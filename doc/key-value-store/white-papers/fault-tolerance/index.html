@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=159;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Fault Tolerance &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/fault-tolerance' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003204/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='fault_tolerance' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003204/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003204/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Fault Tolerance</h1>
+<h3>Is the FoundationDB Key-Value Store fault tolerant?</h3>
+<p>
+Many systems claim to be fault tolerant without really discussing the spectrum of failures they may face or their ability to maintain service in various cases. At one end of the spectrum, network packet collisions happen all the time with only minor impact; at the other end, if all the machines in a cluster lose power, the system will necessarily fail. The importance of fault tolerance lies in the middle range between these extremes. Fault tolerance is characterized by the
+<em>amount, duration, and likelihood</em>
+of data and service loss that may occur.
+</p>
+<h3>Watch it handle power and network failures with ease</h3>
+<div id='video-wrapper'>
+<div class='inner'>
+<iframe frameborder='0' src='/web/20150325003204if_/https://player.vimeo.com/video/66182993?title=0&amp;byline=0&amp;portrait=0'></iframe>
+</div>
+</div>
+<h3>Distributed and replicated</h3>
+<p>The Key-Value Store is built on a distributed shared-nothing architecture. This design gives us a huge advantage over any system running on a single computer, which must fail when the machine fails. The Key-Value Store divides the data into chunks and distributes multiple copies of each chunk to different storage servers, each of which is a separate physical computer with its own local storage. The only connection between the computers is a switched Ethernet network.</p>
+<p>The Key-Value Store can tolerate a single computer failure with service interruption of at most a few seconds and no data loss, although maximum system throughput is affected. Single machine failures are one of the most common types of failure, so tolerance to such failure is essential.</p>
+<h3>Data distribution strategy</h3>
+<p>If multiple machines fail, the Key-Value Store still deals gracefully with the possible service loss. Of course, data unavailability becomes a possibility because there are only a finite number of replicas of each chunk of data.</p>
+<p>Any distributed system faces some basic probabilistic constraints. For example, take a system running on a 40-machine cluster. If each one of a million pieces of data is put on 4 random machines, and then 4 machines fail, unavailability of some data is almost certain. There are only about 100,000 possible combinations of 4 machines among 40, and with a million pieces of data, the failing combination of machines is almost certain to contain some of the million. (It will usually have about 10).</p>
+<p>The Key-Value Store improves these probabilities by selecting "teams" of machines on which to distribute data. Instead of putting each chunk of data on a different set of machines, each machine can participate in multiple teams. In the above example, by selecting only 450 teams of 4 machines that each chunk of data can be on, the chance of data unavailability is reduced to about 0.5%.</p>
+<h3>Independence assumptions</h3>
+<p>As a further refinement, the Key-Value Store can be made aware that certain machines might tend to fail together. For example, every machine in a rack might share a network and power connection. If either failed, then the entire rack of machines would fail. We use this knowledge when choosing teams, taking care not to place any two machines in a team that would have a tendency to fail together. Pieces of data can then be intelligently distributed across racks or even datacenters, so that characteristic multimachine failures (for example, based on rack configuration) do not cause service interruption or data loss. Using this method, the Key-Value Store can continuously operate through a failure of an entire datacenter.</p>
+<h3>Other types of failure</h3>
+<p>There are many different types of failures: drives filling up, network routing errors, machine performance degradation, "dead" machines coming back to life, OS faults, etc. The Key-Value Store has been built from the ground up on a framework that allows simulation of all these types of failures. We've run hundreds of millions of stress tests that fail machines at very short intervals, induce unusually severe loads, delay communications channels at the worst time, or all of the above at once.</p>
+<p>We have worked hard to design the Key-Value Store to maximize fault tolerance, maintaining performance and availability in the face of worst-case scenarios. As a result, the Key-Value Store is a very safe system for managing your data.</p>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:04 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:33:34 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

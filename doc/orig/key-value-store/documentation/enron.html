@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=514;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+The Enron Email Corpus
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/enron.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003223/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003223im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="kvEXMD51MFFITMeEqdUREQ8wfRKT5HJRQ/R9A33xfUI=" name="csrf-token" />
+<link href="/web/20150325003223cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003223cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/enron.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/enron.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003223" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:23 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150706064641/https://foundationdb.com/key-value-store/documentation/enron.html" title="6 Jul 2015"><strong>JUL</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:23 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150706064641/https://foundationdb.com/key-value-store/documentation/enron.html" title="6:46:41 Jul 6, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:23 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003223*/https://foundationdb.com/key-value-store/documentation/enron.html" title="See a list of every capture for this URL">2 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003223/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003223im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003223/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003223/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003223/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003223/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003223/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003223/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003223/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003223/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003223/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003223/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="tutorials.html">Tutorials</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003223/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003223im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="the-enron-email-corpus">
+<h1>The Enron Email Corpus<a class="headerlink" href="#the-enron-email-corpus" title="Permalink to this headline">∞</a></h1>
+<p>This tutorial illustrates some of our data modeling techniques with the Enron email data set. We&#8217;ll look at some approaches to loading the data into FoundationDB and querying the data once its loaded. We&#8217;ll be drawing on <a class="reference internal" href="data-modeling.html"><em>Data Modeling</em></a>, <a class="reference internal" href="developer-guide.html"><em>Developer Guide</em></a>, and <a class="reference internal" href="api-python.html"><em>Python API</em></a>, so you should take a look at those documents if you&#8217;re not familiar with them.</p>
+<p>For an introductory tutorial that begins with &#8220;Hello world&#8221; and explains the basic concepts used in FoundationDB, take a look at our <a class="reference internal" href="class-scheduling.html"><em>class scheduling tutorial</em></a>.</p>
+<p>Although we&#8217;ll be using Python, the concepts in this tutorial are also applicable to the other <a class="reference internal" href="api-reference.html"><em>languages</em></a> supported by FoundationDB.</p>
+<p>If you&#8217;d like to see the finished version of the code we&#8217;ll be working with, take a look at the <a class="reference internal" href="#enron-appendix"><em>Appendix: EnronTutorial.py</em></a>.</p>
+<div class="section" id="overview-of-the-data-set">
+<span id="enron-overview"></span><h2>Overview of the data set<a class="headerlink" href="#overview-of-the-data-set" title="Permalink to this headline">∞</a></h2>
+<p>The Enron corpus is a publicly available data set of email messages sent or received by about 150 senior managers of the <a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Enron">Enron corporation</a>. The data set was acquired and subsequently made public by the Federal Energy Regulatory Commission during its investigation of Enron. It is believed to be one of the largest publicly available collection of real-world email data, and as such it has been widely used for research in social network analysis, natural language processing, and machine learning.</p>
+<p>The corpus contains about half a million messages, organized by personal account and the folders each account contained. Several academic institutions host copies of the corpus, sometimes cleaned or annotated in various ways. We&#8217;ll be using the <a class="reference external" href="/web/20150325003223/http://www.cs.cmu.edu/~enron/">version hosted by CMU</a>. We&#8217;ll also use some <a class="reference external" href="/web/20150325003223/http://ocw.mit.edu/resources/res-6-009-how-to-process-analyze-and-visualize-data-january-iap-2012/datasets-and-code/">utility functions from MIT</a> for reading the emails.</p>
+<p>Here&#8217;s what Jeffrey Skilling&#8217;s folders look like:</p>
+<div class="highlight-python"><div class="highlight"><pre>localhost:CMU$ cd skilling-j
+
+localhost:skilling-j$ ls
+
+_sent_mail      deleted_items       notes_inbox
+all_documents   discussion_threads  sent
+calendar        inbox               sent_items
+contacts        mark
+</pre></div>
+</div>
+<p>The emails are in individual text files:</p>
+<div class="highlight-python"><div class="highlight"><pre>localhost:sent$ cd sent
+
+localhost:sent$ cat 83.
+
+Message-ID: &lt;10708849.1075840101852.JavaMail.evans@thyme&gt;
+Date: Mon, 28 Aug 2000 08:01:00 -0700 (PDT)
+From: sherri.sera@enron.com
+To: slc1856@sunflower.com
+Subject: Re: Thanks for dinner
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-From: Sherri Sera
+X-To: &quot;Stephen L Comeau&quot; &lt;slc1856@sunflower.com&gt;
+X-cc:
+X-bcc:
+X-Folder: \Jeffrey_Skilling_Dec2000\Notes Folders\Sent
+X-Origin: SKILLING-J
+X-FileName: jskillin.nsf
+
+Steve, thanks for the note.  It was great to meet you.  I look forward to
+seeing more of you in the future.
+
+Regards,
+Jeff
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-model">
+<span id="enron-data-model"></span><h2>Data model<a class="headerlink" href="#data-model" title="Permalink to this headline">∞</a></h2>
+<p>Before we begin loading the data into FoundationDB, we need to think about how to model it. In other words, how can we best represent the data in our ordered key-value store? We&#8217;d like to use a model that allows us to easily map the raw data to its representation in the database, while exposing its structure in a way that supports the queries or analysis we&#8217;re interested in.</p>
+<p>One approach is to consider which entities represented in the data contain structure that we want to capture. From this perspective, two kinds of entities are evident: there are the email messages themselves, with their various fields, and there are the persons who send and receive the messages. If we take messages and persons as our two entity types, the relationships between them emerge naturally and can be readily extracted from the message fields.</p>
+<p>We may also be interested in features of the data such as the pattern of contacts between persons or the textual content of their messages. These features can easily be accessed from the basic representation of the messages and persons, allowing us to extend the model to support additional queries.</p>
+<div class="section" id="an-entity-relationship-model">
+<span id="enron-entity-relationship"></span><h3>An entity-relationship model<a class="headerlink" href="#an-entity-relationship-model" title="Permalink to this headline">∞</a></h3>
+<p>Given these considerations, we&#8217;ll use the <a class="reference internal" href="data-modeling.html#data-modeling-entity-relationship"><em>entity-relationship model</em></a> as described in <a class="reference internal" href="data-modeling.html"><em>Data Modeling</em></a>. In this model, entities have directed relationships with each other and can also have associated attributes.</p>
+<p>So, we&#8217;ll make each person and message an entity. We can use email addresses as identifiers for persons and message IDs as identifiers for messages. To indicate the sender of message, we&#8217;ll create a <tt class="docutils literal"><span class="pre">'sender'</span></tt> relationship from a person to the message.  Likewise, we&#8217;ll create a relationship of the appropriate type (<tt class="docutils literal"><span class="pre">'to'</span></tt>, <tt class="docutils literal"><span class="pre">'cc'</span></tt>, or <tt class="docutils literal"><span class="pre">'bcc'</span></tt>) from a message to each of its recipients. All other data associated with a message (<tt class="docutils literal"><span class="pre">subject</span></tt>, <tt class="docutils literal"><span class="pre">text</span></tt>, <tt class="docutils literal"><span class="pre">date</span></tt>, etc.) will be recorded as an attribute of the message.</p>
+</div>
+</div>
+<div class="section" id="loading-the-data">
+<span id="enron-loading-data"></span><h2>Loading the data<a class="headerlink" href="#loading-the-data" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="directories-and-subspaces">
+<span id="enron-directory"></span><h3>Directories and Subspaces<a class="headerlink" href="#directories-and-subspaces" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB provides <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>directories</em></a> within the database as a recommended approach to managing related <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>subspaces</em></a>. We&#8217;ll open a directory for our work with the Enron data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">enron</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;enron&#39;</span><span class="p">,))</span>
+</pre></div>
+</div>
+<p>The <tt class="xref py py-meth docutils literal"><span class="pre">create_or_open()</span></tt> method returns a subspace for all data to be store in the directory. We decided to use the entity-relationship model for persons and messages, so we&#8217;ll create an <tt class="docutils literal"><span class="pre">'ER_space'</span></tt> subspace within the <tt class="docutils literal"><span class="pre">enron</span></tt> subspace.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ER_space</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;ER&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We&#8217;ll use a helper function to clear this and other subspaces as needed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">clear_subspace</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,)</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="p">()</span>
+    <span class="n">tr</span><span class="o">.</span><span class="n">clear_range_startswith</span><span class="p">(</span><span class="n">subspace</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">tup</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="message-processing">
+<span id="enron-mapping-processing"></span><h3>Message processing<a class="headerlink" href="#message-processing" title="Permalink to this headline">∞</a></h3>
+<p>To read the email data from the text files, we&#8217;ll walk the directories and read each email into a Python dictionary whose keys are populated with fields of the message. In addition to the <tt class="docutils literal"><span class="pre">'sender'</span></tt> field, there are fields for recipients and other attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">recipient_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="s">&#39;cc&#39;</span><span class="p">,</span> <span class="s">&#39;bcc&#39;</span><span class="p">]</span>
+<span class="n">attribute_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;folder&#39;</span><span class="p">,</span> <span class="s">&#39;sendername&#39;</span><span class="p">,</span> <span class="s">&#39;subject&#39;</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>An individual message is small enough that we can write its various fields in a single transaction. We&#8217;ll first check if the message has already been loaded. If not, we&#8217;ll proceed to add relationships for <tt class="docutils literal"><span class="pre">'sender'</span></tt> and the various recipient fields. Finally, we&#8217;ll add the attribute values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_email</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+    <span class="c"># Check if the email has already been added to enforce idempotence</span>
+    <span class="k">if</span> <span class="n">is_related_entity</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span><span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;sender&#39;</span><span class="p">],</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">]):</span> <span class="k">return</span>
+    <span class="c"># Add relationship for &#39;sender&#39;</span>
+    <span class="n">add_relationship</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;sender&#39;</span><span class="p">],</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">])</span>
+    <span class="c"># Add relationships for each recipient field</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">recipient_fields</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">]:</span>
+            <span class="n">add_relationship</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">],</span> <span class="n">recipient</span><span class="p">)</span>
+    <span class="c"># Add attributes for each attribute field</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">attribute_fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">]:</span>
+            <span class="n">field_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">])[:</span><span class="mi">40000</span><span class="p">]</span>
+            <span class="n">add_attribute_value</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">],</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transaction-management">
+<span id="enron-transaction-management"></span><h3>Transaction management<a class="headerlink" href="#transaction-management" title="Permalink to this headline">∞</a></h3>
+<p>To <a class="reference internal" href="developer-guide.html#bulk-loading"><em>load a sizeable data set</em></a>, it&#8217;s important to manage your transactions in an efficient manner. FoundationDB is not designed to support <a class="reference internal" href="known-limitations.html"><em>long or large transactions</em></a>, so loading the data set in a single transaction is not an option. As described above, we&#8217;ll use one transaction per message with the <tt class="xref py py-func docutils literal"><span class="pre">add_email()</span></tt> function.</p>
+<p>We&#8217;ll use an iterator <tt class="docutils literal"><span class="pre">EmailWalker</span></tt> to walk the directories. In particular, an instance of <tt class="docutils literal"><span class="pre">EmailWalker</span></tt> is an iterator that returns dictionaries populated with email data, one message per dictionary. (You can see the <tt class="docutils literal"><span class="pre">EmailWalker</span></tt> class in <tt class="docutils literal"><span class="pre">resources/util/email_util.py</span></tt> in the <a class="reference external" href="/web/20150325003223/http://ocw.mit.edu/resources/res-6-009-how-to-process-analyze-and-visualize-data-january-iap-2012/datasets-and-code/">Resources</a> zip file.) The simplest approach to loading the data into FoundationDB would be to sequentially load the messages using something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">load_enron_emails_sequential</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">ER_space</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">EmailWalker</span><span class="p">(</span><span class="n">localdir</span><span class="o">+</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span> <span class="n">add_email</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, it&#8217;s more efficient to use a number of concurrent transactions per process. One approach to managing concurrency uses a queue-based <a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Producer-consumer_problem">producer-consumer</a> pattern in which producers generate data and place it on the queue, while consumers remove data from the queue for further processing. The <a class="reference internal" href="api-python.html#api-python-event-models"><em>gevent</em></a> module has a <tt class="docutils literal"><span class="pre">Queue</span></tt> class that supports this pattern, with each producer and consumer running in its own greenlet.</p>
+<p>We&#8217;ll define a <tt class="docutils literal"><span class="pre">BoundedBuffer</span></tt> as a subclass of <tt class="docutils literal"><span class="pre">Queue</span></tt> that has a single producer with a <tt class="docutils literal"><span class="pre">reader</span></tt> function to obtain the data from its source, and multiple consumers with a <tt class="docutils literal"><span class="pre">writer</span></tt> function to initiate the write transactions. The queue&#8217;s <tt class="docutils literal"><span class="pre">put</span></tt> method will automatically block if the queue&#8217;s <tt class="docutils literal"><span class="pre">maxsize</span></tt> has been reached. We&#8217;ll set <tt class="docutils literal"><span class="pre">maxsize</span></tt> to the number of consumers, which will make the producer wait until some consumer is free before putting more data in the queue.</p>
+<p>The consumers running in separate greenlets will be used to execute transactions, so the number of consumers will determine the number of concurrent transactions. The optimal number of concurrent transactions depends on your hardware configuration, but <a class="reference internal" href="developer-guide.html#bulk-loading"><em>50 transactions per process</em></a> is a good starting point.</p>
+<p>The method to <tt class="xref py py-func docutils literal"><span class="pre">produce_and_consume()</span></tt> will spawn the producer, spawn the consumers, wait for the producer to finish, wait for the queue to empty, and finally wait for all consumers to finish:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BoundedBuffer</span><span class="p">(</span><span class="n">Queue</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">number_consumers</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="c"># Setting maxsize to the number of consumers will make producers</span>
+        <span class="c"># wait to put a task in the queue until some consumer is free</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundedBuffer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">number_consumers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_consumers</span> <span class="o">=</span> <span class="n">number_consumers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">writer</span>
+
+    <span class="k">def</span> <span class="nf">_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># put will block if maxsize of queue is reached</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># yield</span>
+        <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span> <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">produce_and_consume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">producers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">)]</span>
+        <span class="n">consumers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_consumers</span><span class="p">)]</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">producers</span><span class="p">)</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">consumers</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">reader</span></tt> for data loading will be the iterator instantiated from <tt class="docutils literal"><span class="pre">EmailWalker</span></tt>; the <tt class="docutils literal"><span class="pre">writer</span></tt> will be the <tt class="xref py py-func docutils literal"><span class="pre">add_email()</span></tt> function. Our loading function will clear the <tt class="docutils literal"><span class="pre">'ER_space'</span></tt> subspace, instantiate the <tt class="docutils literal"><span class="pre">reader</span></tt> and the queue, and kick off the producer and consumers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">load_enron_emails</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">ER_space</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">EmailWalker</span><span class="p">(</span><span class="n">localdir</span> <span class="o">+</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">BoundedBuffer</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">add_email</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">produce_and_consume</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let&#8217;s load Jeff Skilling&#8217;s email and do some counts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">load_enron_emails</span><span class="p">(</span><span class="s">&#39;/skilling-j&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this portion of the data set, how many messages were sent?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">get_relationships</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="s">&#39;sender&#39;</span><span class="p">))</span>
+
+<span class="go">4132</span>
+</pre></div>
+</div>
+<p>Of these messages, how many were sent by Mr. Skilling?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">get_related_entities</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="s">&#39;sender&#39;</span><span class="p">,</span><span class="s">&#39;jeff.skilling@enron.com&#39;</span><span class="p">))</span>
+
+<span class="go">98</span>
+</pre></div>
+</div>
+<p>Exposing the social network will support additional query types.</p>
+</div>
+</div>
+<div class="section" id="social-network">
+<span id="enron-social-network"></span><h2>Social network<a class="headerlink" href="#social-network" title="Permalink to this headline">∞</a></h2>
+<p>Using the above code, we can now load the Enron corpus in a way that captures its structure and various data values. By representing both persons and emails as entities, we&#8217;re building a <a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Bipartite_graph">bipartite graph</a>. From this underlying graph, we can infer a second graph representing a social network. This social graph will have persons as nodes and directed edges for contacts as defined by one or more messages from sender to recipient.</p>
+<p>We can build the social graph using <tt class="xref py py-func docutils literal"><span class="pre">index_contacts()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">contact</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;contact&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">index_contacts</span><span class="p">():</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">contact</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_relationships</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">get_related_entities</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">):</span>
+            <span class="n">add_contact</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In addition to storing the edge itself, <tt class="xref py py-func docutils literal"><span class="pre">add_contact()</span></tt> stores an edge weight in the social graph by incrementing a count for each message sent by the sender to the recipient:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_contact</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">weight</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we&#8217;re maintaining a simple counter as the value of a key. A limitation of this technique is that it will lead to conflicts if we try to update the counter with concurrent transactions. In this case, <tt class="xref py py-func docutils literal"><span class="pre">index_contacts()</span></tt> works sequentially, so we&#8217;re OK. For a more robust implementation of counters that support concurrent updates, see our counter <a class="reference external" href="/web/20150325003223/https://foundationdb.com/layers">layer</a>.</p>
+<p>We&#8217;ll also define utility functions to get the contacts of a given sender and to get all contact pairs. For the latter, we&#8217;ll use a streaming mode of <tt class="docutils literal"><span class="pre">want_all</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">sender</span><span class="p">,))]]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_all_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">key</span><span class="p">(),</span>
+                       <span class="n">streaming_mode</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">StreamingMode</span><span class="o">.</span><span class="n">want_all</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>Let&#8217;s index the contacts and look a bit at the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">index_contacts</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>How many contact pairs are there in the email that Mr. Skilling held?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">get_all_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">))</span>
+
+<span class="go">8871</span>
+</pre></div>
+</div>
+<p>How many contacts did Mr. Skilling himself have?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="s">&#39;jeff.skilling@enron.com&#39;</span><span class="p">))</span>
+
+<span class="go">809</span>
+</pre></div>
+</div>
+<div class="section" id="avoiding-joins">
+<span id="enron-avoiding-joins"></span><h3>Avoiding joins<a class="headerlink" href="#avoiding-joins" title="Permalink to this headline">∞</a></h3>
+<p>Explicitly storing the social network is, in a sense, redundant in that the contact information could be computed from the entity-relationship model. This kind of redundancy is desirable when it allows common operations to be performed more efficiently. In particular, we should design our data models to reduce the number of joins performed by the client for common operations.</p>
+<p>For example, we may be performing an analysis that requires the number of messages sent by a sender to a recipient. We could count the messages using the entity-relationship model by joining the <tt class="docutils literal"><span class="pre">'sender'</span></tt> and <tt class="docutils literal"><span class="pre">'to'</span></tt> relationships:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">count_messages_with_join</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">email_ID</span> <span class="k">for</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_related_entities</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_related_entity</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p>Using the contact graph, this operation requires a single read:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">count_messages</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>How many messages did Jeff Skilling receive from his brother Mark?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">count_messages</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="s">&#39;markskilling@hotmail.com&#39;</span><span class="p">,</span> <span class="s">&#39;jeff.skilling@enron.com&#39;</span><span class="p">)</span>
+
+<span class="go">69</span>
+</pre></div>
+</div>
+<p>For larger operations, the advantage of avoiding joins increases. If we want to sort all contacts in the graph by weight, we can still do so with a single read:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">sort_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="n">KV_pairs</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">key</span><span class="p">(),</span>
+                                <span class="n">streaming_mode</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">StreamingMode</span><span class="o">.</span><span class="n">want_all</span><span class="p">)</span>
+    <span class="n">contacts</span> <span class="o">=</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">),)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">KV_pairs</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">contacts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we&#8217;re going to perform this operation frequently, we should consider adding an <a class="reference internal" href="data-modeling.html#data-modeling-indexes"><em>index</em></a> of the form <tt class="docutils literal"><span class="pre">('contact_index',</span> <span class="pre">weight,</span> <span class="pre">sender,</span> <span class="pre">recipient)</span></tt>.</p>
+</div>
+<div class="section" id="extended-contacts">
+<span id="enron-extended-contacts"></span><h3>Extended contacts<a class="headerlink" href="#extended-contacts" title="Permalink to this headline">∞</a></h3>
+<p>In social networks, we often want not only a person&#8217;s immediate contacts but also the contacts of contacts, i.e., second-degree contacts, and so on for higher degrees. A naive recursive function will work for low degrees and data sets of moderate size:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">get_extended_contacts</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Degree not greater than zero&#39;</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+            <span class="n">contact</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">contacts</span> <span class="o">=</span> <span class="n">contacts</span> <span class="o">+</span> <span class="n">get_extended_contacts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">degree</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">contacts</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>To increase performance, we can add indexes for higher degrees. The size of these indexes will increase with each degree, so we should add them only as needed. We can begin by adding an index for second-degree (&#8220;friends of friends&#8221;) contacts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sec</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;second&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">index_second_degree</span><span class="p">():</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">get_all_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">second</span> <span class="ow">in</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+            <span class="n">db</span><span class="p">[</span><span class="n">sec</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">second</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>Using the index requires only an additional check in the second-degree case:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_second_degrees</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="n">sec</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">sender</span><span class="p">,))]]</span>
+
+<span class="k">def</span> <span class="nf">get_extended_contacts</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Degree not greater than zero&#39;</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_second_degrees</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+            <span class="n">contact</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">contacts</span> <span class="o">=</span> <span class="n">contacts</span> <span class="o">+</span> <span class="n">get_extended_contacts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">degree</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">contacts</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>How many second-degree contacts did Mr. Skilling have?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jeffFoF</span> <span class="o">=</span> <span class="n">get_extended_contacts</span><span class="p">(</span><span class="s">&#39;jeff.skilling@enron.com&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">jeffFoF</span><span class="p">)</span>
+
+<span class="go">1447</span>
+</pre></div>
+</div>
+<p>Who were a few of them?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">jeffFoF</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="go">[&#39;ken.rice@enron.com&#39;, &#39;john.reese@enron.com&#39;, &#39;margarita.meyer@enron.com&#39;, &#39;andrew.marsden@enron.com&#39;, &#39;john.echols@enron.com&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="concurrent-traversal">
+<h3>Concurrent traversal<a class="headerlink" href="#concurrent-traversal" title="Permalink to this headline">∞</a></h3>
+<p>Indexing the second-degree contacts helps us by transforming the graph to reduce the search space. However, it doesn&#8217;t improve the efficiency of our interaction with the database: our main source of latency, the range reads within <tt class="xref py py-func docutils literal"><span class="pre">get_contacts()</span></tt> and <tt class="xref py py-func docutils literal"><span class="pre">get_second_degrees()</span></tt>, are taking place sequentially. We can greatly increase our efficiency by performing the graph traversal and range reads concurrently.</p>
+<p>We can use a gevent <tt class="docutils literal"><span class="pre">JoinableQueue</span></tt> bounded in size by the number of concurrent workers. After initializing the queue with the first-degree contacts, each worker will get a node from the queue, check if its distance from the starting node is within the specified degree, and if so, process its children.</p>
+<p>Newly encountered nodes are processed by recording their distance from the starting node and adding them to the queue. If we encounter a node that has already been visited via a longer path, we reprocess the node with the shorter distance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">BoundedTraversal</span><span class="p">(</span><span class="n">JoinableQueue</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_children</span><span class="p">,</span> <span class="n">number_workers</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="c"># Setting maxsize to the number of workers will block</span>
+        <span class="c"># putting a node in the queue until some worker is free</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundedTraversal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">number_workers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span> <span class="o">=</span> <span class="n">get_children</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_workers</span> <span class="o">=</span> <span class="n">number_workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxdistance</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c"># Range read will usually block the greenlet</span>
+                    <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_children</span><span class="p">(</span><span class="n">children</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+                <span class="k">finally</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">parent_distance</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="c"># If c is unvisited or only visited via a longer path, then visit it</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">parent_distance</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_distance</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="c"># put will block when maxsize of queue is reached</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_children</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">workers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_workers</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">join</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">workers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">visited</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_bounded_contacts</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+    <span class="n">bounded</span> <span class="o">=</span> <span class="n">BoundedTraversal</span><span class="p">(</span><span class="n">get_contacts</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">bounded</span><span class="o">.</span><span class="n">run_workers</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bounded</span><span class="o">.</span><span class="n">visited</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>How many fourth-degree contacts did Mr. Skilling have?</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">get_bounded_contacts</span><span class="p">(</span><span class="s">&#39;jeff.skilling@enron.com&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="go">2203</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="indexing-by-tf-idf">
+<span id="enron-indexing"></span><h2>Indexing by TF-IDF<a class="headerlink" href="#indexing-by-tf-idf" title="Permalink to this headline">∞</a></h2>
+<p>Of course, an email corpus is interesting for its textual content as well as for the social network it defines. When working with large corpus, it would be helpful to have techniques to summarize individual messages or sets of messages (i.e., subsets of the corpus). We&#8217;d also like to be able to access those messages or message sets by their topical summaries.</p>
+<p><a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Tf-idf">Term Frequency-Inverse Document Frequency (TF-IDF)</a> is a simple numeric measure of a term&#8217;s importance to a document in relation to the larger corpus in which it&#8217;s found. The notion of &#8220;document&#8221; in TF-IDF is flexible; it can correspond to any subset of the corpus. We&#8217;ll implement TF-IDF for two choices of document type: individual messages and persons (i.e., all messages sent by the person). You could easily adjust the code for other choices, such as email folders.</p>
+<blockquote>
+<div>TF-IDF balances the frequency of term with a document (which results in a higher score) against its frequency in the corpus as whole (which results in a lower score). Term Frequency (TF) is just a count of the number of times a term appears in a document. Inverse Document Frequency (IDF) is a inverse measure of the frequency of the term across the corpus. It is calculated as the log-ratio of the number of documents to the number of documents containing the term. TF-IDF is just the product of TF and IDF.</div></blockquote>
+<p>Given TF-IDF scores, we&#8217;ll create two indexes for them. Using the <a class="reference internal" href="data-modeling.html#data-modeling-tuples"><em>tuple layer</em></a>, the first index will store data elements in the order <tt class="docutils literal"><span class="pre">docID,</span> <span class="pre">score,</span> <span class="pre">term</span></tt>, which supports efficient retrieval of terms by individual docment. This operation is useful for generating summaries of the document. The second index will store data elements in the order <tt class="docutils literal"><span class="pre">term,</span> <span class="pre">score,</span> <span class="pre">doc_ID</span></tt>, which supports efficient retrieval of documents by term. This operation is useful for topical searches. In both cases, FoundationDB&#8217;s ordering of keys will allow us to easily retrieve only the results with the highest scores:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">index_score</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">score_tuple</span><span class="p">):</span>
+    <span class="n">doc_type</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">term</span> <span class="o">=</span> <span class="n">score_tuple</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">doc_type</span> <span class="o">+</span> <span class="s">&#39;_term&#39;</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">term</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_&#39;</span> <span class="o">+</span> <span class="n">doc_type</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="section" id="computing-the-tf-idf-scores">
+<span id="enron-computing-scores"></span><h3>Computing the TF-IDF scores<a class="headerlink" href="#computing-the-tf-idf-scores" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">tfidf()</span></tt> function does the bulk of our work. It computes and indexes TF-IDF scores over the entire corpus for a given document type. A document type of <tt class="docutils literal"><span class="pre">'sender'</span></tt> uses the person sending the email; <tt class="docutils literal"><span class="pre">'mid'</span></tt> uses individual messages:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">tfidf</span><span class="p">(</span><span class="n">doc_type</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">doc_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;document type unknown&#39;</span><span class="p">)</span>
+
+    <span class="n">document_tf</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">Counter</span><span class="p">)</span> <span class="c"># document_tf = { docID : Counter( { term : tf })}</span>
+    <span class="n">terms_per_document</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The function iterates over all messages in the corpus, retrieving the text in both the <tt class="docutils literal"><span class="pre">'subject'</span></tt> and <tt class="docutils literal"><span class="pre">'text'</span></tt> (i.e., body) fields. You can use the raw text from these fields or filter it using <a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Stop_words">stop words</a>. (You can find the <tt class="xref py py-func docutils literal"><span class="pre">get_terms()</span></tt> function used below for this purpose in the <a class="reference external" href="/web/20150325003223/http://ocw.mit.edu/resources/res-6-009-how-to-process-analyze-and-visualize-data-january-iap-2012/datasets-and-code/">Day 4 zip file here</a>.) For each term in the combined text, we count its occurrence in the document to get the TFs. In preparation for computing the IDFs, we also collect the set of terms that occur in each document:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_relationships</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">doc_type</span> <span class="o">==</span> <span class="s">&#39;mid&#39;</span><span class="p">:</span> <span class="n">doc_ID</span> <span class="o">=</span> <span class="n">email_ID</span>
+    <span class="k">elif</span> <span class="n">doc_type</span> <span class="o">==</span> <span class="s">&#39;sender&#39;</span><span class="p">:</span> <span class="n">doc_ID</span> <span class="o">=</span> <span class="n">sender</span>
+
+    <span class="n">subject</span> <span class="o">=</span> <span class="n">get_attribute_value</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="s">&#39;subject&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">get_attribute_value</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span>
+    <span class="c"># Tokenize and cleanse the text</span>
+    <span class="n">terms_in_email</span> <span class="o">=</span> <span class="n">get_terms</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_terms</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c"># Retrieve Counter for document and increment it for each term</span>
+    <span class="n">document_tf</span><span class="p">[</span><span class="n">doc_ID</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms_in_email</span><span class="p">)</span>
+    <span class="c"># Collect all of the terms in each document</span>
+    <span class="n">terms_per_document</span><span class="p">[</span><span class="n">doc_ID</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms_in_email</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, we can compute the IDFs. We retrieve the terms for each document and add them to a counter, giving us a the number of documents that contain each term:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># allterms maps each term to the number of documents it occurs in</span>
+<span class="n">allterms</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">terms</span> <span class="ow">in</span> <span class="n">terms_per_document</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="c"># this will increment the counter value for each term in `terms`</span>
+    <span class="n">allterms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The IDF for each term is the log-ratio of the number of documents to the number of documents containing the term. We want a floating point result, so we&#8217;ll convert the integer counts to floats before performing the division:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Compute the Inverse Document Frequencies</span>
+<span class="n">idfs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="c"># Get the number of documents from the number of keys</span>
+<span class="n">ndocuments</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">terms_per_document</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">allterms</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="c"># idfs = {term : frequency}</span>
+    <span class="n">idfs</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ndocuments</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Finally, we multiply each TF and IDF to get a floating point TF-IDF score. We&#8217;ll be storing the scores within indexes in FoundationDB, and the <a class="reference internal" href="api-python.html"><em>tuple layer</em></a> supports integers but not floats. It&#8217;s not a problem to use integers because we only care about the order of the scores, not their absolute magnitude. A quick inspection of the raw scores shows that the first few digits are sufficient to preserve their order. We can multiply the TF-IDFs by 100, round, and convert them to integers to get scores of 2-4 digits without loss of order.</p>
+<p>We&#8217;ll complete the function by returning a generator of tuples, each of which contains the data for a single indexing operation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">return</span> <span class="p">((</span><span class="n">doc_type</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">tf</span> <span class="o">*</span> <span class="n">idfs</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)),</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">tfs</span> <span class="ow">in</span> <span class="n">document_tf</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">tfs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The final function to index the corpus, <tt class="xref py py-func docutils literal"><span class="pre">index_email_terms()</span></tt>, uses the same <tt class="docutils literal"><span class="pre">BoundedBuffer</span></tt> class that we used for loading. The generator returned by <tt class="xref py py-func docutils literal"><span class="pre">tfidf()</span></tt> serves as the reader for the producer, and the <tt class="xref py py-func docutils literal"><span class="pre">index_score()</span></tt> function serves as the writer for the concurrent consumers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">index_email_terms</span><span class="p">(</span><span class="n">doc_type</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">enron</span><span class="p">,</span> <span class="n">doc_type</span> <span class="o">+</span> <span class="s">&#39;_term&#39;</span><span class="p">)</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">enron</span><span class="p">,</span> <span class="s">&#39;term_&#39;</span> <span class="o">+</span> <span class="n">doc_type</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">tfidf</span><span class="p">(</span><span class="n">doc_type</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">BoundedBuffer</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">index_score</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">produce_and_consume</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We&#8217;ll index both document types:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">index_email_terms</span><span class="p">(</span><span class="s">&#39;mid&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">index_email_terms</span><span class="p">(</span><span class="s">&#39;sender&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="summarization">
+<span id="enron-summarization"></span><h3>Summarization<a class="headerlink" href="#summarization" title="Permalink to this headline">∞</a></h3>
+<p>The terms in a document with the highest TF-IDFs are its most important terms as measured against the corpus as a whole. As such, these terms can serve as convenient summarization of the document. Once we&#8217;ve indexed the corpus for a document type, we can use prefix range reads to retrieve just the <tt class="docutils literal"><span class="pre">n</span></tt> highest terms for a document. We give <tt class="xref py py-func docutils literal"><span class="pre">get_range_startswith()</span></tt> a limit of <tt class="docutils literal"><span class="pre">n</span></tt> and specify <tt class="docutils literal"><span class="pre">reverse=True</span></tt> to get the highest scoring terms.</p>
+<p>To summarize the email from a given sender, we can use <tt class="xref py py-func docutils literal"><span class="pre">get_terms_for_sender()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_terms_for_sender</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;sender_term&#39;</span><span class="p">,</span> <span class="n">sender</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">get_terms_for_sender</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;david.morris@lehman.com&#39;</span><span class="p">)</span>
+
+<span class="go">[&#39;lehman&#39;, &#39;brothers&#39;, &#39;target&#39;, &#39;market&#39;, &#39;price&#39;]</span>
+</pre></div>
+</div>
+<p>To summarize a given message, we can use <tt class="xref py py-func docutils literal"><span class="pre">get_terms_for_message()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_terms_for_message</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;mid_term&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">get_terms_for_message</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;6521568.1075845486224.JavaMail.evans@thyme&#39;</span><span class="p">)</span>
+
+<span class="go">[&#39;gama&#39;, &#39;investigation&#39;, &#39;trakya&#39;, &#39;turkish&#39;, &#39;bureaucrats&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="topical-search">
+<span id="enron-topical-search"></span><h3>Topical search<a class="headerlink" href="#topical-search" title="Permalink to this headline">∞</a></h3>
+<p>For summarization, we retrieved high-scoring terms for a given document. The inverse operation, retrieving documents for which a term scores highly, can be used to search by topic. As with summarization, we can easily accomplish this operation using a prefix range read against the appropriate index.</p>
+<p>To find the individuals who sent the messages that most prominently use a given term, we can use <tt class="xref py py-func docutils literal"><span class="pre">get_senders_for_term()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_senders_for_term</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_sender&#39;</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">get_senders_for_term</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;investigation&#39;</span><span class="p">)</span>
+
+<span class="go">[&#39;jeff.skilling@enron.com&#39;, &#39;sherri.sera@enron.com&#39;, &#39;karen.denne@enron.com&#39;, &#39;40enron@enron.com&#39;, &#39;kevinscott@onlinemailbox.net&#39;]</span>
+</pre></div>
+</div>
+<p>To find the messages in the corpus that most prominently use a given term, we can use <tt class="xref py py-func docutils literal"><span class="pre">get_messages_for_term()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_messages_for_term</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_mid&#39;</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">get_messages_for_term</span><span class="p">(</span><span class="n">db</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;audit&#39;</span><span class="p">)</span>
+
+<span class="go">[&#39;3582853.1075852647189.JavaMail.evans@thyme&#39;, &#39;32813276.1075840099516.JavaMail.evans@thyme&#39;, &#39;27521400.1075840089576.JavaMail.evans@thyme&#39;, &#39;15310095.1075840076121.JavaMail.evans@thyme&#39;, &#39;9684455.1075840157951.JavaMail.evans@thyme&#39;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="conclusion">
+<span id="enron-conclusion"></span><h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">∞</a></h2>
+<p>The Enron Email Corpus consists of <a class="reference external" href="/web/20150325003223/http://en.wikipedia.org/wiki/Unstructured_data">unstructured data</a> in flat files, which might not seem like an obvious match for an ordered key-value store. Nevertheless, FoundationDB made it pretty easy to model the data set, load the data, and extend the model for various types of queries. We were even able to perform a lightweight analysis of the textual content of the data and index it to support efficient queries using FoundationDB&#8217;s range reads.</p>
+<p>This exercise highlights a couple of important points:</p>
+<ul class="simple">
+<li>A data model in FoundationDB is flexible and can be extended as needed. You can begin with a basic model that captures the essential structure of your data and then augment it to support your application&#8217;s query patterns.</li>
+<li>Well-designed indexes can often reduce complex queries to simple range reads.</li>
+</ul>
+<p>Given these observations, you can begin to think about how to use FoundationDB with your own application:</p>
+<ul class="simple">
+<li>Take a look at our <a class="reference external" href="/web/20150325003223/https://foundationdb.com/layers">layers</a> and see if you could use one or add your own!</li>
+<li>Remember that you can use the techniques illustrated above in any of the <a class="reference internal" href="api-reference.html"><em>languages</em></a> supported by FoundationDB.</li>
+<li>Ask questions or share your own experiences on the <a class="reference external" href="/web/20150325003223/http://community.foundationdb.com/">community site</a>.</li>
+</ul>
+</div>
+<div class="section" id="appendix-enrontutorial-py">
+<span id="enron-appendix"></span><h2>Appendix: EnronTutorial.py<a class="headerlink" href="#appendix-enrontutorial-py" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the Enron tutorial:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">####################################</span>
+<span class="c">##          Initialize            ##</span>
+<span class="c">####################################</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">gevent</span>
+<span class="kn">from</span> <span class="nn">gevent.queue</span> <span class="kn">import</span> <span class="n">JoinableQueue</span><span class="p">,</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">Empty</span>
+
+<span class="kn">import</span> <span class="nn">fdb</span>
+<span class="kn">import</span> <span class="nn">fdb.tuple</span>
+
+<span class="n">fdb</span><span class="o">.</span><span class="n">api_version</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">event_model</span><span class="o">=</span><span class="s">&quot;gevent&quot;</span><span class="p">)</span>
+<span class="n">enron</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">create_or_open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;enron&#39;</span><span class="p">,))</span>
+
+<span class="c">####################################</span>
+<span class="c">##         Data Modeling          ##</span>
+<span class="c">####################################</span>
+
+<span class="c"># Helper for clearing keys</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">clear_subspace</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">tup</span> <span class="o">=</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,)</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="p">()</span>
+    <span class="n">tr</span><span class="o">.</span><span class="n">clear_range_startswith</span><span class="p">(</span><span class="n">subspace</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">tup</span><span class="p">))</span>
+
+
+<span class="c"># Attributes</span>
+
+<span class="n">ER_space</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;ER&#39;</span><span class="p">]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_attribute_value</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">entity_ID</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">entity_ID</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_attribute_value</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">entity_ID</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tr</span><span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">entity_ID</span><span class="p">,</span> <span class="n">attribute</span><span class="p">))]</span>
+
+<span class="c"># Relationships</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_relationship</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">,</span> <span class="n">foreign_key</span><span class="p">):</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">,</span> <span class="n">foreign_key</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_relationships</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">relationship</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">ER_space</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">relationship</span><span class="p">,)),</span>
+                                            <span class="n">streaming_mode</span><span class="o">=</span><span class="n">fdb</span><span class="o">.</span><span class="n">StreamingMode</span><span class="o">.</span><span class="n">want_all</span><span class="p">)]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_related_entities</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">))]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">is_related_entity</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">,</span> <span class="n">foreign_key</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tr</span><span class="p">[</span><span class="n">ER_space</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">relationship</span><span class="p">,</span> <span class="n">primary_key</span><span class="p">,</span> <span class="n">foreign_key</span><span class="p">))]</span><span class="o">.</span><span class="n">present</span><span class="p">()</span>
+
+<span class="c">####################################</span>
+<span class="c">##        Loading the Data        ##</span>
+<span class="c">####################################</span>
+
+<span class="c"># Location of your downloaded data set</span>
+<span class="n">localdir</span> <span class="o">=</span> <span class="s">&#39;/Users/stephenpimentel/Enron&#39;</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">localdir</span><span class="p">)</span>
+
+<span class="c"># Code available on-line at URL in document</span>
+<span class="kn">from</span> <span class="nn">email_util</span> <span class="kn">import</span> <span class="n">EmailWalker</span>
+
+<span class="c"># Initial data model:</span>
+<span class="c"># Treat email addresses as unique IDs for persons</span>
+<span class="c"># Store persons and emails as entities</span>
+<span class="c"># Store all fields that have persons as values as relationships, i.e.,</span>
+<span class="c">#   sender:, to:, cc:, bcc:</span>
+<span class="c"># Store all other fields as attributes of email entity</span>
+
+<span class="c"># recipient_fields are tuples when non-null, but empty list when null</span>
+<span class="n">recipient_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="s">&#39;cc&#39;</span><span class="p">,</span> <span class="s">&#39;bcc&#39;</span><span class="p">]</span>
+<span class="n">attribute_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;folder&#39;</span><span class="p">,</span> <span class="s">&#39;sendername&#39;</span><span class="p">,</span> <span class="s">&#39;subject&#39;</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_email</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">email</span><span class="p">):</span>
+    <span class="c"># Check if the email has already been added to enforce idempotence</span>
+    <span class="k">if</span> <span class="n">is_related_entity</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span><span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;sender&#39;</span><span class="p">],</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">]):</span> <span class="k">return</span>
+    <span class="c"># Add relationship for &#39;sender&#39;</span>
+    <span class="n">add_relationship</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;sender&#39;</span><span class="p">],</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">])</span>
+    <span class="c"># Add relationships for each recipient field</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">recipient_fields</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">]:</span>
+            <span class="n">add_relationship</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">],</span> <span class="n">recipient</span><span class="p">)</span>
+    <span class="c"># Add attributes for each attribute field</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">attribute_fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">]:</span>
+            <span class="n">field_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">email</span><span class="p">[</span><span class="n">field</span><span class="p">])[:</span><span class="mi">40000</span><span class="p">]</span>
+            <span class="n">add_attribute_value</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">email</span><span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">],</span> <span class="n">field</span><span class="p">,</span> <span class="n">field_value</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load_enron_emails_sequential</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">ER_space</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">EmailWalker</span><span class="p">(</span><span class="n">localdir</span><span class="o">+</span><span class="n">folder</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">email</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span> <span class="n">add_email</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">BoundedBuffer</span><span class="p">(</span><span class="n">Queue</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="n">writer</span><span class="p">,</span> <span class="n">number_consumers</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="c"># Setting maxsize to the number of consumers will make producers</span>
+        <span class="c"># wait to put a task in the queue until some consumer is free</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundedBuffer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">number_consumers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_consumers</span> <span class="o">=</span> <span class="n">number_consumers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">writer</span>
+
+    <span class="k">def</span> <span class="nf">_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># put will block if maxsize of queue is reached</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+                <span class="n">gevent</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c"># yield</span>
+        <span class="k">except</span> <span class="n">Empty</span><span class="p">:</span> <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">produce_and_consume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">producers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">)]</span>
+        <span class="n">consumers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_consumers</span><span class="p">)]</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">producers</span><span class="p">)</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">consumers</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load_enron_emails</span><span class="p">(</span><span class="n">folder</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">ER_space</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">EmailWalker</span><span class="p">(</span><span class="n">localdir</span> <span class="o">+</span> <span class="n">folder</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">BoundedBuffer</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">add_email</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">produce_and_consume</span><span class="p">()</span>
+
+<span class="c">####################################</span>
+<span class="c">##        Social Graph            ##</span>
+<span class="c">####################################</span>
+
+<span class="n">contact</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;contact&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">index_contacts</span><span class="p">():</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">contact</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_relationships</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">get_related_entities</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">):</span>
+            <span class="n">add_contact</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">add_contact</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">weight</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">sender</span><span class="p">,))]]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_all_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">key</span><span class="p">(),</span>
+                        <span class="n">streaming_mode</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">StreamingMode</span><span class="o">.</span><span class="n">want_all</span><span class="p">)]</span>
+
+<span class="c"># How many messages has sender sent to recipient?</span>
+<span class="c"># Version using the ER model requires client to perform join</span>
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">count_messages_with_join</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">email_ID</span> <span class="k">for</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_related_entities</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_related_entity</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="n">recipient</span><span class="p">)])</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">count_messages</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="n">contact</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span><span class="p">))]</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">sort_contacts</span><span class="p">(</span><span class="n">tr</span><span class="p">):</span>
+    <span class="n">KV_pairs</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">contact</span><span class="o">.</span><span class="n">key</span><span class="p">(),</span>
+                                <span class="n">streaming_mode</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">StreamingMode</span><span class="o">.</span><span class="n">want_all</span><span class="p">)</span>
+    <span class="n">contacts</span> <span class="o">=</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">),)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">KV_pairs</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">contacts</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="c"># Extended Contacts</span>
+
+<span class="n">sec</span> <span class="o">=</span> <span class="n">enron</span><span class="p">[</span><span class="s">&#39;second&#39;</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">index_second_degree</span><span class="p">():</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">recipient</span> <span class="ow">in</span> <span class="n">get_all_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">second</span> <span class="ow">in</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">recipient</span><span class="p">):</span>
+            <span class="n">db</span><span class="p">[</span><span class="n">sec</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">sender</span><span class="p">,</span> <span class="n">second</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_second_degrees</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="p">[</span><span class="n">sec</span><span class="o">.</span><span class="n">range</span><span class="p">((</span><span class="n">sender</span><span class="p">,))]]</span>
+
+<span class="k">def</span> <span class="nf">get_extended_contacts</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Degree not greater than zero&#39;</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_second_degrees</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">contacts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">get_contacts</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+            <span class="n">contact</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="n">contacts</span> <span class="o">=</span> <span class="n">contacts</span> <span class="o">+</span> <span class="n">get_extended_contacts</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">degree</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">contacts</span><span class="p">))</span>
+
+<span class="c">####################################</span>
+<span class="c">##      Concurrent Traversal      ##</span>
+<span class="c">####################################</span>
+
+<span class="k">class</span> <span class="nc">BoundedTraversal</span><span class="p">(</span><span class="n">JoinableQueue</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_children</span><span class="p">,</span> <span class="n">number_workers</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+        <span class="c"># Setting maxsize to the number of workers will block</span>
+        <span class="c"># putting a node in the queue until some worker is free</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BoundedTraversal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="n">number_workers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span> <span class="o">=</span> <span class="n">get_children</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_workers</span> <span class="o">=</span> <span class="n">number_workers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">):</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxdistance</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c"># Range read will usually block the greenlet</span>
+                    <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_children</span><span class="p">(</span><span class="n">children</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+                <span class="k">finally</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_done</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="n">parent_distance</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="c"># If c is unvisited or only visited via a longer path, then visit it</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">parent_distance</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_distance</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="c"># put will block when maxsize of queue is reached</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_workers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">children</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_children</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_children</span><span class="p">,</span> <span class="n">children</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">workers</span> <span class="o">=</span> <span class="p">[</span><span class="n">gevent</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="p">,</span> <span class="n">maxdistance</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_workers</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">join</span>
+        <span class="n">gevent</span><span class="o">.</span><span class="n">joinall</span><span class="p">(</span><span class="n">workers</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">visited</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_bounded_contacts</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">):</span>
+    <span class="n">bounded</span> <span class="o">=</span> <span class="n">BoundedTraversal</span><span class="p">(</span><span class="n">get_contacts</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">bounded</span><span class="o">.</span><span class="n">run_workers</span><span class="p">(</span><span class="n">sender</span><span class="p">,</span> <span class="n">degree</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">bounded</span><span class="o">.</span><span class="n">visited</span><span class="p">()</span>
+
+<span class="c">####################################</span>
+<span class="c">##             TF-IDF             ##</span>
+<span class="c">####################################</span>
+
+<span class="c"># Code available on-line at URL in document</span>
+<span class="kn">from</span> <span class="nn">get_terms</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">index_score</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">score_tuple</span><span class="p">):</span>
+    <span class="n">doc_type</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">term</span> <span class="o">=</span> <span class="n">score_tuple</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="n">doc_type</span> <span class="o">+</span> <span class="s">&#39;_term&#39;</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">term</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="n">tr</span><span class="p">[</span><span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_&#39;</span> <span class="o">+</span> <span class="n">doc_type</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">doc_ID</span><span class="p">))]</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+<span class="c"># The docType parameter defines the abstract &quot;documents&quot; to be used for TF-IDF</span>
+<span class="c"># For example,</span>
+<span class="c">#   doc_type = &#39;sender&#39; would use person sending email</span>
+<span class="c">#   doc_type = &#39;mid&#39; would use email itself</span>
+
+<span class="k">def</span> <span class="nf">tfidf</span><span class="p">(</span><span class="n">doc_type</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">doc_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;mid&#39;</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">]:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;document type unknown&#39;</span><span class="p">)</span>
+
+    <span class="n">document_tf</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">Counter</span><span class="p">)</span> <span class="c"># document_tf = { docID : Counter( { term : tf })}</span>
+    <span class="n">terms_per_document</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">sender</span><span class="p">,</span> <span class="n">email_ID</span> <span class="ow">in</span> <span class="n">get_relationships</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="s">&#39;sender&#39;</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">doc_type</span> <span class="o">==</span> <span class="s">&#39;mid&#39;</span><span class="p">:</span> <span class="n">doc_ID</span> <span class="o">=</span> <span class="n">email_ID</span>
+        <span class="k">elif</span> <span class="n">doc_type</span> <span class="o">==</span> <span class="s">&#39;sender&#39;</span><span class="p">:</span> <span class="n">doc_ID</span> <span class="o">=</span> <span class="n">sender</span>
+
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">get_attribute_value</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="s">&#39;subject&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">get_attribute_value</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s">&#39;&#39;</span>
+        <span class="c"># Tokenize and cleanse the text</span>
+        <span class="n">terms_in_email</span> <span class="o">=</span> <span class="n">get_terms</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">+</span> <span class="n">get_terms</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c"># Retrieve Counter for document and increment it for each term</span>
+        <span class="n">document_tf</span><span class="p">[</span><span class="n">doc_ID</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms_in_email</span><span class="p">)</span>
+        <span class="c"># Collect all of the terms in each document</span>
+        <span class="n">terms_per_document</span><span class="p">[</span><span class="n">doc_ID</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms_in_email</span><span class="p">)</span>
+
+    <span class="c"># allterms maps each term to the number of documents it occurs in</span>
+    <span class="n">allterms</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">terms</span> <span class="ow">in</span> <span class="n">terms_per_document</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c"># this will increment the counter value for each term in `terms`</span>
+        <span class="n">allterms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">terms</span><span class="p">)</span>
+
+    <span class="c"># Compute the Inverse Document Frequencies</span>
+    <span class="n">idfs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c"># Get the number of documents from the number of keys</span>
+    <span class="n">ndocuments</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">terms_per_document</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">allterms</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c"># idfs = {term : frequency}</span>
+        <span class="n">idfs</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ndocuments</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">count</span><span class="p">))</span>
+
+    <span class="c"># Combine the Term Frequencies and Inverse Document Frequencies into TF-IDFs</span>
+    <span class="c"># Convert the TF-IDFs to integers with digits sufficient to preserve order</span>
+    <span class="c"># Return a generator of tuples with TD-IDFs to be indexed</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">doc_type</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">tf</span> <span class="o">*</span> <span class="n">idfs</span><span class="p">[</span><span class="n">term</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)),</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">term</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">doc_ID</span><span class="p">,</span> <span class="n">tfs</span> <span class="ow">in</span> <span class="n">document_tf</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">term</span><span class="p">,</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">tfs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">index_email_terms</span><span class="p">(</span><span class="n">doc_type</span><span class="p">):</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">enron</span><span class="p">,</span> <span class="n">doc_type</span> <span class="o">+</span> <span class="s">&#39;_term&#39;</span><span class="p">)</span>
+    <span class="n">clear_subspace</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">enron</span><span class="p">,</span> <span class="s">&#39;term_&#39;</span> <span class="o">+</span> <span class="n">doc_type</span><span class="p">)</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">tfidf</span><span class="p">(</span><span class="n">doc_type</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">BoundedBuffer</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">index_score</span><span class="p">)</span>
+    <span class="n">tasks</span><span class="o">.</span><span class="n">produce_and_consume</span><span class="p">()</span>
+
+<span class="c">####################################</span>
+<span class="c">##   Query Functions for TF-IDF   ##</span>
+<span class="c">####################################</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_terms_for_sender</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">sender</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;sender_term&#39;</span><span class="p">,</span> <span class="n">sender</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_terms_for_message</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;mid_term&#39;</span><span class="p">,</span> <span class="n">email_ID</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_senders_for_term</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_sender&#39;</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+
+<span class="nd">@fdb.transactional</span>
+<span class="k">def</span> <span class="nf">get_messages_for_term</span><span class="p">(</span><span class="n">tr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">term</span><span class="p">):</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">enron</span><span class="o">.</span><span class="n">pack</span><span class="p">((</span><span class="s">&#39;term_mid&#39;</span><span class="p">,</span> <span class="n">term</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">k</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tr</span><span class="o">.</span><span class="n">get_range_startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">The Enron Email Corpus</a><ul><li><a class="reference internal" href="#overview-of-the-data-set">Overview of the data set</a></li><li><a class="reference internal" href="#data-model">Data model</a><ul><li><a class="reference internal" href="#an-entity-relationship-model">An entity-relationship model</a></li></ul></li><li><a class="reference internal" href="#loading-the-data">Loading the data</a><ul><li><a class="reference internal" href="#directories-and-subspaces">Directories and Subspaces</a></li><li><a class="reference internal" href="#message-processing">Message processing</a></li><li><a class="reference internal" href="#transaction-management">Transaction management</a></li></ul></li><li><a class="reference internal" href="#social-network">Social network</a><ul><li><a class="reference internal" href="#avoiding-joins">Avoiding joins</a></li><li><a class="reference internal" href="#extended-contacts">Extended contacts</a></li><li><a class="reference internal" href="#concurrent-traversal">Concurrent traversal</a></li></ul></li><li><a class="reference internal" href="#indexing-by-tf-idf">Indexing by TF-IDF</a><ul><li><a class="reference internal" href="#computing-the-tf-idf-scores">Computing the TF-IDF scores</a></li><li><a class="reference internal" href="#summarization">Summarization</a></li><li><a class="reference internal" href="#topical-search">Topical search</a></li></ul></li><li><a class="reference internal" href="#conclusion">Conclusion</a></li><li><a class="reference internal" href="#appendix-enrontutorial-py">Appendix: EnronTutorial.py</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003223/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003223/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003223/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003223/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003223js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:23 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:30:23 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

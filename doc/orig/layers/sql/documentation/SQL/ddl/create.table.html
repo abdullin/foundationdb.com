@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=193;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+CREATE TABLE
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003619/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003619im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="oDWrK0f25dKQcAgWsoHuIhuiiUJKM8gI8xQjTE2baTo=" name="csrf-token" />
+<link href="/web/20150325003619cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003619cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003619" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:36:19 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:36:19 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:36:19 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003619*/https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003619/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003619im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003619/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003619/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003619/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003619/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003619/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003619/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003619/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003619/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/index.html">SQL Layer Developer Reference</a> &raquo;
+    <a href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003619/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003619im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="create-table">
+<span id="create-table-stmt"></span><h1>CREATE TABLE<a class="headerlink" href="#create-table" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">∞</a></h2>
+<p>Use the <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">TABLE</span></tt> statement to create a new table.</p>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">∞</a></h2>
+<pre class="literal-block">
+CREATE TABLE [ IF NOT EXISTS ] <em>table_name</em>
+{
+    <em>table_definition</em>
+  | <em>as_select_definition</em>
+}
+</pre>
+<p>where <em>table_definition</em> is:</p>
+<pre class="literal-block">
+(
+  {
+      <em>column_name</em> <em>data_type</em> [ <em>column_default</em> ] [ <em>column_constraint</em> [ , ... ] ]
+    | <em>table_constraint</em>
+  } [ , ... ]
+)
+[ <em>storage_format</em> ]
+</pre>
+<p>where <em>as_select_definition</em> is</p>
+<pre class="literal-block">
+{
+    [ ( <em>column_name</em> [, ... ] ) ]
+    AS
+    <em>query</em>
+    WITH [ NO ] DATA
+}
+</pre>
+<p id="create-table-column-default">where <em>column_default</em> is:</p>
+<pre class="literal-block">
+{
+    DEFAULT { <em>function</em> | <em>literal</em> | <em>pseudo-column</em> }
+  | GENERATED { ALWAYS | BY DEFAULT } AS IDENTITY [ ( [ START WITH <em>start</em> ] | [ INCREMENT BY <em>inc</em> ] ) ]
+}
+</pre>
+<p id="create-table-column-constraint">where <em>column_constraint</em> is:</p>
+<pre class="literal-block">
+[ CONSTRAINT <em>constraint_name</em> ]
+{
+    NOT NULL
+  | NULL
+  | PRIMARY KEY
+  | REFERENCES <em>ref_table</em> [ ( <em>ref_column</em> ) ] [ MATCH <em>match</em> ] [ ON DELETE <em>action</em> ] [ ON UPDATE <em>action</em>  ]
+  | UNIQUE
+}
+[ [ NOT ] DEFERRABLE ] [ INITIALLY { IMMEDIATE | DEFERRED } ]
+</pre>
+<p>where <em>table_constraint</em> is:</p>
+<pre class="literal-block">
+[ CONSTRAINT <em>constraint_name</em> ]
+{
+    FOREIGN KEY ( <em>column_name</em> [ , ... ] ) REFERENCES <em>ref_table</em> [ ( <em>ref_column</em> [ , ... ] ) ] [ MATCH <em>match</em> ] [ ON DELETE <em>action</em> ] [ ON UPDATE <em>action</em> ]
+  | GROUPING FOREIGN KEY ( <em>column name</em> [ , ... ] ) REFERENCES <em>parent_table</em> [ ( <em>parent_column</em> [ , ... ] ) ]
+  | INDEX ( <em>column_name</em> [ , ... ] )
+  | PRIMARY KEY ( <em>column_name</em> [ , ... ] )
+  | UNIQUE ( <em>column_name</em> [ , ... ] )
+}
+[ [ NOT ] DEFERRABLE ] [ INITIALLY { IMMEDIATE | DEFERRED } ]
+</pre>
+<p>where <em>storage_format</em> is:</p>
+<pre class="literal-block">
+{
+   STORAGE_FORMAT <em>storage_format_name</em>
+}
+</pre>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">∞</a></h2>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">IF</span> <span class="pre">NOT</span> <span class="pre">EXISTS</span></tt></dt>
+<dd>Do not return an error if a table of the same name already exists. Note that if a table did exist its definition is left <em>unchanged</em>.</dd>
+<dt><em>table_name</em></dt>
+<dd>The name (optionally schema-qualified) of the table to be created.</dd>
+<dt><em>column_name</em></dt>
+<dd>The name of a column to be created in the new table.</dd>
+<dt><em>data_type</em></dt>
+<dd>The data type of the column. See <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/datatypes.html#datatypes"><em>Data Types</em></a> for complete details on supported types.</dd>
+</dl>
+<dl class="docutils" id="create-table-default">
+<dt><tt class="docutils literal"><span class="pre">DEFAULT</span></tt></dt>
+<dd><p class="first">The default clause specifies a value to be used for the associated column when one is not supplied during an insert. This value is also used during the <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">DEFAULT</span></tt> foreign key action. If unspecified, the default is <tt class="docutils literal"><span class="pre">NULL</span></tt>.</p>
+<p>For all cases below, the value is casted to the data type of the column before insertion.</p>
+<dl class="last docutils">
+<dt><em>function</em></dt>
+<dd>Any <em>zero-argument</em> <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/functions.html#sql-functions"><em>functions</em></a>, such as  <tt class="docutils literal"><span class="pre">RAND()</span></tt>, <tt class="docutils literal"><span class="pre">NOW()</span></tt>, or <tt class="docutils literal"><span class="pre">UNIX_TIMESTAMP()</span></tt>.</dd>
+<dt><em>literal</em></dt>
+<dd>Any literal value, such as <tt class="docutils literal"><span class="pre">true</span></tt>, <tt class="docutils literal"><span class="pre">1</span></tt>, or <tt class="docutils literal"><span class="pre">'one'</span></tt>.</dd>
+<dt><em>psuedo-column</em></dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">CURRENT_DATE</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">CURRENT_SCHEMA</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">CURRENT_TIME</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">CURRENT_TIMESTAMP</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">CURRENT_USER</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">SESSION_USER</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">SYSTEM_USER</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">USER</span></tt></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="docutils" id="create-table-generated">
+<dt><tt class="docutils literal"><span class="pre">GENERATED</span> <span class="pre">AS</span> <span class="pre">IDENTITY</span></tt>, <tt class="docutils literal"><span class="pre">START</span> <span class="pre">WITH</span></tt>, <tt class="docutils literal"><span class="pre">INCREMENT</span> <span class="pre">BY</span></tt></dt>
+<dd><p class="first">The generated as identity clause allows values for the column to be supplied automatically by the SQL Layer. See <a class="reference internal" href="#create-table-stmt-identity-columns"><em>Identity Columns</em></a> section below for more details.</p>
+<p>The result of supplying a value during an insert for an identity column is controlled by the following clauses:</p>
+<dl class="last docutils">
+<dt><tt class="docutils literal"><span class="pre">ALWAYS</span></tt></dt>
+<dd>Generate a value and use it for the column <em>even if</em> one is supplied.</dd>
+<dt><tt class="docutils literal"><span class="pre">BY</span> <span class="pre">DEFAULT</span></tt></dt>
+<dd><p class="first">Only generate a value if one is <em>not</em> supplied.</p>
+<p class="last">The initial and subsequent values are controlled by the following clauses:</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">START</span> <span class="pre">WITH</span></tt></dt>
+<dd>Generate <em>start</em> as the first value for the column.</dd>
+<dt><tt class="docutils literal"><span class="pre">INCREMENT</span> <span class="pre">BY</span></tt></dt>
+<dd><p class="first">Add <em>inc</em> to each generated value after the first. That is, the value generated for the <em>N</em>th row is <em>start</em> + <em>N</em> * <em>inc</em>.</p>
+<p>The <tt class="docutils literal"><span class="pre">SERIAL</span></tt> data type may be used as shorthand. See <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/datatypes.html#datatypes"><em>Data Types</em></a> for more details.</p>
+<p>A maximum of one generated column is allowed per table.</p>
+<p class="last">An identity column always implies an associated sequence.</p>
+</dd>
+</dl>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">CONSTRAINT</span></tt> <em>constraint_name</em></dt>
+<dd>The optional name of the constraint.</dd>
+<dt><tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">DEFERRABLE</span></tt>, <tt class="docutils literal"><span class="pre">DEFERRABLE</span></tt></dt>
+<dd><p class="first">Controls whether a constraint can be made deferred. If <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">DEFERRABLE</span></tt> then the constraint is always checked at the end of the statement. This is the default. If <tt class="docutils literal"><span class="pre">DEFERRABLE</span></tt>, the check can be made to happen at <tt class="docutils literal"><span class="pre">COMMIT</span></tt>.</p>
+<p class="last">Only <tt class="docutils literal"><span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt> constraints may be made <tt class="docutils literal"><span class="pre">DEFERRABLE</span></tt>.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">INITIALLY</span> <span class="pre">DEFERRED</span></tt>, <tt class="docutils literal"><span class="pre">INITIALLY</span> <span class="pre">IMMEDIATE</span></tt></dt>
+<dd><p class="first">If a constraint is <tt class="docutils literal"><span class="pre">DEFERRABLE</span></tt>, this controls when the default time that the constraint is checked. If <tt class="docutils literal"><span class="pre">INITIALLY</span> <span class="pre">IMMEDIATE</span></tt>, the constraint is checked at the end of the statement. This is the default. If <tt class="docutils literal"><span class="pre">INITIALLY</span> <span class="pre">DEFERRED</span></tt>, it is checked at <tt class="docutils literal"><span class="pre">COMMIT</span></tt>.</p>
+<p class="last">Also see <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/other/set.html#set-stmt"><em>SET CONSTRAINTS</em></a> for changing this value dynamically.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt>, <tt class="docutils literal"><span class="pre">NULL</span></tt></dt>
+<dd>Controls whether the column may contain <tt class="docutils literal"><span class="pre">NULL</span></tt> values. <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt> is the default for columns in a <tt class="docutils literal"><span class="pre">PRIMARY</span> <span class="pre">KEY</span></tt>, <tt class="docutils literal"><span class="pre">NULL</span></tt> is the default for all others.</dd>
+</dl>
+<dl class="docutils" id="create-table-pk">
+<dt><tt class="docutils literal"><span class="pre">PRIMARY</span> <span class="pre">KEY</span></tt></dt>
+<dd><p class="first">The primary key constraint is semantically identical to a unique constraint. All columns must be <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt>. Additionally, a primary key implies that the given columns are the best set to identify an individual row and influence the physical storage location.</p>
+<p class="last">A maximum of one primary key, whether specified as a column or table constraint, may is allowed per table.</p>
+</dd>
+</dl>
+<dl class="docutils" id="create-table-fk">
+<dt><tt class="docutils literal"><span class="pre">REFERENCES</span></tt>, <tt class="docutils literal"><span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt>, <tt class="docutils literal"><span class="pre">MATCH</span></tt>, <tt class="docutils literal"><span class="pre">ON</span> <span class="pre">DELETE</span></tt>, <tt class="docutils literal"><span class="pre">ON</span> <span class="pre">UPDATE</span></tt></dt>
+<dd><p class="first">These clauses specify a foreign key constraint, which requires that the <em>referencing columns</em> (those from <em>table_name</em>) have matching values in the <em>referenced columns</em> (those from <em>ref_table</em>). If the referenced column list is omitted, the primary key of the referenced table is used. The referenced columns must have a unique constraint.</p>
+<p>A value inserted into the referencing column is matched against the values of the referenced columns. The behavior when there are <tt class="docutils literal"><span class="pre">NULL</span></tt> values present is controlled by the <em>match</em> clause. The following match types are supported:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">SIMPLE</span></tt></dt>
+<dd>If any of the referencing columns are <tt class="docutils literal"><span class="pre">NULL</span></tt>, no matching value is required in the referenced table.</dd>
+</dl>
+<p>The effect of referenced columns changing by an <tt class="docutils literal"><span class="pre">UPDATE</span></tt> or being removed by a <tt class="docutils literal"><span class="pre">DELETE</span></tt> is controlled by the <em>action</em> clause. The following action types are supported:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">NO</span> <span class="pre">ACTION</span></tt></dt>
+<dd>Raise an error and prevent the update or delete from taking place. If the constraint is deferred and referencing rows exist at constraint check time (e.g. <tt class="docutils literal"><span class="pre">COMMIT</span></tt>), an error will be raised. This is the default action.</dd>
+<dt><tt class="docutils literal"><span class="pre">RESTRICT</span></tt></dt>
+<dd>Raise an error and prevent the update or delete from taking place. This action is not deferrable.</dd>
+<dt><tt class="docutils literal"><span class="pre">CASCADE</span></tt></dt>
+<dd>Propagate the change to the referencing columns by updating them to the new values of the referenced columns or deleting them.</dd>
+<dt><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">NULL</span></tt></dt>
+<dd>Set the referencing columns to <tt class="docutils literal"><span class="pre">NULL</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">DEFAULT</span></tt></dt>
+<dd>Set the referencing columns to their default values. Note that there must be referenced columns matching the default values (if not <tt class="docutils literal"><span class="pre">NULL</span></tt>) or an error will be raised.</dd>
+</dl>
+<p class="last">A foreign key always implies an index on the referencing columns.</p>
+</dd>
+</dl>
+<dl class="docutils" id="create-table-unique">
+<dt><tt class="docutils literal"><span class="pre">UNIQUE</span></tt></dt>
+<dd><p class="first">The unique constraint specifies that the given columns are not allowed to have duplicate values within the table.</p>
+<p>Note that, as elsewhere in SQL, <tt class="docutils literal"><span class="pre">NULL</span></tt> values are not considered equal.</p>
+<p class="last">A unique constraint always implies an index. See <a class="reference internal" href="create.index.html#create-index-stmt"><em>CREATE INDEX</em></a> for more details.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">INDEX</span></tt></dt>
+<dd>The index constraint specifies a non-unique index on the given columns. See <a class="reference internal" href="create.index.html#create-index-stmt"><em>CREATE INDEX</em></a> for more details.</dd>
+</dl>
+<dl class="docutils" id="create-table-gfk">
+<dt><tt class="docutils literal"><span class="pre">GROUPING</span> <span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt></dt>
+<dd><p class="first">The grouping foreign key clause specifies a Table-Group constraint. If the <em>parent_column</em> list is omitted, the primary key of <em>parent_table</em> is used. See the <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html#table-groups-intro"><em>Table Groups</em></a> guide for more details.</p>
+<p>The parent column list must match the parent table primary key exactly.</p>
+<p class="last">A maximum of one grouping foreign key is allowed per table.</p>
+</dd>
+</dl>
+<dl class="docutils" id="create-table-storage-format">
+<dt><tt class="docutils literal"><span class="pre">STORAGE_FORMAT</span></tt></dt>
+<dd><p class="first">Controls the format of stored rows. Valid storage formats include:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">tuple</span></tt></dt>
+<dd><a class="reference external" href="/web/20150325003619/https://foundationdb.com/documentation/3.0/data-modeling.html#data-modeling-tuples" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Standard FoundationDB Tuples</em></a>  for row values and/or index keys. It is the default setting. The SQL-Layer  supports all data types in the TUPLE and COLUMN_KEYS storage format.  However, other tuple layers may not be able to decode BOOLEAN, FLOAT, DECIMAL or DOUBLE.</dd>
+<dt><tt class="docutils literal"><span class="pre">protobuf</span></tt></dt>
+<dd>Serialized Protobuf Messages for row values and FoundationDB Tuples  for index keys. The Protobuf Message classes are dynamically generated and mirror the associated table definitions. Standard .proto files can be dumped independently via the new <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlprotod.html#fdbsqlprotod"><em>fdbsqlprotod</em></a> command line tool.</dd>
+<dt><tt class="docutils literal"><span class="pre">column_keys</span></tt></dt>
+<dd>Standard FoundationDB Tuples for row values, with each column in a row mapping to its own key/value pair, and index keys.</dd>
+</dl>
+<p class="last">See also <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html#mapping-sql-to-kv"><em>Mapping SQL data to the Key-Value Store</em></a> for a brief description.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">query</span></tt></dt>
+<dd>A <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html#sqlref-select"><em>SELECT</em></a> or <tt class="docutils literal"><span class="pre">VALUES</span></tt> expression. The column names, if otherwise unnspecified, and types for the table will be derived from the result set of this expression.</dd>
+</dl>
+<dl class="docutils" id="create-table-with-data">
+<dt><tt class="docutils literal"><span class="pre">WITH</span> <span class="pre">DATA</span></tt>, <tt class="docutils literal"><span class="pre">WITH</span> <span class="pre">NO</span> <span class="pre">DATA</span></tt></dt>
+<dd><p class="first">Whether or not the result set returned from the <em>query</em> expression should be inserted into the new table.</p>
+<p class="last">Note: The current release does not support complex queries when <tt class="docutils literal"><span class="pre">WITH</span> <span class="pre">DATA</span></tt> is specified and is generally limited to a single table. All valid queries are supported without data.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="create-table-stmt-identity-columns">
+<span id="identity-columns"></span><h2>Identity Columns<a class="headerlink" href="#create-table-stmt-identity-columns" title="Permalink to this headline">∞</a></h2>
+<p>An identity column provides a way for the SQL Layer to automatically generate
+a numeric value for each row that is added to the table. Instead of attempting
+to manually determine a unique value from the application, it is easier and more
+efficient to use an identity column. To guarantee that each value is truly
+unique, never supply values manually and define a unique constraint, or primary
+key, on the identity column. An identity column must be defined as an
+integer <a class="reference internal" href="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/SQL/datatypes.html#datatypes"><em>data type</em></a>, for example <tt class="docutils literal"><span class="pre">INTEGER</span></tt> or <tt class="docutils literal"><span class="pre">BIGINT</span></tt>.</p>
+<p>The following is an example of defining an identity column in the
+<tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">TABLE</span></tt> statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t</span> <span class="p">(</span>
+  <span class="n">c1</span> <span class="nb">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">GENERATED</span> <span class="k">BY</span> <span class="k">DEFAULT</span> <span class="k">AS</span> <span class="k">IDENTITY</span> <span class="p">(</span><span class="k">START</span> <span class="k">WITH</span> <span class="mi">100</span><span class="p">,</span> <span class="k">INCREMENT</span> <span class="k">BY</span> <span class="mi">5</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">t</span> <span class="k">VALUES</span> <span class="p">(</span><span class="k">DEFAULT</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">t</span> <span class="k">VALUES</span> <span class="p">(</span><span class="k">DEFAULT</span><span class="p">);</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">t</span><span class="p">;</span>
+ <span class="n">c1</span>
+<span class="c1">-----</span>
+ <span class="mi">100</span>
+ <span class="mi">105</span>
+</pre></div>
+</div>
+<p>In this example, a table is created with an identity column that is also
+the primary key. Then, two rows are inserted. The <tt class="docutils literal"><span class="pre">DEFAULT</span></tt> clause is used to
+signal that values should be generated. Lastly, all rows are queried.</p>
+<p>The first row has a value of <tt class="docutils literal"><span class="pre">100</span></tt>, as specified by <tt class="docutils literal"><span class="pre">START</span> <span class="pre">WITH</span></tt>, and the
+second row has a value of <tt class="docutils literal"><span class="pre">105</span></tt>, as specified by <tt class="docutils literal"><span class="pre">INCREMENT</span> <span class="pre">BY</span></tt>. All further
+rows with continue to increase by five.</p>
+<p>Identity columns provide similar functionality to auto-increment columns in
+other databases.</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">∞</a></h2>
+<p>To create a root <tt class="docutils literal"><span class="pre">customers</span></tt> table, issue the following DDL:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">customers</span>
+<span class="p">(</span> 
+   <span class="n">customer_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">rand_id</span>       <span class="nb">INT</span><span class="p">,</span>
+   <span class="n">name</span>          <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+   <span class="n">customer_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+   <span class="n">birthdate</span>     <span class="nb">DATE</span><span class="p">,</span>
+   <span class="k">INDEX</span> <span class="p">(</span><span class="n">birthdate</span><span class="p">)</span>   
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>To define a child to the <tt class="docutils literal"><span class="pre">customers</span></tt> table, issue the following:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">addresses</span>
+<span class="p">(</span>
+   <span class="n">address_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">customer_id</span>  <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">address_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">city</span>         <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">state</span>        <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">customers</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003619/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">CREATE TABLE</a><ul><li><a class="reference internal" href="#purpose">Purpose</a></li><li><a class="reference internal" href="#syntax">Syntax</a></li><li><a class="reference internal" href="#parameters">Parameters</a></li><li><a class="reference internal" href="#create-table-stmt-identity-columns">Identity Columns</a></li><li><a class="reference internal" href="#example">Example</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003619/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003619/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003619/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003619/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003619js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:19 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:31:46 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

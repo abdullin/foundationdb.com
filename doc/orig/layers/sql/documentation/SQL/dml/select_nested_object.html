@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=244;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Nested SELECT SQL Queries
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003212/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003212im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="weiVsvFnAz8QUEtQWKeLsFGOyxjvhn+GuT4O4z9PdtI=" name="csrf-token" />
+<link href="/web/20150325003212cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003212cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003212" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:12 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150812070635/https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html" title="12 Aug 2015"><strong>AUG</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:12 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150327041832/https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html" title="4:18:32 Mar 27, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:12 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003212*/https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Sep 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002000011000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003212/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003212im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003212/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003212/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003212/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003212/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003212/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003212/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003212/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003212/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Developer/index.html">SQL Layer Developer Reference</a> &raquo;
+    <a href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003212/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003212im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="nested-select-sql-queries">
+<span id="sqlref-select-nested"></span><h1>Nested SELECT SQL Queries<a class="headerlink" href="#nested-select-sql-queries" title="Permalink to this headline">∞</a></h1>
+<p>As a <em>distributed</em>, <em>fault-tolerant</em> SQL system, the FoundationDB SQL Layer optimizes data locality and read efficiency across the cluster. Nested SQL queries described here, alongside <a class="reference external" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/features.html#batch-pipelining-for-parallel-query-execution">pipelined parallel query execution</a>, form the basis for efficient querying of objects from the distributed SQL system.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer provides SQL access on top of a scalable, fault-tolerant FoundationDB Key-Value cluster (see <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html"><em>Physical Architecture</em></a>). In order to deliver good performance in a distributed system, the SQL Layer provides two fundamental capabilities: modeling data in hierarchies called <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html"><em>Table Groups</em></a> to keep heterogeneous rows belonging to a single object collocated, and a matching hierarchical query capability called <a class="reference internal" href="#sqlref-select-nested-details"><em>Nested SQL queries</em></a> that returns data in JSON format rather than flat tabular structure.</p>
+<div class="section" id="sample-use-case">
+<h3>Sample Use Case<a class="headerlink" href="#sample-use-case" title="Permalink to this headline">∞</a></h3>
+<p>The classic example used throughout the documentation is a customer object composed of a <tt class="docutils literal"><span class="pre">customers</span></tt>, <tt class="docutils literal"><span class="pre">orders</span></tt>, <tt class="docutils literal"><span class="pre">items</span></tt> and <tt class="docutils literal"><span class="pre">addresses</span></tt> tables.</p>
+<p>In the modeling phase Table-Groups arrange the tables into an explicit hierarchy below (read: Customer has Orders, Order has items, Customer also has addresses):</p>
+<div class="highlight-python"><div class="highlight"><pre>     Customers (parent)
+      /     \
+  Orders   Addresses (child)
+    /
+Items (grandchild)
+</pre></div>
+</div>
+<p>Data from these tables is then stored sequentially, nesting every row under it&#8217;s parent, according to the Table-Group hierarchy:</p>
+<div class="highlight-python"><div class="highlight"><pre>...
+customer row
+   order row
+    item row
+    item row
+    item row
+   order row
+    item row
+    item row
+ address row
+ address row
+customer row
+   order row
+    item row
+ address row
+...
+</pre></div>
+</div>
+<p>Each of these rows is stored as an atomic K/V pair (see <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html"><em>Mapping SQL data to the Key-Value Store</em></a>) and can be accessed directly. Now that SQL data is stored as a hierarchy of rows, Nested SQL queries can read it efficiently as a sequential scan of K/V pairs and return it as hierarchical data.</p>
+<p>Here&#8217;s how: a Nested SQL query defines the desired result hierarchy using nested SELECT statements:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">customer</span> <span class="p">...</span>
+   <span class="k">SELECT</span> <span class="n">orders</span> <span class="p">...</span>
+      <span class="k">SELECT</span> <span class="n">items</span> <span class="p">...</span>
+</pre></div>
+</div>
+<p>The full syntax to return customers, orders and items is as simple as:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+   <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+     <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span>
+      <span class="k">FROM</span> <span class="n">items</span> <span class="k">WHERE</span> <span class="n">items</span><span class="p">.</span><span class="n">order_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">order_id</span><span class="p">)</span> <span class="k">as</span> <span class="n">order_items</span>
+   <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="n">orders</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">as</span> <span class="n">cust_orders</span>
+ <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This query reads the sequential set of customer, order and item rows from the K/V store in a single, efficient query execution, and returns the data in JSON format:</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span><span class="nt">&quot;customer_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nt">&quot;rand_id&quot;</span><span class="p">:</span><span class="mi">82</span><span class="p">,</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Ori Herrnstadt&quot;</span><span class="p">,</span> <span class="nt">&quot;customer_info&quot;</span><span class="p">:</span><span class="s2">&quot;Vroom&quot;</span><span class="p">,</span> <span class="nt">&quot;birthdate&quot;</span><span class="p">:</span><span class="s2">&quot;1982-07-16&quot;</span><span class="p">,</span> <span class="nt">&quot;cust_orders&quot;</span><span class="p">:[</span>
+   <span class="p">{</span><span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span> <span class="nt">&quot;customer_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nt">&quot;order_info&quot;</span><span class="p">:</span><span class="s2">&quot;kite&quot;</span><span class="p">,</span> <span class="nt">&quot;order_date&quot;</span><span class="p">:</span><span class="s2">&quot;2014-08-12 18:16:43&quot;</span><span class="p">,</span> <span class="nt">&quot;order_items&quot;</span><span class="p">:[</span>
+      <span class="p">{</span><span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1001</span><span class="p">,</span> <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span> <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;9.99&quot;</span><span class="p">,</span> <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+      <span class="p">{</span><span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1002</span><span class="p">,</span> <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span> <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;19.99&quot;</span><span class="p">,</span> <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">}]},</span>
+   <span class="p">{</span><span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">102</span><span class="p">,</span> <span class="nt">&quot;customer_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nt">&quot;order_info&quot;</span><span class="p">:</span><span class="s2">&quot;board&quot;</span><span class="p">,</span> <span class="nt">&quot;order_date&quot;</span><span class="p">:</span><span class="s2">&quot;2014-08-15 06:24:05&quot;</span><span class="p">,</span> <span class="nt">&quot;order_items&quot;</span><span class="p">:[</span>
+      <span class="p">{</span><span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1003</span><span class="p">,</span> <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">102</span><span class="p">,</span> <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;9.99&quot;</span><span class="p">,</span> <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">}]</span>
+   <span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">To explore the full example check out the <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/GettingStarted/caoi.tutorial.html"><em>Customer-Order-Item Tutorial</em></a></p>
+</div>
+</div>
+<div class="section" id="rationale">
+<h3>Rationale<a class="headerlink" href="#rationale" title="Permalink to this headline">∞</a></h3>
+<p><a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html"><em>Table Groups</em></a> keep all rows of an object together, eliminating the traditional relational overhead of writing the rows that compose an object into many different tables, over many distributed nodes. Nested SQL queries provide the ability to ask for an object in a single query rather than having to execute many different queries for each of the tables, that in effect simply access the localized set of rows. The following tables summarizes these capabilities:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="40%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Action</th>
+<th class="head">FoundationDB SQL Layer</th>
+<th class="head">Traditional RDBMS</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Put object</td>
+<td>Single txn writes data as a sequential stream of rows into a consecutive range of Key-Value entries in a single machine* in the cluster</td>
+<td>Single txn writes rows to many tables, each located in a different segment of a disk</td>
+</tr>
+<tr class="row-odd"><td>Get object</td>
+<td>Single txn reads data as a sequential stream of rows from consecutive Key-Value entries in a single machine* in the cluster</td>
+<td>Single txn fires multiple queries, one after another, to access the different tables that contain rows of the object.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">* With <a class="reference external" href="/web/20150325003212/https://foundationdb.com/documentation/3.0/configuration.html#configuration-choosing-redundancy-mode" title="(in FoundationDB v3.0)"><em class="xref std std-ref">triple replication enabled</em></a> the cluster would physically replicate the data to three physical machines. This is invisible to the user, or to the SQL Layer for that matter.</p>
+</div>
+</div>
+<div class="section" id="similar-approaches">
+<h3>Similar approaches<a class="headerlink" href="#similar-approaches" title="Permalink to this headline">∞</a></h3>
+<p>Both Table-Groups and Nested SQL queries are unique in the RDBMS world. The <a class="reference external" href="/web/20150325003212/http://research.google.com/pubs/pub38125.html">Google F1 database</a>, which powers Google Adwords, features the most similar approach. Oracle has <a class="reference external" href="/web/20150325003212/http://docs.oracle.com/cd/E11882_01/server.112/e40540/tablecls.htm#CNCPT608">clustered table capabilities</a> that write related rows into a Blob making any access to a subset of the data inefficient.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<span id="sqlref-select-nested-details"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">∞</a></h2>
+<p>There are two methods for selecting nested objects.</p>
+<div class="section" id="expressive-selection-of-nested-data-using-correlated-sub-queries-in-the-select-clause">
+<h3>Expressive selection of nested data using correlated sub-queries in the SELECT clause<a class="headerlink" href="#expressive-selection-of-nested-data-using-correlated-sub-queries-in-the-select-clause" title="Permalink to this headline">∞</a></h3>
+<p>To select specific nesting of rows and columns, use correlated sub-queries in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> portion of the statement. Nesting of tables that are not necessarily within the same Table-Group is allowed.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+  <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span>
+   <span class="k">FROM</span> <span class="o">&lt;</span><span class="n">child_table_name</span><span class="o">&gt;</span>
+   <span class="k">WHERE</span> <span class="o">&lt;</span><span class="n">child_table_name</span><span class="o">&gt;&lt;</span><span class="n">foreign_key_column</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">parent_table_name</span><span class="o">&gt;</span><span class="p">.</span><span class="o">&lt;</span><span class="n">primary_key_column</span><span class="o">&gt;</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="o">&lt;</span><span class="n">parent_table_name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>This syntax is the same the ANSI SQL <tt class="docutils literal"><span class="pre">SELECT</span></tt> syntax (see specification in the <a class="reference internal" href="select.html#sqlref-select"><em>standard SELECT statement</em></a>). The difference is in the semantics: whereas standard SELECT statements limit a sub-query in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> portion of the query to return exactly one value, using Nested SQL any number of columns and rows can be returned. The nesting of subqueries can be done in a recursive fashion. If no <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause is specified, all records from the child table will be returned. If the join correlation is not specified, the returned results will be a Cartesian product.</p>
+<p>In every other respect Nested SQL query is a standard <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement. Normal <tt class="docutils literal"><span class="pre">WHERE</span></tt>, <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt>, <tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt>, <tt class="docutils literal"><span class="pre">LIMIT</span></tt>, and other clauses can be applied.</p>
+</div>
+<div class="section" id="the-shorthand-for-selecting-full-table-group-objects">
+<h3>The ** shorthand for selecting full Table-Group objects<a class="headerlink" href="#the-shorthand-for-selecting-full-table-group-objects" title="Permalink to this headline">∞</a></h3>
+<p>To select all fields and rows from a full object within a Table-Group, for example a complete customer profile, use the ** syntax. The related rows are selected from the table specified and all its child tables in the Table-Group.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">**</span>
+<span class="k">FROM</span> <span class="o">&lt;</span><span class="k">table_name</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>When using the ** shorthand for selecting all nested objects, the selected tables will always be from the same Table-Group. Since the SQL Layer does not allow many-to-many relationships in Table-Groups, the selected related tables will always have a one-to-many relationship within the selected tables. When the root table is selected, all tables in the Table-Group will be selected. If the selected table is not the root table, only that table and the underlying tables will be selected. If a leaf table is specified, no additional tables will be selected to form the nesting.</p>
+<p>Apart from using **, this is a standard <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement. Normal <tt class="docutils literal"><span class="pre">WHERE</span></tt>, <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt>, <tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt>, <tt class="docutils literal"><span class="pre">LIMIT</span></tt>, and other clauses can be applied.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">if you plan to use the <tt class="docutils literal"><span class="pre">SELECT</span> <span class="pre">**</span></tt> shorthand in your application remember that after adding a table to the Table-Group the output of ** will change to include that table as well. The same precaution should be taken when using standard <tt class="docutils literal"><span class="pre">SELECT</span> <span class="pre">*</span></tt>, where adding a column to the table will change the result.</p>
+</div>
+</div>
+</div>
+<div class="section" id="enabling-nested-sql">
+<h2>Enabling Nested SQL<a class="headerlink" href="#enabling-nested-sql" title="Permalink to this headline">∞</a></h2>
+<p>Selecting nested objects is only possible when the output format is set to JSON and not with the tabular output format. To set the output format to JSON, issue the following command before the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SET</span> <span class="n">OutputFormat</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This output format can be enabled on a global or per-session basis. To enable it on a global basis see the <cite>SQL Layer Properties &lt;fdbsql-postgres-outputformat&gt;</cite> page.</p>
+<p>To switch back to tabular format, use:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SET</span> <span class="n">OutputFormat</span> <span class="o">=</span> <span class="s1">&#39;table&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h2>
+<p>To select all data related to an order with order_id = 101:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">**</span>
+<span class="k">FROM</span>   <span class="n">orders</span>
+<span class="k">WHERE</span>  <span class="n">order_id</span> <span class="o">=</span> <span class="mi">101</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The result-set is shown below (formatted for readability). At the highest level one record from the orders table is returned with all 4 columns. The fifth item at this level is <tt class="docutils literal"><span class="pre">coia.items</span></tt>, the schema-qualified name of the child table. Both related items record are then returned one level deeper:</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+  <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+  <span class="nt">&quot;customer_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;order_info&quot;</span><span class="p">:</span><span class="s2">&quot;apple related&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;order_date&quot;</span><span class="p">:</span><span class="s2">&quot;2012-10-14 11:46:12&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;coia.items&quot;</span><span class="p">:</span>
+  <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1001</span><span class="p">,</span>
+      <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+      <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;9.99&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1002</span><span class="p">,</span>
+      <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+      <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;19.99&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here&#8217;s the same example using the explicit nested sub-query approach:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+  <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">items</span> <span class="k">WHERE</span> <span class="n">orders</span><span class="p">.</span><span class="n">order_id</span> <span class="o">=</span> <span class="n">items</span><span class="p">.</span><span class="n">order_id</span> <span class="k">AND</span> <span class="n">items</span><span class="p">.</span><span class="n">price</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="k">AS</span> <span class="n">order_items</span>
+<span class="k">FROM</span> <span class="n">orders</span>
+<span class="k">WHERE</span> <span class="n">order_id</span> <span class="o">=</span> <span class="mi">101</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The result set is identical to that of the previous example with the exception of the name of the items collection now being <tt class="docutils literal"><span class="pre">order_items</span></tt>. Note that we also added the <tt class="docutils literal"><span class="pre">items.price</span> <span class="pre">&gt;</span> <span class="pre">5</span></tt> predicate to the sub-select. in the same way other clauses like <tt class="docutils literal"><span class="pre">GROUP-BY</span></tt>, <tt class="docutils literal"><span class="pre">LIMIT</span></tt> etc can be added at any level of sub-query nesting.</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">{</span>
+  <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+  <span class="nt">&quot;customer_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;order_info&quot;</span><span class="p">:</span><span class="s2">&quot;apple related&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;order_date&quot;</span><span class="p">:</span><span class="s2">&quot;2012-10-14 11:46:12&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;order_items&quot;</span><span class="p">:</span>
+  <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1001</span><span class="p">,</span>
+      <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+      <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;9.99&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;item_id&quot;</span><span class="p">:</span><span class="mi">1002</span><span class="p">,</span>
+      <span class="nt">&quot;order_id&quot;</span><span class="p">:</span><span class="mi">101</span><span class="p">,</span>
+      <span class="nt">&quot;price&quot;</span><span class="p">:</span><span class="s2">&quot;19.99&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;quantity&quot;</span><span class="p">:</span><span class="mi">2</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>It is possible to nest sub-queries to any arbitrary depth. For example, it is possible to retrieve the <tt class="docutils literal"><span class="pre">customer</span></tt>, <tt class="docutils literal"><span class="pre">orders</span></tt>, <tt class="docutils literal"><span class="pre">items</span></tt> and <tt class="docutils literal"><span class="pre">addresses</span></tt> in a single query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">customer_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">birthdate</span><span class="p">,</span>
+        <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">addresses</span> <span class="k">WHERE</span> <span class="n">addresses</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cust_addresses</span><span class="p">,</span>
+        <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+                <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">items</span> <span class="k">WHERE</span> <span class="n">items</span><span class="p">.</span><span class="n">order_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">order_id</span><span class="p">)</span> <span class="k">As</span> <span class="n">order_items</span>
+        <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="n">orders</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cust_orders</span>
+<span class="k">FROM</span> <span class="n">customers</span>
+<span class="k">WHERE</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Notice the nesting of the addresses and orders sub-queries within the customer top level query, and further the nesting of the items sub-query within the orders sub-query.</p>
+<p>Because the query includes all tables in the customers Table-Group it is identical to the ** shorthand query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">**</span> <span class="k">FROM</span> <span class="n">customers</span> <span class="k">WHERE</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<p>If you are new to the SQL Layer and would like to learn more:</p>
+<ul class="simple">
+<li>Read about the <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/Concepts/features.html"><em>SQL Layer Features</em></a></li>
+<li>Continue with the <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html"><em>Getting Started</em></a> options</li>
+<li>And follow the guide to using the <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/GettingStarted/SQL.html"><em>SQL interface</em></a></li>
+</ul>
+<p>To explore other areas in the SQL reference, return to the <a class="reference internal" href="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/SQL/index.html"><em>SQL reference main page</em></a>.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003212/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Nested SELECT SQL Queries</a><ul><li><a class="reference internal" href="#background">Background</a><ul><li><a class="reference internal" href="#sample-use-case">Sample Use Case</a></li><li><a class="reference internal" href="#rationale">Rationale</a></li><li><a class="reference internal" href="#similar-approaches">Similar approaches</a></li></ul></li><li><a class="reference internal" href="#usage">Usage</a><ul><li><a class="reference internal" href="#expressive-selection-of-nested-data-using-correlated-sub-queries-in-the-select-clause">Expressive selection of nested data using correlated sub-queries in the SELECT clause</a></li><li><a class="reference internal" href="#the-shorthand-for-selecting-full-table-group-objects">The ** shorthand for selecting full Table-Group objects</a></li></ul></li><li><a class="reference internal" href="#enabling-nested-sql">Enabling Nested SQL</a></li><li><a class="reference internal" href="#examples">Examples</a></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003212/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003212/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003212/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003212/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003212js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:12 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:31:10 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

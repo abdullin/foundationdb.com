@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=165;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Performance Guide
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003259/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="IxRO6ecrCPDeKbCH5mnVJICugZ18mQDPgGqB8Ss0naw=" name="csrf-token" />
+<link href="/web/20150325003259cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003259cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003259" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:59 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150427172430/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html" title="27 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:59 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150427172430/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html" title="17:24:30 Apr 27, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:59 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003259*/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html" title="See a list of every capture for this URL">3 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003259/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003259/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html" class="active">Performance Guide</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Developer Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003259/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="performance-guide">
+<h1>Performance Guide<a class="headerlink" href="#performance-guide" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer inherits the FoundationDB Key-Value Store&#8217;s <em>scalability</em> and <em>fault-tolerance</em>, making it an ideal back end for the operation of critical applications. The SQL Layer architecture is very different than traditional RDBMS systems. Because of its distributed nature, it exhibits different performance and scale characteristics. This document will provide advice on optimizing your configuration, development style, and data modeling for best performance.</p>
+<div class="section" id="development-approach">
+<h2>Development approach<a class="headerlink" href="#development-approach" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Permalink to this headline">∞</a></h3>
+<p>Like all systems, FoundationDB operates at a low latency while under low load and an increasing latency as the load approaches the saturation point. There are several places in a typical transaction that can experience database latency:</p>
+<ul class="simple">
+<li><strong>Starting the transaction.</strong> This delay will be experienced as part of <tt class="docutils literal"><span class="pre">BEGIN</span> <span class="pre">TRANSACTION</span></tt>. It will typically be a few milliseconds under moderate load. Under high write loads, FoundationDB tries to concentrate most transaction latency here. This latency does not increase transaction conflicts because the transaction has not yet started.</li>
+<li><strong>Simple queries.</strong> These should take about 1 ms under moderate load on appropriate hardware. However, if a transaction performs many queries by waiting for each to complete before starting the next, these small latencies can add up. You can thus reduce transaction latency (and potentially conflicts) by doing as many of your reads as possible in parallel.</li>
+<li><strong>Committing the transaction.</strong> Transactions that are not read-only must be committed, and the commit will not succeed until the transaction is fully durable with replication. This takes time, averaging about 10 ms under normal loads with SSD hardware. This latency will increase further in a geographically distributed system (to confirm that the transaction is durable in multiple datacenters). Only a small part of this latency impacts transaction conflicts.</li>
+</ul>
+</div>
+<div class="section" id="throughput-requires-concurrency">
+<span id="fdbsql-developer-guide-throughput"></span><h3>Throughput requires concurrency<a class="headerlink" href="#throughput-requires-concurrency" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB itself and the SQL Layer will only reach its maximum performance with a highly concurrent workload. This is a practical consideration that derives mathematically from the ratio of system throughput to system latency (known in queuing theory as <a class="reference external" href="/web/20150325003259/http://en.wikipedia.org/wiki/Little%27s_law">Little&#8217;s Law</a>). For FoundationDB, a cluster might have a read latency of 1ms and be capable of millions of reads per second. To achieve such a rate, there must therefore be thousands of read requests happening concurrently.</p>
+<p><strong>Not having enough outstanding requests is the single biggest reason for low performance when using FoundationDB.</strong></p>
+<p>There are several important techniques for achieving high concurrency:</p>
+<ul class="simple">
+<li>Whether your application does FoundationDB transactions in response to requests (as in web applications) or simply does transactions as fast as it can (as in a batch workload), make sure to run it with enough concurrent threads or processes&#8212;perhaps more than you would expect to provide optimal performance from experience with other database systems.</li>
+<li>Whenever possible, let a single query retrieve as much data as possible. The SQL Layer internally employs <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/features.html#fdbsqllayer-features-batch-pipelining"><em>deep parallelism</em></a>, meaning that many operations are executed asynchronously and in parallel. This reduces latency and consequently reduces the number of concurrent transactions required to sustain a given throughput.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="local-vs-cluster-deployments">
+<h3>Local vs cluster deployments<a class="headerlink" href="#local-vs-cluster-deployments" title="Permalink to this headline">∞</a></h3>
+<p>A local deployment of FoundationDB and the SQL Layer is suitable for testing but will not achieve production-level performance. In order to ensure that your application is ready for production, please be sure to test it in a <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/configuration.html#system-requirements" title="(in FoundationDB v3.0)"><em class="xref std std-ref">well-configured</em></a> staging area that is close to a production-sized cluster with a full copy of the production data.</p>
+</div>
+<div class="section" id="ssd-engine">
+<h3>SSD engine<a class="headerlink" href="#ssd-engine" title="Permalink to this headline">∞</a></h3>
+<p>If you are planning to run with the SSD engine in production or wish to load more than a few gigabytes of data, we recommend <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/configuration.html#configuration-storage-engine" title="(in FoundationDB v3.0)"><em class="xref std std-ref">switching to the SSD engine</em></a> on your local deployment as well. Note that this engine is tuned for SSDs and may have poor performance (or even availability problems) when run on weaker I/O subsystems, such as spinning disks or network attached storage.</p>
+</div>
+<div class="section" id="multiple-sql-layers-per-machine">
+<h3>Multiple SQL Layers per machine<a class="headerlink" href="#multiple-sql-layers-per-machine" title="Permalink to this headline">∞</a></h3>
+<p>Much like the Key-Value processes, and in contrast with most SQL databases, a SQL Layer instance is designed as a confined-resource-consumer building block in a cluster of machines, rather than striving to saturate all available resources of a single large machine.</p>
+<p>SQL Layer is currently tuned to take advantage of up to 4 cores in a modern machine. One of these cores is dedicated to the FoundationDB Key-Value client that&#8217;s single-threaded. The SQL Layer itself is multi-threaded and tuned to send as much work to the back end in parallel as possible. On a sufficiently large machine with many available cores and a heavy Application Server load, the single core Key-Value client or the SQL Layer itself may get saturated.</p>
+<p>Because the SQL Layer is stateless, it is possible to run more than one SQL Layer on a single machine. This is done by deploying multiple SQL Layers on the machine, each using a dedicated FoundationDB Key-Value client, and then load balancing the work between them.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We recommend verifying that the Application Server or Application Servers in the machines do in-fact require more capacity than a single SQL Layer can provide, before deploying additional SQL Layer instances.</p>
+</div>
+<p>To set up a second SQL Layer follow <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/administration.html#fdbsql-administration-install-two-sql-layers-on-one-machine"><em>these directions</em></a>.</p>
+</div>
+<div class="section" id="jvm-warmup">
+<h3>JVM Warmup<a class="headerlink" href="#jvm-warmup" title="Permalink to this headline">∞</a></h3>
+<p>The FoundationDB SQL Layer is a Java application which runs within a Java Virtual Machine. Modern JVM&#8217;s use just in time (JIT) compilation techniques to speed up execution. A JIT compiler only compiles a code path when it knows that code path is about to be executed.</p>
+<p>Typically, after the FoundationDB SQL Layer starts up, a query will not execute at the fastest possible speed. After the first few executions of a query, the execution times will stabilize. This is similar to the effect that a clean cache has on local databases like MySQL or Oracle at start up. This is <strong>not</strong> an issue for a long running FoundationDB SQL Layer process; it only affects the performance shortly after a SQL Layer instance is started.</p>
+<p>If you have a specific use case that represents the real-time workload of your system, we recommend running it through throw the SQL Layer as a script immediately upon startup to warm up the JVM.</p>
+</div>
+<div class="section" id="client-side-transaction-cache">
+<h3>Client side transaction cache<a class="headerlink" href="#client-side-transaction-cache" title="Permalink to this headline">∞</a></h3>
+<p>You may notice that a second read of a query is a lot faster than the first within a transaction. This is because a transaction has a local cache in the FoundationDB client. Once any piece of data is read from the cluster, it is cached for that transaction. This means that manually <strong>caching reads for use within a transaction is unnecessary.</strong></p>
+<p>There is also a client-side transaction cache. This optimization means that executing the same query over and over again in the same transaction doesn&#8217;t count against the time limit because it doesn&#8217;t send any new operations to the cluster. While it has no operational implications, this optimization does complicate reasoning about transaction time limits.</p>
+</div>
+</div>
+<div class="section" id="modeling-for-performance">
+<h2>Modeling for performance<a class="headerlink" href="#modeling-for-performance" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer supports ANSI SQL 92 syntax (see the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/index.html"><em>SQL Reference</em></a> for details) which makes it easy to use. Additionally, the SQL Layer provides several unique modeling and indexing features to optimize performance. The most important schema optimization is <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html"><em>Table Groups</em></a>. Table-Groups arrange multiple SQL tables into a hierarchy of parent-child relationships that&#8217;s implemented in the Key-Value Store by nesting the related rows from different tables, thereby avoiding unnecessary fragmentation of objects and eliminating join costs.</p>
+<div class="section" id="explaining-queries">
+<h3>EXPLAINing queries<a class="headerlink" href="#explaining-queries" title="Permalink to this headline">∞</a></h3>
+<p>Typing the <tt class="docutils literal"><span class="pre">EXPLAIN</span></tt> keyword followed by any SQL statement, whether a SELECT query or INSERT, UPDATE or DELETE statement, prints the execution plan.</p>
+<p>For example:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">EXPLAIN</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">hello</span><span class="p">.</span><span class="n">world</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For more detailed execution plan use <tt class="docutils literal"><span class="pre">EXPLAIN</span> <span class="pre">VERBOSE</span></tt> that will also include statistical information and optimizer estimates:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">EXPLAIN</span> <span class="k">VERBOSE</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">hello</span><span class="p">.</span><span class="n">world</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>For an in-depth explanation of execution plans and operators in the SQL Layer, read the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/query.execution.html"><em>Query Execution</em></a> documentation.</p>
+</div>
+<div class="section" id="renormalize">
+<h3>Renormalize<a class="headerlink" href="#renormalize" title="Permalink to this headline">∞</a></h3>
+<p>Countrary to popular RDBMS approaches, we advise against denormalizing any of your data. Instead, use a combination of Table-Groups and Group-Indexes to optimize performance.</p>
+</div>
+<div class="section" id="table-groups">
+<h3>Table-Groups<a class="headerlink" href="#table-groups" title="Permalink to this headline">∞</a></h3>
+<p><strong>Arranging your schema tables into Table-Groups is the single greatest performance optimization tool at your disposal.</strong> To learn more Table-Groups see the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html"><em>Table Groups</em></a> guide.</p>
+</div>
+<div class="section" id="primary-key-selection">
+<h3>Primary Key selection<a class="headerlink" href="#primary-key-selection" title="Permalink to this headline">∞</a></h3>
+<p>We recommend using INTEGER primary keys based on SEQUENCES. While adequate for some application needs, the use of GUIDs does not provide a performance advantage.</p>
+<p>Using a SEQUENCE means that a single table will add rows at the &#8220;tail&#8221;, generally focusing changes in a small part of the key space. Using Table-Groups provides an advantage in that child tables will be distributed based on their parent PK, rather than being added to any &#8220;tail&#8221;. In effect, creating a Table-Group tends to naturally disperse row inserts and changes across the key space.</p>
+<p>Finally, we recommend always defining a Foreign Key for a table.</p>
+</div>
+<div class="section" id="indexes">
+<h3>Indexes<a class="headerlink" href="#indexes" title="Permalink to this headline">∞</a></h3>
+<p>If long Table-Group scans are observed in a running system, this indicates missing indexes or poor SQL optimization. There are several types of indexes at your disposal as described in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/indexes.html#indexing"><em>Indexing Guide</em></a>. The scalable nature of the FoundationDB stack means that <strong>you can and should define indexes wherever appropriate without fear of saturating the database</strong>. Additionally, the transactional engine in FoundationDB Key-Value Store is oblivious to locality, so there is very little cost to creating many indexes that will update different areas of keyspace.</p>
+</div>
+<div class="section" id="multi-column-indexes">
+<h3>Multi-column indexes<a class="headerlink" href="#multi-column-indexes" title="Permalink to this headline">∞</a></h3>
+<p>Planning a multi-column index follows RDBMS best practices:</p>
+<ul class="simple">
+<li>First, include columns that you are likely to use as predicates.</li>
+<li>Second, include columns that you are likely to sort on, in the likely sorting order. If there is more than one likely sort order, do not hesitate to create several slightly differing indexes.</li>
+<li>Finally, include columns that are needed for later projection or comparison. However, only include these columns if you are know they will frequently turn the index into a covering index, avoiding the row lookups.</li>
+</ul>
+<p>Remember that indexes include the hKey at the end of the Key. Therefore it is unnecessary to explicitly include Primary Keys, Foreign Keys, or parts thereof in the column list that defines an index, unless they need to be in the first part of the index for predicate matching or sorting.</p>
+</div>
+<div class="section" id="table-group-indexes">
+<h3>Table-Group indexes<a class="headerlink" href="#table-group-indexes" title="Permalink to this headline">∞</a></h3>
+<p><a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/indexes.html#table-group-index"><em>Table-Group Indexes</em></a> contain two or more columns from more than one table within the same Table-Group. They are often used for queries that filter objects on multiple attributes, where the attributes map to different tables of the same object. For example, a query that filters both on a customer&#8217;s name (from the customer table) and the customer&#8217;s order dates (from the orders table) can be satisfied by a single Table-Group index that contains both columns. Such an index can eliminate a tremendous amount of work during execution.</p>
+</div>
+<div class="section" id="nested-sql-queries">
+<h3>Nested SQL queries<a class="headerlink" href="#nested-sql-queries" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer has an extended capability to return data as objects rather than in tabular form using <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/dml/select_nested_object.html#sqlref-select-nested-details"><em>Nested Queries</em></a>. This capability can alleviate the object-relational impedance mismatch. It employs an extension to SQL that allows nesting in both the query and the result. For example:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span>
+  <span class="p">(</span><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">orders</span> <span class="k">WHERE</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">AS</span> <span class="n">cust_orders</span>
+<span class="k">FROM</span> <span class="n">customers</span>
+<span class="k">WHERE</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This query returns a JSON document with customer 1 and his orders.</p>
+<p>This capability is important when object retrieval, either through an ORM or directly against the database, makes many queries and many roundtrips in order to assemble an object. A single nested query can replace <strong>all</strong> these queries with a single one. For advice on how to use nested queries through your ORM, feel free to contact us.</p>
+</div>
+<div class="section" id="prepared-statements">
+<h3>Prepared statements<a class="headerlink" href="#prepared-statements" title="Permalink to this headline">∞</a></h3>
+<p>It is generally a good idea to use prepared statements because they avoid repeated parsing of the same query. Prepared statements are associated with a connection. When a new connection wants to use a prepared statement, it must:</p>
+<ol class="arabic simple">
+<li>Prepare the statements</li>
+<li>Handle stale statement and re-prepare</li>
+</ol>
+<p>If any DDL operations are performed after preparing a statement, the statement will be rendered invalid and yield this error (<a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/error_codes.html#error-codes"><em>code</em></a> <tt class="docutils literal"><span class="pre">0A50A</span></tt>) on execution:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">ERROR</span><span class="p">:</span> <span class="n">Unusable</span> <span class="n">prepared</span> <span class="k">statement</span> <span class="n">due</span> <span class="k">to</span> <span class="n">DDL</span> <span class="k">after</span> <span class="n">generation</span>
+</pre></div>
+</div>
+<p>Your code will need to catch the error and re-prepare the statement.</p>
+<p>Prepared statements that bind variables can be more tricky. When the query is prepared, no information about the variable is known and the optimizer will pick a reasonable path. The plan will not be adjusted at runtime based on the variable provided, so for some variables this may result in inefficient execution. If this happens, it is best to abandon prepared statements and let the system parse and re-optimize the fully-specified query in every execution.</p>
+</div>
+</div>
+<div class="section" id="bulk-inserts">
+<span id="fdbsql-performance-guide-bulk-insert"></span><h2>Bulk Inserts<a class="headerlink" href="#bulk-inserts" title="Permalink to this headline">∞</a></h2>
+<p>When a large number of rows need to be inserted, either to initialize a new database or to periodically copy from another data source, tuning is important. Proper configuration can speed up bulk inserts by a factor of a hundred or more.</p>
+<p>The <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/backup.html#fdbsqlload"><em>fdbsqlload Command Line Tool</em></a> is implemented to follow best practices. It can itself load data that is already available in flat files. But it does not use any special loading mechanisms and appears to the SQL Layer just like any other application program. Which means any application can follow the same principles.</p>
+<div class="section" id="load-in-parallel">
+<h3>Load in Parallel<a class="headerlink" href="#load-in-parallel" title="Permalink to this headline">∞</a></h3>
+<p>The simplest way to ensure that the SQL Layer is keeping the FoundationDB Key-Value Store busy is to divide the data up into pieces that are loaded at the same time. The <tt class="docutils literal"><span class="pre">--threads</span></tt> argument to <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> splits the input file up and gives each thread a portion to load over a separate connection. A single SQL Layer will scale up the work done by the number of active connections linearly until around 4, when it starts to level off. So, 4 threads is a good rule of thumb if there is no other significant load on the SQL Layer server.</p>
+</div>
+<div class="section" id="transaction-size">
+<h3>Transaction Size<a class="headerlink" href="#transaction-size" title="Permalink to this headline">∞</a></h3>
+<p>Many client drivers default to an auto-commit mode where each statement is executed in a separate transaction. A separate transaction means that each statement must wait for the relatively high commit latency. On the other hand, there may be more 10MB of data to be inserted, and that is the limit on a single transaction. Also, larger transactions decrease the flexibility that the server has to load balance and so hurt overall performance. Fortunately, most bulk loads do not require that the entire dataset appear atomically. 100KB per transaction is a comfortable medium to aim for.</p>
+</div>
+<div class="section" id="multi-row-insert-statements">
+<h3>Multi-row INSERT Statements<a class="headerlink" href="#multi-row-insert-statements" title="Permalink to this headline">∞</a></h3>
+<p>Data sent to the SQL Layer within a transaction is buffered there and not sent to the Key-Value Store until the transaction is committed. But it is still worth tuning the communication between the client and the SQL Layer. If each INSERT statement only has a single row, the protocol overhead for executing any statement is more noticeable. Conversely, if the INSERT statement has hundreds of rows, each side is idle in turn waiting for the other to do a lot of work. For small- to medium-sized rows, 10 per statement seems to be a good compromise.</p>
+<p>It helps to use prepared statements, if the client driver supports them. A little bit of bookkeeping is needed to ensure that the number of rows in the prepared statement matches the number of rows to be inserted. Particularly at the end of a batch, where there may not be an even number of rows left over. It is worth it.</p>
+</div>
+<div class="section" id="checking-constraints">
+<h3>Checking Constraints<a class="headerlink" href="#checking-constraints" title="Permalink to this headline">∞</a></h3>
+<p>If a table has foreign key constraints, each new row that is inserted must check that the foreign key column references an actual row in the database. Every table has a primary key, which must be unique. Each new row that is inserted must check that the primary key is not already in use. A table can also define other uniqueness constraints.</p>
+<p>By default, all these constraints must be checked row-by-row. Which means that the SQL Layer must look in the database for a single key-value pair. The latency for this check one one-by-one is relatively high.</p>
+<p>Marking foreign key constraints as <tt class="docutils literal"><span class="pre">DEFERRABLE</span></tt> and doing <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">CONSTRAINTS</span> <span class="pre">ALL</span> <span class="pre">DEFERRED</span></tt> for each loading connection will delay checking of foreign keys up until <tt class="docutils literal"><span class="pre">COMMIT</span></tt>, which means that more rows can be inserted in parallel while the answer to a prior row&#8217;s check is still outstanding.</p>
+<p>To get the same effect for uniqueness constraints, do <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">constraintCheckTime</span> <span class="pre">=</span> <span class="pre">'DELAYED'</span></tt>. Note that this subtly changes the semantics of the transaction: it is possible for a <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement to see violations of the constraints in a transaction that will later fail, but has not yet. Usually this is not an issue for bulk insert workloads.</p>
+<p>If data is being inserted with a mostly monotonically increasing primary key, such as an integer sequence, it is even better to do <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">constraintCheckTime</span> <span class="pre">=</span> <span class="pre">'DELAYED_WITH_RANGE_CACHE'</span></tt>. For each transaction, for each index, the SQL Layer will do one snapshot range read from the value being inserted to the end of the index. For such workloads, this range will either be empty or start with a value far above the values to be inserted in the current transaction (because they come from another piece of the data). That means that subsequent values can be checked from the local client cache without another check, not even a delayed one.</p>
+<p>If the changed semantics are a problem, most of the performance benefit of <tt class="docutils literal"><span class="pre">DELAYED</span></tt> can be gotten with <tt class="docutils literal"><span class="pre">STATEMENT</span></tt>, without any incorrect semantics, when using multi-row INSERT statements. All of the new rows will be checked in parallel and any errors reported for the INSERT statement.</p>
+</div>
+<div class="section" id="summary">
+<h3>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>4 threads</li>
+<li>100KB transactions</li>
+<li>10 rows per statement</li>
+<li><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">CONSTRAINTS</span> <span class="pre">ALL</span> <span class="pre">DEFERRED;</span> <span class="pre">SET</span> <span class="pre">constraintCheckTime</span> <span class="pre">=</span> <span class="pre">'DELAYED_WITH_RANGE_CACHE'</span></tt></li>
+</ul>
+<p>In internal testing, we see a 150x improvement from these settings over the one-at-a-time default.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li>If you haven&#8217;t already, follow one of the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html#getting-started"><em>Getting Started</em></a> options</li>
+<li>For operational advice on how to set up and maintain a SQL Layer cluster, see <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/index.html"><em>SQL Layer Operations</em></a>.</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Performance Guide</a><ul><li><a class="reference internal" href="#development-approach">Development approach</a><ul><li><a class="reference internal" href="#latency">Latency</a></li><li><a class="reference internal" href="#throughput-requires-concurrency">Throughput requires concurrency</a></li></ul></li><li><a class="reference internal" href="#configuration">Configuration</a><ul><li><a class="reference internal" href="#local-vs-cluster-deployments">Local vs cluster deployments</a></li><li><a class="reference internal" href="#ssd-engine">SSD engine</a></li><li><a class="reference internal" href="#multiple-sql-layers-per-machine">Multiple SQL Layers per machine</a></li><li><a class="reference internal" href="#jvm-warmup">JVM Warmup</a></li><li><a class="reference internal" href="#client-side-transaction-cache">Client side transaction cache</a></li></ul></li><li><a class="reference internal" href="#modeling-for-performance">Modeling for performance</a><ul><li><a class="reference internal" href="#explaining-queries">EXPLAINing queries</a></li><li><a class="reference internal" href="#renormalize">Renormalize</a></li><li><a class="reference internal" href="#table-groups">Table-Groups</a></li><li><a class="reference internal" href="#primary-key-selection">Primary Key selection</a></li><li><a class="reference internal" href="#indexes">Indexes</a></li><li><a class="reference internal" href="#multi-column-indexes">Multi-column indexes</a></li><li><a class="reference internal" href="#table-group-indexes">Table-Group indexes</a></li><li><a class="reference internal" href="#nested-sql-queries">Nested SQL queries</a></li><li><a class="reference internal" href="#prepared-statements">Prepared statements</a></li></ul></li><li><a class="reference internal" href="#bulk-inserts">Bulk Inserts</a><ul><li><a class="reference internal" href="#load-in-parallel">Load in Parallel</a></li><li><a class="reference internal" href="#transaction-size">Transaction Size</a></li><li><a class="reference internal" href="#multi-row-insert-statements">Multi-row INSERT Statements</a></li><li><a class="reference internal" href="#checking-constraints">Checking Constraints</a></li><li><a class="reference internal" href="#summary">Summary</a></li></ul></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003259/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003259/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003259js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:59 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:22 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

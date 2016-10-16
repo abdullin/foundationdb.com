@@ -1,0 +1,1860 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=1350;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Configuration
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Admin/configuration.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003259/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href="/web/20150325003259cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003259cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Admin/configuration.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Admin/configuration.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003259" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:59 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150426034044/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html" title="26 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:59 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325015733/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html" title="1:57:33 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:59 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003259*/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003259/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003259/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003259/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003259/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html" class="active">Configuration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003259/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003259im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="configuration">
+<span id="fdbsql-configuration"></span><h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">∞</a></h1>
+<p>This document contains <em>reference</em> information for configuring an SQL Layer instance. We recommend that you read this document before setting up a instances for performance testing or production use.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In FoundationDB, a &#8220;SQL Layer instance&#8221; refers to one SQL Layer process installed on one physical or virtual machine. It is possible to deploy multiple SQL Layer instances against a single FoundationDB Key-Value cluster, and each SQL Layer instance can have it&#8217;s own configuration.</p>
+</div>
+<p>To configure a SQL Layer instance, you need to understand some basic aspects of the system. You can start by reviewing the <a class="reference internal" href="#fdbsql-system-requirements"><em>system requirements</em></a>. Next, review the <a class="reference internal" href="#fdbsql-directory-structure"><em>directory structure</em></a> and <a class="reference internal" href="#fdbsql-config-files"><em>the main configuration files</em></a>. Finally, you should look at the available configuration parameters, including the <a class="reference internal" href="#fdbsql-config-logging"><em>logging options</em></a>, <a class="reference internal" href="#fdbsql-config-jvm-options"><em>JVM options</em></a>, and most importantly, the <a class="reference internal" href="#fdbsql-server-properties"><em>server options</em></a>, which control the most important aspects of the SQL Layer behavior.</p>
+<p>You should also look at the recommended <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html#fdbsql-architecture"><em>physical architecture</em></a>, and the installation guides for <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html#installing-fbdsqllayer-cluster"><em>setting up a SQL Layer cluster</em></a>.</p>
+<div class="section" id="system-requirements">
+<span id="fdbsql-system-requirements"></span><h2>System requirements<a class="headerlink" href="#system-requirements" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="operating-systems">
+<h3>Operating systems<a class="headerlink" href="#operating-systems" title="Permalink to this headline">∞</a></h3>
+<p>The SQL layer requires one of the following <strong>64-bit</strong> operating systems:</p>
+<ul>
+<li><p class="first">Ubuntu 10.04 or later</p>
+<blockquote>
+<div><ul class="simple">
+<li>Note: FoundationDB requires <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/configuration.html#system-requirements" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Ubuntu 11.10 or later</em></a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">RHEL/CentOS 6</p>
+<blockquote>
+<div><ul class="simple">
+<li>Note: FoundationDB requires <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/configuration.html#system-requirements" title="(in FoundationDB v3.0)"><em class="xref std std-ref">RHEL/CentOS 6.x</em></a></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Windows XP or later</p>
+</li>
+<li><p class="first">Mac OS X 10.7 or later</p>
+</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The Mac OS X version of the FoundationDB server and SQL Layer are intended for use on locally accessible development machines only. Other uses are not recommended.</p>
+</div>
+</div>
+<div class="section" id="kernel-requirements">
+<h3>Kernel Requirements<a class="headerlink" href="#kernel-requirements" title="Permalink to this headline">∞</a></h3>
+<ul>
+<li><p class="first">For RHEL/CentOS</p>
+<blockquote>
+<div><ul class="simple">
+<li>2.6.18 or later</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">For Ubuntu</p>
+<blockquote>
+<div><ul class="simple">
+<li>2.6.32 or later</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>To determine whether the required kernel is installed, enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ uname -r
+</pre></div>
+</div>
+<p>The following is a sample output displayed by running the command on a Ubuntu 14.04 system:</p>
+<div class="highlight-python"><div class="highlight"><pre>3.31.0-24-generic
+</pre></div>
+</div>
+<p>In this example, the output shows the kernel version (<cite>3.13.0</cite>) and errata level (<cite>24-generic</cite>) on the system.</p>
+</div>
+<div class="section" id="package-requirements">
+<h3>Package Requirements<a class="headerlink" href="#package-requirements" title="Permalink to this headline">∞</a></h3>
+<p>The following are the packages required for the SQL Layer:</p>
+<ul class="simple">
+<li>Java</li>
+<li>FoundationDB client</li>
+</ul>
+<p>Full installation instructions can be found in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html#getting-started"><em>Getting Started</em></a> guides.</p>
+</div>
+<div class="section" id="physical-requirements">
+<span id="fdbsql-physical-requirements"></span><h3>Physical Requirements<a class="headerlink" href="#physical-requirements" title="Permalink to this headline">∞</a></h3>
+<p>The following are the CPU and memory requirements for installing the SQL Layer:</p>
+<ul class="simple">
+<li>64 bit processor</li>
+<li>Default of 512 MB of physical RAM is allocated per SQL Layer instance. We recommend that you increase that to at least 1GB for production deployments.</li>
+<li>Between 50 MB and 100 MB of disk space for the SQL Layer software depending on what components are installed</li>
+</ul>
+<p>To determine the physical RAM available on a Linux system, enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ grep MemTotal /proc/meminfo
+</pre></div>
+</div>
+<p>To determine the amount of free disk space on a Linux system, enter the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ df -h
+</pre></div>
+</div>
+<p>The FoundationDB SQL Layer has no space requirements for data storage because it is stateless and relegates all data storage to the Key-Value cluster. It may require temporary local space for sorting; depending on your data size and query complexity, this may be significant.</p>
+</div>
+</div>
+<div class="section" id="directory-structure">
+<span id="fdbsql-directory-structure"></span><h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="linux-directory-structure">
+<h3>Linux Directory Structure<a class="headerlink" href="#linux-directory-structure" title="Permalink to this headline">∞</a></h3>
+<p>The default directory structure created by the package after installation is:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="36%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Directory Name</th>
+<th class="head">Purpose</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>/etc/foundationdb/sql/*</td>
+<td>Configuration file storage (see <a class="reference internal" href="#fdbsql-config-files"><em>Configuration Files</em></a>)</td>
+</tr>
+<tr class="row-odd"><td>/usr/sbin/fdbsqllayer</td>
+<td>SQL Layer start script</td>
+</tr>
+<tr class="row-even"><td>/usr/bin/fdbsql*</td>
+<td>CLI tool scripts</td>
+</tr>
+<tr class="row-odd"><td>/usr/share/foundationdb/sql/*</td>
+<td>Server, client and dependency jar files</td>
+</tr>
+<tr class="row-even"><td>/etc/init.d/fdbsqllayer</td>
+<td>System start script</td>
+</tr>
+<tr class="row-odd"><td>/var/log/foundationdb/sql/*</td>
+<td>Log files</td>
+</tr>
+<tr class="row-even"><td>/var/run/fdb-sql-layer.pid</td>
+<td>Process ID file</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>As part of the package install, a <tt class="docutils literal"><span class="pre">foundationdb</span></tt> user is also created. The SQL Layer instance will always run as the <tt class="docutils literal"><span class="pre">foundationdb</span></tt> user when installed from packages.</li>
+<li>The FoundationDB SQL Layer Java process entry point is com.foundationdb.sql.Main</li>
+</ul>
+</div>
+</div>
+<div class="section" id="max-os-x-directory-structure">
+<span id="fdbsql-mac-paths"></span><h3>Max OS X Directory Structure<a class="headerlink" href="#max-os-x-directory-structure" title="Permalink to this headline">∞</a></h3>
+<p>The default directory structure created by the package after installation is:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Directory Name</th>
+<th class="head">Purpose</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>/Library/LaunchDaemons/com.foundationdb.layer.sql.plist</td>
+<td>System start script</td>
+</tr>
+<tr class="row-odd"><td>/usr/local/etc/foundationdb/sql/*</td>
+<td>Configuration files (see <a class="reference internal" href="#fdbsql-config-files"><em>Configuration Files</em></a>)</td>
+</tr>
+<tr class="row-even"><td>/usr/local/libexec/fdbsqllayer</td>
+<td>SQL Layer start script</td>
+</tr>
+<tr class="row-odd"><td>/usr/local/bin/fdbsql*</td>
+<td>CLI tool scripts</td>
+</tr>
+<tr class="row-even"><td>/usr/local/foundationdb/sql/*</td>
+<td>Server, client and dependency jar files</td>
+</tr>
+<tr class="row-odd"><td>/usr/local/foundationdb/logs/sql/*</td>
+<td>Log files</td>
+</tr>
+<tr class="row-even"><td>/var/run/com.foundationdb.layer.sql.pid</td>
+<td>Process ID (pid) file</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="windows-configuration-and-data-paths">
+<span id="fdbsql-windows-paths"></span><h3>Windows configuration and data paths<a class="headerlink" href="#windows-configuration-and-data-paths" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer Windows installer creates the <a class="reference external" href="/web/20150325003259/http://msdn.microsoft.com/en-us/library/windows/desktop/bb762494(v=vs.85).aspx">CSIDL_COMMON_APPDATA</a><tt class="docutils literal"><span class="pre">\foundationdb\sql</span></tt> directory for configuration files. The location of this directory can vary depending on the version and language of Windows:</p>
+<ul class="simple">
+<li>On English Windows Vista/7 and newer: <tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb</span></tt></li>
+<li>On English Windows XP/Server 2003: <tt class="docutils literal"><span class="pre">C:\Documents</span> <span class="pre">and</span> <span class="pre">Settings\All</span> <span class="pre">Users\Application</span> <span class="pre">Data\foundationdb</span></tt></li>
+<li>On non-English Windows varieties, these paths may be localized.</li>
+</ul>
+<p>The log files are in <a class="reference external" href="/web/20150325003259/http://msdn.microsoft.com/en-us/library/windows/desktop/bb762494(v=vs.85).aspx">CSIDL_COMMON_APPDATA</a><tt class="docutils literal"><span class="pre">\foundationdb\logs\sql</span></tt> by default, so in Windows 7 they will be in <tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb\logs\sql\</span></tt></p>
+</div>
+</div>
+<div class="section" id="configuration-files">
+<span id="fdbsql-config-files"></span><h2>Configuration Files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">∞</a></h2>
+<p>Several configuration files are installed as part of the FoundationDB SQL Layer package in the configuration directory (See above for the configuration directory path in different OS.) You will see at least these four files:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">File</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>log4j.properties</td>
+<td><a class="reference internal" href="#fdbsql-config-logging"><em>Logging configuration</em></a></td>
+</tr>
+<tr class="row-odd"><td>jvm.options</td>
+<td><a class="reference internal" href="#fdbsql-config-jvm-options"><em>JVM configuration</em></a></td>
+</tr>
+<tr class="row-even"><td>server.properties</td>
+<td><a class="reference internal" href="#fdbsql-server-properties"><em>SQL Layer server configuration</em></a></td>
+</tr>
+<tr class="row-odd"><td>sqllayer.policy</td>
+<td><a class="reference internal" href="#fdbsql-policy-file"><em>SQL Layer policy file</em></a></td>
+</tr>
+</tbody>
+</table>
+<p>The different options for each of the three configuration files are summarized below. The most important one to review is <a class="reference internal" href="#fdbsql-server-properties"><em>server.properties</em></a>.</p>
+<div class="section" id="logging-options">
+<span id="fdbsql-config-logging"></span><h3>Logging Options<a class="headerlink" href="#logging-options" title="Permalink to this headline">∞</a></h3>
+<p>The FoundationDB SQL Layer uses <a class="reference external" href="/web/20150325003259/http://logging.apache.org/log4j/index.html">log4j</a>, a common Java logging library. There are multiple log4j properties that determine what gets logged and how. The important logging configuration properties are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="28%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>log4j.appender.rollingFile.File</td>
+<td>Name of file to rollover to when logging</td>
+<td><tt class="docutils literal"><span class="pre">layer.log</span></tt> (under <a class="reference internal" href="#fdbsql-directory-structure"><em>Directory Structure</em></a> logging)</td>
+</tr>
+<tr class="row-odd"><td>log4j.appender.rollingfile.MaxFileSize</td>
+<td>maximum log file</td>
+<td>10MB</td>
+</tr>
+<tr class="row-even"><td>log4j.appender.rollingfile.MaxBackupIndex</td>
+<td>number of log files</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">log4j system logging is different from query logging. The log4j logs hold the SQL instance general log that contains a trace of all activity in the local SQL Layer, including startup, shutdown, session info, errors, etc. When enabled, <a class="reference internal" href="#query-logging"><em>Query logging</em></a> captures only queries that exceed the <a class="reference internal" href="#fdbsql-querylog-execthresholdms"><em>exec_threshold_ms</em></a> threshold.</p>
+</div>
+</div>
+<div class="section" id="jvm-options">
+<span id="fdbsql-config-jvm-options"></span><h3>JVM Options<a class="headerlink" href="#jvm-options" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer runs on the Java Virtual Machine (JVM), which has quite a large number of options. Below are the important options we include in the <cite>jvm.options</cite> file distributed with SQL Layer along with their default values. Other JVM options are available in <a class="reference external" href="/web/20150325003259/http://java.com/">Oracle&#8217;s Java website</a>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="42%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">JVM Option/Property</th>
+<th class="head">Description</th>
+<th class="head">Default</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>MAX_HEAP_SIZE</td>
+<td>Maximum heap size</td>
+<td>512M</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="server-properties">
+<span id="fdbsql-server-properties"></span><h3>Server Properties<a class="headerlink" href="#server-properties" title="Permalink to this headline">∞</a></h3>
+<p>Server properties control the behavior of the SQL Layer instance. They are set in the <a class="reference internal" href="#fdbsql-config-files"><em>server.properties</em></a> configuration file on startup.</p>
+<p>A few of these properties can be set at runtime. These variables are identified in the tables below where Dynamic property is <tt class="docutils literal"><span class="pre">YES</span></tt>. They can be updated using the <tt class="docutils literal"><span class="pre">SET</span></tt> command for setting Session scope or the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/ddl/alter.server.html#alter-server-stmt"><em>ALTER SERVER</em></a> statement for setting Global scope. To change variables that can not be set at runtime, proceed to change the configuration file and <a class="reference internal" href="administration.html#fdbsql-administration-startstop"><em>restart the SQL Layer</em></a>.</p>
+<p>The name of the <tt class="docutils literal"><span class="pre">SET</span></tt> property is the configuration property without its dotted prefix. So, for <tt class="docutils literal"><span class="pre">fdbsql.sql.binary_output='hex'</span></tt> in the file, the corresponding statement is <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">binary_output</span> <span class="pre">TO</span> <span class="pre">'hex'</span></tt>.</p>
+<div class="section" id="cluster-options">
+<h4>Cluster Options<a class="headerlink" href="#cluster-options" title="Permalink to this headline">∞</a></h4>
+<p>Cluster options control the connection parameters the SQL Layer uses to connect to the underlying FoundationDB Cluster. See more information regarding <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/GettingStarted/index.html#installing-fbdsqllayer-cluster"><em>setting up a cluster in the installation guides</em></a>.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-fdb-cluster-file"><em>fdbsql.fdb.cluster_file</em></a></li>
+</ul>
+<span class="target" id="fdbsql-fdb-cluster-file"></span><dl class="var">
+<dt id="c.fdbsql.fdb.cluster_file">
+<tt class="descname">fdbsql.fdb.cluster_file</tt><a class="headerlink" href="#c.fdbsql.fdb.cluster_file" title="Permalink to this definition">∞</a></dt>
+<dd><p>Path to the FoundationDB Key-Value cluster file. This file must exist and be readable by the user starting the SQL Layer. See <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/administration.html#foundationdb-cluster-file" title="(in FoundationDB v3.0)"><em>Cluster files</em></a> form more details.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>See <a class="reference external" href="/web/20150325003259/https://foundationdb.com/documentation/3.0/administration.html#default-cluster-file" title="(in FoundationDB v3.0)"><em>Default cluster file</em></a></td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any path writable by SQL Layer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="server-options">
+<h4>Server Options<a class="headerlink" href="#server-options" title="Permalink to this headline">∞</a></h4>
+<p>SQL options control CLI connection, SQL syntax, sorting and collation related features.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-default-charset"><em>fdbsql.default_charset</em></a></li>
+<li><a class="reference internal" href="#fdbsql-default-collation"><em>fdbsql.default_collation</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-host"><em>fdbsql.postgres.host</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-port"><em>fdbsql.postgres.port</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-outputformat"><em>fdbsql.postgres.OutputFormat</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-statementcachecapacity"><em>fdbsql.postgres.statementCacheCapacity</em></a></li>
+<li><a class="reference internal" href="#fdbsql-routines-script-class-path"><em>fdbsql.routines.script_class_path</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sort-memory"><em>fdbsql.sort.memory</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sql-binary-output"><em>fdbsql.sql.binary_output</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sql-constraintchecktime"><em>fdbsql.sql.constraintCheckTime</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sql-jsonbinary-output"><em>fdbsql.sql.jsonbinary_output</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sql-querytimeout"><em>fdbsql.sql.queryTimeoutSec</em></a></li>
+<li><a class="reference internal" href="#fdbsql-sql-statement-timeout"><em>fdbsql.sql.statement_timeout</em></a></li>
+<li><a class="reference internal" href="#fdbsql-tmp-dir"><em>fdbsql.tmp_dir</em></a></li>
+<li><a class="reference internal" href="#optimizer-implicitaggregate"><em>optimizer.implicitAggregate</em></a></li>
+</ul>
+<span class="target" id="fdbsql-default-charset"></span><dl class="var">
+<dt id="c.fdbsql.default_charset">
+<tt class="descname">fdbsql.default_charset</tt><a class="headerlink" href="#c.fdbsql.default_charset" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies the default charset used. It is possible to override by setting a different charset in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html#create-table-stmt"><em>CREATE TABLE</em></a> statement. Supported charsets are listed in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/localization.html#charset"><em>charset</em></a> section of the Localization page.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>utf8</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/localization.html#charset"><em>supported charset</em></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-default-collation"></span><dl class="var">
+<dt id="c.fdbsql.default_collation">
+<tt class="descname">fdbsql.default_collation</tt><a class="headerlink" href="#c.fdbsql.default_collation" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies the default collation used. It is possible to override by setting a different collation in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.table.html#create-table-stmt"><em>CREATE TABLE</em></a> statement. Supported collations are listed in the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/localization.html#collation"><em>collation</em></a> section of the Localization page.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>ucs_binary</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/SQL/localization.html#collation"><em>supported collation</em></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-host"></span><dl class="var">
+<dt id="c.fdbsql.postgres.host">
+<tt class="descname">fdbsql.postgres.host</tt><a class="headerlink" href="#c.fdbsql.postgres.host" title="Permalink to this definition">∞</a></dt>
+<dd><p>Host on which to start the Postgres Server.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>localhost</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>IP | hostname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-port"></span><dl class="var">
+<dt id="c.fdbsql.postgres.port">
+<tt class="descname">fdbsql.postgres.port</tt><a class="headerlink" href="#c.fdbsql.postgres.port" title="Permalink to this definition">∞</a></dt>
+<dd><p>Port on which to start the Postgres Server.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>15432</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>1 .. 65535</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-outputformat"></span><dl class="var">
+<dt id="c.fdbsql.postgres.OutputFormat">
+<tt class="descname">fdbsql.postgres.OutputFormat</tt><a class="headerlink" href="#c.fdbsql.postgres.OutputFormat" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls whether Nested SQL query format is enabled, and therefore wether results are returned in table format or JSON format. Nested SQL Queries with nested select clauses are supported only when the output format is set to JSON.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>table</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>table | json</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-statementcachecapacity"></span><dl class="var">
+<dt id="c.fdbsql.postgres.statementCacheCapacity">
+<tt class="descname">fdbsql.postgres.statementCacheCapacity</tt><a class="headerlink" href="#c.fdbsql.postgres.statementCacheCapacity" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls the FoundationDB SQL Layer statement cache. If a query uses bind variables
+or a query with the same literals is sent to the FoundationDB SQL Layer, the statement
+cache can be used. Any statement retrieved from the cache avoids the need to
+perform query optimization since an execution plan for the query is kept
+in the statement cache.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="63%" />
+<col width="37%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>500</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>0 .. 4096</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-routines-script-class-path"></span><dl class="var">
+<dt id="c.fdbsql.routines.script_class_path">
+<tt class="descname">fdbsql.routines.script_class_path</tt><a class="headerlink" href="#c.fdbsql.routines.script_class_path" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies a path for additional script engines. The SQL Layer will check these paths and register script engines. Routines are then able to use the registerd names as a script language.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>&#8220;&#8221;</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any path readable by SQL Layer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sort-memory"></span><dl class="var">
+<dt id="c.fdbsql.sort.memory">
+<tt class="descname">fdbsql.sort.memory</tt><a class="headerlink" href="#c.fdbsql.sort.memory" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls the size of the memory buffer allocated for sorting operations. If the data exceeds this size, the buffer will be written to disk, in the <a class="reference internal" href="#fdbsql-tmp-dir"><em>fdbsql.tmp_dir</em></a> directory, with as many files as needed to sort the data. Defaults to 64M.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>64MB</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>0 .. OS Limit</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sql-binary-output"></span><dl class="var">
+<dt id="c.fdbsql.sql.binary_output">
+<tt class="descname">fdbsql.sql.binary_output</tt><a class="headerlink" href="#c.fdbsql.sql.binary_output" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies the format to be used when printing binary data as SQL columns.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="47%" />
+<col width="53%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>octal</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>octal | hex | base64</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sql-constraintchecktime"></span><dl class="var">
+<dt id="c.fdbsql.sql.constraintCheckTime">
+<tt class="descname">fdbsql.sql.constraintCheckTime</tt><a class="headerlink" href="#c.fdbsql.sql.constraintCheckTime" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls when uniqueness constraints are checked when inserting or updating rows. An important special case of a uniqueness constraint is the primary key. Every table has a primary key, even if none is declared. <tt class="docutils literal"><span class="pre">STATEMENT</span></tt> performs all checks for each statement in parallel, which can improve performance when multiple rows are being inserted / updated. <tt class="docutils literal"><span class="pre">DELAYED</span></tt> does not perform checks until <tt class="docutils literal"><span class="pre">COMMIT</span></tt> time, which gives maximum performance, but at the cost of potentially inconsistent <tt class="docutils literal"><span class="pre">SELECT</span></tt> behavior in a transaction that will later report an error. The <tt class="docutils literal"><span class="pre">_WITH_RANGE_CACHE</span></tt> variants also do a snapshot range scan, which can prefill the transaction cache with knowledge that there are no keys in a sequential range. See the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html#fdbsql-performance-guide-bulk-insert"><em>Performance Guide</em></a> for more general information on using this setting to improve bulk insert performance.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>IMMEDIATE</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>IMMEDIATE | STATEMENT | DELAYED | STATEMENT_WITH_RANGE_CACHE | DELAYED_WITH_RANGE_CACHE</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sql-jsonbinary-output"></span><dl class="var">
+<dt id="c.fdbsql.sql.jsonbinary_output">
+<tt class="descname">fdbsql.sql.jsonbinary_output</tt><a class="headerlink" href="#c.fdbsql.sql.jsonbinary_output" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specifies the format to be used when printing binary data as JSON values.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>base64</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>octal | hex | base64</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sql-querytimeout"></span><dl class="var">
+<dt id="c.fdbsql.sql.queryTimeoutSec">
+<tt class="descname">fdbsql.sql.queryTimeoutSec</tt><a class="headerlink" href="#c.fdbsql.sql.queryTimeoutSec" title="Permalink to this definition">∞</a></dt>
+<dd><p>The threshold in seconds for the time to allow a query to run. If a query is executing for longer than this threshold, it will be aborted. Set this to 0 to disable the threshold.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="53%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Double</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any positive double</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-sql-statement-timeout"></span><dl class="var">
+<dt id="c.fdbsql.sql.statement_timeout">
+<tt class="descname">fdbsql.sql.statement_timeout</tt><a class="headerlink" href="#c.fdbsql.sql.statement_timeout" title="Permalink to this definition">∞</a></dt>
+<dd><p>The threshold in milliseconds for the time to allow a query to run. If a query is executing for longer than this threshold, it will be aborted. Set this to 0 to disable the threshold.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any positive integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-tmp-dir"></span><dl class="var">
+<dt id="c.fdbsql.tmp_dir">
+<tt class="descname">fdbsql.tmp_dir</tt><a class="headerlink" href="#c.fdbsql.tmp_dir" title="Permalink to this definition">∞</a></dt>
+<dd><p>Path to location where temporary files are created during some sort operations and other local processing. default /tmp (really?) Temp file are created during some sort operations and other local processing. This directory need not exist before starting the server however the user starting the SQL Layer instance will need correct permissions in order to create the directory.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>System default (e.g. <tt class="docutils literal"><span class="pre">/tmp</span></tt>, <tt class="docutils literal"><span class="pre">%TEMP%</span></tt>)</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any path writable by the SQL Layer process</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="optimizer-implicitaggregate"></span><dl class="var">
+<dt id="c.optimizer.implicitAggregate">
+<tt class="descname">optimizer.implicitAggregate</tt><a class="headerlink" href="#c.optimizer.implicitAggregate" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls how non-aggregate fields in an aggregate query are handled. The
+default value &#8216;error&#8217; is compatible with the SQL standard. &#8216;first&#8217; returns
+the first value always, and &#8216;firstIfUnique&#8217; returns the first
+value if that is still deterministic.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>error</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>error | first | firstIfUnique</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="rest-api-http-options">
+<h4>REST API HTTP Options<a class="headerlink" href="#rest-api-http-options" title="Permalink to this headline">∞</a></h4>
+<p>HTTP options control the connection to the REST API.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-http-host"><em>fdbsql.http.host</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-login-cache-seconds"><em>fdbsql.http.login_cache_seconds</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-port"><em>fdbsql.http.port</em></a></li>
+<li><a class="reference internal" href="#fdbsql-security-realm"><em>fdbsql.security.realm</em></a></li>
+</ul>
+<span class="target" id="fdbsql-http-host"></span><dl class="var">
+<dt id="c.fdbsql.http.host">
+<tt class="descname">fdbsql.http.host</tt><a class="headerlink" href="#c.fdbsql.http.host" title="Permalink to this definition">∞</a></dt>
+<dd><p>Host name on which HTTP Server listens.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>localhost</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>IP | hostname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-login-cache-seconds"></span><dl class="var">
+<dt id="c.fdbsql.http.login_cache_seconds">
+<tt class="descname">fdbsql.http.login_cache_seconds</tt><a class="headerlink" href="#c.fdbsql.http.login_cache_seconds" title="Permalink to this definition">∞</a></dt>
+<dd><p>Controls how long to save credential look-ups.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>300</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-port"></span><dl class="var">
+<dt id="c.fdbsql.http.port">
+<tt class="descname">fdbsql.http.port</tt><a class="headerlink" href="#c.fdbsql.http.port" title="Permalink to this definition">∞</a></dt>
+<dd><p>Port on which to start the HTTP Server.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>8091</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>1 .. 65535</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-security-realm"></span><dl class="var">
+<dt id="c.fdbsql.security.realm">
+<tt class="descname">fdbsql.security.realm</tt><a class="headerlink" href="#c.fdbsql.security.realm" title="Permalink to this definition">∞</a></dt>
+<dd><p>The realm included in requests for authentication.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>SQLLayer</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>The following options control the handling of requests from clients
+operating in a different domain than the SQL Layer is listening on. This is
+commonly referred to as Cross-Site Request Access Control:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-allow-credentials"><em>fdbsql.http.cross_origin.allow_credentials</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-allowed-headers"><em>fdbsql.http.cross_origin.allowed_headers</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-allowed-methods"><em>fdbsql.http.cross_origin.allowed_methods</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-allowed-origins"><em>fdbsql.http.cross_origin.allowed_origins</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-enabled"><em>fdbsql.http.cross_origin.enabled</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-cross-origin-preflight-max-age"><em>fdbsql.http.cross_origin.preflight_max_age</em></a></li>
+</ul>
+<span class="target" id="fdbsql-http-cross-origin-allow-credentials"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.allow_credentials">
+<tt class="descname">fdbsql.http.cross_origin.allow_credentials</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.allow_credentials" title="Permalink to this definition">∞</a></dt>
+<dd><p>A boolean indicating if the resource allows requests with credentials.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>true</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>true | false</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-cross-origin-allowed-headers"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.allowed_headers">
+<tt class="descname">fdbsql.http.cross_origin.allowed_headers</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.allowed_headers" title="Permalink to this definition">∞</a></dt>
+<dd><p>Comma separated list of HTTP headers that are allowed to be specified when accessing resources.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>X-Requested-With,Content-Type,Accept,Origin</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Comma separated list of HTTP headers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-cross-origin-allowed-methods"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.allowed_methods">
+<tt class="descname">fdbsql.http.cross_origin.allowed_methods</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.allowed_methods" title="Permalink to this definition">∞</a></dt>
+<dd><p>Comma separated list of HTTP verbs that are allowed to be used when accessing resources. For more information on end points see the <a class="reference internal" href="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html#rest-api-reference"><em>REST API reference</em></a>.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>HEAD,GET,PUT,POST,DELETE,PATCH</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Comma separated list of HTTP methods</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-cross-origin-allowed-origins"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.allowed_origins">
+<tt class="descname">fdbsql.http.cross_origin.allowed_origins</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.allowed_origins" title="Permalink to this definition">∞</a></dt>
+<dd><p>Comma separated list of origins that are allowed to access the resources.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td><a class="reference external" href="/web/20150325003259/http://localhost:8091/">http://localhost:8091</a></td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Comma separated list of origins</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-cross-origin-enabled"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.enabled">
+<tt class="descname">fdbsql.http.cross_origin.enabled</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.enabled" title="Permalink to this definition">∞</a></dt>
+<dd><p>Determines whether Cross-Site requests are allowed.
+If set to <cite>false</cite>, the rest of the <cite>cross_origin</cite> configuration options are ignored, and no <cite>Access-Control-Allow-*</cite> headers are sent.
+If set to <cite>true</cite>, <cite>Access-Control-Allow-*</cite> headers are sent as specified by the other <cite>cross_origin</cite> options, allowing for cross-origin requests.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>false</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>true | false</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-cross-origin-preflight-max-age"></span><dl class="var">
+<dt id="c.fdbsql.http.cross_origin.preflight_max_age">
+<tt class="descname">fdbsql.http.cross_origin.preflight_max_age</tt><a class="headerlink" href="#c.fdbsql.http.cross_origin.preflight_max_age" title="Permalink to this definition">∞</a></dt>
+<dd><p>The number of seconds that preflight requests can be cached by the client.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="59%" />
+<col width="41%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>1800</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p id="fdbsql-csrf-config">The following options handle how CSRF protection is applied.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-http-csrf-protection-allowed-referers"><em>fdbsql.http.csrf_protection.allowed_referers</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-csrf-protection-type"><em>fdbsql.http.csrf_protection.type</em></a></li>
+</ul>
+<span class="target" id="fdbsql-http-csrf-protection-allowed-referers"></span><dl class="var">
+<dt id="c.fdbsql.http.csrf_protection.allowed_referers">
+<tt class="descname">fdbsql.http.csrf_protection.allowed_referers</tt><a class="headerlink" href="#c.fdbsql.http.csrf_protection.allowed_referers" title="Permalink to this definition">∞</a></dt>
+<dd><p>Comma separated list of referers that are allowed to access the resources.
+Only scheme, domain and port should be provided. Username, password, path and anchor are prohibited.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td><a class="reference external" href="/web/20150325003259/http://localhost/">http://localhost</a></td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Comma separated list of URIs</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-csrf-protection-type"></span><dl class="var">
+<dt id="c.fdbsql.http.csrf_protection.type">
+<tt class="descname">fdbsql.http.csrf_protection.type</tt><a class="headerlink" href="#c.fdbsql.http.csrf_protection.type" title="Permalink to this definition">∞</a></dt>
+<dd><p>How the CSRF protection will be applied.</p>
+<dl class="docutils">
+<dt>none</dt>
+<dd><blockquote class="first">
+<div>Disables all csrf protection.</div></blockquote>
+<dl class="last docutils">
+<dt>referer</dt>
+<dd>Verifies that the <cite>referer</cite> header is from one of the origins in <cite>allowed_referers</cite>.
+GET requests without a referer header or with a blank referer header are also allowed.
+All other requests prohibit blank or missing referer headers.</dd>
+</dl>
+</dd>
+</dl>
+<table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>referer</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>none | referer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="security-options">
+<h4>Security Options<a class="headerlink" href="#security-options" title="Permalink to this headline">∞</a></h4>
+<p>Authentication and Authorization can be enabled by setting these options. For a complete reference please review the <a class="reference internal" href="security.html#fdbsql-security"><em>security</em></a> section.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-http-login"><em>fdbsql.http.login</em></a></li>
+<li><a class="reference internal" href="#fdbsql-http-ssl"><em>fdbsql.http.ssl</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-gssconfigname"><em>fdbsql.postgres.gssConfigName</em></a></li>
+<li><a class="reference internal" href="#fdbsql-postgres-login"><em>fdbsql.postgres.login</em></a></li>
+<li><a class="reference internal" href="#fdbsql-restrict-user-schema"><em>fdbsql.restrict_user_schema</em></a></li>
+</ul>
+<span class="target" id="fdbsql-http-login"></span><dl class="var">
+<dt id="c.fdbsql.http.login">
+<tt class="descname">fdbsql.http.login</tt><a class="headerlink" href="#c.fdbsql.http.login" title="Permalink to this definition">∞</a></dt>
+<dd><p>Determines what form of authentication, if any, is required to connect to the HTTP REST API.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>none</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>none | basic | digest</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-http-ssl"></span><dl class="var">
+<dt id="c.fdbsql.http.ssl">
+<tt class="descname">fdbsql.http.ssl</tt><a class="headerlink" href="#c.fdbsql.http.ssl" title="Permalink to this definition">∞</a></dt>
+<dd><p>Determines whether a SSL connection is required.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>false</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>true | false</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-gssconfigname"></span><dl class="var">
+<dt id="c.fdbsql.postgres.gssConfigName">
+<tt class="descname">fdbsql.postgres.gssConfigName</tt><a class="headerlink" href="#c.fdbsql.postgres.gssConfigName" title="Permalink to this definition">∞</a></dt>
+<dd><p>As part of <a class="reference internal" href="security.html#fdbsql-kerberos"><em>enabling Kerberos support</em></a>, this property must contain the name of the JAAS configuration file in the configuration directory.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>none</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any valid configuration name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-postgres-login"></span><dl class="var">
+<dt id="c.fdbsql.postgres.login">
+<tt class="descname">fdbsql.postgres.login</tt><a class="headerlink" href="#c.fdbsql.postgres.login" title="Permalink to this definition">∞</a></dt>
+<dd><p>If this property is present in the <a class="reference internal" href="#fdbsql-config-files"><em>server.properties</em></a> configuration file then a password authentication is required.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="45%" />
+<col width="55%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>none</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>none | password | md5</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-restrict-user-schema"></span><dl class="var">
+<dt id="c.fdbsql.restrict_user_schema">
+<tt class="descname">fdbsql.restrict_user_schema</tt><a class="headerlink" href="#c.fdbsql.restrict_user_schema" title="Permalink to this definition">∞</a></dt>
+<dd><p>Restrict non-admin users to a single schema that has the same name as their user name. Admin users are unaffected.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>false</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>true | false</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="query-logging-options">
+<span id="query-logging"></span><h4>Query Logging Options<a class="headerlink" href="#query-logging-options" title="Permalink to this headline">∞</a></h4>
+<p>The SQL Layer provides an option to log queries issued to the server into a local file. The query log can be configured to log all queries or only queries taking longer than a configured time threshold to execute.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Query logging is different than the <a class="reference internal" href="administration.html#fdbsql-administration-logfile"><em>general logging</em></a> of the SQL Layer.</p>
+</div>
+<p>The query log file is a plain text, structured file that is readable by humans and can easily be parsed by tools. Here&#8217;s an example of some output in the query log file:</p>
+<div class="highlight-python"><div class="highlight"><pre>#
+# 2011-09-08 22:39:40.727
+# session_id=6
+# execution_time=53391
+# rows_processed=2139
+SELECT name, oid FROM customers INNER JOIN orders ON customers.cid=orders.cid WHERE order_date &lt; &#39;2014-02-02&#39;
+#
+# 2011-09-08 22:40:06.63
+# session_id=6
+# execution_time=17782
+# rows_processed=5000
+SELECT * FROM orders
+#
+# 2011-09-08 22:40:06.63
+# session_id=6
+# execution_time=12
+# error_msg=com.foundationdb.server.error.NoSuchColumnException: NO_SUCH_COLUMN: Unknown column: `no_such_table`
+SELECT no_such_table
+</pre></div>
+</div>
+<p>Events are separated by a single &#8216;#&#8217; character. This record separator can be used by scripts to easily separate events in a query log file. The separator marks the end of the event.</p>
+<p>Possible lines for an event are:</p>
+<ul class="simple">
+<li>Timestamp at which the query was logged (roughly query start time + execution_time) in the timezone of the logging SQL Layer instance.</li>
+<li><tt class="docutils literal"><span class="pre">session_id</span></tt> - Identifier of the executing session.</li>
+<li><tt class="docutils literal"><span class="pre">execution_time</span></tt> - Query duration in milliseconds.</li>
+<li><tt class="docutils literal"><span class="pre">rows_processed</span></tt> - (Optional) Number of rows processed by the query.</li>
+<li><tt class="docutils literal"><span class="pre">error_msg</span></tt> - (Optional) Error class, code, and message for failing statements.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In a distributed configuration, each SQL Layer instance will have a local log file containing queries that ran on that instance only.</p>
+</div>
+<p>Several properties in the server.properties file control query logging:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#fdbsql-querylog-enabled"><em>fdbsql.querylog.enabled</em></a></li>
+<li><a class="reference internal" href="#fdbsql-querylog-execthresholdms"><em>fdbsql.querylog.exec_threshold_ms</em></a></li>
+<li><a class="reference internal" href="#fdbsql-querylog-filename"><em>fdbsql.querylog.filename</em></a></li>
+</ul>
+</div></blockquote>
+<span class="target" id="fdbsql-querylog-enabled"></span><dl class="var">
+<dt id="c.fdbsql.querylog.enabled">
+<tt class="descname">fdbsql.querylog.enabled</tt><a class="headerlink" href="#c.fdbsql.querylog.enabled" title="Permalink to this definition">∞</a></dt>
+<dd><p>Whether the FoundationDB SQL Layer query log is enabled or not.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>boolean</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>false</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>true | false</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-querylog-execthresholdms"></span><dl class="var">
+<dt id="c.fdbsql.querylog.exec_threshold_ms">
+<tt class="descname">fdbsql.querylog.exec_threshold_ms</tt><a class="headerlink" href="#c.fdbsql.querylog.exec_threshold_ms" title="Permalink to this definition">∞</a></dt>
+<dd><p>The threshold in milliseconds for the time to log a query in the query log. If
+a query is executing for longer than this threshold, it will be logged in the
+query log file. Set this to 0 to log all queries issued against the SQL Layer.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="54%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>Integer</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td>0</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any positive integer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<span class="target" id="fdbsql-querylog-filename"></span><dl class="var">
+<dt id="c.fdbsql.querylog.filename">
+<tt class="descname">fdbsql.querylog.filename</tt><a class="headerlink" href="#c.fdbsql.querylog.filename" title="Permalink to this definition">∞</a></dt>
+<dd><p>File in which the FoundationDB SQL Layer query log will places queries it logs.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Property type</td>
+<td>String</td>
+</tr>
+<tr class="row-even"><td>Default value</td>
+<td><tt class="docutils literal"><span class="pre">queries.log</span></tt> (under <a class="reference internal" href="#fdbsql-directory-structure"><em>Directory Structure</em></a> logging)</td>
+</tr>
+<tr class="row-odd"><td>Dynamic property</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Range of values</td>
+<td>Any file writable by the SQL Layer</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="policy-file">
+<span id="fdbsql-policy-file"></span><h4>Policy File<a class="headerlink" href="#policy-file" title="Permalink to this headline">∞</a></h4>
+<p>The policy file defines permissions for packages. The java
+security manager will use this as a source to determine whether a certain
+action can be performend. It limits the capabilities of functions and procedures to perform
+malicious actions to the system. The routine firewall is the bottleneck
+for permissions. Permissions can be granted for specific actions using
+standard <a class="reference external" href="/web/20150325003259/https://docs.oracle.com/javase/jp/8/technotes/guides/security/PolicyFiles.html">Java syntax for policy files</a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003259/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Configuration</a><ul><li><a class="reference internal" href="#system-requirements">System requirements</a><ul><li><a class="reference internal" href="#operating-systems">Operating systems</a></li><li><a class="reference internal" href="#kernel-requirements">Kernel Requirements</a></li><li><a class="reference internal" href="#package-requirements">Package Requirements</a></li><li><a class="reference internal" href="#physical-requirements">Physical Requirements</a></li></ul></li><li><a class="reference internal" href="#directory-structure">Directory Structure</a><ul><li><a class="reference internal" href="#linux-directory-structure">Linux Directory Structure</a></li><li><a class="reference internal" href="#max-os-x-directory-structure">Max OS X Directory Structure</a></li><li><a class="reference internal" href="#windows-configuration-and-data-paths">Windows configuration and data paths</a></li></ul></li><li><a class="reference internal" href="#configuration-files">Configuration Files</a><ul><li><a class="reference internal" href="#logging-options">Logging Options</a></li><li><a class="reference internal" href="#jvm-options">JVM Options</a></li><li><a class="reference internal" href="#server-properties">Server Properties</a><ul><li><a class="reference internal" href="#cluster-options">Cluster Options</a></li><li><a class="reference internal" href="#server-options">Server Options</a></li><li><a class="reference internal" href="#rest-api-http-options">REST API HTTP Options</a></li><li><a class="reference internal" href="#security-options">Security Options</a></li><li><a class="reference internal" href="#query-logging-options">Query Logging Options</a></li><li><a class="reference internal" href="#policy-file">Policy File</a></li></ul></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003259/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003259/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003259/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003259js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:59 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:43 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

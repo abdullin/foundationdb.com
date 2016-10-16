@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app13.us.archive.org";archive_analytics.values.server_ms=221;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SET
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/other/set.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003617/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="+odhFGT6XtLxtfBDvvvFfqAlM/v5f0ZF2h4hCJacGK8=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003617/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003617/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003617/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../../index.html>Summary</a></li>
+<li>
+<a href=../../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../../Concepts/features.html>Features</a></li>
+<li><a href=../../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../index.html>SQL Reference</a></li>
+<li><a href=../../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../../Admin/configuration.html>Configuration</a></li>
+<li><a href=../../Admin/administration.html>Administration</a></li>
+<li><a href=../../Admin/security.html>Security</a></li>
+<li><a href=../../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../index.html>SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="set">
+<span id="set-stmt"></span><h1>SET<a class="headerlink" href="#set" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">∞</a></h2>
+<p>Use the <tt class="docutils literal"><span class="pre">SET</span></tt> statement to change session level properties.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">to change properties globally, use the <a class="reference internal" href=../ddl/alter.server.html><em>ALTER SERVER</em></a> statement instead.</p>
+</div>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">∞</a></h2>
+<div class="highlight-sql"><div class="highlight"><pre>SET &lt;property&gt; { TO | = } { &lt;value&gt; | &#39;&lt;value&gt;&#39; | DEFAULT }
+</pre></div>
+</div>
+<div class="highlight-sql"><div class="highlight"><pre>SET CONSTRAINTS { ALL | &lt;constraint&gt; } { IMMEDIATE | DEFERRED }
+</pre></div>
+</div>
+<div class="highlight-sql"><div class="highlight"><pre>SET [ SESSION CHARACTERISTICS AS ] TRANSACTION
+  {
+      ISOLATION LEVEL { READ UNCOMMITTED | READ COMMITTED NO SNAPSHOT | READ COMMITTED | REPEATABLE READ | SNAPSHOT | SERIALIZABLE }
+    | { READ ONLY | READ WRITE }
+  }
+</pre></div>
+</div>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">∞</a></h2>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">&lt;property&gt;</span></tt></dt>
+<dd>The name of the property being changed. See <a class="reference internal" href=../../Admin/configuration.html><em>Server Properties</em></a> for properties that can be changed with <tt class="docutils literal"><span class="pre">SET</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">&lt;value&gt;</span></tt></dt>
+<dd>The new value of the property.</dd>
+<dt><tt class="docutils literal"><span class="pre">DEFAULT</span></tt></dt>
+<dd>Restore the property to its default setting.</dd>
+<dt><tt class="docutils literal"><span class="pre">CONSTRAINTS</span> <span class="pre">{</span> <span class="pre">ALL</span> <span class="pre">|</span> <span class="pre">&lt;constraint&gt;</span> <span class="pre">}</span> <span class="pre">{</span> <span class="pre">IMMEDIATE</span> <span class="pre">|</span> <span class="pre">DEFERRED</span> <span class="pre">}</span></tt></dt>
+<dd>Change when a <tt class="docutils literal"><span class="pre">DEFERRBLE</span></tt> constraint, either <em>all</em> or the one named <em>constraint</em>, are checked. If <tt class="docutils literal"><span class="pre">IMMEDIATE</span></tt>, the constraint(s) are check at the end of the statement. If <tt class="docutils literal"><span class="pre">DEFERRED</span></tt>, they are checked at <tt class="docutils literal"><span class="pre">COMMIT</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">SESSION</span> <span class="pre">CHARACTERISTICS</span> <span class="pre">AS</span></tt></dt>
+<dd>If supplied when changing a <tt class="docutils literal"><span class="pre">TRANSACTION</span></tt> setting, it stays in effect for the lifetime of the session.</dd>
+<dt><tt class="docutils literal"><span class="pre">TRANSACTION</span> <span class="pre">{</span> <span class="pre">READ</span> <span class="pre">ONLY</span> <span class="pre">|</span> <span class="pre">READ</span> <span class="pre">WRITE</span> <span class="pre">}</span></tt></dt>
+<dd>If <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">ONLY</span></tt>, only statements that read values (e.g. <tt class="docutils literal"><span class="pre">SELECT</span></tt>) may be performed. If <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">WRITE</span></tt>, any statement may be performed.</dd>
+<dt><tt class="docutils literal"><span class="pre">TRANSACTION</span> <span class="pre">ISOLATION</span> <span class="pre">LEVEL</span></tt></dt>
+<dd><p class="first">Change how other, concurrent, transactions affect what data is seen and can be changed by this transaction. The default is <tt class="docutils literal"><span class="pre">SERIALIZABLE</span></tt>, which is the strongest and appropriate for most cases. If transactions concurrently modify data that another transaction reads, only one of the transactions will complete successfully.</p>
+<p><tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span> <span class="pre">NO</span> <span class="pre">SNAPSHOT</span></tt> allows a read-only transaction to see rolling snapshots of data that has been successfully committed, without encountering errors due to the time limit on how long a transaction can be open. <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span> <span class="pre">NO</span> <span class="pre">SNAPSHOT</span></tt> implies <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">ONLY</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">SNAPSHOT</span></tt> does not generate any read conflicts. Transactions will conflict only because they both try to write the same row, not because one updates what the other reads.</p>
+<p class="last">Requesting any other isolation level will actually give the next stronger level that is actually supported. So, <tt class="docutils literal"><span class="pre">REPEATABLE</span> <span class="pre">READ</span></tt> will actually give <tt class="docutils literal"><span class="pre">SNAPSHOT</span></tt>.</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h2>
+<p>Setting the encoding the client will send data in:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SET</span> <span class="n">client_encoding</span> <span class="k">TO</span> <span class="n">latin1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Disallow writes from this transaction:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SET</span> <span class="n">TRANSACTION</span> <span class="k">READ</span> <span class="k">ONLY</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SET</a><ul><li><a class="reference internal" href="#purpose">Purpose</a></li><li><a class="reference internal" href="#syntax">Syntax</a></li><li><a class="reference internal" href="#parameters">Parameters</a></li><li><a class="reference internal" href="#examples">Examples</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003617/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:17 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:42:03 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

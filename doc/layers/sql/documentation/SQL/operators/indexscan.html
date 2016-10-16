@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app19.us.archive.org";archive_analytics.values.server_ms=182;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Index Scan
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/operators/indexscan.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003758/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003758/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003758/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003758/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../../index.html>Summary</a></li>
+<li>
+<a href=../../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../../Concepts/features.html>Features</a></li>
+<li><a href=../../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../index.html>SQL Reference</a></li>
+<li><a href=../../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../../Admin/configuration.html>Configuration</a></li>
+<li><a href=../../Admin/administration.html>Administration</a></li>
+<li><a href=../../Admin/security.html>Security</a></li>
+<li><a href=../../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../index.html>SQL Reference</a> &raquo;
+    <a href=../../Concepts/query.execution.html>Query Execution</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="index-scan">
+<span id="algebra-operator-indexscan"></span><h1>Index Scan<a class="headerlink" href="#index-scan" title="Permalink to this headline">∞</a></h1>
+<p>This operator scans an index to locate index records whose keys are inside a
+given range.</p>
+<p>An index in FoundationDB SQL has both a key and value. For regular table indexes, an
+index row&#8217;s value is not used for anything. For group indexes however, an
+index row&#8217;s value contains a bitmap that identifies which rows are null.</p>
+<p>In general, an index row&#8217;s key consists of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>columns declared in the index</li>
+<li><tt class="docutils literal"><span class="pre">hkey</span></tt> columns that were declared as part of index</li>
+</ul>
+</div></blockquote>
+<div class="section" id="behavior">
+<h2>Behavior<a class="headerlink" href="#behavior" title="Permalink to this headline">∞</a></h2>
+<p>In the general case, the index is probed using the low end of the
+index key range. Index records are written to the output stream as long
+as they fall inside the index key range. When the first record outside
+the range is located, the scan is closed.</p>
+<p>It is also possible to have the initial probe start at the high end of
+the index key range and records are visited in descending key order.</p>
+<p>If the index being scanned is a group index, the join method used on the
+<a class="reference internal" href=../ddl/create.index.html><em>create index</em></a> becomes important. The index scan
+uses a list of tables for which the inner join semantics is assumed, skipping
+the index entries where the child table is requested, but missing.</p>
+<p>If we&#8217;re executing a query which has a LEFT JOIN between c and o, we
+would pass user table (CUSTOMER) as the inner join type
+and get all the rows. If we were executing a query plan which had
+an INNER JOIN between c and o, we would pass user table (ORDER)
+and get only the customers with orders.</p>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">∞</a></h2>
+<p>It is possible to specify INNER only partially up the branch. For
+instance, if our group index had been on (customer.name, order.date,
+item.sku), passing user table (ORDER) would be analogous to SQL
+FROM c INNER JOIN o LEFT JOIN i.</p>
+<p>Specifying the user table corresponding to the group
+index&#8217;s root-most table means the index will be scanned only with
+LEFT JOIN semantics; all entries (within the key range) will be
+returned.</p>
+<p>Specifying a user table not within the group index&#8217;s
+branch segment (i.e., root-ward of the group index&#8217;s root-most table, or
+leaf-ward of the group indexes leaf-most table, or in another branch or group)
+will result in an IllegalArgumentException during the operator&#8217;s construction</p>
+</div>
+<div class="section" id="output">
+<h2>Output<a class="headerlink" href="#output" title="Permalink to this headline">∞</a></h2>
+<p>Output contains index rows. Each row has an <tt class="docutils literal"><span class="pre">hkey</span></tt> of the index&#8217;s table.</p>
+</div>
+<div class="section" id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">∞</a></h2>
+<p>Index scan does one random access followed by as many sequential accesses as are required to cover the index key range.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Index Scan</a><ul><li><a class="reference internal" href="#behavior">Behavior</a></li><li><a class="reference internal" href="#notes">Notes</a></li><li><a class="reference internal" href="#output">Output</a></li><li><a class="reference internal" href="#performance">Performance</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003758/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:37:58 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:42:14 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

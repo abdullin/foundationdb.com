@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app4.us.archive.org";archive_analytics.values.server_ms=69;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Transport Layer Security
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/tls.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325014542/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325014542/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../index.html>Overview</a></li>
+<li><a href=index.html>Documentation</a></li>
+<li><a href=../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../https:/web.archive.org/web/20150325014542/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325014542/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../about/index.html>About Us</a></li>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+<li><a href=../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=index.html>Summary</a></li>
+<li><a href=index.html>Getting Started</a></li>
+<li><a href=tutorials.html>Tutorials</a></li>
+<li><a href=developer-guide.html>Developer Guide</a></li>
+<li><a href=data-modeling.html>Data Modeling</a></li>
+<li><a href=../recipes/index.html>Design Recipes</a></li>
+<li>
+<a href=api-reference.html>API Reference</a>
+<ul>
+<li><a href=api-python.html>Python API</a></li>
+<li><a href=api-ruby.html>Ruby API</a></li>
+<li><a href=api-node.html>Node.js API</a></li>
+<li><a href=api-php.html>PHP API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325014542/https:/foundationdb.com/key-value-store/documentation/javadoc/index.html>Java API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325014542/http:/godoc.org/github.com/FoundationDB/fdb-go/fdb>Go API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325014542/https:/github.com/Doxense/foundationdb-dotnet-client>.NET API</a></li>
+<li><a href=api-c.html>C API</a></li>
+</ul>
+</li>
+<li><a href=building-cluster.html>Building a Cluster</a></li>
+<li><a href=configuration.html>Configuration</a></li>
+<li><a href=administration.html>Administration</a></li>
+<li><a href=command-line-interface.html>Command Line Interface</a></li>
+<li><a href=mr-status.html>Machine-Readable Status</a></li>
+<li><a href=tls.html class="active">Transport Layer Security</a></li>
+<li><a href=backups.html>Backup and Restoration</a></li>
+<li><a href=known-limitations.html>Known Limitations</a></li>
+<li><a href=platforms.html>Platform Issues</a></li>
+<li><a href=release-notes.html>Release Notes</a></li>
+<li><a href=older/index.html>Older Versions</a></li>
+<li><a href=../white-papers/index.html>White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href=search.html>
+      <img alt="Magnifying-glass" src=../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="transport-layer-security">
+<h1>Transport Layer Security<a class="headerlink" href="#transport-layer-security" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">∞</a></h2>
+<p>Transport Layer Security (TLS) and its predecessor, Secure Sockets Layer (SSL), are protocols designed to provide communication security over public networks. Users exchange a symmetric session key that is used to encrypt data exchanged between the parties.</p>
+<p>By default, a FoundationDB cluster uses <em>unencrypted</em> connections among client and server processes. This document describes the <a class="reference external" href=../../https:/web.archive.org/web/20150325014542/http:/en.wikipedia.org/wiki/Transport_Layer_Security>Transport Layer Security</a> (TLS) capabilities of FoundationDB, which enable security and authentication through a public/private key infrastructure. TLS is provided in FoundationDB via a plugin-based architecture. This document will describe the basic TLS capabilities of FoundationDB and document the default plugin, which is based on <a class="reference external" href=../../https:/web.archive.org/web/20150325014542/http:/www.gnutls.org>GnuTLS</a>. TLS-enabled servers will only communicate with other TLS-enabled servers and TLS-enabled clients. Therefore, a cluster&#8217;s machines must all enable TLS in order for TLS to be used.</p>
+</div>
+<div class="section" id="setting-up-foundationdb-to-use-tls">
+<h2>Setting Up FoundationDB to use TLS<a class="headerlink" href="#setting-up-foundationdb-to-use-tls" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="enabling-tls-in-a-new-cluster">
+<span id="enable-tls"></span><h3>Enabling TLS in a new cluster<a class="headerlink" href="#enabling-tls-in-a-new-cluster" title="Permalink to this headline">∞</a></h3>
+<p>To set a new cluster to use TLS, use the <tt class="docutils literal"><span class="pre">-t</span></tt> flag on <tt class="docutils literal"><span class="pre">make-public.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host1$ sudo /usr/lib/foundationdb/make-public.py -t
+/etc/foundationdb/fdb.cluster is now using address 10.0.1.1 (TLS enabled)
+</pre></div>
+</div>
+<p>This will configure the new cluster to communicate with TLS.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Depending on your operating system, version and configuration, there may be a firewall in place that prevents external access to certain ports. If necessary, please consult the appropriate documentation for your OS and ensure that all machines in your cluster can reach the ports configured in your <a class="reference internal" href="configuration.html#foundationdb-conf"><em>configuration file</em></a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="converting-an-existing-cluster-to-use-tls">
+<span id="converting-existing-cluster"></span><h2>Converting an existing cluster to use TLS<a class="headerlink" href="#converting-an-existing-cluster-to-use-tls" title="Permalink to this headline">∞</a></h2>
+<p>Enabling TLS on an existing (non-TLS) cluster cannot be accomplished without downtime because all processes must have TLS enabled to communicate. At startup, each server process enables TLS if the addresses in its cluster file are TLS-enabled. As a result, server processes must be stopped and restarted to convert them to use TLS. To convert the cluster to TLS in the most conservative way:</p>
+<ol class="arabic simple">
+<li>Stop all FoundationDB clients and <a class="reference internal" href="administration.html#administration-running-foundationdb"><em>server processes</em></a> in the cluster.</li>
+<li>Change all cluster files to have the <tt class="docutils literal"><span class="pre">:tls</span></tt> suffix for each coordinator.</li>
+<li>Restart the cluster and the clients.</li>
+</ol>
+</div>
+<div class="section" id="configuring-the-tls-plugin">
+<span id="configuring-tls-plugin"></span><h2>Configuring the TLS Plugin<a class="headerlink" href="#configuring-the-tls-plugin" title="Permalink to this headline">∞</a></h2>
+<p>The location and operation of the TLS plugin are configured through four settings. These settings can be provided as command-line options, client options, or environment variables, and are named as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="16%" />
+<col width="23%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Command-line Option</th>
+<th class="head">Client Option</th>
+<th class="head">Environment Variable</th>
+<th class="head">Purpose</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tls_plugin</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">TLS_plugin</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">FDB_TLS_PLUGIN</span></tt></td>
+<td>Path to the file to be loaded as the TLS plugin</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">tls_certificate_file</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">TLS_cert_path</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">FDB_TLS_CERTIFICATE_FILE</span></tt></td>
+<td>Path to the file from which the local certificates
+can be loaded, used by the plugin</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tls_key_file</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">TLS_key_path</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">FDB_TLS_KEY_FILE</span></tt></td>
+<td>Path to the file from which to load the private
+key, used by the plugin</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">tls_verify_peers</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">TLS_verify_peers</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">FDB_TLS_VERIFY_PEERS</span></tt></td>
+<td>The byte-string for the verification of peer
+certificates and sessions, used by the plugin</td>
+</tr>
+</tbody>
+</table>
+<p>The value for each setting can be specified in more than one way.  The actual valued used is determined in the following order:</p>
+<ol class="arabic simple">
+<li>An explicity specified value as a command-line option or client option, if one is given;</li>
+<li>The value of the environment variable, if one has been set;</li>
+<li>The default value</li>
+</ol>
+<p>As with all other command-line options to <tt class="docutils literal"><span class="pre">fdbserver</span></tt>, the TLS settings can be specified in the <a class="reference internal" href="configuration.html#foundationdb-conf-fdbserver"><em>[fdbserver] section of the configuration file</em></a>.</p>
+<p>The settings for certificate file, key file, and peer verification are interpreted by the loaded plugin.</p>
+<div class="section" id="default-values">
+<h3>Default Values<a class="headerlink" href="#default-values" title="Permalink to this headline">∞</a></h3>
+<div class="section" id="plugin-default-location">
+<h4>Plugin default location<a class="headerlink" href="#plugin-default-location" title="Permalink to this headline">∞</a></h4>
+<p>Similarly, if a value is not specified for the parameter <tt class="docutils literal"><span class="pre">tls_plugin</span></tt>, the file will be specified by the environment variable <tt class="docutils literal"><span class="pre">FDB_TLS_PLUGIN</span></tt> or, if this variable is not set, the system-dependent location:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Linux: <tt class="docutils literal"><span class="pre">/usr/lib/foundationdb/plugins/FDBGnuTLS.so</span></tt></li>
+<li>Mac OS X: <tt class="docutils literal"><span class="pre">/usr/local/foundationdb/plugins/FDBGnuTLS.dylib</span></tt></li>
+<li>Windows: <tt class="docutils literal"><span class="pre">C:\Program</span> <span class="pre">Files\foundationdb\plugins\FDBGnuTLS.dll</span></tt></li>
+</ul>
+</div></blockquote>
+<p>On Windows, this location will be relative to the chosen installation location. The environment variable <tt class="docutils literal"><span class="pre">FOUNDATIONDB_INSTALL_PATH</span></tt> will be used in place of <tt class="docutils literal"><span class="pre">C:\Program</span> <span class="pre">Files\foundationdb\</span></tt> to determine this location.</p>
+</div>
+<div class="section" id="certificate-file-default-location">
+<h4>Certificate file default location<a class="headerlink" href="#certificate-file-default-location" title="Permalink to this headline">∞</a></h4>
+<p>The default behavior when the certificate or key file is not specified is to look for a file named <tt class="docutils literal"><span class="pre">fdb.pem</span></tt> in the current working directory. If this file is not present, an attempt is made to load a file from a system-dependent location:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Linux: <tt class="docutils literal"><span class="pre">/etc/foundationdb/fdb.pem</span></tt></li>
+<li>Mac OS X: <tt class="docutils literal"><span class="pre">/usr/local/etc/foundationdb/fdb.pem</span></tt></li>
+<li>Windows: <tt class="docutils literal"><span class="pre">C:\ProgramData\foundationdb\fdb.pem</span></tt></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="default-peer-verification">
+<h4>Default Peer Verification<a class="headerlink" href="#default-peer-verification" title="Permalink to this headline">∞</a></h4>
+<p>The default peer verification is the empty string.</p>
+</div>
+</div>
+<div class="section" id="parameters-and-client-bindings">
+<h3>Parameters and client bindings<a class="headerlink" href="#parameters-and-client-bindings" title="Permalink to this headline">∞</a></h3>
+<p>When loading a TLS plugin from a non-default location when using a client binding, the <tt class="docutils literal"><span class="pre">TLS_PLUGIN</span></tt> network option must be specified before any other TLS option. Because a loaded TLS plugin is allowed to reject the values specified in the other options, the plugin load operation will be forced by specifying one of the other options, if it not already specified.</p>
+</div>
+</div>
+<div class="section" id="the-default-gnutls-based-plugin">
+<h2>The default GnuTLS-based plugin<a class="headerlink" href="#the-default-gnutls-based-plugin" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB server and client libraries ship with a default TLS plugin based on the GnuTLS library. By default, it will be loaded automatically when participating in a TLS-enabled cluster.</p>
+<p>For the plugin to operate, each process (both server and client) must have an X509 certificate, its corresponding private key, and potentially the certificates with which is was signed. When a process begins to communicate with a FoundationDB server process, the peer&#8217;s certificate is checked to see if it is trusted and the fields of the peer certificate are verified. Peers must share the same root trusted certificate, and they must both present certificates whose signing chain includes this root certificate.</p>
+<p>If the local certificate and chain is invalid, a FoundationDB server process bound to a TLS address will not start. In the case of invalid certificates on a client, the client will be able to start but will be unable to connect any TLS-enabled cluster.</p>
+<div class="section" id="formats">
+<h3>Formats<a class="headerlink" href="#formats" title="Permalink to this headline">∞</a></h3>
+<p>The GnuTLS plugin can read certificates and their private keys in base64-encoded DER-formatted X.509 format (which is known as PEM). A PEM file can contain both certificates and a private key or the two can be stored in separate files.</p>
+</div>
+<div class="section" id="required-files">
+<h3>Required files<a class="headerlink" href="#required-files" title="Permalink to this headline">∞</a></h3>
+<p>A single file can contain the information as described in both of the following sections.</p>
+<div class="section" id="the-certificate-file">
+<span id="tls-certificate-file"></span><h4>The certificate file<a class="headerlink" href="#the-certificate-file" title="Permalink to this headline">∞</a></h4>
+<p>A file must be supplied that contains an ordered list of certificates. The first certificate is the process&#8217; own certificate. Each following certificate must sign the one preceding it.</p>
+<p>All but the last certificate are provided to peers during TLS handshake as the certificate chain.</p>
+<p>The last certificate in the list is the trusted certificate. All processes that want to communicate must have the same trusted certificate.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If the certificate list contains only one certificate, that certificate <em>must</em> be self-signed and will be used as both the certificate chain and the trusted certificate.</p>
+</div>
+<p>Each of these certificates must be in the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>--------BEGIN CERTIFICATE--------
+xxxxxxxxxxxxxxx
+--------END CERTIFICATE--------
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-key-file">
+<span id="tls-key-file"></span><h4>The key file<a class="headerlink" href="#the-key-file" title="Permalink to this headline">∞</a></h4>
+<p>The key file must contain the private key corresponding to the process&#8217; own certificate. The private key must be in PKCS#8 format, which means that it must be surrounded by:</p>
+<div class="highlight-python"><div class="highlight"><pre>-----BEGIN PRIVATE KEY-----
+xxxxxxxxxxxxxxx
+-----END PRIVATE KEY-----
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="certificate-creation">
+<h3>Certificate creation<a class="headerlink" href="#certificate-creation" title="Permalink to this headline">∞</a></h3>
+<p>If your organization already makes use of certificates for access control and securing communications, you should ask your security expert for organizational procedure for obtaining and verifying certificates. If the goal of enabling TLS is to make sure that only known machines can join or access the FoundationDB cluster and for securing communications, then creating your own certificates can serve these purposes.</p>
+<p>The following set of commands uses the OpenSSL command-line tools to create a self-signed certificate and private key. The certificate is then joined with the private key in the output <tt class="docutils literal"><span class="pre">fdb.pem</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host:&gt; openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout private.key -out cert.crt
+user@host:&gt; cat cert.crt private.key &gt; fdb.pem
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="peer-verification">
+<h2>Peer verification<a class="headerlink" href="#peer-verification" title="Permalink to this headline">∞</a></h2>
+<p>A FoundationDB server or client will only communicate with peers that present a certificate chain that meets the verification requirements. By default, the only requirement is that the provided certificate chain ends in a certificate signed by the local trusted certificate.</p>
+<div class="section" id="certificate-field-verification">
+<span id="tls-verify-peers"></span><h3>Certificate field verification<a class="headerlink" href="#certificate-field-verification" title="Permalink to this headline">∞</a></h3>
+<p>With a peer verification string, FoundationDB servers and clients can adjust what is required of the certificate chain presented by a peer. These options can make the certificate requirements more rigorous or more lenient.</p>
+<div class="section" id="turning-down-the-validation">
+<h4>Turning down the validation<a class="headerlink" href="#turning-down-the-validation" title="Permalink to this headline">∞</a></h4>
+<p>If the default checking of the certificate chain is too stringent, the verification string can contain settings to weaken what certificates are accepted.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Setting</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Check.Valid=0</span></tt></td>
+<td>Sets the current process to disable all further verification
+of a peer certificate.</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Check.Unexpired=0</span></tt></td>
+<td>Disables date checking of peer certificates. If the clocks in
+the cluster and between the clients and servers are not to be
+trusted, setting this value to <tt class="docutils literal"><span class="pre">0</span></tt> can allow communications
+to proceed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="adding-verification-requirements">
+<h4>Adding verification requirements<a class="headerlink" href="#adding-verification-requirements" title="Permalink to this headline">∞</a></h4>
+<p>Requirements can be placed on the fields of the Issuer and Subject DNs in the peer&#8217;s own certificate. These reqirements take the form of a comma-separated list of conditions. Each condition takes the form of <tt class="docutils literal"><span class="pre">field=value</span></tt>. Only certain fields from a DN can be matched against.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Field</th>
+<th class="head">Well known name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">CN</span></tt></td>
+<td>Common Name</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">C</span></tt></td>
+<td>County</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">L</span></tt></td>
+<td>Locality</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ST</span></tt></td>
+<td>State</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">O</span></tt></td>
+<td>Organization</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">OU</span></tt></td>
+<td>Organizational Unit</td>
+</tr>
+</tbody>
+</table>
+<p>The field of each condition may optionally have a DN prefix, which is otherwise considered to be for the Subject DN.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="78%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Prefix</th>
+<th class="head">DN</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">S.</span></tt>, <tt class="docutils literal"><span class="pre">Subject.</span></tt>, or none</td>
+<td>Subject</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">I.</span></tt>, or <tt class="docutils literal"><span class="pre">Issuer.</span></tt></td>
+<td>Issuer</td>
+</tr>
+</tbody>
+</table>
+<p>The value of a condition must be specified in a form derived from a subset of <a class="reference external" href=../../https:/web.archive.org/web/20150325014542/http:/www.ietf.org/rfc/rfc4514.txt>RFC 4514</a>. Specifically, the &#8220;raw&#8221; notation (a value starting with the <tt class="docutils literal"><span class="pre">#</span></tt> character) is not accepted. Other escaping mechanisms, including specifying characters by hex notation, are allowed. The specified field&#8217;s value must exactly match the value in the peer&#8217;s certificate.</p>
+<p>By default, the fields of a peer certificate&#8217;s DNs are not examined.</p>
+</div>
+<div class="section" id="verification-examples">
+<h4>Verification Examples<a class="headerlink" href="#verification-examples" title="Permalink to this headline">∞</a></h4>
+<p>A verification string can be of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>Check.Unexpired=0,I.C=US,C=US,S.O=XYZCorp\, LLC
+</pre></div>
+</div>
+<p>This verification string would:</p>
+<ul class="simple">
+<li>Skip the check on all peer certificates that the certificate is not yet expired</li>
+<li>Require that the Issuer have a Country field of <tt class="docutils literal"><span class="pre">US</span></tt></li>
+<li>Require that the Subject have a Country field of <tt class="docutils literal"><span class="pre">US</span></tt></li>
+<li>Require that the Subject have a Organization field of <tt class="docutils literal"><span class="pre">XYZCorp,</span> <span class="pre">LLC</span></tt></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Transport Layer Security</a><ul><li><a class="reference internal" href="#introduction">Introduction</a></li><li><a class="reference internal" href="#setting-up-foundationdb-to-use-tls">Setting Up FoundationDB to use TLS</a><ul><li><a class="reference internal" href="#enabling-tls-in-a-new-cluster">Enabling TLS in a new cluster</a></li></ul></li><li><a class="reference internal" href="#converting-an-existing-cluster-to-use-tls">Converting an existing cluster to use TLS</a></li><li><a class="reference internal" href="#configuring-the-tls-plugin">Configuring the TLS Plugin</a><ul><li><a class="reference internal" href="#default-values">Default Values</a><ul><li><a class="reference internal" href="#plugin-default-location">Plugin default location</a></li><li><a class="reference internal" href="#certificate-file-default-location">Certificate file default location</a></li><li><a class="reference internal" href="#default-peer-verification">Default Peer Verification</a></li></ul></li><li><a class="reference internal" href="#parameters-and-client-bindings">Parameters and client bindings</a></li></ul></li><li><a class="reference internal" href="#the-default-gnutls-based-plugin">The default GnuTLS-based plugin</a><ul><li><a class="reference internal" href="#formats">Formats</a></li><li><a class="reference internal" href="#required-files">Required files</a><ul><li><a class="reference internal" href="#the-certificate-file">The certificate file</a></li><li><a class="reference internal" href="#the-key-file">The key file</a></li></ul></li><li><a class="reference internal" href="#certificate-creation">Certificate creation</a></li></ul></li><li><a class="reference internal" href="#peer-verification">Peer verification</a><ul><li><a class="reference internal" href="#certificate-field-verification">Certificate field verification</a><ul><li><a class="reference internal" href="#turning-down-the-validation">Turning down the validation</a></li><li><a class="reference internal" href="#adding-verification-requirements">Adding verification requirements</a></li><li><a class="reference internal" href="#verification-examples">Verification Examples</a></li></ul></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../https:/web.archive.org/web/20150325014542/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 1:45:42 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:28:36 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

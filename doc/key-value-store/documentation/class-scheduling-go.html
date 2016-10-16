@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app7.us.archive.org";archive_analytics.values.server_ms=288;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Class Scheduling in Go
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/class-scheduling-go.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003512/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="ARwnTUJaw+JQ8vjUDdankdA3KzJOd+tR6sTasHuttbA=" name="csrf-token" />
+<link href=../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003512/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../index.html>Overview</a></li>
+<li><a href=index.html>Documentation</a></li>
+<li><a href=../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../https:/web.archive.org/web/20150325003512/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003512/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../about/index.html>About Us</a></li>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+<li><a href=../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=index.html>Summary</a></li>
+<li><a href=index.html>Getting Started</a></li>
+<li><a href=tutorials.html>Tutorials</a></li>
+<li><a href=developer-guide.html>Developer Guide</a></li>
+<li><a href=data-modeling.html>Data Modeling</a></li>
+<li><a href=../recipes/index.html>Design Recipes</a></li>
+<li>
+<a href=api-reference.html>API Reference</a>
+<ul>
+<li><a href=api-python.html>Python API</a></li>
+<li><a href=api-ruby.html>Ruby API</a></li>
+<li><a href=api-node.html>Node.js API</a></li>
+<li><a href=api-php.html>PHP API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003512/https:/foundationdb.com/key-value-store/documentation/javadoc/index.html>Java API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003512/http:/godoc.org/github.com/FoundationDB/fdb-go/fdb>Go API</a></li>
+<li><a href=../../https:/web.archive.org/web/20150325003512/https:/github.com/Doxense/foundationdb-dotnet-client>.NET API</a></li>
+<li><a href=api-c.html>C API</a></li>
+</ul>
+</li>
+<li><a href=building-cluster.html>Building a Cluster</a></li>
+<li><a href=configuration.html>Configuration</a></li>
+<li><a href=administration.html>Administration</a></li>
+<li><a href=command-line-interface.html>Command Line Interface</a></li>
+<li><a href=mr-status.html>Machine-Readable Status</a></li>
+<li><a href=tls.html>Transport Layer Security</a></li>
+<li><a href=backups.html>Backup and Restoration</a></li>
+<li><a href=known-limitations.html>Known Limitations</a></li>
+<li><a href=platforms.html>Platform Issues</a></li>
+<li><a href=release-notes.html>Release Notes</a></li>
+<li><a href=older/index.html>Older Versions</a></li>
+<li><a href=../white-papers/index.html>White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="tutorials.html">Tutorials</a> &raquo;
+    <a href="class-scheduling.html">Class Scheduling</a> &raquo;
+    
+    <a id="mobile-search-link" href=search.html>
+      <img alt="Magnifying-glass" src=../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="class-scheduling-in-go">
+<h1>Class Scheduling in Go<a class="headerlink" href="#class-scheduling-in-go" title="Permalink to this headline">∞</a></h1>
+<p>This tutorial provides a walkthrough of designing and building a simple application in Go using FoundationDB. In this tutorial, we use a few simple data modeling techniques. For a more in-depth discussion of data modeling in FoundationDB, see <a class="reference internal" href="data-modeling.html"><em>Data Modeling</em></a>.</p>
+<p>The concepts in this tutorial are applicable to all the <a class="reference internal" href="api-reference.html"><em>languages</em></a> supported by FoundationDB. If you prefer, you can see a version of this tutorial in <a class="reference internal" href="class-scheduling.html"><em>Python</em></a>, <a class="reference internal" href="class-scheduling-ruby.html"><em>Ruby</em></a>, or <a class="reference internal" href="class-scheduling-java.html"><em>Java</em></a>.</p>
+<div class="section" id="first-steps">
+<span id="class-sched-go-first-steps"></span><h2>First steps<a class="headerlink" href="#first-steps" title="Permalink to this headline">∞</a></h2>
+<p>Let&#8217;s begin with &#8220;Hello world.&#8221;</p>
+<p>If you have not yet installed FoundationDB, see <a class="reference internal" href="getting-started.html"><em>Getting Started</em></a>.</p>
+<p>We&#8217;ll start by importing the basic FoundationDB package, as well as the <tt class="docutils literal"><span class="pre">log</span></tt> and <tt class="docutils literal"><span class="pre">format</span></tt> packages:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb&quot;</span>
+  <span class="s">&quot;log&quot;</span>
+  <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Before using the API, we need to specify the API version. This allows programs to maintain compatibility even if the API is modified in future versions:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">fdb</span><span class="p">.</span><span class="nx">MustAPIVersion</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, we open a FoundationDB database.  The API will connect to the FoundationDB cluster indicated by the <a class="reference internal" href="administration.html#default-cluster-file"><em>default cluster file</em></a>.</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">db</span> <span class="o">:=</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">MustOpenDefault</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We&#8217;re ready to use the database. First, let&#8217;s write a key-value pair.</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">e</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">fdb</span><span class="p">.</span><span class="nx">Key</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">))</span>
+    <span class="k">return</span>
+<span class="p">})</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Unable to set FDB database value (%v)&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When this function returns without error, the modification is durably stored in FoundationDB! Under the covers, this function creates a transaction with a single modification. We’ll see later how to do multiple operations in a single transaction. For now, let’s read back the data:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">ret</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">e</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">ret</span> <span class="p">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">fdb</span><span class="p">.</span><span class="nx">Key</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)).</span><span class="nx">MustGet</span><span class="p">()</span>
+    <span class="k">return</span>
+<span class="p">})</span>
+<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Unable to read FDB database value (%v)&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nx">v</span> <span class="o">:=</span> <span class="nx">ret</span><span class="p">.([]</span><span class="kt">byte</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;hello, %s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>If this is all working, it looks like we are ready to start building a real application. For reference, here&#8217;s the full code for &#8220;hello world&#8221;:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb&quot;</span>
+    <span class="s">&quot;log&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// Different API versions may expose different runtime behaviors.</span>
+    <span class="nx">fdb</span><span class="p">.</span><span class="nx">MustAPIVersion</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="c1">// Open the default database from the system cluster</span>
+    <span class="nx">db</span> <span class="o">:=</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">MustOpenDefault</span><span class="p">()</span>
+
+    <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">e</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">fdb</span><span class="p">.</span><span class="nx">Key</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">))</span>
+        <span class="k">return</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Unable to set FDB database value (%v)&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">ret</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">e</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ret</span> <span class="p">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">fdb</span><span class="p">.</span><span class="nx">Key</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">)).</span><span class="nx">MustGet</span><span class="p">()</span>
+        <span class="k">return</span>
+    <span class="p">})</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">log</span><span class="p">.</span><span class="nx">Fatalf</span><span class="p">(</span><span class="s">&quot;Unable to read FDB database value (%v)&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">v</span> <span class="o">:=</span> <span class="nx">ret</span><span class="p">.([]</span><span class="kt">byte</span><span class="p">)</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;hello, %s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="class-scheduling-application">
+<h2>Class scheduling application<a class="headerlink" href="#class-scheduling-application" title="Permalink to this headline">∞</a></h2>
+<p>Let&#8217;s say we&#8217;ve been asked to build a class scheduling system for students and administrators. We&#8217;ll walk through the design and implementation of this application. Instead of typing everything in as you follow along, look at the <a class="reference internal" href="#class-sched-go-appendix"><em>Appendix: classScheduling.go</em></a> for a finished version of the program. You may want to refer to this code as we walk through the tutorial.</p>
+<div class="section" id="requirements">
+<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">∞</a></h3>
+<p>We&#8217;ll need to let users list available classes and track which students have signed up for which classes. Here&#8217;s a first cut at the functions we&#8217;ll need to implement:</p>
+<div class="highlight-python"><div class="highlight"><pre>availableClasses()       // returns list of classes
+signup(studentID, class) // signs up a student for a class
+drop(studentID, class)   // drops a student from a class
+</pre></div>
+</div>
+</div>
+<div class="section" id="data-model">
+<span id="class-sched-go-data-model"></span><h3>Data model<a class="headerlink" href="#data-model" title="Permalink to this headline">∞</a></h3>
+<p>First, we need to design a <a class="reference internal" href="data-modeling.html"><em>data model</em></a>. A data model is just a method for storing our application data using keys and values in FoundationDB. We seem to have two main types of data: (1) a list of classes and (2) a record of which students will attend which classes. Let&#8217;s keep attending data like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>// (&quot;attends&quot;, student, class) = &quot;&quot;
+</pre></div>
+</div>
+<p>We&#8217;ll just store the key with a blank value to indicate that a student is signed up for a particular class. For this application, we&#8217;re going to think about a key-value pair&#8217;s key as a <a class="reference internal" href="data-modeling.html#data-modeling-tuples"><em>tuple</em></a>. Encoding a tuple of data elements into a key is a very common pattern for an ordered key-value store.</p>
+<p>We&#8217;ll keep data about classes like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>// (&quot;class&quot;, class_name) = seatsAvailable
+</pre></div>
+</div>
+<p>Similarly, each such key will represent an available class. We&#8217;ll use <tt class="docutils literal"><span class="pre">seatsAvailable</span></tt> to record the number of seats available.</p>
+</div>
+<div class="section" id="directories-and-subspaces">
+<h3>Directories and Subspaces<a class="headerlink" href="#directories-and-subspaces" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB includes a few modules that make it easy to model data using this approach:</p>
+<div class="highlight-python"><div class="highlight"><pre>import (
+  &quot;github.com/FoundationDB/fdb-go/fdb&quot;
+  &quot;github.com/FoundationDB/fdb-go/fdb/directory&quot;
+  &quot;github.com/FoundationDB/fdb-go/fdb/subspace&quot;
+  &quot;github.com/FoundationDB/fdb-go/fdb/tuple&quot;
+)
+</pre></div>
+</div>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">directory</span></tt> module lets us open a <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>directory</em></a> in the database:</p>
+<div class="highlight-python"><div class="highlight"><pre>schedulingDir, err := directory.CreateOrOpen(db, []string{&quot;scheduling&quot;}, nil)
+if e != nil {
+  log.Fatal(e)
+}
+</pre></div>
+</div>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">CreateOrOpen()</span></tt> function returns a <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>subspace</em></a> where we&#8217;ll store our application data. Each subspace has a fixed prefix it uses when defining keys. The prefix corresponds to the first element of a tuple. We decided that we wanted <tt class="docutils literal"><span class="pre">&quot;attends&quot;</span></tt> and  <tt class="docutils literal"><span class="pre">&quot;class&quot;</span></tt> as our prefixes, so we&#8217;ll create new subspaces for them within the <tt class="docutils literal"><span class="pre">scheduling</span></tt> subspace.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">courseSS</span> <span class="o">=</span> <span class="n">schedulingDir</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="s">&quot;class&quot;</span><span class="p">)</span>
+<span class="n">attendSS</span> <span class="o">=</span> <span class="n">schedulingDir</span><span class="o">.</span><span class="n">Sub</span><span class="p">(</span><span class="s">&quot;attends&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Subspaces have a <tt class="xref py py-func docutils literal"><span class="pre">Pack()</span></tt> function for defining keys. To store the records for our data model, we can use <tt class="docutils literal"><span class="pre">attendSS.Pack(tuple.Tuple{studentID,</span> <span class="pre">class})</span></tt> and <tt class="docutils literal"><span class="pre">courseSS.Pack(tuple.Tuple{class})</span></tt>.</p>
+</div>
+<div class="section" id="transactions">
+<h3>Transactions<a class="headerlink" href="#transactions" title="Permalink to this headline">∞</a></h3>
+<p>We&#8217;re going to rely on the powerful guarantees of transactions to help keep all of our modifications straight, so let&#8217;s look at how the FoundationDB Go API lets you write a transactional function. We use <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt> to execute a code block transactionally. For example, to <tt class="docutils literal"><span class="pre">signup</span></tt> a <tt class="docutils literal"><span class="pre">studentID</span></tt> for a <tt class="docutils literal"><span class="pre">class</span></tt>, we might use:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">}),</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A function using this approach takes a parameter of type <tt class="docutils literal"><span class="pre">Transactor</span></tt>. When <em>calling</em> such a function, you can pass an argument of type <tt class="docutils literal"><span class="pre">Database</span></tt> or <tt class="docutils literal"><span class="pre">Transaction</span></tt>. The function to be executed transactionally is parameterized by the <tt class="docutils literal"><span class="pre">Transaction</span></tt> it will use to do reads and writes.</p>
+<p>When using a <tt class="docutils literal"><span class="pre">Database</span></tt>, <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt> <em>automatically creates a transaction and implements a retry loop</em> to ensure that the transaction eventually commits. If you instead pass a <tt class="docutils literal"><span class="pre">Transaction</span></tt>, that transaction will be used directly, and it is assumed that the caller implements appropriate retry logic for errors. This permits functions using this pattern to be composed into larger transactions.</p>
+<p>Without the <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt> method, signup would look something like:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">db</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Database</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">tr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">d</span><span class="p">.</span><span class="nx">CreateTransaction</span><span class="p">()</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+
+  <span class="nx">wrapped</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">e</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.(</span><span class="nx">Error</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+          <span class="nx">err</span> <span class="p">=</span> <span class="nx">e</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nb">panic</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}()</span>
+
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">}),</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Commit</span><span class="p">().</span><span class="nx">Get</span><span class="p">()</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span> <span class="p">{</span>
+    <span class="nx">wrapped</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">fe</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="nx">Error</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">ok</span> <span class="p">{</span>
+      <span class="nx">err</span> <span class="p">=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">OnError</span><span class="p">(</span><span class="nx">fe</span><span class="p">).</span><span class="nx">Get</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Furthermore, this version can only be called with a <tt class="docutils literal"><span class="pre">Database</span></tt>, making it impossible to compose larger transactional functions by calling one from another.</p>
+</div>
+<div class="section" id="making-some-sample-classes">
+<h3>Making some sample classes<a class="headerlink" href="#making-some-sample-classes" title="Permalink to this headline">∞</a></h3>
+<p>Let&#8217;s make some sample classes and put them in the <tt class="docutils literal"><span class="pre">classNames</span></tt> variable. We&#8217;ll make individual classes from combinations of class types, levels, and times:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">var</span> <span class="nx">levels</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;intro&quot;</span><span class="p">,</span> <span class="s">&quot;for dummies&quot;</span><span class="p">,</span> <span class="s">&quot;remedial&quot;</span><span class="p">,</span> <span class="s">&quot;101&quot;</span><span class="p">,</span> <span class="s">&quot;201&quot;</span><span class="p">,</span> <span class="s">&quot;301&quot;</span><span class="p">,</span> <span class="s">&quot;mastery&quot;</span><span class="p">,</span> <span class="s">&quot;lab&quot;</span><span class="p">,</span> <span class="s">&quot;seminar&quot;</span><span class="p">}</span>
+<span class="kd">var</span> <span class="nx">types</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;chem&quot;</span><span class="p">,</span> <span class="s">&quot;bio&quot;</span><span class="p">,</span> <span class="s">&quot;cs&quot;</span><span class="p">,</span> <span class="s">&quot;geometry&quot;</span><span class="p">,</span> <span class="s">&quot;calc&quot;</span><span class="p">,</span> <span class="s">&quot;alg&quot;</span><span class="p">,</span> <span class="s">&quot;film&quot;</span><span class="p">,</span> <span class="s">&quot;music&quot;</span><span class="p">,</span> <span class="s">&quot;art&quot;</span><span class="p">,</span> <span class="s">&quot;dance&quot;</span><span class="p">}</span>
+<span class="kd">var</span> <span class="nx">times</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;2:00&quot;</span><span class="p">,</span> <span class="s">&quot;3:00&quot;</span><span class="p">,</span> <span class="s">&quot;4:00&quot;</span><span class="p">,</span> <span class="s">&quot;5:00&quot;</span><span class="p">,</span> <span class="s">&quot;6:00&quot;</span><span class="p">,</span> <span class="s">&quot;7:00&quot;</span><span class="p">,</span> <span class="s">&quot;8:00&quot;</span><span class="p">,</span> <span class="s">&quot;9:00&quot;</span><span class="p">,</span> <span class="s">&quot;10:00&quot;</span><span class="p">,</span> <span class="s">&quot;11:00&quot;</span><span class="p">,</span>
+                     <span class="s">&quot;12:00&quot;</span><span class="p">,</span> <span class="s">&quot;13:00&quot;</span><span class="p">,</span> <span class="s">&quot;14:00&quot;</span><span class="p">,</span> <span class="s">&quot;15:00&quot;</span><span class="p">,</span> <span class="s">&quot;16:00&quot;</span><span class="p">,</span> <span class="s">&quot;17:00&quot;</span><span class="p">,</span> <span class="s">&quot;18:00&quot;</span><span class="p">,</span> <span class="s">&quot;19:00&quot;</span><span class="p">}</span>
+
+<span class="nx">classes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">levels</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="nx">types</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">levels</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">types</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">times</span> <span class="p">{</span>
+      <span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">types</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">)</span><span class="o">+</span><span class="nx">j</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">)</span><span class="o">+</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s %s %s&quot;</span><span class="p">,</span> <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">types</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">times</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initializing-the-database">
+<h3>Initializing the database<a class="headerlink" href="#initializing-the-database" title="Permalink to this headline">∞</a></h3>
+<p>Next, we initialize the database with our class list:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">tr</span><span class="p">.</span><span class="nx">ClearRange</span><span class="p">(</span><span class="nx">schedulingDir</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">classes</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="p">]}),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>After this code is run, the database will contain all of the sample classes we created above.</p>
+</div>
+<div class="section" id="listing-available-classes">
+<h3>Listing available classes<a class="headerlink" href="#listing-available-classes" title="Permalink to this headline">∞</a></h3>
+<p>Before students can do anything else, they need to be able to retrieve a list of available classes from the database. Because FoundationDB sorts its data by key and therefore has efficient range-read capability, we can retrieve all of the classes in a single database call. We find this range of keys with <tt class="xref py py-func docutils literal"><span class="pre">GetRange()</span></tt>:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">availableClasses</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">)</span> <span class="p">(</span><span class="nx">ac</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">r</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">ReadTransact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">rtr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">ReadTransaction</span><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">classes</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="nx">ri</span> <span class="o">:=</span> <span class="nx">rtr</span><span class="p">.</span><span class="nx">GetRange</span><span class="p">(</span><span class="nx">courseSS</span><span class="p">,</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">RangeOptions</span><span class="p">{}).</span><span class="nx">Iterator</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">Advance</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">kv</span> <span class="o">:=</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">MustGet</span><span class="p">()</span>
+      <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Unpack</span><span class="p">(</span><span class="nx">kv</span><span class="p">.</span><span class="nx">Key</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+      <span class="p">}</span>
+      <span class="nx">classes</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">classes</span><span class="p">,</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">].(</span><span class="kt">string</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">classes</span><span class="p">,</span> <span class="kc">nil</span>
+  <span class="p">})</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">ac</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.([]</span><span class="kt">string</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <tt class="xref py py-func docutils literal"><span class="pre">GetRange()</span></tt> function returns the key-values specified by its range. In this case, we use the subspace <tt class="docutils literal"><span class="pre">courseSS</span></tt> to get all the classes.</p>
+</div>
+<div class="section" id="signing-up-for-a-class">
+<h3>Signing up for a class<a class="headerlink" href="#signing-up-for-a-class" title="Permalink to this headline">∞</a></h3>
+<p>We finally get to the crucial function (which we saw before when looking at <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt>). A student has decided on a class (by name) and wants to sign up. The <tt class="docutils literal"><span class="pre">signup</span></tt> function will take a <tt class="docutils literal"><span class="pre">studentID</span></tt> and a <tt class="docutils literal"><span class="pre">class</span></tt>:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We simply insert the appropriate record (with a blank value).</p>
+</div>
+<div class="section" id="dropping-a-class">
+<h3>Dropping a class<a class="headerlink" href="#dropping-a-class" title="Permalink to this headline">∞</a></h3>
+<p>Dropping a class is similar to signing up:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Clear</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">)</span>
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Of course, to actually drop the student from the class, we need to be able to delete a record from the database.  We do this with the <tt class="xref py py-func docutils literal"><span class="pre">Clear()</span></tt> function.</p>
+</div>
+<div class="section" id="done">
+<h3>Done?<a class="headerlink" href="#done" title="Permalink to this headline">∞</a></h3>
+<p>We report back to the project leader that our application is done&#8212;students can sign up for, drop, and list classes. Unfortunately, we learn that there has been a bit of scope creep in the mean time. Popular classes are getting over-subscribed, and our application is going to need to enforce the class size constraint as students add and drop classes.</p>
+</div>
+<div class="section" id="seats-are-limited">
+<h3>Seats are limited!<a class="headerlink" href="#seats-are-limited" title="Permalink to this headline">∞</a></h3>
+<p>Let&#8217;s go back to the data model. Remember that we stored the number of seats in the class in the value of the key-value entry in the class list. Let&#8217;s refine that a bit to track the <em>remaining</em> number of seats in the class. The initialization can work the same way (in our example, all classes initially have 100 seats), but the <tt class="docutils literal"><span class="pre">availableClasses</span></tt>, <tt class="docutils literal"><span class="pre">signup</span></tt>, and <tt class="docutils literal"><span class="pre">drop</span></tt> functions are going to have to change. Let&#8217;s start with <tt class="docutils literal"><span class="pre">availableClasses</span></tt>:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">availableClasses</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">)</span> <span class="p">(</span><span class="nx">ac</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">r</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">ReadTransact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">rtr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">ReadTransaction</span><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">classes</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="nx">ri</span> <span class="o">:=</span> <span class="nx">rtr</span><span class="p">.</span><span class="nx">GetRange</span><span class="p">(</span><span class="nx">courseSS</span><span class="p">,</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">RangeOptions</span><span class="p">{}).</span><span class="nx">Iterator</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">Advance</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">kv</span> <span class="o">:=</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">MustGet</span><span class="p">()</span>
+<span class="hll">      <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">kv</span><span class="p">.</span><span class="nx">Value</span><span class="p">),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span><span class="hll">      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="hll">        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="hll">      <span class="p">}</span>
+</span><span class="hll">      <span class="k">if</span> <span class="nx">v</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span>        <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Unpack</span><span class="p">(</span><span class="nx">kv</span><span class="p">.</span><span class="nx">Key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+        <span class="p">}</span>
+        <span class="nx">classes</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">classes</span><span class="p">,</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">].(</span><span class="kt">string</span><span class="p">))</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">classes</span><span class="p">,</span> <span class="kc">nil</span>
+  <span class="p">})</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">ac</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.([]</span><span class="kt">string</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is easy &#8211; we simply add a condition to check that the value is non-zero. Let&#8217;s check out <tt class="docutils literal"><span class="pre">signup</span></tt> next:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+  <span class="nx">classKey</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">return</span> <span class="c1">// already signed up</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="nx">seats</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">classKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">return</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="hll">    <span class="k">if</span> <span class="nx">seats</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span><span class="hll">      <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;no remaining seats&quot;</span><span class="p">)</span>
+</span><span class="hll">      <span class="k">return</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">classKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="nx">seats</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+</span>    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>We now have to check that we aren&#8217;t already signed up, since we don&#8217;t want a double sign up to decrease the number of seats twice. Then we look up how many seats are left to make sure there is a seat remaining so we don&#8217;t push the counter into the negative. If there is a seat remaining, we decrement the counter.</p>
+</div>
+<div class="section" id="concurrency-and-consistency">
+<h3>Concurrency and consistency<a class="headerlink" href="#concurrency-and-consistency" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">signup</span></tt> function is starting to get a bit complex; it now reads and writes a few different key-value pairs in the database. One of the tricky issues in this situation is what happens as multiple clients/students read and modify the database at the same time. Couldn&#8217;t two students both see one remaining seat and sign up at the same time?</p>
+<p>These are tricky issues without simple answers&#8212;unless you have transactions! Because these functions are defined as FoundationDB transactions, we can have a simple answer: Each transactional function behaves as if it is the only one modifying the database. There is no way for a transaction to &#8216;see&#8217; another transaction change the database, and each transaction ensures that either all of its modifications occur or none of them do.</p>
+<p>Looking deeper, it is, of course, possible for two transactions to conflict. For example, if two people both see a class with one seat and sign up at the same time, FoundationDB must allow only one to succeed. This causes one of the transactions to fail to commit (which can also be caused by network outages, crashes, etc.). To ensure correct operation, applications need to handle this situation, usually via retrying the transaction. In this case, the conflicting transaction will be retried automatically by the <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt> function and will eventually lead to the correct result, a &#8216;No remaining seats&#8217; error.</p>
+</div>
+<div class="section" id="idempotence">
+<h3>Idempotence<a class="headerlink" href="#idempotence" title="Permalink to this headline">∞</a></h3>
+<p>Occasionally, a transaction might be retried even after it succeeds (for example, if the client loses contact with the cluster at just the wrong moment). This can cause problems if transactions are not written to be idempotent, i.e. to have the same effect if committed twice as if committed once. There are generic design patterns for <a class="reference internal" href="developer-guide.html#developer-guide-unknown-results"><em>making any transaction idempotent</em></a>, but many transactions are naturally idempotent. For example, all of the transactions in this tutorial are idempotent.</p>
+</div>
+<div class="section" id="dropping-with-limited-seats">
+<h3>Dropping with limited seats<a class="headerlink" href="#dropping-with-limited-seats" title="Permalink to this headline">∞</a></h3>
+<p>Let&#8217;s finish up the limited seats feature by modifying the drop function:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+  <span class="nx">classKey</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">return</span> <span class="c1">// not taking this class</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="nx">seats</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">classKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span><span class="hll">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="hll">      <span class="k">return</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="hll">
+</span><span class="hll">    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">classKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="nx">seats</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+</span>    <span class="nx">tr</span><span class="p">.</span><span class="nx">Clear</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">)</span>
+
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This case is easier than signup because there are no constraints we can hit. We just need to make sure the student is in the class and to &#8220;give back&#8221; one seat when the student drops.</p>
+</div>
+<div class="section" id="more-features">
+<h3>More features?!<a class="headerlink" href="#more-features" title="Permalink to this headline">∞</a></h3>
+<p>Of course, as soon as our new version of the system goes live, we hear of a trick that certain students are using. They are signing up for all classes immediately, and only later dropping those that they don&#8217;t want to take. This has led to an unusable system, and we have been asked to fix it. We decide to limit students to five classes:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+  <span class="nx">classKey</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="c1">// already signed up</span>
+    <span class="p">}</span>
+
+    <span class="nx">seats</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">classKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nx">seats</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+      <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;no remaining seats&quot;</span><span class="p">)</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+<span class="hll">    <span class="nx">classes</span> <span class="o">:=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">GetRange</span><span class="p">(</span><span class="nx">attendSS</span><span class="p">.</span><span class="nx">Sub</span><span class="p">(</span><span class="nx">studentID</span><span class="p">),</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">RangeOptions</span><span class="p">{</span><span class="nx">Mode</span><span class="p">:</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">StreamingModeWantAll</span><span class="p">}).</span><span class="nx">GetSliceOrPanic</span><span class="p">()</span>
+</span><span class="hll">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span> <span class="p">{</span>
+</span><span class="hll">      <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;too many classes&quot;</span><span class="p">)</span>
+</span><span class="hll">      <span class="k">return</span>
+</span><span class="hll">    <span class="p">}</span>
+</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">classKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="nx">seats</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Fortunately, we decided on a data model that keeps all of the attending records for a single student together. With this approach, we can use a single range read to retrieve all the classes that a student attends. We simply return an error if the number of classes has reached the limit of five.</p>
+</div>
+<div class="section" id="composing-transactions">
+<h3>Composing transactions<a class="headerlink" href="#composing-transactions" title="Permalink to this headline">∞</a></h3>
+<p>Oh, just one last feature, we&#8217;re told. We have students that are trying to switch from one popular class to another. By the time they drop one class to free up a slot for themselves, the open slot in the other class is gone. By the time they see this and try to re-add their old class, that slot is gone too! So, can we make it so that a student can switch from one class to another without this worry?</p>
+<p>Fortunately, we have FoundationDB, and this sounds an awful lot like the transactional property of atomicity&#8212;the all-or-nothing behavior that we already rely on. All we need to do is to <em>compose</em> the <tt class="docutils literal"><span class="pre">drop</span></tt> and <tt class="docutils literal"><span class="pre">signup</span></tt> functions into a new <tt class="docutils literal"><span class="pre">swap</span></tt> function. This makes the <tt class="docutils literal"><span class="pre">swap</span></tt> function exceptionally easy:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kd">func</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">oldClass</span><span class="p">,</span> <span class="nx">newClass</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">tr</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">oldClass</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">tr</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">newClass</span><span class="p">)</span>
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The simplicity of this implementation belies the sophistication of what FoundationDB is taking care of for us.</p>
+<p>By dropping the old class and signing up for the new one inside a single transaction, we ensure that either both steps happen, or that neither happens. The first notable thing about the <tt class="docutils literal"><span class="pre">swap</span></tt> function is that it is transactional, but it also calls the transactional functions <tt class="docutils literal"><span class="pre">signup</span></tt> and <tt class="docutils literal"><span class="pre">drop</span></tt>. Because these transactional functions can accept either a <tt class="docutils literal"><span class="pre">Database</span></tt> or an existing <tt class="docutils literal"><span class="pre">Transaction</span></tt> as their <tt class="docutils literal"><span class="pre">db</span></tt> parameter, the <tt class="docutils literal"><span class="pre">switchClass</span></tt> function can be called with a database by a simple client, and a new transaction will be automatically created. However, once this transaction is created and passed in as <tt class="docutils literal"><span class="pre">tr</span></tt>, the calls to <tt class="docutils literal"><span class="pre">drop</span></tt> and <tt class="docutils literal"><span class="pre">signup</span></tt> both share the same <tt class="docutils literal"><span class="pre">tr</span></tt>. This ensures that they see each other&#8217;s modifications to the database, and all of the changes that both of them make in sequence are made transactionally when the <tt class="docutils literal"><span class="pre">switchClass</span></tt> function returns. This compositional capability is very powerful.</p>
+<p>Also note that, if an exception is raised, for example, in <tt class="docutils literal"><span class="pre">signup</span></tt>, the exception is not caught by <tt class="docutils literal"><span class="pre">swap</span></tt> and so will be thrown to the calling function. In this case, the transaction object (owned by the <tt class="xref py py-func docutils literal"><span class="pre">Transact()</span></tt> function) is destroyed, automatically rolling back all database modifications, leaving the database completely unchanged by the half-executed function.</p>
+</div>
+<div class="section" id="are-we-done">
+<h3>Are we done?<a class="headerlink" href="#are-we-done" title="Permalink to this headline">∞</a></h3>
+<p>Yep, we&#8217;re done. Fortunately, our UI team built an awesome UI while we were working on our back end, and we are ready to deploy. If you want to see this entire application in one place plus some concurrent testing code, look at the <a class="reference internal" href="#class-sched-go-appendix"><em>Appendix: classScheduling.go</em></a>, below.</p>
+</div>
+<div class="section" id="deploying-and-scaling">
+<h3>Deploying and scaling<a class="headerlink" href="#deploying-and-scaling" title="Permalink to this headline">∞</a></h3>
+<p>Since we store all state for this application in FoundationDB, deploying and scaling this solution up is impressively painless. Just run a web server, the UI, this back end, and point the whole thing at FoundationDB. We can run as many computers with this setup as we want, and they can all hit the database at the same time because of the transactional integrity of FoundationDB. Also, since all of the state in the system is stored in the database, any of these computers can fail without any lasting consequences.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li>See <a class="reference internal" href="data-modeling.html"><em>Data Modeling</em></a> for guidance on using tuple and subspaces to enable effective storage and retrieval of data.</li>
+<li>See <a class="reference internal" href="developer-guide.html"><em>Developer Guide</em></a> for general guidance on development using FoundationDB.</li>
+<li>See the <a class="reference internal" href="api-reference.html"><em>API References</em></a> for detailed API documentation.</li>
+</ul>
+</div>
+<div class="section" id="appendix-classscheduling-go">
+<span id="class-sched-go-appendix"></span><h2>Appendix: classScheduling.go<a class="headerlink" href="#appendix-classscheduling-go" title="Permalink to this headline">∞</a></h2>
+<p>Here&#8217;s the code for the scheduling tutorial:</p>
+<div class="highlight-go"><div class="highlight"><pre><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+  <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb&quot;</span>
+  <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb/directory&quot;</span>
+  <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb/subspace&quot;</span>
+  <span class="s">&quot;github.com/FoundationDB/fdb-go/fdb/tuple&quot;</span>
+
+  <span class="s">&quot;fmt&quot;</span>
+  <span class="s">&quot;log&quot;</span>
+  <span class="s">&quot;strconv&quot;</span>
+  <span class="s">&quot;errors&quot;</span>
+  <span class="s">&quot;sync&quot;</span>
+  <span class="s">&quot;math/rand&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span> <span class="nx">courseSS</span> <span class="nx">subspace</span><span class="p">.</span><span class="nx">Subspace</span>
+<span class="kd">var</span> <span class="nx">attendSS</span> <span class="nx">subspace</span><span class="p">.</span><span class="nx">Subspace</span>
+
+<span class="kd">var</span> <span class="nx">classes</span> <span class="p">[]</span><span class="kt">string</span>
+
+<span class="kd">func</span> <span class="nx">availableClasses</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">)</span> <span class="p">(</span><span class="nx">ac</span> <span class="p">[]</span><span class="kt">string</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">r</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">ReadTransact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">rtr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">ReadTransaction</span><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">classes</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="nx">ri</span> <span class="o">:=</span> <span class="nx">rtr</span><span class="p">.</span><span class="nx">GetRange</span><span class="p">(</span><span class="nx">courseSS</span><span class="p">,</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">RangeOptions</span><span class="p">{}).</span><span class="nx">Iterator</span><span class="p">()</span>
+    <span class="k">for</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">Advance</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">kv</span> <span class="o">:=</span> <span class="nx">ri</span><span class="p">.</span><span class="nx">MustGet</span><span class="p">()</span>
+      <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">kv</span><span class="p">.</span><span class="nx">Value</span><span class="p">),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="nx">v</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Unpack</span><span class="p">(</span><span class="nx">kv</span><span class="p">.</span><span class="nx">Key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+        <span class="p">}</span>
+        <span class="nx">classes</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">classes</span><span class="p">,</span> <span class="nx">t</span><span class="p">[</span><span class="mi">0</span><span class="p">].(</span><span class="kt">string</span><span class="p">))</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">classes</span><span class="p">,</span> <span class="kc">nil</span>
+  <span class="p">})</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">ac</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.([]</span><span class="kt">string</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+  <span class="nx">classKey</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="c1">// already signed up</span>
+    <span class="p">}</span>
+
+    <span class="nx">seats</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">classKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nx">seats</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+      <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;no remaining seats&quot;</span><span class="p">)</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">classes</span> <span class="o">:=</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">GetRange</span><span class="p">(</span><span class="nx">attendSS</span><span class="p">.</span><span class="nx">Sub</span><span class="p">(</span><span class="nx">studentID</span><span class="p">),</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">RangeOptions</span><span class="p">{</span><span class="nx">Mode</span><span class="p">:</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">StreamingModeWantAll</span><span class="p">}).</span><span class="nx">GetSliceOrPanic</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span> <span class="p">{</span>
+      <span class="nx">err</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="s">&quot;too many classes&quot;</span><span class="p">)</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">classKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="nx">seats</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">,</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{})</span>
+
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">SCKey</span> <span class="o">:=</span> <span class="nx">attendSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">})</span>
+  <span class="nx">classKey</span> <span class="o">:=</span> <span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">class</span><span class="p">})</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="c1">// not taking this class</span>
+    <span class="p">}</span>
+
+    <span class="nx">seats</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">tr</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">classKey</span><span class="p">).</span><span class="nx">MustGet</span><span class="p">()),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">classKey</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="nx">seats</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">Clear</span><span class="p">(</span><span class="nx">SCKey</span><span class="p">)</span>
+
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">t</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transactor</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">oldClass</span><span class="p">,</span> <span class="nx">newClass</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="nx">ret</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">tr</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">oldClass</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+      <span class="k">return</span>
+    <span class="p">}</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">tr</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">newClass</span><span class="p">)</span>
+    <span class="k">return</span>
+  <span class="p">})</span>
+  <span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">fdb</span><span class="p">.</span><span class="nx">MustAPIVersion</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+  <span class="nx">db</span> <span class="o">:=</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">MustOpenDefault</span><span class="p">()</span>
+
+  <span class="nx">schedulingDir</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">directory</span><span class="p">.</span><span class="nx">CreateOrOpen</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;scheduling&quot;</span><span class="p">},</span> <span class="kc">nil</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">courseSS</span> <span class="p">=</span> <span class="nx">schedulingDir</span><span class="p">.</span><span class="nx">Sub</span><span class="p">(</span><span class="s">&quot;class&quot;</span><span class="p">)</span>
+  <span class="nx">attendSS</span> <span class="p">=</span> <span class="nx">schedulingDir</span><span class="p">.</span><span class="nx">Sub</span><span class="p">(</span><span class="s">&quot;attends&quot;</span><span class="p">)</span>
+
+  <span class="kd">var</span> <span class="nx">levels</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;intro&quot;</span><span class="p">,</span> <span class="s">&quot;for dummies&quot;</span><span class="p">,</span> <span class="s">&quot;remedial&quot;</span><span class="p">,</span> <span class="s">&quot;101&quot;</span><span class="p">,</span> <span class="s">&quot;201&quot;</span><span class="p">,</span> <span class="s">&quot;301&quot;</span><span class="p">,</span> <span class="s">&quot;mastery&quot;</span><span class="p">,</span> <span class="s">&quot;lab&quot;</span><span class="p">,</span> <span class="s">&quot;seminar&quot;</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">types</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;chem&quot;</span><span class="p">,</span> <span class="s">&quot;bio&quot;</span><span class="p">,</span> <span class="s">&quot;cs&quot;</span><span class="p">,</span> <span class="s">&quot;geometry&quot;</span><span class="p">,</span> <span class="s">&quot;calc&quot;</span><span class="p">,</span> <span class="s">&quot;alg&quot;</span><span class="p">,</span> <span class="s">&quot;film&quot;</span><span class="p">,</span> <span class="s">&quot;music&quot;</span><span class="p">,</span> <span class="s">&quot;art&quot;</span><span class="p">,</span> <span class="s">&quot;dance&quot;</span><span class="p">}</span>
+  <span class="kd">var</span> <span class="nx">times</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;2:00&quot;</span><span class="p">,</span> <span class="s">&quot;3:00&quot;</span><span class="p">,</span> <span class="s">&quot;4:00&quot;</span><span class="p">,</span> <span class="s">&quot;5:00&quot;</span><span class="p">,</span> <span class="s">&quot;6:00&quot;</span><span class="p">,</span> <span class="s">&quot;7:00&quot;</span><span class="p">,</span> <span class="s">&quot;8:00&quot;</span><span class="p">,</span> <span class="s">&quot;9:00&quot;</span><span class="p">,</span> <span class="s">&quot;10:00&quot;</span><span class="p">,</span> <span class="s">&quot;11:00&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;12:00&quot;</span><span class="p">,</span> <span class="s">&quot;13:00&quot;</span><span class="p">,</span> <span class="s">&quot;14:00&quot;</span><span class="p">,</span> <span class="s">&quot;15:00&quot;</span><span class="p">,</span> <span class="s">&quot;16:00&quot;</span><span class="p">,</span> <span class="s">&quot;17:00&quot;</span><span class="p">,</span> <span class="s">&quot;18:00&quot;</span><span class="p">,</span> <span class="s">&quot;19:00&quot;</span><span class="p">}</span>
+
+  <span class="nx">classes</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">levels</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="nx">types</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">))</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">levels</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">types</span> <span class="p">{</span>
+      <span class="k">for</span> <span class="nx">k</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">times</span> <span class="p">{</span>
+        <span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">types</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">)</span><span class="o">+</span><span class="nx">j</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="nx">times</span><span class="p">)</span><span class="o">+</span><span class="nx">k</span><span class="p">]</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s %s %s&quot;</span><span class="p">,</span> <span class="nx">levels</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">types</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">times</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Transact</span><span class="p">(</span><span class="kd">func</span> <span class="p">(</span><span class="nx">tr</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Transaction</span><span class="p">)</span> <span class="p">(</span><span class="kd">interface</span><span class="p">{},</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">tr</span><span class="p">.</span><span class="nx">ClearRange</span><span class="p">(</span><span class="nx">schedulingDir</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">classes</span> <span class="p">{</span>
+      <span class="nx">tr</span><span class="p">.</span><span class="nx">Set</span><span class="p">(</span><span class="nx">courseSS</span><span class="p">.</span><span class="nx">Pack</span><span class="p">(</span><span class="nx">tuple</span><span class="p">.</span><span class="nx">Tuple</span><span class="p">{</span><span class="nx">classes</span><span class="p">[</span><span class="nx">i</span><span class="p">]}),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+  <span class="p">})</span>
+
+  <span class="nx">run</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">indecisiveStudent</span><span class="p">(</span><span class="nx">db</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Database</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">ops</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">studentID</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;s%d&quot;</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span>
+
+  <span class="nx">allClasses</span> <span class="o">:=</span> <span class="nx">classes</span>
+
+  <span class="kd">var</span> <span class="nx">myClasses</span> <span class="p">[]</span><span class="kt">string</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">ops</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">moods</span> <span class="p">[]</span><span class="kt">string</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+      <span class="nx">moods</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">moods</span><span class="p">,</span> <span class="s">&quot;drop&quot;</span><span class="p">,</span> <span class="s">&quot;switch&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">)</span> <span class="p">&lt;</span> <span class="mi">5</span> <span class="p">{</span>
+      <span class="nx">moods</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">moods</span><span class="p">,</span> <span class="s">&quot;add&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Need to recheck classes:&quot;</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+          <span class="nx">allClasses</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{}</span>
+        <span class="p">}</span>
+      <span class="p">}()</span>
+
+      <span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="nx">allClasses</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">availableClasses</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">switch</span> <span class="nx">moods</span><span class="p">[</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Intn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">moods</span><span class="p">))]</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="s">&quot;add&quot;</span><span class="p">:</span>
+        <span class="nx">class</span> <span class="o">:=</span> <span class="nx">allClasses</span><span class="p">[</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Intn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">))]</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="nx">signup</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">class</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">myClasses</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">,</span> <span class="nx">class</span><span class="p">)</span>
+      <span class="k">case</span> <span class="s">&quot;drop&quot;</span><span class="p">:</span>
+        <span class="nx">classI</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nx">Intn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">))</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="nx">drop</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">myClasses</span><span class="p">[</span><span class="nx">classI</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">myClasses</span><span class="p">[</span><span class="nx">classI</span><span class="p">],</span> <span class="nx">myClasses</span> <span class="p">=</span> <span class="nx">myClasses</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nx">myClasses</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="k">case</span> <span class="s">&quot;switch&quot;</span><span class="p">:</span>
+        <span class="nx">oldClassI</span> <span class="o">:=</span> <span class="nx">rand</span><span class="p">.</span><span class="nx">Intn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">myClasses</span><span class="p">))</span>
+        <span class="nx">newClass</span> <span class="o">:=</span> <span class="nx">allClasses</span><span class="p">[</span><span class="nx">rand</span><span class="p">.</span><span class="nx">Intn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">allClasses</span><span class="p">))]</span>
+        <span class="nx">err</span> <span class="p">=</span> <span class="nx">swap</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">studentID</span><span class="p">,</span> <span class="nx">myClasses</span><span class="p">[</span><span class="nx">oldClassI</span><span class="p">],</span> <span class="nx">newClass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+          <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="nx">myClasses</span><span class="p">[</span><span class="nx">oldClassI</span><span class="p">]</span> <span class="p">=</span> <span class="nx">newClass</span>
+      <span class="p">}</span>
+    <span class="p">}()</span>
+  <span class="p">}</span>
+
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">Done</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">run</span><span class="p">(</span><span class="nx">db</span> <span class="nx">fdb</span><span class="p">.</span><span class="nx">Database</span><span class="p">,</span> <span class="nx">students</span><span class="p">,</span> <span class="nx">opsPerStudent</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">students</span><span class="p">)</span>
+
+  <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">students</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="k">go</span> <span class="nx">indecisiveStudent</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">opsPerStudent</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">wg</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nx">wg</span><span class="p">.</span><span class="nx">Wait</span><span class="p">()</span>
+
+  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Ran&quot;</span><span class="p">,</span> <span class="nx">students</span> <span class="o">*</span> <span class="nx">opsPerStudent</span><span class="p">,</span> <span class="s">&quot;transactions&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Class Scheduling in Go</a><ul><li><a class="reference internal" href="#first-steps">First steps</a></li><li><a class="reference internal" href="#class-scheduling-application">Class scheduling application</a><ul><li><a class="reference internal" href="#requirements">Requirements</a></li><li><a class="reference internal" href="#data-model">Data model</a></li><li><a class="reference internal" href="#directories-and-subspaces">Directories and Subspaces</a></li><li><a class="reference internal" href="#transactions">Transactions</a></li><li><a class="reference internal" href="#making-some-sample-classes">Making some sample classes</a></li><li><a class="reference internal" href="#initializing-the-database">Initializing the database</a></li><li><a class="reference internal" href="#listing-available-classes">Listing available classes</a></li><li><a class="reference internal" href="#signing-up-for-a-class">Signing up for a class</a></li><li><a class="reference internal" href="#dropping-a-class">Dropping a class</a></li><li><a class="reference internal" href="#done">Done?</a></li><li><a class="reference internal" href="#seats-are-limited">Seats are limited!</a></li><li><a class="reference internal" href="#concurrency-and-consistency">Concurrency and consistency</a></li><li><a class="reference internal" href="#idempotence">Idempotence</a></li><li><a class="reference internal" href="#dropping-with-limited-seats">Dropping with limited seats</a></li><li><a class="reference internal" href="#more-features">More features?!</a></li><li><a class="reference internal" href="#composing-transactions">Composing transactions</a></li><li><a class="reference internal" href="#are-we-done">Are we done?</a></li><li><a class="reference internal" href="#deploying-and-scaling">Deploying and scaling</a></li></ul></li><li><a class="reference internal" href="#next-steps">Next steps</a></li><li><a class="reference internal" href="#appendix-classscheduling-go">Appendix: classScheduling.go</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../https:/web.archive.org/web/20150325003512/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:35:12 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:30:15 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

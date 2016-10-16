@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app16.us.archive.org";archive_analytics.values.server_ms=194;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Error Codes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/error_codes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003621/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003621/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Community</a></li>
+<li><a href=../../../../courses/index.html>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href="index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../documentation/latest/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="error-codes">
+<span id="id1"></span><h1>Error Codes<a class="headerlink" href="#error-codes" title="Permalink to this headline">∞</a></h1>
+<p>Below are error codes that the SQL Layer might return, organized into different classes.</p>
+<div class="section" id="class-00">
+<h2>Class 00<a class="headerlink" href="#class-00" title="Permalink to this headline">∞</a></h2>
+<p>Normal Successful completion</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>00000</td>
+<td>SUCCESSFUL_COMPLETION</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-08">
+<h2>Class 08<a class="headerlink" href="#class-08" title="Permalink to this headline">∞</a></h2>
+<p>Connection Failure(s)</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>08500</td>
+<td>CONNECTION_TERMINATED</td>
+</tr>
+<tr class="row-odd"><td>08501</td>
+<td>UNSUPPORTED_PROTOCOL</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-0a">
+<h2>Class 0A<a class="headerlink" href="#class-0a" title="Permalink to this headline">∞</a></h2>
+<p>Feature not supported</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>0A500</td>
+<td>UNSUPPORTED_SQL</td>
+</tr>
+<tr class="row-odd"><td>0A501</td>
+<td>UNSUPPORTED_PARAMETERS</td>
+</tr>
+<tr class="row-even"><td>0A502</td>
+<td>UNSUPPORTED_EXPLAIN</td>
+</tr>
+<tr class="row-odd"><td>0A503</td>
+<td>UNSUPPORTED_CREATE_SELECT</td>
+</tr>
+<tr class="row-even"><td>0A504</td>
+<td>UNSUPPORTED_FK_INDEX</td>
+</tr>
+<tr class="row-odd"><td>0A505</td>
+<td>UNSUPPORTED_CHECK</td>
+</tr>
+<tr class="row-even"><td>0A506</td>
+<td>UNSUPPORTED_GROUP_UNIQUE</td>
+</tr>
+<tr class="row-odd"><td>0A507</td>
+<td>UNSUPPORTED_INDEX_PREFIX</td>
+</tr>
+<tr class="row-even"><td>0A508</td>
+<td>SELECT_EXISTS_ERROR</td>
+</tr>
+<tr class="row-odd"><td>0A509</td>
+<td>UNSUPPORTED_GROUP_INDEX_JOIN</td>
+</tr>
+<tr class="row-even"><td>0A50A</td>
+<td>STALE_STATEMENT</td>
+</tr>
+<tr class="row-odd"><td>0A50B</td>
+<td>UNSUPPORTED_FULL_OUTER_JOIN</td>
+</tr>
+<tr class="row-even"><td>0A50C</td>
+<td>UNSUPPORTED_GROUP_BY_ROLLUP</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-21">
+<h2>Class 21<a class="headerlink" href="#class-21" title="Permalink to this headline">∞</a></h2>
+<p>Cardinality violation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>21000</td>
+<td>SUBQUERY_TOO_MANY_ROWS</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-22">
+<h2>Class 22<a class="headerlink" href="#class-22" title="Permalink to this headline">∞</a></h2>
+<p>Data exception</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>22001</td>
+<td>STRING_TRUNCATION</td>
+</tr>
+<tr class="row-odd"><td>22003</td>
+<td>VALUE_OUT_OF_RANGE</td>
+</tr>
+<tr class="row-even"><td>22006</td>
+<td>INVALID_INTERVAL_FORMAT</td>
+</tr>
+<tr class="row-odd"><td>22007</td>
+<td>INVALID_DATE_FORMAT</td>
+</tr>
+<tr class="row-even"><td>2200H</td>
+<td>SEQUENCE_LIMIT_EXCEEDED</td>
+</tr>
+<tr class="row-odd"><td>22012</td>
+<td>DIVIDE_BY_ZERO</td>
+</tr>
+<tr class="row-even"><td>22018</td>
+<td>INVALID_CHAR_TO_NUM</td>
+</tr>
+<tr class="row-odd"><td>22023</td>
+<td>INVALID_PARAMETER_VALUE</td>
+</tr>
+<tr class="row-even"><td>22501</td>
+<td>TABLE_DEFINITION_CHANGED</td>
+</tr>
+<tr class="row-odd"><td>22502</td>
+<td>NEGATIVE_LIMIT</td>
+</tr>
+<tr class="row-even"><td>22503</td>
+<td>INVALID_ARGUMENT_TYPE</td>
+</tr>
+<tr class="row-odd"><td>22504</td>
+<td>ZERO_DATE_TIME</td>
+</tr>
+<tr class="row-even"><td>22505</td>
+<td>EXTERNAL_ROW_READER_EXCEPTION</td>
+</tr>
+<tr class="row-odd"><td>22506</td>
+<td>SECURITY</td>
+</tr>
+<tr class="row-even"><td>22507</td>
+<td>STORAGE_KEY_SIZE_EXCEEDED</td>
+</tr>
+<tr class="row-odd"><td>22508</td>
+<td>OVERLOAD_EXCEPTION</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-23">
+<h2>Class 23<a class="headerlink" href="#class-23" title="Permalink to this headline">∞</a></h2>
+<p>Integrity constraint violation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>23501</td>
+<td>DUPLICATE_KEY</td>
+</tr>
+<tr class="row-odd"><td>23502</td>
+<td>NOT_NULL_VIOLATION</td>
+</tr>
+<tr class="row-even"><td>23503</td>
+<td>FK_REFERENCING_VIOLATION</td>
+</tr>
+<tr class="row-odd"><td>23504</td>
+<td>FK_REFERENCED_VIOLATION</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-24">
+<h2>Class 24<a class="headerlink" href="#class-24" title="Permalink to this headline">∞</a></h2>
+<p>Invalid cursor state</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>24501</td>
+<td>CURSOR_IS_FINISHED</td>
+</tr>
+<tr class="row-odd"><td>24502</td>
+<td>CURSOR_IS_UNKNOWN</td>
+</tr>
+<tr class="row-even"><td>24503</td>
+<td>NO_ACTIVE_CURSOR</td>
+</tr>
+<tr class="row-odd"><td>24504</td>
+<td>CURSOR_CLOSE_BAD</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-25">
+<h2>Class 25<a class="headerlink" href="#class-25" title="Permalink to this headline">∞</a></h2>
+<p>Invalid transaction state</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>25002</td>
+<td>TRANSACTION_IN_PROGRESS</td>
+</tr>
+<tr class="row-odd"><td>25003</td>
+<td>TRANSACTION_READ_ONLY</td>
+</tr>
+<tr class="row-even"><td>25004</td>
+<td>ISOLATION_LEVEL_IGNORED</td>
+</tr>
+<tr class="row-odd"><td>25005</td>
+<td>NO_TRANSACTION</td>
+</tr>
+<tr class="row-even"><td>25010</td>
+<td>IMPLICITLY_COMMITTED</td>
+</tr>
+<tr class="row-odd"><td>25P02</td>
+<td>TRANSACTION_ABORTED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-28">
+<h2>Class 28<a class="headerlink" href="#class-28" title="Permalink to this headline">∞</a></h2>
+<p>Invalid authorization specification</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>28000</td>
+<td>AUTHENTICATION_FAILED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-2b">
+<h2>Class 2B<a class="headerlink" href="#class-2b" title="Permalink to this headline">∞</a></h2>
+<p>Dependent privilege descriptors still exist</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>2B000</td>
+<td>VIEW_REFERENCES_EXIST</td>
+</tr>
+<tr class="row-odd"><td>2B001</td>
+<td>FOREIGN_KEY_PREVENTS_DROP_TABLE</td>
+</tr>
+<tr class="row-even"><td>2B002</td>
+<td>FOREIGN_KEY_PREVENTS_ALTER_COLUMN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-2c">
+<h2>Class 2C<a class="headerlink" href="#class-2c" title="Permalink to this headline">∞</a></h2>
+<p>Invalid character set name</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>2C000</td>
+<td>UNSUPPORTED_CHARSET</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-2h">
+<h2>Class 2H<a class="headerlink" href="#class-2h" title="Permalink to this headline">∞</a></h2>
+<p>Invalid collation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>2H000</td>
+<td>UNSUPPORTED_COLLATION</td>
+</tr>
+<tr class="row-odd"><td>2H001</td>
+<td>INVALID_COLLATION_SCHEME</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-39">
+<h2>Class 39<a class="headerlink" href="#class-39" title="Permalink to this headline">∞</a></h2>
+<p>External routine invocation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>39000</td>
+<td>EXTERNAL_ROUTINE_INVOCATION</td>
+</tr>
+<tr class="row-odd"><td>39001</td>
+<td>EMBEDDED_RESOURCE_LEAK</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-3f">
+<h2>Class 3F<a class="headerlink" href="#class-3f" title="Permalink to this headline">∞</a></h2>
+<p>Invalid schema name</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>3F000</td>
+<td>NO_SUCH_SCHEMA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-40">
+<h2>Class 40<a class="headerlink" href="#class-40" title="Permalink to this headline">∞</a></h2>
+<p>Transaction rollback. These error codes indicate that the transaction was rolled back, but is considered retryable.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>40000</td>
+<td>QUERY_TIMEOUT</td>
+</tr>
+<tr class="row-odd"><td>40001</td>
+<td>PERSISTIT_ROLLBACK</td>
+</tr>
+<tr class="row-even"><td>40002</td>
+<td>FDB_NOT_COMMITTED</td>
+</tr>
+<tr class="row-odd"><td>40003</td>
+<td>FDB_COMMIT_UNKNOWN_RESULT</td>
+</tr>
+<tr class="row-even"><td>40004</td>
+<td>FDB_PAST_VERSION</td>
+</tr>
+<tr class="row-odd"><td>40005</td>
+<td>FDB_FUTURE_VERSION</td>
+</tr>
+<tr class="row-even"><td>4000A</td>
+<td>TABLE_VERSION_CHANGED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-42">
+<h2>Class 42<a class="headerlink" href="#class-42" title="Permalink to this headline">∞</a></h2>
+<p>Syntax error or access rule violation</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>42000</td>
+<td>SQL_PARSE_EXCEPTION</td>
+</tr>
+<tr class="row-odd"><td>42501</td>
+<td>NO_SUCH_TABLE</td>
+</tr>
+<tr class="row-even"><td>42502</td>
+<td>NO_INDEX</td>
+</tr>
+<tr class="row-odd"><td>42503</td>
+<td>NO_SUCH_GROUP</td>
+</tr>
+<tr class="row-even"><td>42504</td>
+<td>NO_SUCH_TABLEDEF</td>
+</tr>
+<tr class="row-odd"><td>42505</td>
+<td>NO_SUCH_TABLEID</td>
+</tr>
+<tr class="row-even"><td>42506</td>
+<td>AMBIGUOUS_COLUMN_NAME</td>
+</tr>
+<tr class="row-odd"><td>42507</td>
+<td>SUBQUERY_RESULT_FAIL</td>
+</tr>
+<tr class="row-even"><td>42508</td>
+<td>JOIN_NODE_ERROR</td>
+</tr>
+<tr class="row-odd"><td>42509</td>
+<td>CORRELATION_NAME_ALREADY_USED</td>
+</tr>
+<tr class="row-even"><td>4250A</td>
+<td>VIEW_BAD_SUBQUERY</td>
+</tr>
+<tr class="row-odd"><td>4250B</td>
+<td>TABLE_BAD_SUBQUERY</td>
+</tr>
+<tr class="row-even"><td>4250C</td>
+<td>WRONG_FUNCTION_ARITY</td>
+</tr>
+<tr class="row-odd"><td>4250D</td>
+<td>NO_SUCH_FUNCTION</td>
+</tr>
+<tr class="row-even"><td>4250E</td>
+<td>ORDER_GROUP_BY_NON_INTEGER_CONSTANT</td>
+</tr>
+<tr class="row-odd"><td>4250F</td>
+<td>ORDER_GROUP_BY_INTEGER_OUT_OF_RANGE</td>
+</tr>
+<tr class="row-even"><td>42510</td>
+<td>MISSING_GROUP_INDEX_JOIN</td>
+</tr>
+<tr class="row-odd"><td>42511</td>
+<td>TABLE_INDEX_JOIN</td>
+</tr>
+<tr class="row-even"><td>42512</td>
+<td>INSERT_WRONG_COUNT</td>
+</tr>
+<tr class="row-odd"><td>42513</td>
+<td>UNSUPPORTED_CONFIGURATION</td>
+</tr>
+<tr class="row-even"><td>42514</td>
+<td>SCHEMA_DEF_PARSE_EXCEPTION</td>
+</tr>
+<tr class="row-odd"><td>42515</td>
+<td>SQL_PARSER_INTERNAL_EXCEPTION</td>
+</tr>
+<tr class="row-even"><td>42516</td>
+<td>NO_SUCH_SEQUENCE</td>
+</tr>
+<tr class="row-odd"><td>42517</td>
+<td>NO_SUCH_UNIQUE</td>
+</tr>
+<tr class="row-even"><td>42518</td>
+<td>NO_SUCH_GROUPING_FK</td>
+</tr>
+<tr class="row-odd"><td>42519</td>
+<td>NO_SUCH_ROUTINE</td>
+</tr>
+<tr class="row-even"><td>4251A</td>
+<td>NO_SUCH_CAST</td>
+</tr>
+<tr class="row-odd"><td>4251B</td>
+<td>PROCEDURE_CALLED_AS_FUNCTION</td>
+</tr>
+<tr class="row-even"><td>4251C</td>
+<td>NO_SUCH_CURSOR</td>
+</tr>
+<tr class="row-odd"><td>4251D</td>
+<td>NO_SUCH_PREPARED_STATEMENT</td>
+</tr>
+<tr class="row-even"><td>4251E</td>
+<td>SET_WRONG_NUM_COLUMNS</td>
+</tr>
+<tr class="row-odd"><td>4251F</td>
+<td>SET_WRONG_TYPE_COLUMNS</td>
+</tr>
+<tr class="row-even"><td>42520</td>
+<td>NO_SUCH_CONSTRAINT</td>
+</tr>
+<tr class="row-odd"><td>42521</td>
+<td>DEFAULT_OUTSIDE_INSERT</td>
+</tr>
+<tr class="row-even"><td>42523</td>
+<td>FOREIGN_KEY_NOT_DEFERRABLE</td>
+</tr>
+<tr class="row-odd"><td>42524</td>
+<td>NO_AGGREGATE_WITH_GROUP_BY</td>
+</tr>
+<tr class="row-even"><td>42525</td>
+<td>NO_TABLE_SPECIFIED</td>
+</tr>
+<tr class="row-odd"><td>42600</td>
+<td>KEY_COLUMN_MISMATCH</td>
+</tr>
+<tr class="row-even"><td>42601</td>
+<td>KEY_COLUMN_MISSING</td>
+</tr>
+<tr class="row-odd"><td>42602</td>
+<td>INVALID_CHILD_COLLECTION</td>
+</tr>
+<tr class="row-even"><td>42603</td>
+<td>NO_SUCH_FOREIGN_KEY</td>
+</tr>
+<tr class="row-odd"><td>42700</td>
+<td>FULL_TEXT_QUERY_PARSE</td>
+</tr>
+<tr class="row-even"><td>42800</td>
+<td>CANT_CALL_SCRIPT_LIBRARY</td>
+</tr>
+<tr class="row-odd"><td>42801</td>
+<td>SCRIPT_REGISTRATION_EXCEPTION</td>
+</tr>
+<tr class="row-even"><td>42802</td>
+<td>DIRECT_ENDPOINT_NOT_FOUND</td>
+</tr>
+<tr class="row-odd"><td>42803</td>
+<td>DIRECT_TRANSACTION_FAILED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-46">
+<h2>Class 46<a class="headerlink" href="#class-46" title="Permalink to this headline">∞</a></h2>
+<p>SQL/J</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>46001</td>
+<td>INVALID_SQLJ_JAR_URL</td>
+</tr>
+<tr class="row-odd"><td>46002</td>
+<td>DUPLICATE_SQLJ_JAR</td>
+</tr>
+<tr class="row-even"><td>46003</td>
+<td>REFERENCED_SQLJ_JAR</td>
+</tr>
+<tr class="row-odd"><td>4600B</td>
+<td>NO_SUCH_SQLJ_JAR</td>
+</tr>
+<tr class="row-even"><td>46103</td>
+<td>SQLJ_INSTANCE_EXCEPTION</td>
+</tr>
+<tr class="row-odd"><td>46200</td>
+<td>INVALID_SQLJ_DEPLOYMENT_DESCRIPTOR</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-50">
+<h2>Class 50<a class="headerlink" href="#class-50" title="Permalink to this headline">∞</a></h2>
+<p>DDL definition failure</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>50002</td>
+<td>PROTECTED_TABLE</td>
+</tr>
+<tr class="row-odd"><td>50003</td>
+<td>JOIN_TO_PROTECTED_TABLE</td>
+</tr>
+<tr class="row-even"><td>50004</td>
+<td>JOIN_TO_UNKNOWN_TABLE</td>
+</tr>
+<tr class="row-odd"><td>50005</td>
+<td>JOIN_TO_WRONG_COLUMNS</td>
+</tr>
+<tr class="row-even"><td>50006</td>
+<td>DUPLICATE_TABLE</td>
+</tr>
+<tr class="row-odd"><td>50007</td>
+<td>UNSUPPORTED_DROP</td>
+</tr>
+<tr class="row-even"><td>50008</td>
+<td>UNSUPPORTED_COLUMN_DATA_TYPE</td>
+</tr>
+<tr class="row-odd"><td>50009</td>
+<td>JOIN_TO_MULTIPLE_PARENTS</td>
+</tr>
+<tr class="row-even"><td>5000A</td>
+<td>UNSUPPORTED_INDEX_DATA_TYPE</td>
+</tr>
+<tr class="row-odd"><td>5000B</td>
+<td>MULTIPLE_IDENTITY_COLUMNS</td>
+</tr>
+<tr class="row-even"><td>5000C</td>
+<td>DUPLICATE_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>5000D</td>
+<td>DUPLICATE_GROUP</td>
+</tr>
+<tr class="row-even"><td>5000E</td>
+<td>REFERENCED_TABLE</td>
+</tr>
+<tr class="row-odd"><td>5000F</td>
+<td>DROP_INDEX_NOT_ALLOWED</td>
+</tr>
+<tr class="row-even"><td>5000G</td>
+<td>FK_DDL_VIOLATION</td>
+</tr>
+<tr class="row-odd"><td>5000H</td>
+<td>PROTECTED_INDEX</td>
+</tr>
+<tr class="row-even"><td>5000I</td>
+<td>BRANCHING_GROUP_INDEX</td>
+</tr>
+<tr class="row-odd"><td>5000J</td>
+<td>WRONG_NAME_FORMAT</td>
+</tr>
+<tr class="row-even"><td>5000K</td>
+<td>DUPLICATE_VIEW</td>
+</tr>
+<tr class="row-odd"><td>5000L</td>
+<td>UNDEFINED_VIEW</td>
+</tr>
+<tr class="row-even"><td>5000M</td>
+<td>SUBQUERY_ONE_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>5000N</td>
+<td>DUPLICATE_SCHEMA</td>
+</tr>
+<tr class="row-even"><td>5000O</td>
+<td>REFERENCED_SCHEMA</td>
+</tr>
+<tr class="row-odd"><td>5000P</td>
+<td>WRONG_TABLE_FOR_INDEX</td>
+</tr>
+<tr class="row-even"><td>5000Q</td>
+<td>MISSING_DDL_PARAMETERS</td>
+</tr>
+<tr class="row-odd"><td>5000R</td>
+<td>INDEX_COL_NOT_IN_GROUP</td>
+</tr>
+<tr class="row-even"><td>5000S</td>
+<td>INDEX_TABLE_NOT_IN_GROUP</td>
+</tr>
+<tr class="row-odd"><td>5000T</td>
+<td>INDISTINGUISHABLE_INDEX</td>
+</tr>
+<tr class="row-even"><td>5000U</td>
+<td>DROP_GROUP_NOT_ROOT</td>
+</tr>
+<tr class="row-odd"><td>5000V</td>
+<td>BAD_SPATIAL_INDEX</td>
+</tr>
+<tr class="row-even"><td>5000W</td>
+<td>DUPLICATE_ROUTINE</td>
+</tr>
+<tr class="row-odd"><td>5000X</td>
+<td>DUPLICATE_PARAMETER</td>
+</tr>
+<tr class="row-even"><td>5000Y</td>
+<td>SET_STORAGE_NOT_ROOT</td>
+</tr>
+<tr class="row-odd"><td>5000Z</td>
+<td>INVALID_CREATE_AS</td>
+</tr>
+<tr class="row-even"><td>50010</td>
+<td>GROUP_MULTIPLE_ROOTS</td>
+</tr>
+<tr class="row-odd"><td>50011</td>
+<td>JOIN_TYPE_MISMATCH</td>
+</tr>
+<tr class="row-even"><td>50012</td>
+<td>PK_NULL_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>50013</td>
+<td>DUPLICATE_INDEXES</td>
+</tr>
+<tr class="row-even"><td>50014</td>
+<td>MISSING_PRIMARY_KEY</td>
+</tr>
+<tr class="row-odd"><td>50015</td>
+<td>DUPLICATE_TABLEID</td>
+</tr>
+<tr class="row-even"><td>50016</td>
+<td>JOIN_COLUMN_MISMATCH</td>
+</tr>
+<tr class="row-odd"><td>50017</td>
+<td>INDEX_LACKS_COLUMNS</td>
+</tr>
+<tr class="row-even"><td>50018</td>
+<td>NO_SUCH_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>50019</td>
+<td>DUPLICATE_STORAGE_DESCRIPTION_KEYS</td>
+</tr>
+<tr class="row-even"><td>5001B</td>
+<td>TABLE_NOT_IN_GROUP</td>
+</tr>
+<tr class="row-odd"><td>5001C</td>
+<td>NAME_IS_NULL</td>
+</tr>
+<tr class="row-even"><td>5001D</td>
+<td>DUPLICATE_INDEX_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>5001E</td>
+<td>COLUMN_POS_ORDERED</td>
+</tr>
+<tr class="row-even"><td>5001F</td>
+<td>TABLE_COL_IN_GROUP</td>
+</tr>
+<tr class="row-odd"><td>5001G</td>
+<td>GROUP_MISSING_COL</td>
+</tr>
+<tr class="row-even"><td>5001H</td>
+<td>GROUP_MISSING_INDEX</td>
+</tr>
+<tr class="row-odd"><td>5001I</td>
+<td>BAD_COLUMN_DEFAULT</td>
+</tr>
+<tr class="row-even"><td>5001J</td>
+<td>NULL_REFERENCE</td>
+</tr>
+<tr class="row-odd"><td>5001L</td>
+<td>BAD_AIS_REFERENCE</td>
+</tr>
+<tr class="row-even"><td>5001M</td>
+<td>BAD_INTERNAL_SETTING</td>
+</tr>
+<tr class="row-odd"><td>5001O</td>
+<td>GROUP_INDEX_DEPTH</td>
+</tr>
+<tr class="row-even"><td>5001P</td>
+<td>DUPLICATE_INDEXID</td>
+</tr>
+<tr class="row-odd"><td>5001Q</td>
+<td>STORAGE_DESCRIPTION_INVALID</td>
+</tr>
+<tr class="row-even"><td>5001S</td>
+<td>GROUP_MIXED_TABLE_TYPES</td>
+</tr>
+<tr class="row-odd"><td>5001T</td>
+<td>GROUP_MULTIPLE_MEM_TABLES</td>
+</tr>
+<tr class="row-even"><td>5001U</td>
+<td>JOIN_PARENT_NO_PK</td>
+</tr>
+<tr class="row-odd"><td>5001V</td>
+<td>DUPLICATE_SEQUENCE</td>
+</tr>
+<tr class="row-even"><td>5001W</td>
+<td>INDEX_COLUMN_IS_PARTIAL</td>
+</tr>
+<tr class="row-odd"><td>5001X</td>
+<td>COLUMN_SIZE_MISMATCH</td>
+</tr>
+<tr class="row-even"><td>5001Y</td>
+<td>WHOLE_GROUP_QUERY</td>
+</tr>
+<tr class="row-odd"><td>5001Z</td>
+<td>SEQUENCE_INTERVAL_ZERO</td>
+</tr>
+<tr class="row-even"><td>50020</td>
+<td>SEQUENCE_MIN_GE_MAX</td>
+</tr>
+<tr class="row-odd"><td>50021</td>
+<td>SEQUENCE_START_IN_RANGE</td>
+</tr>
+<tr class="row-even"><td>50023</td>
+<td>ALTER_MADE_NO_CHANGE</td>
+</tr>
+<tr class="row-odd"><td>50024</td>
+<td>INVALID_ROUTINE</td>
+</tr>
+<tr class="row-even"><td>50025</td>
+<td>INVALID_INDEX_ID</td>
+</tr>
+<tr class="row-odd"><td>50026</td>
+<td>DUPLICATE_CONSTRAINTNAME</td>
+</tr>
+<tr class="row-even"><td>50027</td>
+<td>COLUMN_NOT_GENERATED</td>
+</tr>
+<tr class="row-odd"><td>50028</td>
+<td>COLUMN_ALREADY_GENERATED</td>
+</tr>
+<tr class="row-even"><td>50029</td>
+<td>DROP_SEQUENCE_NOT_ALLOWED</td>
+</tr>
+<tr class="row-odd"><td>5002A</td>
+<td>GENERATOR_WRONG_DATATYPE</td>
+</tr>
+<tr class="row-even"><td>50030</td>
+<td>JOIN_TO_SELF</td>
+</tr>
+<tr class="row-odd"><td>50031</td>
+<td>ONLINE_DDL_IN_PROGRESS</td>
+</tr>
+<tr class="row-even"><td>50032</td>
+<td>FOREIGN_KEY_INDEX_REQUIRED</td>
+</tr>
+<tr class="row-odd"><td>50033</td>
+<td>NO_COLUMNS_IN_TABLE</td>
+</tr>
+<tr class="row-even"><td>50034</td>
+<td>PROTECTED_COLUMN</td>
+</tr>
+<tr class="row-odd"><td>50035</td>
+<td>CONCURRENT_VIOLATION</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-51">
+<h2>Class 51<a class="headerlink" href="#class-51" title="Permalink to this headline">∞</a></h2>
+<p>Internal problems created by user configuration</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>51001</td>
+<td>STALE_AIS</td>
+</tr>
+<tr class="row-odd"><td>51010</td>
+<td>MALFORMED_REQUEST</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-52">
+<h2>Class 52<a class="headerlink" href="#class-52" title="Permalink to this headline">∞</a></h2>
+<p>Configuration &amp; startup errors</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>52001</td>
+<td>SERVICE_NOT_STARTED</td>
+</tr>
+<tr class="row-odd"><td>52002</td>
+<td>SERVICE_ALREADY_STARTED</td>
+</tr>
+<tr class="row-even"><td>52003</td>
+<td>SERVICE_CIRC_DEPEND</td>
+</tr>
+<tr class="row-odd"><td>52004</td>
+<td>BAD_CONFIG_DIRECTORY</td>
+</tr>
+<tr class="row-even"><td>52006</td>
+<td>CONFIG_LOAD_FAILED</td>
+</tr>
+<tr class="row-odd"><td>5200B</td>
+<td>TAP_BEAN_FAIL</td>
+</tr>
+<tr class="row-even"><td>5200E</td>
+<td>QUERY_LOG_CLOSE_FAIL</td>
+</tr>
+<tr class="row-odd"><td>5200F</td>
+<td>INVALID_PORT</td>
+</tr>
+<tr class="row-even"><td>52010</td>
+<td>INVALID_VOLUME</td>
+</tr>
+<tr class="row-odd"><td>52011</td>
+<td>INVALID_OPTIMIZER_PROPERTY</td>
+</tr>
+<tr class="row-even"><td>52012</td>
+<td>IS_TABLE_VERSION_MISMATCH</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-53">
+<h2>Class 53<a class="headerlink" href="#class-53" title="Permalink to this headline">∞</a></h2>
+<p>Internal error</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>53000</td>
+<td>INTERNAL_ERROR</td>
+</tr>
+<tr class="row-odd"><td>53001</td>
+<td>INTERNAL_CORRUPTION</td>
+</tr>
+<tr class="row-even"><td>53003</td>
+<td>PERSISTIT_ERROR</td>
+</tr>
+<tr class="row-odd"><td>53004</td>
+<td>FDB_ERROR</td>
+</tr>
+<tr class="row-even"><td>53005</td>
+<td>ROW_OUTPUT</td>
+</tr>
+<tr class="row-odd"><td>53006</td>
+<td>SCAN_RETRY_ABANDONDED</td>
+</tr>
+<tr class="row-even"><td>53009</td>
+<td>TABLEDEF_MISMATCH</td>
+</tr>
+<tr class="row-odd"><td>5300A</td>
+<td>PROTOBUF_READ</td>
+</tr>
+<tr class="row-even"><td>5300B</td>
+<td>PROTOBUF_WRITE</td>
+</tr>
+<tr class="row-odd"><td>5300D</td>
+<td>MERGE_SORT_IO</td>
+</tr>
+<tr class="row-even"><td>5300E</td>
+<td>AIS_VALIDATION</td>
+</tr>
+<tr class="row-odd"><td>5300F</td>
+<td>PROTOBUF_BUILD</td>
+</tr>
+<tr class="row-even"><td>5300G</td>
+<td>NOT_ALLOWED_BY_CONFIG</td>
+</tr>
+<tr class="row-odd"><td>5300H</td>
+<td>JOIN_GRAPH_FAILURE</td>
+</tr>
+<tr class="row-even"><td>5300I</td>
+<td>CORRUPTED_PLAN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-55">
+<h2>Class 55<a class="headerlink" href="#class-55" title="Permalink to this headline">∞</a></h2>
+<p>Type conversion errors</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>55001</td>
+<td>UNKNOWN_TYPE</td>
+</tr>
+<tr class="row-odd"><td>55002</td>
+<td>UNSUPPORTED_DATA_TYPE</td>
+</tr>
+<tr class="row-even"><td>55004</td>
+<td>OVERFLOW</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-56">
+<h2>Class 56<a class="headerlink" href="#class-56" title="Permalink to this headline">∞</a></h2>
+<p>Explain query errors</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>56000</td>
+<td>UNABLE_TO_EXPLAIN</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-57">
+<h2>Class 57<a class="headerlink" href="#class-57" title="Permalink to this headline">∞</a></h2>
+<p>Insert, Update, Delete processing exceptions</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>57001</td>
+<td>NO_SUCH_ROW</td>
+</tr>
+<tr class="row-odd"><td>57002</td>
+<td>CONCURRENT_MODIFICATION</td>
+</tr>
+<tr class="row-even"><td>57008</td>
+<td>FK_VALUE_MISMATCH</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-58">
+<h2>Class 58<a class="headerlink" href="#class-58" title="Permalink to this headline">∞</a></h2>
+<p>Query canceled by user</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>58000</td>
+<td>QUERY_CANCELED</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-70">
+<h2>Class 70<a class="headerlink" href="#class-70" title="Permalink to this headline">∞</a></h2>
+<p>Unknown errors</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Code</th>
+<th class="head">Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>70000</td>
+<td>UNKNOWN</td>
+</tr>
+<tr class="row-odd"><td>70001</td>
+<td>UNEXPECTED_EXCEPTION</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Error Codes</a><ul><li><a class="reference internal" href="#class-00">Class 00</a></li><li><a class="reference internal" href="#class-08">Class 08</a></li><li><a class="reference internal" href="#class-0a">Class 0A</a></li><li><a class="reference internal" href="#class-21">Class 21</a></li><li><a class="reference internal" href="#class-22">Class 22</a></li><li><a class="reference internal" href="#class-23">Class 23</a></li><li><a class="reference internal" href="#class-24">Class 24</a></li><li><a class="reference internal" href="#class-25">Class 25</a></li><li><a class="reference internal" href="#class-28">Class 28</a></li><li><a class="reference internal" href="#class-2b">Class 2B</a></li><li><a class="reference internal" href="#class-2c">Class 2C</a></li><li><a class="reference internal" href="#class-2h">Class 2H</a></li><li><a class="reference internal" href="#class-39">Class 39</a></li><li><a class="reference internal" href="#class-3f">Class 3F</a></li><li><a class="reference internal" href="#class-40">Class 40</a></li><li><a class="reference internal" href="#class-42">Class 42</a></li><li><a class="reference internal" href="#class-46">Class 46</a></li><li><a class="reference internal" href="#class-50">Class 50</a></li><li><a class="reference internal" href="#class-51">Class 51</a></li><li><a class="reference internal" href="#class-52">Class 52</a></li><li><a class="reference internal" href="#class-53">Class 53</a></li><li><a class="reference internal" href="#class-55">Class 55</a></li><li><a class="reference internal" href="#class-56">Class 56</a></li><li><a class="reference internal" href="#class-57">Class 57</a></li><li><a class="reference internal" href="#class-58">Class 58</a></li><li><a class="reference internal" href="#class-70">Class 70</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../foundationdb/index.html>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../legal/terms/index.html>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:21 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:32:13 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

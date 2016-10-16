@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=70;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Core Anti-Features &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/anti-features' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003202/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003202im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href="/web/20150325003202cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003202cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='anti_features' id='white_papers'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/white-papers/anti-features/";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/white-papers/anti-features/" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003202" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20140829050006/https://foundationdb.com/key-value-store/white-papers/anti-features/" title="29 Aug 2014">AUG</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:02 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20140829050006/https://foundationdb.com/key-value-store/white-papers/anti-features/" title="5:00:06 Aug 29, 2014"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:02 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325013029/https://foundationdb.com/key-value-store/white-papers/anti-features" title="1:30:29 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:02 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003202*/https://foundationdb.com/key-value-store/white-papers/anti-features/" title="See a list of every capture for this URL">6 captures</a>
+           <div class="r" title="Timespan for captures of this URL">28 Aug 14 - 11 Apr 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000020000_2015:2:003100000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003202/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003202im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003202/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003202/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003202/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003202/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003202/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003202/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003202/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003202/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003202/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Core Anti-Features</h1>
+<h3>What is an anti-feature?</h3>
+<p>
+FoundationDB's design clearly distinguishes its set of
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/features'>core features</a>
+from those that are better supported elsewhere, often as
+<a href='/web/20150325003202/https://foundationdb.com/layers'>layers</a>
+FoundationDB has deliberately limited its database core API to the minimal set of features needed to expose a scalable, fault-tolerant database with ACID transactions and high performance. As a result, there is also a set of
+<em>anti-features:</em>
+features that FoundationDB does not intend to provide in its database core. (For a detailed list of technical limitations, whether relating to our design or just to the current version, see
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/documentation/known-limitations.html'>Known Limitations</a>
+.)
+</p>
+<h3>Data models</h3>
+<p>With the rise of NoSQL databases, a wide variety of data models have become popular. Graph data models are used for networks, geospatial models for geographical data, JSON and XML for hierarchical documents, and column-family models for sparse, tabular data. Of course, the traditional relational model is also still widely used. Each of these data models is useful and appropriate for different use cases. An application that is even moderately complex may have distinct data sets that best fit different models.</p>
+<p>
+FoundationDB's core exposes a single data model: an ordered key-value store. When combined with multikey, ACID transactions, this model is powerful enough to be used directly by applications, as illustrated in our
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/documentation/tutorials.html'>tutorial examples.</a>
+However, our ordered key-value store can also serve as a foundation for other data models, including those above. Because of the simplicity of the key-value model, it is easy to map higher-level models onto it. (See
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/documentation/data-modeling.html'>Data Modeling</a>
+for examples of these mappings).
+</p>
+<p>Transactions are the essential capability that allows a developer to build a data model reliably and efficiently in a layer. If a higher-level model requires multiple key-value pairs per data item, a layer can update them all in a single transaction, ensuring their consistency.</p>
+<h3>Query languages</h3>
+<p>A variety of query languages have come into use alongside NoSQL databases. For example, new query languages specific to JSON databases and graph databases have become popular. XQuery is used with XML. Languages with SQL-like syntax are often defined for column-family databases. Of course, SQL itself is still heavily used with relational databases.</p>
+<p>
+The FoundationDB core exposes a robust and powerful API but includes no separate query language. FoundationDB empowers developers to employ a broad range of data models and use the query languages best suited to their applications, implemented as layers. (See our
+<a href='/web/20150325003202/https://foundationdb.com/layers/sql/index.html'>SQL Layer</a>
+as an example).
+</p>
+<h3>Analytic frameworks</h3>
+<p>Analytic processing of large data sets has become prominent in conjunction with NoSQL databases. Some popular approaches offer generic frameworks for batch processing (e.g, MapReduce); some offer frameworks for real-time, stream processing; some focus on more specific analytics, whether using traditional aggregation functions or statistical techniques such as machine learning. The most effective approach to analytics depends on the details of the application's data model.</p>
+<p>Analytic frameworks are outside the scope of the FoundationDB core. However, because the core can use range reads to efficiently scan large swaths of data, analytics can be implemented within a layer, possibly as part of a query language.</p>
+<h3>Disconnected operation</h3>
+<p>
+The rise of mobile computing has led to the model of
+<em>disconnected operation</em>
+in which an application on a mobile device remains available even when it's not connected to a central server. Examples of this sort of mobile application include note taking, to-do lists, and document editing.
+</p>
+<p>While a central server running FoundationDB could be used as a database for a mobile application to connect and sync to from time to time, FoundationDB's core does not itself directly provide disconnected operation. Because it would sacrifice ACID properties, we believe that in those applications where disconnected operation is needed, the database is the wrong tier to implement it.</p>
+<h3>Long-running transactions</h3>
+<p>FoundationDB aims to provide low latencies across a range of metrics. Transaction latencies, in particular, are typically under 15 milliseconds. Some applications require very large operations that require several seconds or more, several orders of magnitude larger than our usual transaction latency. Large operations of this kind are best approached in FoundationDB by decomposition into a set of smaller transactions.</p>
+<p>
+FoundationDB does not support
+<em>long-running transactions,</em>
+currently defined as those
+<a href='/web/20150325003202/https://foundationdb.com/key-value-store/documentation/known-limitations.html#long-transactions'>lasting over five seconds.</a>
+The system employs multiversion concurrency control and maintains older versions of the database for a five second period. A transaction that is kept open longer will not be able to commit. If you have a requirement to support large operations, we would be happy to assist you to implement a decomposition strategy within a layer.
+</p>
+<h3>Content delivery networks (CDN)</h3>
+<p>
+A
+<em>content delivery network</em>
+(CDN) employs geographically dispersed datacenters to serve data with high performance to similarly dispersed end-users. While FoundationDB does support multiple datacenters, it has not been designed as a CDN. The FoundationDB core does not locate data in a geographically aware manner and does not aim to provide low write latencies (e.g., under 5 milliseconds) over large geographic distances.
+</p>
+<p>In FoundationDB's configuration for multiple datacenters, each datacenter contains a complete, up-to-date copy of the database. Each client will have a primary datacenter, with other datacenters acting in a secondary mode to support minimal downtime if a datacenter becomes unavailable.</p>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003202/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003202/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003202/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003202/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003202js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:02 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:20:10 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app7.us.archive.org";archive_analytics.values.server_ms=485;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Flow: Actor-based Concurrency with C++ &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/flow' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003157/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='flow' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003157/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003157/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003157/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003157/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Flow: Actor-based Concurrency with C++</h1>
+<h3>Engineering challenges</h3>
+<p>
+FoundationDB began with ambitious goals for both
+<a href='/web/20150325003157/https://foundationdb.com/key-value-store/performance'>high performance</a>
+per node and
+<a href='/web/20150325003157/https://foundationdb.com/key-value-store/white-papers/scalability'>scalability</a>.
+We knew that to achieve these goals we would face serious engineering challenges while developing the FoundationDB core. We'd need to implement efficient asynchronous communicating processes of the sort supported by
+<a class='external-link' href='/web/20150325003157/http://en.wikipedia.org/wiki/Erlang_(programming_language)'>Erlang</a>
+or the
+<a class='external-link' href='/web/20150325003157/http://msdn.microsoft.com/en-us/library/vstudio/hh191443.aspx'>Async library in .NET,</a>
+but we'd also need the raw speed and I/O efficiency of C++. Finally, we'd need to perform extensive simulation to engineer for reliability and fault tolerance on large clusters.
+</p>
+<p>
+To meet these challenges, we developed several new tools, the first of which is Flow, a new programming language that brings
+<a class='external-link' href='/web/20150325003157/http://en.wikipedia.org/wiki/Actor_model'>actor-based concurrency</a>
+to C++11. To add this capability, Flow introduces a number of new keywords and control-flow primitives for managing concurrency. Flow is implemented as a compiler which analyzes an asynchronous function (actor) and rewrites it as an object with many different sub-functions that use callbacks to avoid blocking (see
+<a class='external-link' href='/web/20150325003157/https://github.com/Sage/streamlinejs' target='_blank'>streamlinejs</a>
+for a similar concept using JavaScript). The Flow compiler's output is normal C++11 code, which is then compiled to a binary using traditional tools. Flow also provides input to our simulation tool, Lithium, which conducts deterministic simulations of the entire system, including its physical interfaces and failure modes. In short, Flow allows efficient concurrency within C++ in a maintainable and extensible manner, achieving all three major engineering goals:
+</p>
+<ul>
+<li>high performance (by compiling to native code),</li>
+<li>actor-based concurrency (for high productivity development),</li>
+<li>simulation support (for testing).</li>
+</ul>
+<h3>A first look</h3>
+<p>
+Actors in Flow receive asynchronous messages from each other using a data type called a
+<em>future.</em>
+When an actor requires a data value to continue computation, it waits for it without blocking other actors. The following simple actor performs asynchronous addition. It takes a future integer and a normal integer as an offset, waits on the future integer, and returns the sum of the value and the offset:
+</p>
+<pre class='prettyprint'>ACTOR Future<int> asyncAdd(Future<int> f, int offset) {&#x000A;  int value = wait( f );&#x000A;  return value + offset;&#x000A;}</pre>
+<h3>Flow performance</h3>
+<p>
+We're sometimes asked if we
+<em>really</em>
+needed to implement our own programming language extension. Aren't there enough programming languages and libraries in the world already? We carefully evaluated a number of languages before implementing Flow. Having done that evaluation, we can confirm that Flow provides a combination of performance, concurrency, and simulation support that isn't readily available elsewhere.
+</p>
+<p>
+Let's look a bit more at performance and concurrency using the
+<em>ring benchmark</em>
+proposed by Joe Armstrong in his book
+<a class='external-link' href='/web/20150325003157/http://www.amazon.com/Programming-Erlang-Software-Concurrent-World/dp/193435600X'>
+<em>Programming Erlang: Software for a Concurrent World.</em>
+</a>
+Armstrong describes the benchmark as follows:
+</p>
+<blockquote>Write a ring benchmark. Create N processes in a ring. Send a message round the ring M times so that a total of N * M messages get sent. Time how long this takes for different values of N and M. Write a similar program in some other programming language you are familiar with. Compare the results. Write a blog, and publish the results on the internet!</blockquote>
+<p>Here are the results for N = 1000 and M = 1000 (Caveat: These benchmarks were found around the Internet ca. 2010. They are not from identical computers, so the results are only roughly comparable.)</p>
+<table class='table'>
+<thead>
+<tr>
+<th>Programming language</th>
+<th>Time in seconds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ruby (using threads)</td>
+<td>1990 sec</td>
+</tr>
+<tr>
+<td>Ruby (using queues)</td>
+<td>360 sec</td>
+</tr>
+<tr>
+<td>Objective C (using threads)</td>
+<td>26 sec</td>
+</tr>
+<tr>
+<td>Java (using threads)</td>
+<td>12 sec</td>
+</tr>
+<tr>
+<td>Stackless Python</td>
+<td>1.68 sec</td>
+</tr>
+<tr>
+<td>Erlang</td>
+<td>1.09 sec</td>
+</tr>
+<tr>
+<td>Go</td>
+<td>0.87 sec</td>
+</tr>
+<tr>
+<td>Flow</td>
+<td>0.075 sec</td>
+</tr>
+</tbody>
+<tbody></tbody>
+</table>
+<p>On this benchmark, Flow is about an order of magnitude faster than its closest competitors (Go, Erlang, and Stackless Python) and over two orders of magnitude faster than languages using conventional multithreading. We've found that our investment in Flow has paid off very well in the performance gains we've received.</p>
+<h3>Flow features</h3>
+<p>Flow's new keywords and control-flow primitives support the capability to pass messages asynchronously between components. Here's a brief overview.</p>
+<h4>Promise<T> and Future<T></h4>
+<p>
+The data types that connect asynchronous senders and receivers are
+<code>Promise<T></code>
+and
+<code>Future<T></code>
+for some C++ type
+<code>T</code>.
+When a sender holds a
+<code>Promise<T></code>,
+it represents a promise to deliver a value of type
+<code>T</code>
+at some point in the future to the holder of the
+<code>Future<T></code>.
+Conversely, a receiver holding a
+<code>Future<T></code>
+can asynchronously continue computation until the point at which it actually needs the
+<code>T</code>.
+</p>
+<p>Promises and futures can be used within a single process, but their real strength in a distributed system is that they can traverse the network. For example, one computer could create a promise/future pair, then send the promise to another computer over the network. The promise and future will still be connected, and when the promise is fulfilled by the remote computer, the original holder of the future will see the value appear.</p>
+<h4>wait()</h4>
+<p>
+At the point when a receiver holding a
+<code>Future<T></code>
+needs the
+<code>T</code>
+to continue computation, it invokes the
+<code>wait()</code>
+statement with the
+<code>Future<T></code>
+as its parameter. The
+<code>wait()</code>
+statement allows the calling actor to pause execution until the value of the future is set, returning a value of type
+<code>T</code>.
+During the wait, other actors can continue execution, providing asynchronous concurrency within a single process.
+</p>
+<h4>ACTOR</h4>
+<p>
+Only functions labeled with the
+<code>ACTOR</code>
+tag can call
+<code>wait()</code>.
+Actors are the essential unit of asynchronous work and can be composed to create complex message-passing systems. By composing actors, futures can be chained together so that the result of one depends on the output of another.
+</p>
+<p>
+An actor is declared as returning a
+<code>Future<T></code>,
+where
+<code>T</code>
+may be
+<code>Void</code>
+if the actor's return value is used only for signaling. Each actor is preprocessed into a C++11 class with internal callbacks and supporting functions.
+</p>
+<h4>State</h4>
+<p>
+The
+<code>state</code>
+keyword is used to scope a variable so that it is visible across multiple
+<code>wait()</code>
+statements within an actor. The use of a
+<code>state</code>
+variable is illustrated in the example actor below.
+</p>
+<h4>PromiseStream<T>, FutureStream<T></h4>
+<p>
+When a component wants to work with a
+<em>stream</em>
+of asynchronous messages rather than a single message, it can use
+<code>PromiseStream<T></code>
+and
+<code>FutureStream<T></code>.
+These constructs allow for two important features: multiplexing and reliable delivery of messages. They also play an important role in Flow design patterns. For example, many of the servers in FoundationDB expose their interfaces as a
+<code>struct</code>
+of promise streams—one for each request type.
+</p>
+<h4>waitNext()</h4>
+<p>
+<code>waitNext()</code>
+is the counterpart of
+<code>wait()</code>
+for streams. It pauses program execution and waits for the next value in a
+<code>FutureStream</code>.
+If there is a value ready in the stream, execution continues without delay.
+</p>
+<h4>choose . . . when</h4>
+<p>
+The
+<code>choose</code>
+and
+<code>when</code>
+constructs allow an actor to wait for multiple futures at once in a ordered and predictable way.
+</p>
+<h4>Example: A Server Interface</h4>
+<p>
+Below is a actor that runs on single server communicating over the network. Its functionality is to maintain a count in response to asynchronous messages from other actors. It supports an interface implemented with a loop containing a
+<code>choose</code>
+statement with a
+<code>when</code>
+for each request type. Each
+<code>when</code>
+uses
+<code>waitNext()</code>
+to asynchronously wait for the next request in the stream. The add and subtract interfaces modify the count itself, stored with a state variable. The get interface takes a
+<code>Promise<int></code>
+instead of just an
+<code>int</code>
+to facilitate sending back the return message.
+</p>
+<p>To write the equivalent code directly in C++, a developer would have to implement a complex set of callbacks with exception-handling, requiring far more engineering effort. Flow makes it much easier to implement this sort of asynchronous coordination, with no loss of performance.</p>
+<pre class='prettyprint'>ACTOR void serveCountingServerInterface(&#x000A;           CountingServerInterface csi) {&#x000A;    state int count = 0;&#x000A;    while (1) {&#x000A;        choose {&#x000A;            when (int x = waitNext(csi.addCount.getFuture())){&#x000A;                count += x;&#x000A;            }&#x000A;            when (int x = waitNext(csi.subtractCount.getFuture())){&#x000A;                count -= x;&#x000A;            }&#x000A;            when (Promise<int> r = waitNext(csi.getCount.getFuture())){&#x000A;                r.send( count ); // goes to client&#x000A;            }&#x000A;        }&#x000A;    }&#x000A;}</pre>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003157/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:31:57 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:38:12 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=195;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+The Transaction Manifesto &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003201/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003201im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href="/web/20150325003201cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003201cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='transaction_manifesto' id='white_papers'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto/";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto/" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003201" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20150104025348/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto" title="4 Jan 2015">JAN</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:01 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20150104025348/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto" title="2:53:48 Jan 4, 2015"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:01 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325010210/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto" title="1:02:10 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:01 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003201*/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto/" title="See a list of every capture for this URL">8 captures</a>
+           <div class="r" title="Timespan for captures of this URL">28 Aug 14 - 11 Apr 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000020000_2015:2:203100000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003201/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003201im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003201/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003201/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003201/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003201/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003201/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003201/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003201/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003201/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003201/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003201/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>The Transaction Manifesto</h1>
+<h3>What is a transaction?</h3>
+
+<p>A transaction is a set of database reads and writes that is handled as a unit with a few crucial properties. First, all reads in the transaction see the same snapshot of the database (e.g. do not see changes to the data resulting from other transactions executing concurrently). Second, the writes within a transaction either all succeed or all fail. (Failure might be caused, for example, by a connection loss.) Lastly, after a transaction succeeds (commits), the writes are permanently stored. These properties of transactions (called isolation, atomicity, and durability) are the fundamental "ACID" guarantees. We at FoundationDB think that support for ACID transactions is much more than a nice extra feature; transactions are critical for building robust systems in an efficient, simple way.</p>
+
+<h3>Everyone needs transactions</h3>
+
+<p>Every application that needs to support simultaneous clients (concurrency) should be built using transactions with ACID properties. Transactions are the simplest and strongest programming model available to handle concurrency and will play an increasingly prominent role as NoSQL technology matures.</p>
+
+<p>A common misconception is that transactions are useful only for e-commerce or banking, which deal with financial transactions. However, the power of transactions comes from their engineering impact on application-building, not from the details of any particular application. Because of the ACID properties, transactions can be composed to create new abstractions, support more efficient data structures, and enforce integrity constraints. As a result, building applications with transactions is easier, more reliable, and more extensible than any of the alternatives.</p>
+
+<p>It may seem that the design tradeoffs for your system compel you to give up the advantages of transactions to gain speed, scalability, and fault tolerance. Systems built this way are usually fragile, difficult to manage, and often nearly impossible to adapt to changing business needs. The costs of foregoing transactions are rarely worth the benefits, especially if an alternative can provide transactional integrity at scale.</p>
+
+<h3>Transactions make concurrency simple</h3>
+
+<p>Concurrency arises whenever multiple clients, users, or parts of an application read and write the same data at the same time. Transactions make managing concurrency simple for developers. The main property of transactions that achieves this simplicity is <em>isolation</em>, the "I" in ACID. When a system guarantees that transactions are fully isolated (known as "serializability"), developers can treat each transaction as if it were executed sequentially, even though it may actually be executed concurrently. The burden of reasoning about potential interactions between operations from separate transactions goes away.</p>
+
+<h3>Slightly better than nothing: local transactions</h3>
+
+<p>Some systems offer ACID transactions for a limited set of predefined operations, typically restricted by the structure of the data model. For example, a document database may allow a single document to be updated in a transaction. A graph database may allow a relationship between two nodes to be added or dropped, updating the data elements for all three entities in a transaction.</p>
+
+<p>However, the real power of transactions comes when they can be <em>defined by the application developer</em> over any set of data elements. An application developer working with a key-value store should be able to define transactions that read and write any number of key-value pairs. When developers can freely define transactions without arbitrary restrictions, they can use transactions as fundamental building blocks for an application.</p>
+
+<h3>Transactions enable abstraction</h3>
+
+<p>Application-defined transactions are <em>composable</em>. Isolation, in combination with <em>atomicity</em> (the "A" in ACID), ensures that the execution of one transaction can't affect the visible behavior of another. This guarantee makes transactions composable with one another, allowing them to be assembled to build new <em>abstractions</em>. Abstractions can be encapsulated in <em>layers</em>. For example, a common abstraction is to maintain an index along with the primary data for to enable quickly finding data items matching some constraint. In any key-value store, this functionality can easily be implemented by storing a second copy of the data with the desired index field as the key. However, concurrent updates to the data potentially complicate this simple design. Without transactions it is difficult to ensure that, as the data changes, both the data and the index are updated consistently. With transactions, an indexing layer can update both the data and the index in a single transaction, guaranteeing their consistency and allowing a strong abstraction.</p>
+
+<p>Transactions allow layers to build abstractions simply and efficiently, providing a highly extensible capability to support multiple data models. Data models optimized for graphs, hierarchical documents, column-oriented data, or relational data can all be implemented in layers on top of an ordered key-value store. In most of these cases, a single data object in the higher-level model will map onto multiple key-value pairs. Transactions make it straightforward to reliably implement these mappings by wrapping multiple key-value updates in atomic units.</p>
+
+<h3>Transactions enable efficient data representations</h3>
+
+<p>The benefits of transactions extend beyond a more flexible choice of high-level data model. They can also enable a more efficient data representation within a given model. For example, consider the design pattern of <em>embedding</em> data commonly used in document-oriented databases. (Someone from the relational database world might know this as denormalizing.) In the embedding pattern, you nest data within the hierarchical structure of a single document (often duplicating it) rather than storing a reference to another document that can be shared.</p>
+
+<p>Embedding is often motivated by a lack of support for global transactions. Since most document-oriented databases only allow atomic operations on a single document, the developer must "squeeze" the data into a single document to enable atomic updates. The resulting document with embedded data will be larger, more complex, and usually less efficient to access and update.</p>
+
+<p>With transactions, there is no need to employ embedding to achieve atomic updates. Data elements can be modeled to optimize access efficiency, using multiple documents when appropriate, and still be updated in a single transaction to guarantee consistency. Moreover, the data can be shared by multiple clients and concurrently updated. Again, transactions provide the concurrency control needed to safely manage shared state.</p>
+
+<h3>Transactions enable flexibility</h3>
+
+<p>Most applications supporting significant business functions experience changing requirements. (And, of course, they usually need to do more, not less!) You may be tempted to think of transactional integrity as a nice feature but one that that's not essential for your application. To be sure, many applications can be built to avoid the need for global transactions by carefully designing the data schema for a specific, simple access pattern. However, when those applications evolve, having the flexibility to modify your data model and the power of global transactions can make the difference between an easy change and re-architecting.</p>
+
+<p>Imagine you operate a web application in which users both generate posts and receive posts from other users. All posts are maintained in a back-end database. Management has asked you to build a dashboard for doing some basic analytics. Although your data store is read-write, the dashboard is initially intended to perform read-only queries. The data is just for analysis, so if results are sometimes a bit out-of-date, nobody will notice in the UI. Overall, you see no need for transactions. You put together some great data visualizations that allow your company to analyze and view posts in new ways.</p>
+
+<p>On the up side, the dashboard proves very popular. On the down side, you start hearing demands for new features: users want the dashboard to support editing and moderation of the posts found using the analytics. Also, the ad-serving division wants access to the dashboard data via an API to drive their billing system. You now have a situation where the simple read-only model of the dashboard has gone out the window, and your new API needs to be able to provide strong guarantees about the results it is delivering.</p>
+
+<p>This sort of evolution of requirements is a natural and frequently occurring pattern. Transactions make the difference between being able to easily add these features and throwing out large parts of your code and starting over.</p>
+
+<h3>Transactions are not as expensive as you think</h3>
+
+<p>You may be reluctant to employ transactions due to a perception that they impose serious technical tradeoffs, particularly for the kinds of high performance applications targeted by NoSQL databases. However, when you examine the tradeoffs more closely, the cost to the user is quite low. (The cost to the database engineer is quite high&mdash;distributed transactional systems are difficult to build!)</p>
+
+<h4>Performance and scalability?</h4>
+
+<p>We know of no practical limits to the scalability or performance of systems supporting transactions. When the movement toward NoSQL databases began, early systems, such as Google Bigtable, adopted minimal designs tightly focused on the scalability and performance. Features familiar from relational databases had been aggressively shed and the supposition was that the abandoned features were unnecessary or even harmful for scalability and performance goals.</p>
+
+<p>Those suppositions were wrong. It is becoming clear that supporting transactions is a matter of engineering effort, not a fundamental tradeoff in the design space. Algorithms for maintaining transactional integrity can be distributed and scale out like many other problems. Transactional integrity does come at a CPU cost, but in our experience <em>that cost is less than 10% of total system CPU</em>. This is a small price to pay for transactional integrity and can easily be made up elsewhere.</p>
+
+<h4>Write Latency?</h4>
+
+<p>Transactions guarantee the <em>durability</em> of writes (the "D" in ACID). This guarantee comes with some increase in write latency. Durability means that committed writes stay committed, even in the face of subsequent hardware failures. As such, durability is an important component of fault tolerance. NoSQL systems that don't support durability are necessarily weaker in regard to fault tolerance. Because of the importance of true fault tolerance, the write latency required for durable transactions is usually worth the cost. For those applications that have a hard requirement to minimize write latency, durability can be turned off without sacrificing the "ACI" properties.</p>
+
+<h3>Transactions are the future of NoSQL</h3>
+
+<p>As NoSQL databases become more broadly used for a wide variety of purposes, more applications built on them employ non-trivial concurrency from multiple clients. Without adequate concurrency control, all the traditional problems of concurrency re-emerge and create a significant burden for application developers. ACID transactions simplify concurrency for developers by providing serializable operations that can be composed to properly engineer application software. If you're building an application that needs to be scalable and you don't have transactions, you will eventually be burned. Fortunately, the scalability, fault-tolerance, and performance of NoSQL databases are still achievable with transactions. The choice to use transactions is ultimately not a matter of fundamental tradeoffs but of sound engineering. As the technology matures, transactions will form a foundational capability for future NoSQL databases.</p>
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003201/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003201/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003201/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003201/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003201js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:01 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:09:38 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

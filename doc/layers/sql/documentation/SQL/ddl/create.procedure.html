@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app19.us.archive.org";archive_analytics.values.server_ms=501;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+CREATE PROCEDURE
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/ddl/create.procedure.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003317/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="/dyxL7ZYA6kv6HId+8zLVcc4lQ4OhS93PTB8M9KjuYQ=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003317/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../index.html>Overview</a></li>
+<li><a href=../../index.html>Documentation</a></li>
+<li><a href=../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003317/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003317/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../../index.html>Summary</a></li>
+<li>
+<a href=../../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../../Concepts/features.html>Features</a></li>
+<li><a href=../../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../index.html>SQL Reference</a></li>
+<li><a href=../../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../../Admin/configuration.html>Configuration</a></li>
+<li><a href=../../Admin/administration.html>Administration</a></li>
+<li><a href=../../Admin/security.html>Security</a></li>
+<li><a href=../../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../index.html>SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../../key-value-store/documentation/latest/search.html>
+      <img alt="Magnifying-glass" src=../../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="create-procedure">
+<span id="create-procedure-stmt"></span><h1>CREATE PROCEDURE<a class="headerlink" href="#create-procedure" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">∞</a></h2>
+<p>Creates a stored procedure, defined dynamically or as a reference to an external library, to extend SQL functionality.</p>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">∞</a></h2>
+<pre class="literal-block">
+CREATE [ OR REPLACE ] PROCEDURE <em>procedure_name</em>
+  ( [ { IN | OUT | INOUT } ]  [ <em>parameter_name</em> <em>parameter_type</em> , ...)
+  LANGUAGE <em>language</em> PARAMETER STYLE <em>parameter_style</em>
+  [ EXTERNAL NAME '&lt;jar&gt;:&lt;class&gt;.&lt;method&gt;' ]
+  [ AS '<em>quoted definition</em>' ] [ DYNAMIC ] RESULT SETS <em>result_count</em> ]
+  [ { NO SQL | READS SQL DATA | MODIFIES SQL DATA } ]
+  [ EXTERNAL SECURITY { INVOKER | DEFINER } ]
+</pre>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">∞</a></h2>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">OR</span> <span class="pre">REPLACE</span></tt></dt>
+<dd>If a procedure of this name currently exists, the new definition replaces the current definition.  Otherwise, attempting to create a duplicate procedure name results in an error.</dd>
+<dt><em>procedure_name</em></dt>
+<dd>The name (optionally schema-qualified) for the procedure.</dd>
+<dt><tt class="docutils literal"><span class="pre">IN</span></tt>, <tt class="docutils literal"><span class="pre">OUT</span></tt>, <tt class="docutils literal"><span class="pre">INOUT</span></tt></dt>
+<dd>Define if the parameters value is input only (<tt class="docutils literal"><span class="pre">IN</span></tt>), output only (<tt class="docutils literal"><span class="pre">OUT</span></tt>) or both (<tt class="docutils literal"><span class="pre">INOUT</span></tt>).  The default is <tt class="docutils literal"><span class="pre">IN</span></tt>.</dd>
+<dt><em>parameter_name</em></dt>
+<dd>The optional name for the each parameter to the procedure.</dd>
+<dt><em>parameter_type</em></dt>
+<dd>The data type of the value expected or returned for this parameter.</dd>
+<dt><em>language</em></dt>
+<dd><p class="first">The language used for the writing of the stored procedure. While several JVM compatible languages have been tested, there is support for two:</p>
+<dl class="last docutils">
+<dt><tt class="docutils literal"><span class="pre">JAVA</span></tt></dt>
+<dd>Procedure is written in Java and available as an external, loadable jar.</dd>
+<dt><tt class="docutils literal"><span class="pre">JAVASCRIPT</span></tt></dt>
+<dd>Procedure is written in Javascript and will be executed with the JVM Javascript engine.</dd>
+</dl>
+</dd>
+<dt><em>parameter_style</em></dt>
+<dd><p class="first">Parameter style, determining how the SQL translates the parameters of the procedure into the parameters of the procedures. There are two values:</p>
+<dl class="last docutils">
+<dt><tt class="docutils literal"><span class="pre">JAVA</span></tt></dt>
+<dd>Inputs are passed as standard Java types (including primitives). Outputs (and in/out) are passed as a one element long array into which the called method stores the value. For procedures in languages other than Java, the procedure must define a named procedure to call.</dd>
+<dt><tt class="docutils literal"><span class="pre">VARIABLES</span></tt></dt>
+<dd>Script is run directly without requiring a function (though they are allowed). Inputs are passed by named variable binding. Outputs can be returned that way, too, if the language supports such assignment. Only valid for JAVASCRIPT or other scripting language procedures.</dd>
+</dl>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">EXTERNAL</span> <span class="pre">NAME</span></tt></dt>
+<dd>The text of the procedure is defined in an external jar file, loaded into the JVM via the <tt class="docutils literal"><span class="pre">sqlj.install_jar</span></tt> procedure. If you are using a <tt class="docutils literal"><span class="pre">JAVASCRIPT</span></tt> procedure with a JAVA parameter style, you need to include the <tt class="docutils literal"><span class="pre">EXTERNAL</span> <span class="pre">NAME</span></tt> parameter to allow the execution engine to determine which procedure in the quoted definition to call.</dd>
+<dt><em>quoted_definition</em></dt>
+<dd>An inline definition of the procedure. For a short, one-line procedure, you may enclose the procedure in single quotes. For longer procedures and any procedure spanning multiple lines, mark the beginning and end of the procedure with <tt class="docutils literal"><span class="pre">$$</span></tt>. There is no way to escape this marker, meaning your procedure definition cannot use two dollar signs in a row.</dd>
+<dt><tt class="docutils literal"><span class="pre">DYNAMIC</span> <span class="pre">RESULTS</span> <span class="pre">SETS</span></tt></dt>
+<dd><p class="first">A stored procedure can produce one or more result sets. These appear as additional outputs of type <tt class="docutils literal"><span class="pre">java.sql.ResultSet</span></tt>.</p>
+<p class="last">You need to include this statement in your procedure definition if the procedures has both output parameters and is expected to return one or more results sets.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">∞</a></h2>
+<p>It is possible to use other JVM compatible language (like Jython, JRuby, Groovy, Clojure) as stored procedure languages. Please contact FoundationDB for instructions on configuring your system to allow this.</p>
+<p>Access to the local database from inside a script / Java method is via an embedded JDBC driver using the standard embedded URL: <tt class="docutils literal"><span class="pre">jdbc:default:connection</span></tt>.</p>
+<p>Procedures written using Java must use the parameter style <tt class="docutils literal"><span class="pre">JAVA</span></tt>. Javacript procedures may use either <tt class="docutils literal"><span class="pre">JAVA</span></tt> (and define a procedure name) or <tt class="docutils literal"><span class="pre">VARIABLES</span></tt>.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h2>
+<p>A simple Javascript procedure to manage both input and output values using the <tt class="docutils literal"><span class="pre">JAVA</span></tt> parameter style. As a multi-line procedure, it uses the <tt class="docutils literal"><span class="pre">$$</span></tt> to delimit the start and end of the procedure:</p>
+<div class="highlight-sql"><div class="highlight"><pre>CREATE PROCEDURE js_function(IN x DOUBLE, IN y DOUBLE, OUT s DOUBLE, OUT p DOUBLE)
+  LANGUAGE javascript PARAMETER STYLE java EXTERNAL NAME &#39;f&#39;
+AS $$
+  function f(x, y, s, p) {
+    s[0] = x + y;
+    p[0] = x * y;
+  }
+$$;
+</pre></div>
+</div>
+<p>A simple Javascript procedure using the <tt class="docutils literal"><span class="pre">VARIABLES</span></tt> parameter style:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">PROCEDURE</span> <span class="n">js_array</span><span class="p">(</span><span class="k">IN</span> <span class="n">x</span> <span class="n">DOUBLE</span><span class="p">,</span> <span class="k">IN</span> <span class="n">y</span> <span class="n">DOUBLE</span><span class="p">,</span> <span class="k">OUT</span> <span class="n">s</span> <span class="n">DOUBLE</span><span class="p">,</span> <span class="k">OUT</span> <span class="n">d</span> <span class="n">DOUBLE</span><span class="p">)</span>
+<span class="k">AS</span> <span class="s1">&#39;[x + y, x - y]&#39;</span> <span class="k">LANGUAGE</span> <span class="n">javascript</span> <span class="k">PARAMETER</span> <span class="n">STYLE</span> <span class="n">variables</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>An example of using Javascript to execute a query using the embedded JDBC driver. This returns a result set rather than output values:</p>
+<div class="highlight-sql"><div class="highlight"><pre>CREATE PROCEDURE js_query()
+  LANGUAGE javascript PARAMETER STYLE variables AS $$
+java.sql.DriverManager.getConnection(&quot;jdbc:default:connection&quot;).createStatement().executeQuery(&quot;SELECT name FROM customers ORDER BY name LIMIT 10&quot;)
+$$;
+</pre></div>
+</div>
+<p>An example to create a procedure which calls a class method an external jar file. The first step is to load your jar file into the running calling <tt class="docutils literal"><span class="pre">sqlj.install_jar()</span></tt>. Then create the procedure that is a wrapper around the static method. When you call the procedure <tt class="docutils literal"><span class="pre">calcuate_tax()</span></tt> the <tt class="docutils literal"><span class="pre">com.example.taxation.StateTax#calculate()</span></tt> method, stored in the StateTaxes.jar, is invoked. The result is returned in the tax parameter:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CALL</span> <span class="n">sqlj</span><span class="p">.</span><span class="n">install_jar</span><span class="p">(</span><span class="s1">&#39;/path/StateTaxes.jar&#39;</span><span class="p">,</span> <span class="s1">&#39;StateTax&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">PROCEDURE</span> <span class="n">calculate_tax</span> <span class="p">(</span><span class="k">IN</span> <span class="n">cost</span> <span class="n">DOUBLE</span><span class="p">,</span> <span class="k">IN</span> <span class="k">state</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="k">OUT</span> <span class="n">tax</span> <span class="n">DOUBLE</span><span class="p">)</span>
+<span class="k">LANGUAGE</span> <span class="n">JAVA</span> <span class="k">PARAMETER</span> <span class="n">STYLE</span> <span class="n">JAVA</span>
+<span class="k">EXTERNAL</span> <span class="n">NAME</span> <span class="s1">&#39;StateTax:com.example.taxation.StateTax.calculate&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>It is expected the parameters on the procedure and the parameters to the Java static method are the same. Reflection is used to determine the actual signature of the method, so some flexibility is allowed in matching the declared signature.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">CREATE PROCEDURE</a><ul><li><a class="reference internal" href="#purpose">Purpose</a></li><li><a class="reference internal" href="#syntax">Syntax</a></li><li><a class="reference internal" href="#parameters">Parameters</a></li><li><a class="reference internal" href="#notes">Notes</a></li><li><a class="reference internal" href="#examples">Examples</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325003317/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:17 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:29:08 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

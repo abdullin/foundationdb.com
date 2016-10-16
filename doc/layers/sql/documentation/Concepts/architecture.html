@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app14.us.archive.org";archive_analytics.values.server_ms=76;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Physical Architecture
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003211/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="C6wT2Sjrso1yjLaKj01iJ+dd0vpyOjSKdGcFCRfgDN4=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003211/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003211/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003211/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=index.html>Concepts</a>
+<ul>
+<li><a href=features.html>Features</a></li>
+<li><a href=architecture.html class="active">Physical Architecture</a></li>
+<li><a href=table.groups.html>Table-Groups</a></li>
+<li><a href=mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=known.limitations.html>Known Limitations</a></li>
+<li><a href=glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Concepts</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="physical-architecture">
+<span id="fdbsql-architecture"></span><h1>Physical Architecture<a class="headerlink" href="#physical-architecture" title="Permalink to this headline">∞</a></h1>
+<p>This document covers the architectural considerations of planning a production deployment. We recommend you read this document before setting up a cluster for performance testing or production use.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In FoundationDB, a &#8220;SQL Layer instance&#8221; refers to one SQL Layer process installed on one physical or virtual machine.</p>
+</div>
+<p>A common system design will include three logical layers:</p>
+<ul>
+<li><p class="first">An <strong>application layer</strong> has multiple application-server or web-server machines. This is where your application runs.</p>
+</li>
+<li><p class="first">A <strong>SQL layer</strong> includes multiple SQL Layer instances and provides SQL and object access to the application layer. The SQL Layer stores and manages data in the FoundationDB Key-Value cluster.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Some parts of your application can run here, as well as code embedded within the SQL Layer as <a class="reference internal" href=../SQL/ddl/create.function.html><em>Functions</em></a> or <a class="reference internal" href=../SQL/ddl/create.procedure.html><em>Procedures</em></a> in a variety of languages.</p>
+</div>
+</li>
+<li><p class="first">A <strong>FoundationDB Key-Value cluster</strong> handles all state in the system. It should be configured with an appropriate <a class="reference external" href=../../../../key-value-store/documentation/3.0/configuration.html title="(in FoundationDB v3.0)"><em class="xref std std-ref">redundancy mode</em></a> for the desired level of fault tolerance.</p>
+</li>
+</ul>
+<a class="reference internal image-reference" href=../_images/architecture-simple.png><img alt="../_images/architecture-simple.png" class="align-center" src=../../../../im_/architecture-simple.png style="width: 600px;" /></a>
+<p>FoundationDB manages state, distributed across cluster machines, in a consistent and fault tolerant way. As a result the SQL Layer is stateless and can be easily scaled. The main consideration in setting up a production cluster is how to arrange the layers in your physical infrastructure for simplicity and efficiency, while guaranteeing fault tolerance.</p>
+<p>The exact configuration will depend on the needs of the project. Systems with few users but large quantities of data and transactions will have more FoundationDB machines than SQL Layer machines, while systems with many users and moderate amounts of data and transactions will optimize the opposite way.</p>
+<p>You should review the <a class="reference internal" href="#fdbsql-architecture-recommended"><em>recommended architecture</em></a> below, which collocates a SQL Layer instance within every application layer machine. This deployment configuration is quick to deploy and achieves fault tolerance in a straightforward manner. If this configuration is inadequate for your needs, you should review the <a class="reference internal" href="#fdbsql-architecture-alternative"><em>alternative architecture</em></a>, which discusses alternative approaches, such as collocating the SQL Layer instances within the FoundationDB Key-Value cluster machines.</p>
+<div class="section" id="recommended-architecture">
+<span id="fdbsql-architecture-recommended"></span><h2>Recommended architecture<a class="headerlink" href="#recommended-architecture" title="Permalink to this headline">∞</a></h2>
+<p>The recommended physical architecture collocates the SQL Layer with the application layer on the same physical or virtual machine.</p>
+<a class="reference internal image-reference" href=../_images/architecture-recommended-setup.png><img alt="../_images/architecture-recommended-setup.png" class="align-center" src=../../../../im_/architecture-recommended-setup.png style="width: 600px;" /></a>
+<p>The advantages of this configuration are:</p>
+<ul class="simple">
+<li><strong>good latency characteristics</strong> because the communication between the application layer and SQL layer is local</li>
+<li><strong>simple fault tolerance</strong> because the only cross-machine communication is between the FoundationDB Key-Value client and Key-Value cluster, and that communication is fault tolerant. If an application layer machine fails, it will fail with its dedicated SQL Layer instance and will have no impact on other running application layer instances.</li>
+<li><strong>simple load balancing</strong> because the FoundationDB Key-Value client manages all load balancing between the client and the Key-Value cluster. The load balancing of front-end requests to application layer servers is not impacted.</li>
+<li><strong>sharing multi-core CPUs</strong> efficiently because application layer processes are mostly multi-threaded and can share CPU cores with the SQL Layer. This stands in contrast to the FoundationDB server process that uses a single CPU core.</li>
+</ul>
+<p>The disadvantage is that adding a SQL Layer instance to a well-tuned application layer machine will change its behavior characteristic and may require re-tuning. If the average load on each application layer machine is already high, then this configuration may also require adding additional capacity to the application layer.</p>
+<p>With this approach, you will scale each layer independently. Add FoundationDB processes and machines as the data size and transaction load increases. Add application layer + SQL layer machines as the number of users and the work by each user increase.</p>
+</div>
+<div class="section" id="alternative-architecture">
+<span id="fdbsql-architecture-alternative"></span><h2>Alternative architecture<a class="headerlink" href="#alternative-architecture" title="Permalink to this headline">∞</a></h2>
+<p>If you decide for operational reasons on an alternative approach, it may require a more complicated setup for load balancing and fault tolerance. One such alternative approach is to keep the application layer unchanged, and collocate SQL Layer with the FoundationDB Key-Value cluster.</p>
+<a class="reference internal image-reference" href=../_images/architecture-alternative-setup.png><img alt="../_images/architecture-alternative-setup.png" class="align-center" src=../../../../im_/architecture-alternative-setup.png style="width: 600px;" /></a>
+<p>The advantages of this configuration are:</p>
+<ul class="simple">
+<li><strong>good sharing of I/O resources</strong>  - because the SQL layer is stateless it will consume very little disk I/O. (See <a class="reference internal" href=../Admin/configuration.html><em>Physical Requirements</em></a>).</li>
+<li><strong>no changes to the application layer configuration required</strong></li>
+</ul>
+<p>Some disadvantages are:</p>
+<ul>
+<li><p class="first"><strong>load balancing and fault tolerance must be set up manually</strong> with technologies like <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003211/http:/www.pgpool.net>pgpool</a> to provide simple load balancing between application layer and SQL layer. The closest mode in pgpool to what several SQL layer instances do when backed by a single FoundationDB Key-Value cluster is master/slave replication. This means that it will route SELECT queries to an unloaded member of the pool but updates to the master (the backend 0).</p>
+</li>
+<li><p class="first"><strong>potential conflicts for core utilization</strong> between the SQL Layer and FoundationDB server processes. The FoundationDB server processes expect to use exactly one core to its full, while the SQL Layer Java process will compete for any free core capacity.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p>In order to avoid conflicts, it is possible to manually assign specific cores to each FoundationDB server process and assign the remaining cores to the SQL Layer. If a 4 core machine has 2 FoundationDB server processes running, then allocate at most 2 cores to the SQL Layer instance. This can be done by setting OS CPU affinity for the processes as outlined below:</p>
+<ul class="last simple">
+<li>On Linux: <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003211/http:/www.cyberciti.biz/tips/setting-processor-affinity-certain-task-or-process.html>http://www.cyberciti.biz/tips/setting-processor-affinity-certain-task-or-process.html</a></li>
+<li>On Windows: <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003211/http:/www.addictivetips.com/windows-tips/how-to-set-processor-affinity-to-an-application-in-windows>http://www.addictivetips.com/windows-tips/how-to-set-processor-affinity-to-an-application-in-windows/</a></li>
+<li>Mac OS X does not support this feature: <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003211/http:/superuser.com/questions/149312/how-to-set-processor-affinity-on-os-x>http://superuser.com/questions/149312/how-to-set-processor-affinity-on-os-x</a></li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">∞</a></h2>
+<p>While the two approaches outlined here are simple to understand and deploy, you can develop any physical deployment model that fits your particular needs. For example, some deployments keep two classes of SQL Layer instances, one for transactions and the other for reporting. It is also possible to provide a dedicated instance for your end customers to connect a BI tool such as Tableau (R). Keep in mind that the only way to ensure that a deployment model fits your needs is to test under the expected usage loads.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Physical Architecture</a><ul><li><a class="reference internal" href="#recommended-architecture">Recommended architecture</a></li><li><a class="reference internal" href="#alternative-architecture">Alternative architecture</a></li><li><a class="reference internal" href="#summary">Summary</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003211/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:11 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:11:48 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

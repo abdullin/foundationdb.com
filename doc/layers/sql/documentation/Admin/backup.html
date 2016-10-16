@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app17.us.archive.org";archive_analytics.values.server_ms=161;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Backup and Restoration
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Admin/backup.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003300/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003300/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=index.html>Operations</a>
+<ul>
+<li><a href=configuration.html>Configuration</a></li>
+<li><a href=administration.html>Administration</a></li>
+<li><a href=security.html>Security</a></li>
+<li><a href=backup.html class="active">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="backup-and-restoration">
+<span id="fdbsql-backup"></span><h1>Backup and Restoration<a class="headerlink" href="#backup-and-restoration" title="Permalink to this headline">∞</a></h1>
+<p>This document covers backup and restoration of SQL Layer data within a FoundationDB database. While FoundationDB itself is fault tolerant, the backup tool provides an additional level of protection by supporting recovery from disasters or unintentional modification of the database.</p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">∞</a></h2>
+<p>FoundationDB SQL Layer provides tools to backup (dump) and restore (load) data in SQL format. These tools complement the FoundationDB <a class="reference external" href=../../../../key-value-store/documentation/3.0/backups.html title="(in FoundationDB v3.0)"><em>Backup and Restoration</em></a> which makes a consistent, point-in-time backup of a FoundationDB database without downtime. It is recommended that for production use, you use the FoundationDB backup tool, but for day-to-day administration work or for loading external datasets, you rely on the SQL Layer tools.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The FoundationDB backup tool is supported only on Linux.</p>
+</div>
+<p>The backup tool has two components:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">fdbsqldump</span></tt></dt>
+<dd>Logical backups are performed using a utility called <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt>. It can be used to dump a schema or collection of schemas for backup or transfer to another database server. The dump contains SQL statements to create tables, indexes, and <tt class="docutils literal"><span class="pre">INSERT</span></tt> statements to populate the tables with data. Tables are dumped in group order. <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> does not dump the <tt class="docutils literal"><span class="pre">INFORMATION_SCHEMA</span></tt> schema.</dd>
+<dt><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt></dt>
+<dd><p class="first">This command line tool is used to restore a backup or load data from a SQL dump file. <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> performs the restore itself, so it must have access to the SQL dump files.</p>
+<p><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> offers about the same functionality you can find in <tt class="docutils literal"><span class="pre">psql</span></tt>, using COPY for CSV and MYSQL_DUMP files or <tt class="docutils literal"><span class="pre">\i</span></tt>. It can handle a CSV files with or without headers, most MySQLdump files, most PostgreSQL dump files, and every FoundationDB dump file formats. It supports an <tt class="docutils literal"><span class="pre">auto</span></tt> option for the <a class="reference internal" href="#cmdoption-fdbsqlload-f"><em class="xref std std-option">fdbsqlload -f</em></a> format mode that does a little guessing of file formats and target tables.</p>
+<p>More significantly, the load can be done in parallel using multiple threads and multiple transactions. This requires breaking the file up into multiple pieces along line / statement boundaries.</p>
+<p class="last"><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> is used both for backup and restore operations as well as <a class="reference internal" href=../../index.html><em>migration</em></a> of data from other database systems.</p>
+</dd>
+</dl>
+<div class="section" id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">∞</a></h3>
+<p><tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> and <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> come with the SQL Layer Client Tools. See <a class="reference internal" href="administration.html#fdbsql-install-client-tools"><em>Installing Client Tools</em></a> for installations details.</p>
+</div>
+</div>
+<div class="section" id="fdbsqldump-command-line-tool">
+<span id="fdbsqldump"></span><h2><tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> Command Line Tool<a class="headerlink" href="#fdbsqldump-command-line-tool" title="Permalink to this headline">∞</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> does not support loading DDL with multiple threads, so this should be run once with <tt class="docutils literal"><span class="pre">--no-data</span></tt> and once with <tt class="docutils literal"><span class="pre">--no-schemas</span></tt> for optimal loading.</p>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> command line tool is used to backup (dump) data from one or more schemas in the SQL Layer:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbsqldump [options...] schemas...
+</pre></div>
+</div>
+<div class="section" id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">∞</a></h3>
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-c">
+<span id="cmdoption-fdbsqldump--commit"></span><tt class="descname">-c</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--commit</tt><tt class="descclassname"> &lt;auto|row_count&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-c" title="Permalink to this definition">∞</a></dt>
+<dd><p>Dumps the data in multiple transactions. The <tt class="docutils literal"><span class="pre">commit_frequency</span></tt> value specifies the number of rows to dump out in each transaction before it is committed.</p>
+<p>Remember that FoundationDB supports a transaction timeout of up to 5 seconds, so this value should be small enough to complete within that limit. Using <tt class="docutils literal"><span class="pre">auto</span></tt> will pick an optimal value.</p>
+<p>In this mode the output <em>is not guaranteed to be in a consistent snapshot</em> as data might change between consecutive transactions.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump--insert-max-rows">
+<tt class="descname">--insert-max-rows</tt><tt class="descclassname"> &lt;row_count&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump--insert-max-rows" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the maximum number of rows in a single INSERT statement in the dump file. The default value is 100 rows.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-d">
+<span id="cmdoption-fdbsqldump--no-data"></span><tt class="descname">-d</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--no-data</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump-d" title="Permalink to this definition">∞</a></dt>
+<dd><p>Dump only data definition statements without any data.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-s">
+<span id="cmdoption-fdbsqldump--no-schemas"></span><tt class="descname">-s</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--no-schemas</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump-s" title="Permalink to this definition">∞</a></dt>
+<dd><p>Dump only data without any data definition statements.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-o">
+<span id="cmdoption-fdbsqldump--output"></span><tt class="descname">-o</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--output</tt><tt class="descclassname"> &lt;filename&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-o" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the output file including the path.</p>
+<p>If the filename is not specified the results will be written to standard output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump--help">
+<tt class="descname">--help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump--help" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output help information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump--version">
+<tt class="descname">--version</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump--version" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output version information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-h">
+<span id="cmdoption-fdbsqldump--host"></span><tt class="descname">-h</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--host</tt><tt class="descclassname"> &lt;hostname&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-h" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the host to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-p">
+<span id="cmdoption-fdbsqldump--port"></span><tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port_number&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-p" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the port to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-u">
+<span id="cmdoption-fdbsqldump--user"></span><tt class="descname">-u</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--user</tt><tt class="descclassname"> &lt;user_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-u" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the user to connect as.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-w">
+<span id="cmdoption-fdbsqldump--password"></span><tt class="descname">-w</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password</tt><tt class="descclassname"> &lt;password&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqldump-w" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the password for the user.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-W">
+<span id="cmdoption-fdbsqldump--password-prompt"></span><tt class="descname">-W</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password-prompt</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump-W" title="Permalink to this definition">∞</a></dt>
+<dd><p>Prompt for the password without echoing.</p>
+</dd></dl>
+
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Also see <a class="reference internal" href=../Developer/client.tools.html><em>Connection Details</em></a> for more details.</p>
+</div>
+<dl class="option">
+<dt id="cmdoption-fdbsqldump-arg-schemas">
+<tt class="descname">schemas</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqldump-arg-schemas" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify all schemas that will be included in this dump file. If not specified, all schemas, except for the INFORMATION_SCHEMA schema, are included in the dump.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="fdbsqlload-command-line-tool">
+<span id="fdbsqlload"></span><h2><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> Command Line Tool<a class="headerlink" href="#fdbsqlload-command-line-tool" title="Permalink to this headline">∞</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> command line tool is used to load data into the SQL Layer:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbsqlload [options...] files...
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Multiple <a class="reference internal" href="#cmdoption-fdbsqlload--host"><em class="xref std std-option">fdbsqlload --host</em></a> arguments can be used for parallel loading.</p>
+</div>
+<div class="section" id="id1">
+<h3>Options<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h3>
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-c">
+<span id="cmdoption-fdbsqlload--commit"></span><tt class="descname">-c</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--commit</tt><tt class="descclassname"> &lt;auto|row_count&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-c" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the number of rows to insert before a transaction is committed.</p>
+<p>Remember that FoundationDB supports a transaction timeout of up to 5 seconds, so this value should be small enough to complete within that limit. Using <tt class="docutils literal"><span class="pre">auto</span></tt> will pick an optimal value.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--constraint-check-time">
+<tt class="descname">--constraint-check-time</tt><tt class="descclassname"> &lt;check_time&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload--constraint-check-time" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the point in the execution when constraint checking takes place. If not specified, <tt class="docutils literal"><span class="pre">DEFERRED_WITH_RANGE_CACHE</span></tt> will be used.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--error-file">
+<tt class="descname">--error-file</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload--error-file" title="Permalink to this definition">∞</a></dt>
+<dd><p>Filename to output any errors encountered during the load. Without this option, any errors will <em>stop the load process</em>.</p>
+<p>The file is output as a SQL file commented with line number references to the original source file. The fiel is intended to be edited, to correct any syntax or data problems, and then re-ran through <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--encoding">
+<tt class="descname">--encoding</tt><tt class="descclassname"> &lt;character set name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload--encoding" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the character set (e.g. UTF8, latin1) that the files are encoded in.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-f">
+<span id="cmdoption-fdbsqlload--format"></span><tt class="descname">-f</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--format</tt><tt class="descclassname"> &lt;auto|csv|mysql|sql&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-f" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the input file format. The <tt class="docutils literal"><span class="pre">auto</span></tt> option does a little guessing of file formats and target tables. If not specified, <tt class="docutils literal"><span class="pre">auto</span></tt> will be used.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> with the MySQL format does not support loading DDL. Run MySQL dump once with DDL and load that with <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> with the <tt class="docutils literal"><span class="pre">--file</span></tt> option, and dump again with just the data.</p>
+</div>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--header">
+<tt class="descname">--header</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload--header" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify that the input file has a header line preceding the data. Only valid with CSV format.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-t">
+<span id="cmdoption-fdbsqlload--into"></span><tt class="descname">-t</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--into</tt><tt class="descclassname"> &lt;table_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-t" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the target table to load the data into. Only valid with CSV format.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-q">
+<span id="cmdoption-fdbsqlload--quiet"></span><tt class="descname">-q</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--quiet</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload-q" title="Permalink to this definition">∞</a></dt>
+<dd><p>Suppress loader messages.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-r">
+<span id="cmdoption-fdbsqlload--retry"></span><tt class="descname">-r</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--retry</tt><tt class="descclassname"> &lt;retry_count&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-r" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the number of times to retry a transaction that failed. Defaults to <tt class="docutils literal"><span class="pre">10</span></tt> if the <tt class="docutils literal"><span class="pre">--commit</span></tt> option was also given, <tt class="docutils literal"><span class="pre">1</span></tt> otherwise.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-s">
+<span id="cmdoption-fdbsqlload--schema"></span><tt class="descname">-s</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--schema</tt><tt class="descclassname"> &lt;schema_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-s" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the schema to load into.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-n">
+<span id="cmdoption-fdbsqlload--threads"></span><tt class="descname">-n</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--threads</tt><tt class="descclassname"> &lt;thread_count&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-n" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the number of threads to use in parallel for loading the data. Defaults to <tt class="docutils literal"><span class="pre">1</span></tt>.</p>
+<p>This option makes a significant difference in load performance. We recommend that you specify a value that is at least the number of cores in the system.</p>
+<p>Using this option prevents the loading of files with DDL statements. Instead you should use two files, one for the schema and another for the data. For example, when using fdbsqldump, run it once with <a class="reference internal" href="#cmdoption-fdbsqldump--no-data"><em class="xref std std-option">--no-data</em></a> and once with <a class="reference internal" href="#cmdoption-fdbsqldump--no-schemas"><em class="xref std std-option">--no-schemas</em></a>. Then, use fdbsqlload twice, once to load the schema with <tt class="docutils literal"><span class="pre">--threads=1</span></tt> and once with <tt class="docutils literal"><span class="pre">--threads=N</span></tt> to load the data, where <tt class="docutils literal"><span class="pre">N</span></tt> is about the number of CPU cores.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--help">
+<tt class="descname">--help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload--help" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output help information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload--version">
+<tt class="descname">--version</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload--version" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output version information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-h">
+<span id="cmdoption-fdbsqlload--host"></span><tt class="descname">-h</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--host</tt><tt class="descclassname"> &lt;hostname&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-h" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the host to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-p">
+<span id="cmdoption-fdbsqlload--port"></span><tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port_number&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-p" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the port to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-u">
+<span id="cmdoption-fdbsqlload--user"></span><tt class="descname">-u</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--user</tt><tt class="descclassname"> &lt;user_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-u" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the user to connect as.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-w">
+<span id="cmdoption-fdbsqlload--password"></span><tt class="descname">-w</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password</tt><tt class="descclassname"> &lt;password&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlload-w" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the password for the user.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-W">
+<span id="cmdoption-fdbsqlload--password-prompt"></span><tt class="descname">-W</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password-prompt</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload-W" title="Permalink to this definition">∞</a></dt>
+<dd><p>Prompt for the password without echoing.</p>
+</dd></dl>
+
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Also see <a class="reference internal" href=../Developer/client.tools.html><em>Connection Details</em></a> for more details.</p>
+</div>
+<dl class="option">
+<dt id="cmdoption-fdbsqlload-arg-files">
+<tt class="descname">files</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlload-arg-files" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify one or more files to be loaded.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="post-loading-checklist">
+<span id="fdbsqldump-post-load"></span><h3>Post Loading Checklist<a class="headerlink" href="#post-loading-checklist" title="Permalink to this headline">∞</a></h3>
+<p>Once you load the data, it is recommended that you generate <a class="reference internal" href=../SQL/Indexes/index.statistics.html><em>index statistics</em></a> for the tables. The command for generating statistics for a table through <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> is:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="k">table_name</span><span class="o">&gt;</span> <span class="k">ALL</span> <span class="k">UPDATE</span> <span class="k">STATISTICS</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Missing table or index statistics are reported in the <tt class="docutils literal"><span class="pre">server.log</span></tt> <a class="reference internal" href="administration.html#fdbsql-administration-logfile"><em>log file</em></a>. Check this log file on a regular basis to determine if a rebuild of the statistics is required for a certain table.</p>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Backup and Restoration</a><ul><li><a class="reference internal" href="#introduction">Introduction</a><ul><li><a class="reference internal" href="#prerequisites">Prerequisites</a></li></ul></li><li><a class="reference internal" href="#fdbsqldump-command-line-tool"><tt class="docutils literal"><span class="pre">fdbsqldump</span></tt> Command Line Tool</a><ul><li><a class="reference internal" href="#options">Options</a></li></ul></li><li><a class="reference internal" href="#fdbsqlload-command-line-tool"><tt class="docutils literal"><span class="pre">fdbsqlload</span></tt> Command Line Tool</a><ul><li><a class="reference internal" href="#id1">Options</a></li><li><a class="reference internal" href="#post-loading-checklist">Post Loading Checklist</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:00 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:59 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

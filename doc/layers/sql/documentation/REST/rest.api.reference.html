@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=219;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+REST API Reference
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003300/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="qKOP271jGRFxBAZqC2ylbb93q3jzJoZxDCvrxfbWnlQ=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003300/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=rest.api.reference.html class="active">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="rest-api-reference">
+<span id="id1"></span><h1>REST API Reference<a class="headerlink" href="#rest-api-reference" title="Permalink to this headline">∞</a></h1>
+<p>The REST API provides a document style interface to SQL Layer data. It conforms to the same fully-modeled schema and is particularly adapted to access <a class="reference internal" href=../Concepts/table.groups.html><em>Table Groups</em></a> data as JSON objects.</p>
+<p>This document describes version 1 (<tt class="docutils literal"><span class="pre">/v1</span></tt>) of the REST API. New releases may increase the version number.</p>
+<p>In this guide we use the word entity to describe a Table-Group instance.</p>
+<div class="section" id="setting-up">
+<h2>Setting up<a class="headerlink" href="#setting-up" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="example-entities-and-data">
+<h3>Example Entities and Data<a class="headerlink" href="#example-entities-and-data" title="Permalink to this headline">∞</a></h3>
+<p>Assume the <tt class="docutils literal"><span class="pre">Employees</span></tt> schema, pictured below, has been created and populated with data.</p>
+<img alt="../_images/employees.schema.grouped.png" class="align-center" src=../../../../im_/employees.schema.grouped.png />
+<p>Departments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d001&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Marketing&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d002&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Finance&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d003&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Human Resources&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d004&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Production&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d005&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Development&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d006&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Quality Management&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d007&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Sales&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d008&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Research&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;dept_no&quot;</span><span class="p">:</span><span class="s">&quot;d009&quot;</span><span class="p">,</span><span class="s">&quot;dept_name&quot;</span><span class="p">:</span><span class="s">&quot;Customer Service&quot;</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Employees:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;John&quot;</span><span class="p">,</span> <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Butler&quot;</span><span class="p">,</span> <span class="s">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s">&quot;1953-09-02&quot;</span><span class="p">,</span> <span class="s">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s">&quot;1986-06-26&quot;</span><span class="p">,</span>
+    <span class="s">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s">&quot;d005&quot;</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1986-06-26&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;9999-01-01&quot;</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">60117</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1986-06-26&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;9999-01-01&quot;</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Senior Engineer&quot;</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1986-06-26&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;9999-01-01&quot;</span> <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;first_name&quot;</span><span class="p">:</span> <span class="s">&quot;Sally&quot;</span><span class="p">,</span> <span class="s">&quot;last_name&quot;</span><span class="p">:</span> <span class="s">&quot;Green&quot;</span><span class="p">,</span> <span class="s">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s">&quot;1985-11-21&quot;</span><span class="p">,</span> <span class="s">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s">&quot;1964-06-02&quot;</span><span class="p">,</span>
+    <span class="s">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s">&quot;d007&quot;</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1996-08-03&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;9999-01-01&quot;</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">65828</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1996-08-03&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;2001-08-02&quot;</span> <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="s">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Staff&quot;</span><span class="p">,</span> <span class="s">&quot;from_date&quot;</span><span class="p">:</span> <span class="s">&quot;1996-08-03&quot;</span><span class="p">,</span> <span class="s">&quot;to_date&quot;</span><span class="p">:</span> <span class="s">&quot;9999-01-01&quot;</span> <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connecting-to-the-rest-api-with-curl">
+<h3>Connecting to the REST API with <tt class="docutils literal"><span class="pre">curl</span></tt><a class="headerlink" href="#connecting-to-the-rest-api-with-curl" title="Permalink to this headline">∞</a></h3>
+<p>The <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/curl.haxx.se>cURL utility</a> is a command line tool for transferring data with URL syntax. It can be used for command-line interaction with the SQL Layer&#8217;s REST Object API on port <tt class="docutils literal"><span class="pre">8091</span></tt>. As an example, we will issue a request with <tt class="docutils literal"><span class="pre">curl</span></tt> against the REST API <a class="reference internal" href="#rest-api-version"><em>version end point</em></a> to retrieve the version of SQL Layer running:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ curl http://localhost:8091/v1/version
+</pre></div>
+</div>
+<p>If everything is working correctly, you should see output similar to:</p>
+<div class="highlight-json"><div class="highlight"><pre><span class="p">[</span>
+<span class="p">{</span><span class="nt">&quot;server_name&quot;</span><span class="p">:</span><span class="s2">&quot;FoundationDB SQL Layer&quot;</span><span class="p">,</span><span class="nt">&quot;server_version&quot;</span><span class="p">:</span><span class="s2">&quot;2.0.0-SNAPSHOT.4489-1179823&quot;</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>For all state-changing requests (i.e. not GET requests), the referer header must be set in order to prevent cross-site request forgery attacks.
+By default the referer must be <cite>http://localhost</cite>, but this can be changed in the <a class="reference internal" href=../Admin/configuration.html><em>configuration settings</em></a>.
+Setting this with curl just requires the addition of the <cite>-e</cite> option, for example:</p>
+<blockquote class="last">
+<div>$ curl -e <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/localhost>http://localhost</a> -X DELETE <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/localhost:8091/v1/entity/getting_started_rest.orders/101>http://localhost:8091/v1/entity/getting_started_rest.orders/101</a></div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="entity-resources">
+<span id="rest-api-entity"></span><h3>Entity Resources<a class="headerlink" href="#entity-resources" title="Permalink to this headline">∞</a></h3>
+<div class="section" id="names-and-identifiers">
+<span id="rest-entity-name-id"></span><h4>Names and Identifiers<a class="headerlink" href="#names-and-identifiers" title="Permalink to this headline">∞</a></h4>
+<p>A SQL Table-Group is referred to as an entity in REST, where the name of the entity is the fully-qualified (i.e. schema and table) table name and the identifier is the value(s) of the <tt class="docutils literal"><span class="pre">PRIMARY</span> <span class="pre">KEY</span></tt>. If basic authorization is enabled for HTTP connections, the schema name defaults to the user name and may be omitted from REST requests.</p>
+<p>The representation in an entity identifier in a URL is the same as in SQL for most data types. For example, <tt class="docutils literal"><span class="pre">SELECT</span> <span class="pre">*</span> <span class="pre">FROM</span> <span class="pre">schemaA.example</span> <span class="pre">WHERE</span> <span class="pre">id=1</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">GET</span> <span class="pre">/v1/entity/schemaA.example/1</span></tt>. Data types that contain non-URL safe bytes, such as generic binary data, may be specified in encoded forms.</p>
+<p>For example, assume the given table and row containing the binary values of ASCII &#8216;ABC&#8217; (decimal values 65, 66 and 67):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; CREATE TABLE schemaA.example(id CHAR(12) FOR BIT DATA NOT NULL PRIMARY KEY, num INT);
+&gt; INSERT INTO schemaA.example VALUES (x&#39;414243&#39;, 100);
+</pre></div>
+</div>
+<p>The identifier can be specified as a string (UTF-8 byte values restricted to URL safe range):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; GET /v1/entity/schemaA.example/ABC
+[
+{&quot;id&quot;:&quot;QUJD&quot;,&quot;num&quot;:100}
+]
+</pre></div>
+</div>
+<p>Or as URL-encoded values (again, restricted to URL safe range):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; GET /v1/entity/schemaA.example/%41%42%43
+[
+{&quot;id&quot;:&quot;QUJD&quot;,&quot;num&quot;:100}
+]
+</pre></div>
+</div>
+<p>Or as a hex-encoded string (prefixed with <tt class="docutils literal"><span class="pre">hex:</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; GET /v1/entity/schemaA.example/hex:414243
+[
+{&quot;id&quot;:&quot;QUJD&quot;,&quot;num&quot;:100}
+]
+</pre></div>
+</div>
+<p>Or as a base64-encoded string (prefixed with <tt class="docutils literal"><span class="pre">base64:</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; GET /v1/entity/schemaA.example/base64:QUJD
+[
+{&quot;id&quot;:&quot;QUJD&quot;,&quot;num&quot;:100}
+]
+</pre></div>
+</div>
+</div>
+<div class="section" id="get">
+<span id="rest-api-get"></span><h4>GET<a class="headerlink" href="#get" title="Permalink to this headline">∞</a></h4>
+<dl class="get">
+<dt id="get--v1-entity-name">
+<tt class="descname">GET </tt><tt class="descname">/v1/entity/{name}</tt><a class="headerlink" href="#get--v1-entity-name" title="Permalink to this definition">∞</a></dt>
+<dd><p>Retrieve all instances of the given entity. Successful response is a JSON array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; name of the entity (schema.table or only table name, schema name defaults to logged in user name).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Query Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> &#8211; maximum hierarchical depth to retrieve. <em>default is -1 (unlimited)</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/v1/entity/employees</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Butler&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1953-09-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">60117</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Senior Engineer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sally&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Green&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1985-11-21&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1964-06-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d007&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1996-08-03&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">2</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="nt">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">65828</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1996-08-03&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2001-08-02&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">2</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Staff&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1996-08-03&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">2</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="get">
+<dt id="get--v1-entity-name-id">
+<tt class="descname">GET </tt><tt class="descname">/v1/entity/{name}/{id}</tt><a class="headerlink" href="#get--v1-entity-name-id" title="Permalink to this definition">∞</a></dt>
+<dd><p>Retrieve a single instance of the given entity. Successful response is a JSON array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; name of the entity.</li>
+<li><strong>id</strong> &#8211; identifier of the entity.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Query Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>depth</strong> &#8211; maximum hierarchical depth to retrieve. <em>default is -1 (unlimited)</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/v1/entity/employees/1</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong>:</p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1953-09-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Butler&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">60117</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Senior Engineer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="post">
+<span id="rest-api-post"></span><h4>POST<a class="headerlink" href="#post" title="Permalink to this headline">∞</a></h4>
+<dl class="post">
+<dt id="post--v1-entity-name">
+<tt class="descname">POST </tt><tt class="descname">/v1/entity/{name}</tt><a class="headerlink" href="#post--v1-entity-name" title="Permalink to this definition">∞</a></dt>
+<dd><p>Create a new instance of the entity. Successful response is a JSON object containing identifiers for all created entities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; name of the entity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/v1/entity/employees</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bill&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wilson&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-10-18&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-03-13&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-03-13&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="put">
+<span id="rest-api-put"></span><h4>PUT<a class="headerlink" href="#put" title="Permalink to this headline">∞</a></h4>
+<dl class="put">
+<dt id="put--v1-entity-name-id">
+<tt class="descname">PUT </tt><tt class="descname">/v1/entity/{name}/{id}</tt><a class="headerlink" href="#put--v1-entity-name-id" title="Permalink to this definition">∞</a></dt>
+<dd><p>Replace the entire entity at the given identifier. Successful response is a JSON object containing identifiers for all created entities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; name of the entity.</li>
+<li><strong>id</strong> &#8211; identifier of the entity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">PUT</span> <span class="nn">/v1/entity/employees/3</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Bill&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wilson&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-10-18&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-03-13&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;2013-03-13&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="patch">
+<span id="rest-api-patch"></span><h4>PATCH<a class="headerlink" href="#patch" title="Permalink to this headline">∞</a></h4>
+<dl class="patch">
+<dt id="patch--v1-entity-name">
+<tt class="descname">PATCH </tt><tt class="descname">/v1/entity/{name}</tt><a class="headerlink" href="#patch--v1-entity-name" title="Permalink to this definition">∞</a></dt>
+<dd><p>Update individual portions of an entity or, if the entity does not exist, create a new one. Only the fields specified in the incoming document will be modified. This provides <em>upsert</em> or <em>merge</em> style behavior.</p>
+<p>Input may be a JSON object or array. Each object must contain the full ID of the entity to modify (or create). The given objects may not contain changes to collections. Successful response is a JSON object or array, if one was given, containing the identity for the affected entity or entities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; name of the entity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre>PATCH /v1/entity/employees HTTP/1.1
+Content-Type: application/json
+
+{
+  &quot;emp_no&quot;: 1,
+  &quot;first_name&quot;: &quot;Clark&quot;
+}
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="delete">
+<span id="rest-api-delete"></span><h4>DELETE<a class="headerlink" href="#delete" title="Permalink to this headline">∞</a></h4>
+<dl class="delete">
+<dt id="delete--v1-entity-name-id">
+<tt class="descname">DELETE </tt><tt class="descname">/v1/entity/{name}/{id}</tt><a class="headerlink" href="#delete--v1-entity-name-id" title="Permalink to this definition">∞</a></dt>
+<dd><p>Destroy an instance of an entity. Successful response has an empty body.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; name of the entity.</li>
+<li><strong>id</strong> &#8211; identifier of the entity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">DELETE</span> <span class="nn">/v1/entity/employees/3</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">204</span> <span class="ne">No Content</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="full-text-resources">
+<span id="rest-api-fulltext"></span><h3>Full Text Resources<a class="headerlink" href="#full-text-resources" title="Permalink to this headline">∞</a></h3>
+<p>In addition to the example entities and data, this section assumes a full text index was created on the <tt class="docutils literal"><span class="pre">employees.first_name</span></tt> field. The REST endpoint for full text queries takes <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003300/http:/lucene.apache.org/core/old_versioned_docs/versions/2_9_1/queryparsersyntax.html>Lucene syntax</a>. See <a class="reference internal" href=../SQL/indexes.html><em>Full-Text Indexes</em></a> for more details about the creation and usage of such an index.</p>
+<dl class="get">
+<dt id="get--v1-text-name-index">
+<tt class="descname">GET </tt><tt class="descname">/v1/text/{name}/{index}</tt><a class="headerlink" href="#get--v1-text-name-index" title="Permalink to this definition">∞</a></dt>
+<dd><p>Perform a full text search on the specified index. Successful response is a JSON array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; Name of the entity the index is defined on.</li>
+<li><strong>index</strong> &#8211; Name of the full text index to search.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Query Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>q</strong> &#8211; Query text to execute. <em>required</em></li>
+<li><strong>depth</strong> &#8211; Depth of the entity to retrieve <em>default is -1 (unlimited)</em></li>
+<li><strong>size</strong> &#8211; Maximum number of entities to return <em>default is -1 (unlimited)</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/v1/text/employees/ft_first_name?q=J*</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;birth_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1953-09-02&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;gender&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nt">&quot;hire_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;last_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Butler&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_emp&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;dept_no&quot;</span><span class="p">:</span> <span class="s2">&quot;d005&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;salaries&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;salary&quot;</span><span class="p">:</span> <span class="mi">60117</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;titles&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="nt">&quot;emp_no&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;from_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Senior Engineer&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;to_date&quot;</span><span class="p">:</span> <span class="s2">&quot;9999-01-01&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;emp_no_ref&quot;</span><span class="p">:</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="procedure-call-resources">
+<span id="rest-api-procs"></span><h3>Procedure Call Resources<a class="headerlink" href="#procedure-call-resources" title="Permalink to this headline">∞</a></h3>
+<p>For example responses, assume the procedure below has been created on the FoundationDB SQL Layer.</p>
+<blockquote>
+<div><div class="highlight-sql"><div class="highlight"><pre>CREATE PROCEDURE js_concat(IN x CHAR(32), IN y CHAR(32), OUT ret CHAR(64))
+LANGUAGE javascript PARAMETER STYLE variables AS $$
+    ret = x + &#39; &#39; + y;
+$$;
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="post">
+<dt id="post--v1-call-procedure">
+<tt class="descname">POST </tt><tt class="descname">/v1/call/{procedure}</tt><a class="headerlink" href="#post--v1-call-procedure" title="Permalink to this definition">∞</a></dt>
+<dd><p>Retrieve the results from running the given procedure. Successful result is a JSON array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Request JSON Object:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>(varies)</strong> &#8211; Passed directly to the procedure. For the example, <tt class="docutils literal"><span class="pre">x</span></tt> and <tt class="docutils literal"><span class="pre">y</span></tt> are <em>required</em> query parameters.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/v1/call/js_concat</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;x&quot;</span> <span class="p">:</span> <span class="s2">&quot;hello&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;y&quot;</span> <span class="p">:</span> <span class="s2">&quot;world&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;ret&quot;</span><span class="p">:</span> <span class="s2">&quot;hello world&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="sql-resources">
+<span id="rest-api-sql"></span><h3>SQL Resources<a class="headerlink" href="#sql-resources" title="Permalink to this headline">∞</a></h3>
+<dl class="post">
+<dt id="post--v1-sql-query">
+<tt class="descname">POST </tt><tt class="descname">/v1/sql/query</tt><a class="headerlink" href="#post--v1-sql-query" title="Permalink to this definition">∞</a></dt>
+<dd><p>Run a single SQL statement. Successful response is a JSON array results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Request JSON Object:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>q</strong> (<em>string</em>) &#8211; SQL query to run. <em>required</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/v1/sql/explain</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;q&quot;</span> <span class="p">:</span> <span class="s2">&quot;SELECT COUNT(*) emp_cnt FROM emp.employees&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;emp_cnt&quot;</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--v1-sql-explain">
+<tt class="descname">POST </tt><tt class="descname">/v1/sql/explain</tt><a class="headerlink" href="#post--v1-sql-explain" title="Permalink to this definition">∞</a></dt>
+<dd><p>View the explain plan for running the given query. Successful response is a JSON object containing elements for all pieces of the plan.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Request JSON Object:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>q</strong> (<em>string</em>) &#8211; SQL query to explain. <em>required</em></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/v1/sql/explain</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;q&quot;</span> <span class="p">:</span> <span class="s2">&quot;SELECT COUNT(*) emp_cnt FROM emp.employees&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;project&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;input_operator&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">{</span>
+    <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;count_operator&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;Count_TableStatus&quot;</span> <span class="p">],</span>
+    <span class="nt">&quot;input_type&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;rowtype&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;emp.employees&quot;</span> <span class="p">],</span>
+      <span class="nt">&quot;table_schema&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;emp&quot;</span> <span class="p">],</span>
+      <span class="nt">&quot;table_name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;employees&quot;</span> <span class="p">]</span>
+    <span class="p">}</span> <span class="p">],</span>
+    <span class="nt">&quot;output_type&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">{</span>
+      <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;rowtype&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;values([MCOMPAT_ BIGINT(21) NOT NULL])&quot;</span> <span class="p">]</span>
+    <span class="p">}</span> <span class="p">]</span>
+  <span class="p">}</span> <span class="p">],</span>
+  <span class="nt">&quot;projection&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">{</span>
+    <span class="nt">&quot;type&quot;</span> <span class="p">:</span> <span class="s2">&quot;field&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;position&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="mi">0</span> <span class="p">],</span>
+    <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;Field&quot;</span> <span class="p">]</span>
+  <span class="p">}</span> <span class="p">],</span>
+  <span class="nt">&quot;cost&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;rows = 3, cost = 7.18640&quot;</span> <span class="p">],</span>
+  <span class="nt">&quot;name&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="s2">&quot;Project_Default&quot;</span> <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="post">
+<dt id="post--v1-sql-execute">
+<tt class="descname">POST </tt><tt class="descname">/v1/sql/execute</tt><a class="headerlink" href="#post--v1-sql-execute" title="Permalink to this definition">∞</a></dt>
+<dd><p>Execute multiple SQL statements within a single transaction. Individual statements can be free-form and must be separated by semicolons (<tt class="docutils literal"><span class="pre">;</span></tt>). Successful response is a JSON object with one field per statement executed.</p>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">POST</span> <span class="nn">/v1/sql/execute</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">text/plain</span>
+
+SELECT SUM(salary) total_sal FROM emp.salaries;
+SELECT first_name,dept_name
+  FROM emp.employees
+  INNER JOIN emp.dept_emp USING(emp_no)
+  INNER JOIN emp.departments USING(dept_no);
+SELECT MIN(from_date) min_title_date FROM emp.titles;
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">{</span>
+  <span class="nt">&quot;result_set&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;total_sal&quot;</span><span class="p">:</span> <span class="mi">125945</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;result_set_1&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;dept_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Production&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;first_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sally&quot;</span><span class="p">,</span>
+      <span class="nt">&quot;dept_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Development&quot;</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;result_set_2&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&quot;min_title_date&quot;</span><span class="p">:</span> <span class="s2">&quot;1986-06-26&quot;</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="version-resource">
+<span id="rest-api-version"></span><h3>Version Resource<a class="headerlink" href="#version-resource" title="Permalink to this headline">∞</a></h3>
+<dl class="get">
+<dt id="get--v1-version">
+<tt class="descname">GET </tt><tt class="descname">/v1/version</tt><a class="headerlink" href="#get--v1-version" title="Permalink to this definition">∞</a></dt>
+<dd><p>Request the version of the SQL Layer. This is often used as the &#8220;Hello World&#8221; of the REST API. Successful response contains a single JSON array with a single object containing the name and version of the FoundationDB SQL Layer.</p>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/v1/version</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;server_name&quot;</span><span class="p">:</span> <span class="s2">&quot;FoundationDB SQL Layer&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;server_version&quot;</span><span class="p">:</span> <span class="s2">&quot;1.5.2-SNAPSHOT.2617&quot;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="view-resource">
+<span id="rest-api-view"></span><h3>View Resource<a class="headerlink" href="#view-resource" title="Permalink to this headline">∞</a></h3>
+<p>This resource exposes views that have been created through SQL. For demonstration purposes, assume this view has been created on the FoundationDB SQL Layer.</p>
+<blockquote>
+<div><div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">VIEW</span> <span class="n">name_dept</span><span class="p">(</span><span class="n">emp_name</span><span class="p">,</span><span class="n">dept_name</span><span class="p">)</span> <span class="k">AS</span>
+    <span class="k">SELECT</span> <span class="n">first_name</span> <span class="o">||</span> <span class="s1">&#39; &#39;</span> <span class="o">||</span> <span class="n">last_name</span><span class="p">,</span><span class="n">dept_name</span> <span class="k">FROM</span> <span class="n">emp</span><span class="p">.</span><span class="n">employees</span>
+    <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">emp</span><span class="p">.</span><span class="n">dept_emp</span> <span class="k">USING</span><span class="p">(</span><span class="n">emp_no</span><span class="p">)</span> <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">emp</span><span class="p">.</span><span class="n">departments</span> <span class="k">USING</span><span class="p">(</span><span class="n">dept_no</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="get">
+<dt id="get--v1-view-name">
+<tt class="descname">GET </tt><tt class="descname">/v1/view/{name}</tt><a class="headerlink" href="#get--v1-view-name" title="Permalink to this definition">∞</a></dt>
+<dd><p>Retrieve the results from running the given view. Successful result is a JSON array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Query Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>(varies)</strong> &#8211; Passed directly to the view. For the example, <tt class="docutils literal"><span class="pre">emp_name</span></tt> and <tt class="docutils literal"><span class="pre">dept_name</span></tt> are valid query parameters.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="nf">GET</span> <span class="nn">/v1/view/name_dept</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+</pre></div>
+</div>
+<p><strong>Response</strong></p>
+<div class="highlight-http"><div class="highlight"><pre><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">OK</span>
+<span class="na">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+
+<span class="p">[</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;emp_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John Butler&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Production&quot;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nt">&quot;emp_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Sally Green&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dept_name&quot;</span><span class="p">:</span><span class="s2">&quot;Development&quot;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">REST API Reference</a><ul><li><a class="reference internal" href="#setting-up">Setting up</a><ul><li><a class="reference internal" href="#example-entities-and-data">Example Entities and Data</a></li><li><a class="reference internal" href="#connecting-to-the-rest-api-with-curl">Connecting to the REST API with <tt class="docutils literal"><span class="pre">curl</span></tt></a></li></ul></li><li><a class="reference internal" href="#api-reference">API Reference</a><ul><li><a class="reference internal" href="#entity-resources">Entity Resources</a><ul><li><a class="reference internal" href="#names-and-identifiers">Names and Identifiers</a></li><li><a class="reference internal" href="#get">GET</a></li><li><a class="reference internal" href="#post">POST</a></li><li><a class="reference internal" href="#put">PUT</a></li><li><a class="reference internal" href="#patch">PATCH</a></li><li><a class="reference internal" href="#delete">DELETE</a></li></ul></li><li><a class="reference internal" href="#full-text-resources">Full Text Resources</a></li><li><a class="reference internal" href="#procedure-call-resources">Procedure Call Resources</a></li><li><a class="reference internal" href="#sql-resources">SQL Resources</a></li><li><a class="reference internal" href="#version-resource">Version Resource</a></li><li><a class="reference internal" href="#view-resource">View Resource</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003300/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:00 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:32 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=243;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SELECT
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003320/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003320im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="LqdUesv2n5lUTap9UCTOOn1UhYs4BCTKWcq6b1swCEU=" name="csrf-token" />
+<link href="/web/20150325003320cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003320cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003320" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:33:20 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:33:20 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:33:20 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003320*/https://foundationdb.com/layers/sql/documentation/SQL/dml/select.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003320/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003320im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003320/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003320/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003320/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003320/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003320/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003320/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003320/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003320/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Developer/index.html">SQL Layer Developer Reference</a> &raquo;
+    <a href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003320/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003320im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="select">
+<span id="sqlref-select"></span><h1>SELECT<a class="headerlink" href="#select" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">∞</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">SELECT</span></tt> command selects a set of records from one or more tables or views.</p>
+<p>Tables can be joined together with ANSI compatible inner and outer joins.</p>
+<p>There are two versions of the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement:</p>
+<ol class="arabic simple">
+<li>Standard ANSI <tt class="docutils literal"><span class="pre">SELECT</span></tt></li>
+<li><a class="reference internal" href="select_nested_object.html#sqlref-select-nested"><em>Nested object SELECT</em></a></li>
+</ol>
+<p>This page covers the syntax of both versions of the statement but only describes the functionality of the standard ANSI <tt class="docutils literal"><span class="pre">SELECT</span></tt>.</p>
+</div>
+<div class="section" id="syntax">
+<h2>Syntax<a class="headerlink" href="#syntax" title="Permalink to this headline">∞</a></h2>
+<pre class="literal-block">
+SELECT [ DISTINCT ] <em>column_expression</em> [ , ... ]
+  [ FROM <em>table_expression</em> [ <em>join_expression</em> [ ... ] ] ]
+  [ WHERE <em>where_expression</em>
+  [ GROUP BY <em>column_expression</em> [ , ... ] ]
+  [ HAVING <em>where_expression</em>
+  [ ORDER BY <em>column_expression</em> [ ASC | DESC ] [ , ... ] ]
+  [ LIMIT { [ <em>offset</em> , ] <em>row_count</em> | <em>row_count</em> [ OFFSET <em>offset</em> ] } ]
+</pre>
+<p>where <em>column_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>column_name</em> | <em>expression</em> } [ [ AS ] <em>column_alias</em> ]
+</pre>
+<p>where <em>table_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>table_name</em> | <em>view_name</em> | ( <em>subquery</em> ) } [ [ AS ] <em>table_alias</em> ]
+</pre>
+<p>where <em>join_expression</em> is:</p>
+<div class="highlight-sql"><div class="highlight"><pre>{
+    *table_expression*
+  | CROSS JOIN *table_expression*
+  | [ INNER | LEFT | RIGHT ] JOIN *table_expression* ON *expression*
+}
+</pre></div>
+</div>
+<p>where <em>where_expression</em> is:</p>
+<pre class="literal-block">
+{ <em>condition</em> [ { AND | OR } <em>condition</em> ] [ ... ] }
+</pre>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">∞</a></h2>
+<dl class="docutils">
+<dt>table_name</dt>
+<dd>The name (optionally schema-qualified) of an existing table.</dd>
+<dt>view_name</dt>
+<dd>The name (optionally schema-qualified) of an eisting view.</dd>
+<dt>subquery</dt>
+<dd>Any valid <tt class="docutils literal"><span class="pre">SELECT</span></tt> query. For column expressions the limitation for the ANSI syntax is that a subquery must return exactly one field and one row. For nested objects multiple columns and multiple rows are allowed.</dd>
+<dt>column_name</dt>
+<dd>The name (optionally schema and table-qualified) of an existing column.</dd>
+<dt>expression</dt>
+<dd><p class="first">Any valid expression. Valid expressions can only include column names that are available in the context of the query. Expressions can include column names, literals, functions and subqueries. Subqueries used in expressions in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> part of the statement are not allowed to produce more than one row and one column except if the nested object syntax is used. Aggregate functions should only be used in combination with <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt>. If no <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is present the grouping is implicitly on all columns. Two special cases exist for expressions in the <tt class="docutils literal"><span class="pre">SELECT</span></tt> part of the statement:</p>
+<ul class="last simple">
+<li>returns all columns from all tables specified in the <tt class="docutils literal"><span class="pre">FROM</span></tt> (if table-qualified it returns all columns from the specified  table).</li>
+<li>returns all columns from a table including all columns from child tables. See <a class="reference internal" href="select_nested_object.html#sqlref-select-nested"><em>SELECT Nested Objects</em></a> for more details.</li>
+</ul>
+</dd>
+<dt>condition</dt>
+<dd>An expression that returns a value of type boolean. Other types are allowed as long as they can be implicitly cast to the boolean type.</dd>
+<dt><tt class="docutils literal"><span class="pre">DISTINCT</span></tt></dt>
+<dd>Select on rows containing unique values.</dd>
+<dt><tt class="docutils literal"><span class="pre">FROM</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">FROM</span></tt> allows the specification of tables, views and subqueries to select columns from.</dd>
+<dt><tt class="docutils literal"><span class="pre">WHERE</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">WHERE</span></tt> is used to limit the number of rows that is returned in the result set.</dd>
+<dt><tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is used to reduce the result set by grouping together rows that have the same values in the columns specified in the <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> clause. If <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> is used, the columns in the SELECT part of the query have to be either included in the grouping columns or aggregate functions. If a column is specified that is not included in the grouping and no aggregate function is specified, the aggregate function <tt class="docutils literal"><span class="pre">FIRST</span></tt> is implied.</dd>
+<dt><tt class="docutils literal"><span class="pre">HAVING</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">HAVING</span></tt> is used to limit the number of rows produced by a grouping query by placing conditions on the grouped or aggregated values. <tt class="docutils literal"><span class="pre">HAVING</span></tt> is different from <tt class="docutils literal"><span class="pre">WHERE</span></tt> because it is executed after the grouping has taken place. Aggregate functions are allowed as part of the <tt class="docutils literal"><span class="pre">HAVING</span></tt> clause.</dd>
+<dt><tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> is used to order the result set based on the specified column expressions. For each expression, <tt class="docutils literal"><span class="pre">ASC</span></tt> or <tt class="docutils literal"><span class="pre">DESC</span></tt> can optionally be specified to order the results in either ascending or descending order. If the order is not specified, the default order for each column is ascending. The collation for each column is used to determine the sort order.</dd>
+<dt><tt class="docutils literal"><span class="pre">LIMIT</span></tt>, <tt class="docutils literal"><span class="pre">OFFSET</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">LIMIT</span></tt> is used to limit the number of rows being output by the query. The <cite>row_count</cite> determines how many rows will be selected and the <cite>offset</cite> determines the starting point in the result set. A <cite>row_count</cite> of 10 and an <cite>offset</cite> of 5 will result in rows 5 through 14 being returned if they are available.</dd>
+</dl>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">∞</a></h2>
+<p>Using <tt class="docutils literal"><span class="pre">LIMIT</span></tt> can result in much better query performance in some cases because rows only need to be evaluated until offset + row_count is reached. The use of grouping and/or ordering can cause all records to be evaluated even if <tt class="docutils literal"><span class="pre">LIMIT</span></tt> is used. See the section on <a class="reference internal" href="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/Concepts/query.execution.html#algebra-execution-optimizer"><em>Optimizer and Query Execution</em></a> for more information.</p>
+<p>Using <tt class="docutils literal"><span class="pre">DISTINCT</span></tt> is the same as using <tt class="docutils literal"><span class="pre">GROUP</span> <span class="pre">BY</span></tt> on all selected columns.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h2>
+<p>Select all columns from all records in the orders table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">orders</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Select the number of customers with last name of Smith that placed an order on October 17th, 2012:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="k">distinct</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span>
+<span class="k">FROM</span>   <span class="n">customers</span>
+       <span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">orders</span> <span class="k">ON</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">order_id</span>
+<span class="k">WHERE</span>  <span class="n">customers</span><span class="p">.</span><span class="n">last_name</span> <span class="o">=</span> <span class="s1">&#39;Smith&#39;</span>
+  <span class="k">AND</span>  <span class="n">orders</span><span class="p">.</span><span class="n">order_date</span> <span class="o">=</span> <span class="s1">&#39;2012-10-17&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003320/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SELECT</a><ul><li><a class="reference internal" href="#purpose">Purpose</a></li><li><a class="reference internal" href="#syntax">Syntax</a></li><li><a class="reference internal" href="#parameters">Parameters</a></li><li><a class="reference internal" href="#notes">Notes</a></li><li><a class="reference internal" href="#examples">Examples</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003320/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003320/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003320/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003320/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003320js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:20 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:42:08 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app12.us.archive.org";archive_analytics.values.server_ms=415;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+SQL Layer 1.9.2
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/ReleaseNotes/1.9.2.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003615/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003615im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="4OIY8fUfEnmjxpNiJm8S3A+9hVG3+zHPyan+XQBaqCI=" name="csrf-token" />
+<link href="/web/20150325003615cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003615cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/ReleaseNotes/1.9.2.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/ReleaseNotes/1.9.2.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003615" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:36:15 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:36:15 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:36:15 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003615*/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/1.9.2.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003615/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003615im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003615/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003615/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003615/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003615/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003615/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003615/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003615/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003615/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">Release Notes</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003615/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003615im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="sql-layer-1-9-2">
+<span id="release-notes-1-9-2"></span><h1>SQL Layer 1.9.2<a class="headerlink" href="#sql-layer-1-9-2" title="Permalink to this headline">∞</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please see the <a class="reference internal" href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/administration.html#fdbsql-administration-upgrading"><em>Upgrading</em></a> section before installing this release.</p>
+</div>
+<div class="section" id="major-new-features">
+<h2>Major New Features<a class="headerlink" href="#major-new-features" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="jdbc">
+<h3>JDBC<a class="headerlink" href="#jdbc" title="Permalink to this headline">∞</a></h3>
+<p>An official JDBC driver for connecting to the SQL Layer, with support for both
+Java6/JDBC4.0 and Java7/JDBC4.1, is now available. This is now the supported
+mechanism for JVM based environments.</p>
+<p>The jar file for Java7, named <tt class="docutils literal"><span class="pre">fdb-sql-layer-jdbc-1.9-1-jdbc41.jar</span></tt>, is included
+with a standard SQL Layer installation.</p>
+<p>See the <a class="reference external" href="/web/20150325003615/https://github.com/FoundationDB/sql-layer-jdbc/">Project Page</a> for
+additional details, including code examples and instructions for Maven based
+projects.</p>
+</div>
+<div class="section" id="union-operator">
+<h3>UNION Operator<a class="headerlink" href="#union-operator" title="Permalink to this headline">∞</a></h3>
+<p>Statements using the <tt class="docutils literal"><span class="pre">UNION</span></tt> or <tt class="docutils literal"><span class="pre">UNION</span> <span class="pre">ALL</span></tt> syntax are now supported. Multiple
+<tt class="docutils literal"><span class="pre">SELECT</span></tt> statements can be combined into a single result set with <tt class="docutils literal"><span class="pre">UNION</span></tt>. Any
+duplicate rows from the combined statements are suppressed. <tt class="docutils literal"><span class="pre">UNION</span> <span class="pre">ALL</span></tt> behaves
+similarly, with the additional feature of allowing duplicate rows through.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">test</span><span class="o">=&gt;</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t1</span><span class="p">(</span><span class="n">a</span> <span class="nb">INT</span><span class="p">);</span>
+<span class="n">test</span><span class="o">=&gt;</span> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">t1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">test</span><span class="o">=&gt;</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t2</span><span class="p">(</span><span class="n">b</span> <span class="nb">INT</span><span class="p">);</span>
+<span class="n">test</span><span class="o">=&gt;</span> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">t2</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">test</span><span class="o">=&gt;</span> <span class="k">SELECT</span> <span class="n">a</span> <span class="k">FROM</span> <span class="n">t1</span> <span class="k">UNION</span> <span class="k">SELECT</span> <span class="n">b</span> <span class="k">FROM</span> <span class="n">t2</span><span class="p">;</span>
+ <span class="n">a</span>
+<span class="c1">---</span>
+ <span class="mi">1</span>
+ <span class="mi">2</span>
+ <span class="mi">3</span>
+<span class="n">test</span><span class="o">=&gt;</span> <span class="k">SELECT</span> <span class="n">a</span> <span class="k">FROM</span> <span class="n">t1</span> <span class="k">UNION</span> <span class="k">ALL</span> <span class="k">SELECT</span> <span class="n">b</span> <span class="k">FROM</span> <span class="n">t2</span><span class="p">;</span>
+ <span class="n">a</span>
+<span class="c1">---</span>
+ <span class="mi">1</span>
+ <span class="mi">2</span>
+ <span class="mi">2</span>
+ <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="long-running-ddl">
+<h3>Long Running DDL<a class="headerlink" href="#long-running-ddl" title="Permalink to this headline">∞</a></h3>
+<p>Long running DDL operations, such as <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">INDEX</span></tt> on a large table, are now
+supported. This is implemented by performing the operation in multiple,
+discrete transactions while keeping the new data private to the session
+performing the change. Currently, DML operations against the same table will
+be rejected. However, see the Experimental New Features for additional details.</p>
+</div>
+</div>
+<div class="section" id="other-new-features">
+<h2>Other New Features<a class="headerlink" href="#other-new-features" title="Permalink to this headline">∞</a></h2>
+<ul>
+<li><p class="first">The <a class="reference external" href="/web/20150325003615/https://foundationdb.com/documentation/3.0/developer-guide.html#developer-guide-directories" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Directory Layer</em></a>
+directory that data is stored in is now fully configurable via the
+<tt class="docutils literal"><span class="pre">fdbsql.fdb.root_directory</span></tt> <a class="reference internal" href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html#fdbsql-server-properties"><em>Runtime Property</em></a>.</p>
+<p>The default value is <tt class="docutils literal"><span class="pre">sql/</span></tt>, a top level directory. Subdirectories are
+possible by separating directory names with a forward slash (<tt class="docutils literal"><span class="pre">/</span></tt>).</p>
+<p>On a single FoundationDB Cluster, all SQL Layer instances configured with the
+same directory will share tables and data. Conversely, any instances
+configured with <em>different</em> directories will have their data completely
+segregated. For example, two unrelated applications could run side-by-side,
+but independently, by using the directories <tt class="docutils literal"><span class="pre">sql/app_one/</span></tt> and
+<tt class="docutils literal"><span class="pre">sql/app_two/</span></tt>.</p>
+</li>
+<li><p class="first">One-argument overloads of <tt class="docutils literal"><span class="pre">CURRVAL</span></tt> and <tt class="docutils literal"><span class="pre">NEXTVAL</span></tt> functions, which take
+a Sequence name as a string.</p>
+</li>
+<li><p class="first">Constraint validation checking can now be pipelined by setting the
+<tt class="docutils literal"><span class="pre">constraintCheckTime</span></tt> session option to <tt class="docutils literal"><span class="pre">DEFERRED</span></tt>.</p>
+<p>In the event of an offending row, the error may be propagated <em>after</em> the
+statement responsible has returned, potentially until the next <tt class="docutils literal"><span class="pre">COMMIT</span></tt>.</p>
+<p>Some scenarios, such as bulk loading, can achieve greater throughput when
+this option is enabled due to the read latency for validation being hidden.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">ASCII</span></tt>, <tt class="docutils literal"><span class="pre">FROM_BASE64</span></tt>, <tt class="docutils literal"><span class="pre">REPEAT</span></tt>, <tt class="docutils literal"><span class="pre">REPLACE</span></tt>, <tt class="docutils literal"><span class="pre">TO_BASE64</span></tt> and
+<tt class="docutils literal"><span class="pre">UNICODE</span></tt> scalar functions.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">VAR_POP</span></tt>, <tt class="docutils literal"><span class="pre">VAR_SAMP</span></tt>, <tt class="docutils literal"><span class="pre">STDDEV_POP</span></tt>, <tt class="docutils literal"><span class="pre">STDDEV_SAMP</span></tt> aggregate
+functions.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SET</span> <span class="pre">TRANSACTION</span> <span class="pre">ISOLATION</span> <span class="pre">LEVEL</span> <span class="pre">&lt;NAME&gt;</span></tt> is now supported.</p>
+<p>Only the <tt class="docutils literal"><span class="pre">SERIALIZABLE</span></tt> level is supported.</p>
+<p>The other standard levels (<tt class="docutils literal"><span class="pre">READ</span> <span class="pre">UNCOMMITTED</span></tt>, <tt class="docutils literal"><span class="pre">READ</span> <span class="pre">COMMITTED</span></tt> and
+<tt class="docutils literal"><span class="pre">REPEATABLE</span> <span class="pre">READ</span></tt>) are allowed but will be ignored and yield a warning
+once per transaction.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SHOW</span> <span class="pre">TRANSACTION</span> <span class="pre">ISOLATION</span> <span class="pre">LEVEL</span></tt> is now supported.</p>
+</li>
+<li><p class="first">Standard <tt class="docutils literal"><span class="pre">NCHAR</span></tt>, <tt class="docutils literal"><span class="pre">NATIONAL</span> <span class="pre">CHAR</span></tt>, <tt class="docutils literal"><span class="pre">NVARCHAR</span></tt>,
+<tt class="docutils literal"><span class="pre">NATIONAL</span> <span class="pre">CHARACTER</span> <span class="pre">VARYING</span></tt> and <tt class="docutils literal"><span class="pre">LONG</span> <span class="pre">NVARCHAR</span></tt> type names are now
+supported as aliases to their non-NATIONAL names with the default character
+set (<tt class="docutils literal"><span class="pre">UTF-8</span></tt>).</p>
+</li>
+</ul>
+</div>
+<div class="section" id="experimental-new-features">
+<h2>Experimental New Features<a class="headerlink" href="#experimental-new-features" title="Permalink to this headline">∞</a></h2>
+<p>The features below are major additions to the SQL Layer but should be
+considered <em>bleeding edge</em>. As such, they are all disabled by default and
+must be explicitly used or enabled via configuration. Note that the
+functionality may change before being enabled by default.</p>
+<p>Please let us know if you are are planning to try any of these and we&#8217;d
+be happy to help!</p>
+<div class="section" id="configurable-storage-formats">
+<span id="release-notes-1-9-2-storage-format"></span><h3>Configurable Storage Formats<a class="headerlink" href="#configurable-storage-formats" title="Permalink to this headline">∞</a></h3>
+<p>There are now multiple supported formats that table and index values can be
+stored in at the at the FoundationDB key/value level. This allows other layers
+to more easily use SQL Layer data.</p>
+<p>The storage format is specified as a suffix of <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">TABLE</span></tt> and
+<tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">INDEX</span></tt>:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t</span><span class="p">(...)</span> <span class="n">STORAGE_FORMAT</span> <span class="o">&lt;</span><span class="n">format_name</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">x</span> <span class="k">ON</span> <span class="n">t</span><span class="p">(...)</span> <span class="n">STORAGE_FORMAT</span> <span class="o">&lt;</span><span class="n">format_name</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<div class="section" id="available-formats">
+<h4>Available Formats<a class="headerlink" href="#available-formats" title="Permalink to this headline">∞</a></h4>
+<ul>
+<li><p class="first">TUPLE</p>
+<p>Standard FoundationDB <a class="reference external" href="/web/20150325003615/https://foundationdb.com/documentation/3.0/data-modeling.html#data-modeling-tuples" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Tuples</em></a>
+for row values and/or index keys.</p>
+<p>Note that the Tuple encoding supports a subset of SQL data types. In
+particular, <tt class="docutils literal"><span class="pre">FLOAT</span></tt>, <tt class="docutils literal"><span class="pre">DOUBLE</span></tt> and <tt class="docutils literal"><span class="pre">DECIMAL</span></tt> will not be allowed as
+index columns when using this format.</p>
+</li>
+<li><p class="first">PROTOBUF</p>
+<p>Serialized <a class="reference external" href="/web/20150325003615/https://code.google.com/p/protobuf/">Protobuf</a> Messages for row
+values and FoundationDB Tuples for index keys. The Protobuf Message classes
+are dynamically generated and mirror the associated table definitions.</p>
+<p>Standard <tt class="docutils literal"><span class="pre">.proto</span></tt> files can be dumped independently via the new <tt class="docutils literal"><span class="pre">fdbsqlprotod</span></tt>
+command line tool.</p>
+</li>
+<li><p class="first">COLUMN_KEYS</p>
+<p>Standard FoundationDB Tuples for row values, with each column
+in a row mapping to <em>its own</em> key/value pair, and index keys.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="spatial-index">
+<span id="release-notes-1-9-2-spatial-index"></span><h3>Spatial Index<a class="headerlink" href="#spatial-index" title="Permalink to this headline">∞</a></h3>
+<p>Indexes mapping two-dimensional values to a Z-order curve are available. This
+type of index is particularly efficient for nearest-neighbor and
+point-in-range style queries.</p>
+<p>See the <a class="reference internal" href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/SQL/Indexes/spatial.html#geospatial-tutorial"><em>Spatial Indexes</em></a> documentation for full
+details.</p>
+<p>Enable with the following <a class="reference internal" href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html#fdbsql-server-properties"><em>Runtime Property</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">spatial_index_on</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="online-ddl">
+<h3>Online DDL<a class="headerlink" href="#online-ddl" title="Permalink to this headline">∞</a></h3>
+<p>The ability to perform DML (<tt class="docutils literal"><span class="pre">INSERT</span></tt>, <tt class="docutils literal"><span class="pre">UPDATE</span></tt> and <tt class="docutils literal"><span class="pre">DELETE</span></tt>) against a table
+also undergoing a DDL operation, typically called <em>Online DDL</em>, is now
+supported.</p>
+<p>This dramatically minimizes the downtime and overhead of performing long
+running DDL operations, such as <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">INDEX</span></tt> or <tt class="docutils literal"><span class="pre">ALTER</span> <span class="pre">TABLE</span></tt>, as it
+allows applications to continue reading <em>and</em> writing affected tables.</p>
+<p>Enable with the following <a class="reference internal" href="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html#fdbsql-server-properties"><em>Runtime Property</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">feature</span><span class="o">.</span><span class="n">ddl_with_dml_on</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="bug-fixes">
+<h2>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">∞</a></h2>
+<ul class="simple">
+<li>Update standard <tt class="docutils literal"><span class="pre">information_schema</span></tt> tables to be fully compliant with
+respect to column names and order. Tables containing data type information
+are also now available.</li>
+<li>Improve handling of subqueries in an aggregate query</li>
+<li>More compatible handling of <tt class="docutils literal"><span class="pre">TIME</span></tt> and <tt class="docutils literal"><span class="pre">TIMESTAMP</span></tt> values from JDBC</li>
+<li>Correct output for <tt class="docutils literal"><span class="pre">TIMESTAMPDIFF</span></tt> <tt class="docutils literal"><span class="pre">DATETIME</span></tt> overload</li>
+<li>Correct scale of literal <tt class="docutils literal"><span class="pre">DECIMAL</span></tt> values</li>
+<li>More supported input types for <tt class="docutils literal"><span class="pre">HEX</span></tt> and correct <tt class="docutils literal"><span class="pre">UNHEX</span></tt> output</li>
+<li>Properly flush cached execution plans when query parameters have changed</li>
+<li>Consistent treatment (e.g. length, substring) of strings with containing
+Unicode code-points</li>
+<li>Support more scenarios of user defined functions that execute SQL and
+better handling of error produced by them</li>
+<li>Improved type resolution for prepared statements and user defined functions</li>
+<li>Tweaks for Npgsql driver compatibility</li>
+<li>Attempting to connect with an unsupported protocol version now receives a
+clear error message</li>
+<li>Unsupported collations are now rejected instead of silently converted</li>
+<li>Better handling of rapid connect and disconnect workloads</li>
+<li>Installed configuration and script files now use native line endings</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003615/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">SQL Layer 1.9.2</a><ul><li><a class="reference internal" href="#major-new-features">Major New Features</a><ul><li><a class="reference internal" href="#jdbc">JDBC</a></li><li><a class="reference internal" href="#union-operator">UNION Operator</a></li><li><a class="reference internal" href="#long-running-ddl">Long Running DDL</a></li></ul></li><li><a class="reference internal" href="#other-new-features">Other New Features</a></li><li><a class="reference internal" href="#experimental-new-features">Experimental New Features</a><ul><li><a class="reference internal" href="#configurable-storage-formats">Configurable Storage Formats</a><ul><li><a class="reference internal" href="#available-formats">Available Formats</a></li></ul></li><li><a class="reference internal" href="#spatial-index">Spatial Index</a></li><li><a class="reference internal" href="#online-ddl">Online DDL</a></li></ul></li><li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003615/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003615/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003615/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003615/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003615js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:15 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:31:24 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

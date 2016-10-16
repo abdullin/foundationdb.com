@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=78;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Release Notes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/release-notes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003222/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="FBmXYBYX+korrjpmFYIVi7RtIkp8oFUCkMFhp/Mccfc=" name="csrf-token" />
+<link href="/web/20150325003222cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003222cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/release-notes.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/release-notes.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003222" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20140829061932/https://foundationdb.com/key-value-store/documentation/release-notes.html" title="29 Aug 2014">AUG</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:22 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150428171517/https://foundationdb.com/key-value-store/documentation/release-notes.html" title="28 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20140829061932/https://foundationdb.com/key-value-store/documentation/release-notes.html" title="6:19:32 Aug 29, 2014"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:22 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150428171517/https://foundationdb.com/key-value-store/documentation/release-notes.html" title="17:15:17 Apr 28, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:22 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003222*/https://foundationdb.com/key-value-store/documentation/release-notes.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">29 Aug 14 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000010000_2015:2:001100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003222/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003222/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003222/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003222/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/release-notes.html" class="active">Release Notes</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003222/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="release-notes">
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">∞</a></h1>
+<p>To be notified of new Key-Value Store releases, you can follow the continuously updated <a class="reference external" href="/web/20150325003222/http://community.foundationdb.com/articles/4195/key-value-store-releases-continuously-updated.html">release post</a> on our Community Site.</p>
+<div class="section" id="id1">
+<h2>3.0.7<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h2>
+<p>Release 3.0.7 is protocol-compatible with all prior 3.0.x releases. All users should continue to employ the bindings released with 3.0.2, with the exception of the following:</p>
+<ul class="simple">
+<li>Node.js - updated to 3.0.6</li>
+<li>Ruby - updated to 3.0.7</li>
+</ul>
+<div class="section" id="fixes">
+<h3>Fixes<a class="headerlink" href="#fixes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">fdbcli</span></tt> would segmentation fault if there was a semicolon after a quoted string.</li>
+<li><a class="reference internal" href="api-python.html#api-python-transaction-atomic-operations"><em>Atomic operations</em></a> performed on keys that had been <a class="reference internal" href="api-python.html#api-python-snapshot-reads"><em>snapshot read</em></a> would be converted into a set operation.</li>
+<li>Reading a key to which an atomic operation had already been applied would cause the read to behave as a snapshot read.</li>
+<li>In rare scenarios, it was possible for the memory holding the result of a read to be released when a transaction was reset.</li>
+<li>If available RAM was negative, it was reported as a very large number in status.</li>
+</ul>
+</div>
+<div class="section" id="ruby">
+<h3>Ruby<a class="headerlink" href="#ruby" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: <tt class="docutils literal"><span class="pre">FDB</span></tt> objects could not be garbage collected.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>3.0.6<a class="headerlink" href="#id2" title="Permalink to this headline">∞</a></h2>
+<p>Release 3.0.6 is protocol-compatible with all prior 3.0.x releases. All users should continue to employ the bindings released with 3.0.2, with the exception of the following:</p>
+<ul class="simple">
+<li>Node.js - updated to 3.0.6</li>
+</ul>
+<div class="section" id="id3">
+<h3>Fixes<a class="headerlink" href="#id3" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Read-latency probes for status incorrectly returned zero.</li>
+<li>Commit-latency probe for status included the time to acquire its read version.</li>
+<li>Client and server could crash when experiencing problems with network connections.</li>
+</ul>
+</div>
+<div class="section" id="node-js">
+<h3>Node.js<a class="headerlink" href="#node-js" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: npm source package did not compile on Mac OS X 10.9 or newer.</li>
+</ul>
+</div>
+<div class="section" id="windows">
+<h3>Windows<a class="headerlink" href="#windows" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Added registry key during installation.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>3.0.5<a class="headerlink" href="#id4" title="Permalink to this headline">∞</a></h2>
+<p>Release 3.0.5 is protocol-compatible with all prior 3.0.x releases. This release contains only a bug fix for Windows packages; Linux and Mac OS X packages for 3.0.5 are identical to those for 3.0.4. All users should continue to employ the bindings released with 3.0.2, with the exception of the following:</p>
+<ul class="simple">
+<li>Node.js - updated to 3.0.3 if downloaded from <tt class="docutils literal"><span class="pre">npm</span></tt>.</li>
+</ul>
+<div class="section" id="id5">
+<h3>Fixes<a class="headerlink" href="#id5" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Windows: fix Visual Studio 2013 code generation bug on older processors or versions of Windows that don&#8217;t support the AVX instruction set (see <a class="reference external" href="/web/20150325003222/https://connect.microsoft.com/VisualStudio/feedback/details/811093">https://connect.microsoft.com/VisualStudio/feedback/details/811093</a>).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>3.0.4<a class="headerlink" href="#id6" title="Permalink to this headline">∞</a></h2>
+<p>Release 3.0.4 is protocol-compatible with all prior 3.0.x releases. Users should continue to employ the bindings released with 3.0.2, with the exception of the following:</p>
+<ul class="simple">
+<li>Node.js - updated to 3.0.3 if downloaded from <tt class="docutils literal"><span class="pre">npm</span></tt>.</li>
+</ul>
+<div class="section" id="id7">
+<h3>Fixes<a class="headerlink" href="#id7" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Mac OS X: backup agent used 100% CPU even when idle.</li>
+<li>Backups were inoperative on databases with greater than 32-bit versions.</li>
+<li>Backup agents were not started on Windows.</li>
+<li>Restore required write permissions on files.</li>
+<li>The backup client did not report errors properly in all scenarios.</li>
+<li><tt class="docutils literal"><span class="pre">fdbserver</span> <span class="pre">-v</span></tt> did not print the version.</li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h3>Node.js<a class="headerlink" href="#id8" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fixed a compilation problem on Linux and Mac OS X as distributed on <tt class="docutils literal"><span class="pre">npm</span></tt>. (Note: The corrected binding is distributed as version 3.0.3.)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>3.0.2<a class="headerlink" href="#id9" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="upgrades">
+<h3>Upgrades<a class="headerlink" href="#upgrades" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>When upgrading from version 2.0.x to 3.0.x, you should consult <a class="reference internal" href="administration.html#upgrading-from-2-to-3"><em>Upgrading to 3.0</em></a>.</li>
+</ul>
+</div>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Status information provided in <a class="reference internal" href="mr-status.html"><em>machine-readable JSON</em></a> form.</li>
+<li>Differential backups and backup of selective keyspaces added to <a class="reference internal" href="backups.html#backup-wait"><em>backup tool</em></a>.</li>
+<li>Clients may retrieve <a class="reference internal" href="mr-status.html#mr-status-key"><em>machine-readable status</em></a>, <a class="reference internal" href="administration.html#cluster-file-client-access"><em>cluster filepath, and cluster file contents</em></a> by reading designated system keys from the database.</li>
+<li>Two new <a class="reference internal" href="api-python.html#api-python-transaction-atomic-operations"><em>atomic operations</em></a>: max and min.</li>
+</ul>
+</div>
+<div class="section" id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Increased maximum writes per second from 200,000 to 11,000,000.</li>
+<li>Improved latencies, particularly on underutilized clusters.</li>
+<li>Improved performance of backup and restore.</li>
+<li>Improved client CPU usage.</li>
+<li>Better rate-limiting when committing very large transactions.</li>
+<li>Improved performance while servers rejoin the cluster.</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Fixes<a class="headerlink" href="#id10" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>B-tree vacuuming could exhibit poor performance after large deletions of data.</li>
+<li>Computation of memory availability was not correct on newer Linux versions.</li>
+<li>Integers could overflow when setting range limits.</li>
+<li>With the memory storage engine, a key could be lost after multiple reboots in quick succession.</li>
+</ul>
+</div>
+<div class="section" id="client">
+<h3>Client<a class="headerlink" href="#client" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 300 and backwards compatible with previous API versions.</li>
+<li>By default, <a class="reference internal" href="developer-guide.html#snapshot-isolation"><em>snapshot reads</em></a> see writes within the same transaction. The previous behavior can be achieved using transaction options.</li>
+<li>The <a class="reference internal" href="known-limitations.html#large-transactions"><em>transaction size limit</em></a> includes conflict ranges.</li>
+<li>Explicitly added read or write <a class="reference internal" href="api-python.html#api-python-conflict-ranges"><em>conflict ranges</em></a> and <a class="reference internal" href="api-python.html#api-python-watches"><em>watches</em></a> for keys that begin with <tt class="docutils literal"><span class="pre">\xFF</span></tt> require one of the transaction options <tt class="docutils literal"><span class="pre">access_system_keys</span></tt> or <tt class="docutils literal"><span class="pre">read_system_keys</span></tt> to be set.</li>
+<li>New network options for <tt class="docutils literal"><span class="pre">trace_max_logs_size</span></tt> and <tt class="docutils literal"><span class="pre">trace_roll_size</span></tt> for an individual client&#8217;s trace files.</li>
+<li>New transaction options: max_retry_delay, read_system_keys.</li>
+<li>All errors cause <a class="reference internal" href="api-python.html#api-python-watches"><em>watches</em></a> to trigger.</li>
+<li>All errors cause a transaction to reset (previously true only of some errors).</li>
+</ul>
+</div>
+<div class="section" id="java">
+<h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ReadTransactionContext</span></tt> added next to <tt class="docutils literal"><span class="pre">TransactionContext</span></tt>, allowing <tt class="docutils literal"><span class="pre">read()</span></tt> and <tt class="docutils literal"><span class="pre">readAsync()</span></tt> composable read-only operations on transactions.</li>
+<li>The <tt class="docutils literal"><span class="pre">Future</span></tt> interface adds <tt class="docutils literal"><span class="pre">getInterruptibly()</span></tt> and <tt class="docutils literal"><span class="pre">blockInterruptibly()</span></tt>, which propagate <tt class="docutils literal"><span class="pre">InterruptedExcetption</span></tt> to the calling code.</li>
+<li>Exception-handling logic is reworked in <tt class="docutils literal"><span class="pre">map()</span></tt>, <tt class="docutils literal"><span class="pre">flatMap()</span></tt>, and <tt class="docutils literal"><span class="pre">rescue()</span></tt> to propagate <tt class="docutils literal"><span class="pre">OutOfMemoryError</span></tt> and <tt class="docutils literal"><span class="pre">RejectedExecutionException</span></tt> instead of the spurious <tt class="docutils literal"><span class="pre">SettableAlreadySet</span></tt> exception.</li>
+<li>Performance is improved for applications that use many blocking-style <tt class="docutils literal"><span class="pre">get()</span></tt> calls.</li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>Node.js<a class="headerlink" href="#id11" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: <tt class="docutils literal"><span class="pre">fdb.open</span></tt>, <tt class="docutils literal"><span class="pre">fdb.createCluster</span></tt>, and <tt class="docutils literal"><span class="pre">cluster.openDatabase</span></tt> didn&#8217;t use the callback in API versions 22 or lower.</li>
+<li>Tuple performance is improved.</li>
+</ul>
+</div>
+<div class="section" id="php">
+<h3>PHP<a class="headerlink" href="#php" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="api-php.html#api-php-snapshot-reads"><em>Snapshot reads</em></a> have a <tt class="docutils literal"><span class="pre">transact</span></tt> function.</li>
+</ul>
+</div>
+<div class="section" id="python">
+<h3>Python<a class="headerlink" href="#python" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Bindings work in Cygwin.</li>
+<li>The <a class="reference internal" href="api-python.html#api-python-transactional-decorator"><em>transactional decorator</em></a> no longer warns of a transaction approaching the 5 second limit.</li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h3>Ruby<a class="headerlink" href="#id12" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: <tt class="docutils literal"><span class="pre">db.get</span></tt>, <tt class="docutils literal"><span class="pre">get_key</span></tt>, and <tt class="docutils literal"><span class="pre">get_and_watch</span></tt> returned Futures instead of actual values.</li>
+</ul>
+</div>
+<div class="section" id="other-changes">
+<h3>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Versions increase by 1 million per second instead of 1 thousand per second.</li>
+<li>Removed support for Ubuntu 11.10.</li>
+<li>Python binding has been removed from Linux packages.</li>
+<li>In <tt class="docutils literal"><span class="pre">fdbcli</span></tt>, <tt class="docutils literal"><span class="pre">getrange</span></tt> does a prefix range read if no end key is specified.</li>
+<li>In <tt class="docutils literal"><span class="pre">fdbcli</span></tt>, added an option to disable the initial status check.</li>
+</ul>
+</div>
+<div class="section" id="note-on-version-numbers">
+<h3>Note on version numbers<a class="headerlink" href="#note-on-version-numbers" title="Permalink to this headline">∞</a></h3>
+<p>Version 3.0.2 is the first publicly released version in the 3.0.x series. Versions 3.0.0-1 were limited-availability releases with the same feature set.</p>
+</div>
+<div class="section" id="earlier-release-notes">
+<h3>Earlier release notes<a class="headerlink" href="#earlier-release-notes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/2.0/release-notes.html">2.0 (API Version 200)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/1.0/release-notes.html">1.0 (API Version 100)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/beta3/release-notes.html">Beta 3 (API Version 23)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/beta2/release-notes.html">Beta 2 (API Version 22)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/beta1/release-notes.html">Beta 1 (API Version 21)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/alpha6/release-notes.html">Alpha 6 (API Version 16)</a></li>
+<li><a class="reference external" href="/web/20150325003222/https://foundationdb.com/documentation/alpha5/release-notes.html">Alpha 5 (API Version 14)</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Release Notes</a><ul><li><a class="reference internal" href="#id1">3.0.7</a><ul><li><a class="reference internal" href="#fixes">Fixes</a></li><li><a class="reference internal" href="#ruby">Ruby</a></li></ul></li><li><a class="reference internal" href="#id2">3.0.6</a><ul><li><a class="reference internal" href="#id3">Fixes</a></li><li><a class="reference internal" href="#node-js">Node.js</a></li><li><a class="reference internal" href="#windows">Windows</a></li></ul></li><li><a class="reference internal" href="#id4">3.0.5</a><ul><li><a class="reference internal" href="#id5">Fixes</a></li></ul></li><li><a class="reference internal" href="#id6">3.0.4</a><ul><li><a class="reference internal" href="#id7">Fixes</a></li><li><a class="reference internal" href="#id8">Node.js</a></li></ul></li><li><a class="reference internal" href="#id9">3.0.2</a><ul><li><a class="reference internal" href="#upgrades">Upgrades</a></li><li><a class="reference internal" href="#features">Features</a></li><li><a class="reference internal" href="#performance">Performance</a></li><li><a class="reference internal" href="#id10">Fixes</a></li><li><a class="reference internal" href="#client">Client</a></li><li><a class="reference internal" href="#java">Java</a></li><li><a class="reference internal" href="#id11">Node.js</a></li><li><a class="reference internal" href="#php">PHP</a></li><li><a class="reference internal" href="#python">Python</a></li><li><a class="reference internal" href="#id12">Ruby</a></li><li><a class="reference internal" href="#other-changes">Other changes</a></li><li><a class="reference internal" href="#note-on-version-numbers">Note on version numbers</a></li><li><a class="reference internal" href="#earlier-release-notes">Earlier release notes</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003222/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003222/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003222js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:22 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:29:21 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

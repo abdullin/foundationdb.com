@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app10.us.archive.org";archive_analytics.values.server_ms=212;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Recipe: Tables (java) &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/recipes/developer/tables/java' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325004207/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='language' id='recipes'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325004207/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Overview</a></li>
+<li><a href=../../../../documentation/index.html>Documentation</a></li>
+<li><a href=../../../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004207/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004207/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container'>
+<div id='recipe-content'>
+<header>
+<a href='/web/20150325004207/https://foundationdb.com/key-value-store/recipes'>&larr; Back to Recipes</a>
+<h1>Tables</h1>
+<div class='languages'>
+<a href=../index.html class="python">python</a>
+<a href=../go/index.html class="go">go</a>
+<a href=index.html class="java active">java</a>
+<a href=../ruby/index.html class="ruby">ruby</a>
+</div>
+</header>
+<div id='body'> <h2>Goal</h2><p>   Create a table data structure suitable for sparse data.</p><h2>Challenge</h2><p>   Support efficient random access to individual cells in a table, as well as retrieval of all cells in a particular row or all cells in a particular column.</p><h2>Explanation</h2><p>   Tables give us a representation for two-dimensional data with labeled rows and columns. (Column labels are common in data sets. For rows, a primary key, such as an entity ID, can be used.) Each cell in the table will be modeled using two key-value pairs, one in row-dominant order and one in column-dominant order.</p><h2>Ordering</h2><p>   By storing the table in both row order and column order, we can support efficient retrieval of entire rows or columns with a single range read.</p><h2>Pattern</h2><p>   We construct a key from a tuple containing the row and column identifiers. Unassigned cells in the tables will consume no storage, so sparse tables are stored very efficiently. As a result, a table can safely have a very large number of columns.</p><p>   Using the lexicographic order of tuples, we can store the data in a row-oriented or column-oriented manner by placing either the row or column first in the tuple, respectively. Placing the row first makes it efficient to read all the cells in a particular row with a single range read; placing the column first makes reading a column efficient. We can support both access patterns by storing cells in both row-oriented and column-oriented layouts, allowing efficient retrieval of either an entire row or an entire column.</p><p>   We can create a subspace for the table and nested subspaces for the row and column indexes. Setting a cell would then look like:</p> <pre>tr.set(rowIndex.subspace(Tuple.from(row, column)).getKey(), pack(value));
+tr.set(colIndex.subspace(Tuple.from(column, row)).getKey(), pack(value));
+</pre><h2>Extensions</h2><h3>Higher dimensions</h3><p>   This approach can be straightforwardly extended to N dimensions for N &gt; 2. Unless N is small and your data is very sparse, you probably won't want to store all N! index orders, as that could consume a prohibitive amount of space. Instead, you'll want to select the most common access patterns for direct storage.</p><h2>Code</h2><p>   Here’s a simple implementation of the basic table pattern:</p> <pre>import java.util.Map;
+import java.util.TreeMap;
+public class MicroTable {
+    private static final FDB fdb;
+    private static final Database db;
+    private static final Subspace table;
+    private static final Subspace rowIndex;
+    private static final Subspace colIndex;
+    
+    static {
+        fdb = FDB.selectAPIVersion(200);
+        db = fdb.open();
+        table = new Subspace(Tuple.from("T"));
+        rowIndex = table.subspace(Tuple.from("R"));
+        colIndex = table.subspace(Tuple.from("C"));
+    }
+    
+    // Packing and unpacking helper functions.
+    private static byte[] pack(Object value){
+        return Tuple.from(value).pack();
+    }
+    
+    private static Object unpack(byte[] value){
+        return Tuple.fromBytes(value).get(0);
+    }
+    
+    public static void setCell(TransactionContext tcx, final String row, 
+                                final String column, final Object value){
+        tcx.run(new Function&lt;Transaction, Void&gt;() {
+            public Void apply(Transaction tr){
+                tr.set(rowIndex.subspace(Tuple.from(row, column)).getKey(),
+                        pack(value));
+                tr.set(colIndex.subspace(Tuple.from(column,row)).getKey(), 
+                        pack(value));
+                
+                return null;
+            }
+        });
+    }
+    
+    public static Object getCell(TransactionContext tcx, final String row,
+                                final String column){
+        return tcx.run(new Function&lt;Transaction, Object&gt;() {
+            public Object apply(Transaction tr){
+                return unpack(tr.get(rowIndex.subspace(
+                        Tuple.from(row,column)).getKey()).get());
+            }
+        });
+    }
+    
+    public static void setRow(TransactionContext tcx, final String row,
+                                final Map&lt;String,Object&gt; cols){
+        tcx.run(new Function&lt;Transaction, Void&gt;() {
+            public Void apply(Transaction tr){
+                tr.clear(rowIndex.subspace(Tuple.from(row)).range());
+                
+                for(Map.Entry&lt;String,Object&gt; cv : cols.entrySet()){
+                    setCell(tr, row, cv.getKey(), cv.getValue());
+                }
+                return null;
+            }
+        });
+    }
+    
+    public static void setColumn(TransactionContext tcx, final String column,
+                                    final Map&lt;String,Object&gt; rows){
+        tcx.run(new Function&lt;Transaction,Void&gt;() {
+            public Void apply(Transaction tr){
+                tr.clear(colIndex.subspace(Tuple.from(column)).range());
+                for(Map.Entry&lt;String,Object&gt; rv : rows.entrySet()){
+                    setCell(tr, rv.getKey(), column, rv.getValue());
+                }
+                return null;
+            }
+        });
+    }
+    
+    public static TreeMap&lt;String,Object&gt; getRow(TransactionContext tcx,
+                                                final String row){
+        return tcx.run(new Function&lt;Transaction,TreeMap&lt;String,Object&gt; &gt;() {
+            public TreeMap&lt;String,Object&gt; apply(Transaction tr){
+                TreeMap&lt;String,Object&gt; cols = new TreeMap&lt;String,Object&gt;();
+                
+                for(KeyValue kv : tr.getRange(
+                        rowIndex.subspace(Tuple.from(row)).range())){
+                    cols.put(rowIndex.unpack(kv.getKey()).getString(1),
+                            unpack(kv.getValue()));
+                }
+                
+                return cols;
+            }
+        });
+    }
+    
+    
+    public static TreeMap&lt;String,Object&gt; getColumn(TransactionContext tcx,
+                                                final String column){
+        return tcx.run(new Function&lt;Transaction,TreeMap&lt;String,Object&gt; &gt;() {
+            public TreeMap&lt;String,Object&gt; apply(Transaction tr){
+                TreeMap&lt;String,Object&gt; rows = new TreeMap&lt;String,Object&gt;();
+                
+                for(KeyValue kv : tr.getRange(
+                        colIndex.subspace(Tuple.from(column)).range())){
+                    rows.put(colIndex.unpack(kv.getKey()).getString(1),
+                            unpack(kv.getValue()));
+                }
+                
+                return rows;
+            }
+        });
+    }
+}</pre><p>   That’s about all you need to store and retrieve data from simple tables.</p><p>   Happy tabling!</p> </div>
+</div>
+<div id='more'>
+</div>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../../https:/web.archive.org/web/20150325004207/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  $(function() {
+    $('#recipe-content #body pre').each(function(index, pre) {
+      var $pre = $(pre)
+      if (!$pre.hasClass('prettyprint')) $pre.addClass('prettyprint')
+    })
+    prettyPrint()
+  })
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:42:07 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:36:41 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

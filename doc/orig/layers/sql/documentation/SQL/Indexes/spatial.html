@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app14.us.archive.org";archive_analytics.values.server_ms=101;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Spatial Indexes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/Indexes/spatial.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003620/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003620im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href="/web/20150325003620cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003620cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/SQL/Indexes/spatial.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/SQL/Indexes/spatial.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003620" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:36:20 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:36:20 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:36:20 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003620*/https://foundationdb.com/layers/sql/documentation/SQL/Indexes/spatial.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003620/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003620im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003620/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003620/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003620/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003620/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003620/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003620/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003620/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003620/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/Developer/index.html">SQL Layer Developer Reference</a> &raquo;
+    <a href="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003620/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003620im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="spatial-indexes">
+<h1>Spatial Indexes<a class="headerlink" href="#spatial-indexes" title="Permalink to this headline">∞</a></h1>
+<p>Many applications need to, or would greatly benefit from the ability to execute spatial queries, e.g. find entities located in a given region, or find the 10 entities whose location is nearest a given point.  Our spatial indexing feature supports point-in-region and nearest neighbor queries using z-order indexing strategies.</p>
+<div class="section" id="z-order-indexes">
+<h2>Z-order indexes<a class="headerlink" href="#z-order-indexes" title="Permalink to this headline">∞</a></h2>
+<p>The main idea of a <a class="reference external" href="/web/20150325003620/http://en.wikipedia.org/wiki/Z-order_(curve)">z-order-based</a> spatial index is to transform multidimensional data to one dimension; z-order is an ordering of points such that points that are close in the ordering are likely to be close in space. So in our spatial indexes, each lat/lon point is represented by a “z-value”, which is a 64-bit integer. The spatial index is a conventional B-tree whose key is a z-value. Z-order is obtained by ordering the indexed records by z-values.
+Queries go through a similar transformation. A points-in-region query gives rise to a small set of z-value intervals. Evaluating a points-in-region query involves locating, for each z-value interval, the lower bound of the interval in the index, and scanning records until we reach the upper bound.</p>
+</div>
+<div class="section" id="why-not-r-trees">
+<h2>Why not R-trees?<a class="headerlink" href="#why-not-r-trees" title="Permalink to this headline">∞</a></h2>
+<p>Most database systems with spatial indexes use the <a class="reference external" href="/web/20150325003620/http://en.wikipedia.org/wiki/Rtree">R-tree data structure</a> for indexing, (e.g. MySQL, Postgres, Oracle). This approach has two problems. First, while an R-tree is similar to a B-tree in its general operation (balanced, shallow, growth by splitting and promoting nodes), it is not a B-tree. Spatial indexes and conventional indexes are different data structures, and typically share little or no code. And this is why you often see that spatial indexes and conventional indexes have very different properties.
+Second, R-trees have a difficult time with nearest neighbor queries. Finding N points near a given point is a new kind of R-tree operation. By contrast, with z-order, it’s just random and sequential access, which is easy because the underlying structure really is a B-tree.
+FoundationDB SQL Layer implements both conventional and spatial indexes using the FoundationDB storage substrate.</p>
+</div>
+<div class="section" id="optimizing-spatial-queries">
+<h2>Optimizing Spatial Queries<a class="headerlink" href="#optimizing-spatial-queries" title="Permalink to this headline">∞</a></h2>
+<p>Because z-order builds upon a conventional B-tree, the integration of spatial indexes was very straightforward. In particular, the query optimizer treats spatial and non-spatial indexes identically: use the query bounds to estimate index selectivity, and use the most selective index, (or, depending on the query, multiple indexes).
+For a spatial index, the query bounds are spatial. We generate the z-value intervals, use our histograms of index keys to estimate the rows returned by each interval, and sum the estimates.
+So for a query like this:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="n">name</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="k">max</span><span class="p">(</span><span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">))</span>
+<span class="k">from</span> <span class="n">cities</span>
+<span class="k">where</span> <span class="n">population</span> <span class="o">&gt;=</span> <span class="mi">100000</span>
+<span class="k">and</span>   <span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>...the optimizer will use the index on population, or the spatial index on (lat, lon), depending on which index scan is more selective. This can easily seen by varying the lower bound on population (100000), the search radius (2.16), and the location of the search (42.3583, -71.0603).</p>
+</div>
+<div class="section" id="creating-a-spatial-index">
+<h2>Creating a spatial index<a class="headerlink" href="#creating-a-spatial-index" title="Permalink to this headline">∞</a></h2>
+<p>We support spatial indexes for locations represented by (latitude, longitude). To illustrate, the following is a table containing point data:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">table</span> <span class="n">cities</span><span class="p">(</span>
+  <span class="n">id</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
+  <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+  <span class="n">population</span> <span class="nb">int</span><span class="p">,</span>
+  <span class="n">lat</span> <span class="nb">decimal</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+  <span class="n">lon</span> <span class="nb">decimal</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+  <span class="k">primary</span> <span class="k">key</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>A spatial index is created as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">index</span> <span class="n">idx_geo</span> <span class="k">on</span> <span class="n">cities</span><span class="p">(</span><span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice we use the function z_order_lat_lon around the indexed columns. z_order_lat_lon means that the columns lat and lon should be interpreted as latitude and longitude.</p>
+</div>
+<div class="section" id="covering-spatial-indexes">
+<h2>Covering Spatial Indexes<a class="headerlink" href="#covering-spatial-indexes" title="Permalink to this headline">∞</a></h2>
+<p>Suppose you have an application tracking your company’s vehicles, which report their location periodically. If you want to locate all the vehicles in a given region, or the 10 vehicles nearest a given point, you can create an index optimizing these queries as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">index</span> <span class="n">idx_spatial</span> <span class="k">on</span> <span class="n">vehicles</span><span class="p">(</span><span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The following query reports the drivers of green vehicles in a region, their destination, and the number of passengers being carried.</p>
+<div class="highlight-sql"><div class="highlight"><pre>select driver, destination, passengers
+from vehicle
+where color = ‘green’
+and distance(latitude, longitude, 42.293628, -71.254663) &lt;= 0.0001;
+</pre></div>
+</div>
+<p>This query will execute by searching the spatial index, yielding vehicle primary key values, then retrieve the vehicle rows, check the color, and return the requested columns.</p>
+<p>For conventional (non-spatial) indexes, a common optimization is to include more columns in the index, making the index “covering” for a query. If the index includes all of the columns referenced by the query, then row retrieval can be skipped, relying just on the column values in the index row. This can increase query execution speed by 1-2 orders of magnitude, especially for queries returning many rows.</p>
+<p>To optimize the query above, we can define this covering index:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">index</span> <span class="n">idx_covering_spatial</span> <span class="k">on</span> <span class="n">vehicles</span><span class="p">(</span>
+  <span class="n">color</span><span class="p">,</span>
+  <span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">),</span>
+  <span class="n">driver</span><span class="p">,</span>
+  <span class="n">destination</span><span class="p">,</span>
+  <span class="n">passengers</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The query above has two predicates, restricting color to ‘green’, and restricting latitude and longitude to the circle of 0.0001 degrees around (42.293628, -71.254663). Both of these conditions can be handled by the new index. In general, a spatial index of this kind can be used when the columns preceding the lat/lon part are restricted using equality (color = ‘green’). The index rows retrieved include driver, destination and passengers, matching what is needed by the SELECT clause.
+So what we have is an index that can, under the right conditions, handle both spatial and non-spatial restrictions, and provide a covering index optimization as well. Spatial indexes can also benefit from individual and group indexes, which optimize access to Entity information.</p>
+</div>
+<div class="section" id="use-cases-point-in-region-and-nearest-neighbor-queries">
+<h2>Use Cases: point-in-region and nearest neighbor queries<a class="headerlink" href="#use-cases-point-in-region-and-nearest-neighbor-queries" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="point-in-region-queries">
+<h3>Point-in-region Queries<a class="headerlink" href="#point-in-region-queries" title="Permalink to this headline">∞</a></h3>
+<p>The following query locates cities with population at least 100,000, within 1 degree (latitude or longitude) of Boston:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="n">name</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">)</span>
+<span class="k">from</span> <span class="n">cities</span>
+<span class="k">where</span> <span class="n">population</span> <span class="o">&gt;=</span> <span class="mi">100000</span>
+<span class="k">and</span>   <span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This should be self-explanatory (once you know that Boston is at latitude 42.3583 and longitude -71.0603). The result rows are ordered by distance from Boston.</p>
+</div>
+<div class="section" id="nearest-neighbor-queries">
+<h3>Nearest Neighbor Queries<a class="headerlink" href="#nearest-neighbor-queries" title="Permalink to this headline">∞</a></h3>
+<p>Suppose you want to do a similar query, but instead of limiting by distance, you want the 10 nearest cities to Boston with population of at least 100,000. If we take any 10 cities in the world whose population is &gt;= 100,000, then this gives us an upper bound on the radius in which we find our answer. (Either we found the exact 10 nearest cities with population &gt;= 100,000, or we didn’t. If we didn’t, then the farthest away city among those 10 must be an upper bound on the distance to the actual 10th farthest city.)
+Of course, if you can get 10 cities that really are near Boston, you will get an upper bound really close to the actual answer. This is accomplished by the following query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="k">max</span><span class="p">(</span><span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">))</span>
+<span class="k">from</span> <span class="n">cities</span>
+<span class="k">where</span> <span class="n">population</span> <span class="o">&gt;=</span> <span class="mi">100000</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">znear</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">)</span>
+<span class="k">limit</span> <span class="mi">10</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This query provides the 10 cities near Boston — the 10 nearest in z-order. So the output from this query is a good, conservative approximation of the maximum radius in which we can find the 10 nearest cities to Boston with population &gt;= 100,000.
+Now that we have an upper bound on radius, (let’s suppose it’s 2.16), the points-in-region query provides the result:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="n">name</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="k">max</span><span class="p">(</span><span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">))</span>
+<span class="k">from</span> <span class="n">cities</span>
+<span class="k">where</span> <span class="n">population</span> <span class="o">&gt;=</span> <span class="mi">100000</span>
+<span class="k">and</span>   <span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Queries that span the “edge” of the space (longitude -180 = longitude +180) are handled correctly.
+Both spatial queries — the first one computing the maximum radius, and the second one providing the cities — run very efficiently with the spatial index. The first query runs in time proportional to the number of records specified in the LIMIT. The second query runs in time proportional to the size of the query region relative to the size of the earth.</p>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003620/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Spatial Indexes</a><ul><li><a class="reference internal" href="#z-order-indexes">Z-order indexes</a></li><li><a class="reference internal" href="#why-not-r-trees">Why not R-trees?</a></li><li><a class="reference internal" href="#optimizing-spatial-queries">Optimizing Spatial Queries</a></li><li><a class="reference internal" href="#creating-a-spatial-index">Creating a spatial index</a></li><li><a class="reference internal" href="#covering-spatial-indexes">Covering Spatial Indexes</a></li><li><a class="reference internal" href="#use-cases-point-in-region-and-nearest-neighbor-queries">Use Cases: point-in-region and nearest neighbor queries</a><ul><li><a class="reference internal" href="#point-in-region-queries">Point-in-region Queries</a></li><li><a class="reference internal" href="#nearest-neighbor-queries">Nearest Neighbor Queries</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003620/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003620/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003620/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003620/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003620js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:20 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:41:31 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

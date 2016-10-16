@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=163;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Localization
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/localization.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003622/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003622/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../index.html>Community</a></li>
+<li><a href=../../../../courses/index.html>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href="index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../documentation/latest/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="localization">
+<span id="id1"></span><h1>Localization<a class="headerlink" href="#localization" title="Permalink to this headline">∞</a></h1>
+<p>The <a class="reference internal" href="ddl/create.table.html#create-table-stmt"><em>CREATE TABLE</em></a> statement allows per-column specification of sort order and character classification behavior.</p>
+<div class="section" id="collation-support">
+<span id="collation"></span><h2>Collation Support<a class="headerlink" href="#collation-support" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer implements collations using <a class="reference external" href=../../../../index.html>ICU</a>.
+Collations can be specified in two different formats using valid ICU <a class="reference external" href=../../../../icu-bin/locexp/index.html>locales</a> and <a class="reference external" href=../../../../locale/index.html>keywords</a>.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">locale[_case][_accent]</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">locale[_keyword=value]</span></tt></li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">case</span></tt> determines case sensitivity (<tt class="docutils literal"><span class="pre">ci</span></tt> or <tt class="docutils literal"><span class="pre">cs</span></tt> for insensitive and sensitive, respectively) and <tt class="docutils literal"><span class="pre">accent</span></tt> determines accent sensitivity (<tt class="docutils literal"><span class="pre">cx</span></tt> or <tt class="docutils literal"><span class="pre">co</span></tt> for insensitive and sensitive, respectively). <tt class="docutils literal"><span class="pre">keyword</span></tt> and <tt class="docutils literal"><span class="pre">value</span></tt> are a keyword-value pair; multiple keyword-value pairs can be included, separated with an underscore. The following are examples of valid collations:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">en_us</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">en_us_ci</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">en_us_cs</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">en_us_ci_co</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">en_us_ci_cx</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">sv_se</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">zh_collation=stroke</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">zh_Hant_TW_collation=pinyin</span></tt></li>
+</ul>
+<p>Note that locales must be unambiguous. For example, <tt class="docutils literal"><span class="pre">fr_ci</span></tt> is an ambiguous collation specifier because ci could indicate a region (Ivory Coast) or case insensitivity. Instead, you could use <tt class="docutils literal"><span class="pre">fr__ci</span></tt> (in which <tt class="docutils literal"><span class="pre">ci</span></tt> is for case insensitivity), <tt class="docutils literal"><span class="pre">fr_ci_cs</span></tt> (in which <tt class="docutils literal"><span class="pre">ci</span></tt> is a region and case sensitivity is desired), or <tt class="docutils literal"><span class="pre">fr_ci_ci</span></tt> (in which <tt class="docutils literal"><span class="pre">ci</span></tt> is a region and case insensitivity is desired).</p>
+<p>The SQL Layer also provides a binary collation, <tt class="docutils literal"><span class="pre">ucs_binary</span></tt>; this is used if no collation is specified when creating a table. The default collation can be set using the <a class="reference internal" href=../Admin/configuration.html><em>default collation</em></a> configuration option.</p>
+<p>The following example creates a table whose only column uses the <tt class="docutils literal"><span class="pre">en_us_ci</span></tt> collation.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t1</span>
+<span class="p">(</span>
+  <span class="n">c1</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="k">COLLATE</span> <span class="n">en_us_ci</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="character-set-support">
+<span id="charset"></span><h2>Character Set Support<a class="headerlink" href="#character-set-support" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer supports the following character sets:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">latin1</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">utf8</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">utf16</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">iso_8859_1</span></tt></li>
+</ul>
+</div></blockquote>
+<p>If no character set is specified when creating a table, SQL Layer uses <tt class="docutils literal"><span class="pre">utf8</span></tt>. The default character set can be set using the <a class="reference internal" href=../Admin/configuration.html><em>default charset</em></a> configuration option.</p>
+<p>The following example creates a table whose only column uses the <tt class="docutils literal"><span class="pre">latin1</span></tt> character set.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t1</span>
+<span class="p">(</span>
+  <span class="n">c1</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="nb">CHARACTER</span> <span class="k">SET</span> <span class="n">latin1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-both-collation-and-character-set">
+<h2>Using both collation and character set<a class="headerlink" href="#using-both-collation-and-character-set" title="Permalink to this headline">∞</a></h2>
+<p>Note that if you define both a character set and a collation for an attribute, they must appear in that order:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t1</span>
+<span class="p">(</span>
+  <span class="n">c1</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="nb">CHARACTER</span> <span class="k">SET</span> <span class="n">latin1</span> <span class="k">COLLATE</span> <span class="n">en_us_ci</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>And not,</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">t1</span>
+<span class="p">(</span>
+  <span class="n">c1</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="k">COLLATE</span> <span class="n">en_us_ci</span> <span class="nb">CHARACTER</span> <span class="k">SET</span> <span class="n">latin1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Localization</a><ul><li><a class="reference internal" href="#collation-support">Collation Support</a></li><li><a class="reference internal" href="#character-set-support">Character Set Support</a></li><li><a class="reference internal" href="#using-both-collation-and-character-set">Using both collation and character set</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../foundationdb/index.html>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../legal/terms/index.html>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:22 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:33:04 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

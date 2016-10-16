@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app15.us.archive.org";archive_analytics.values.server_ms=349;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Query Execution
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/query.execution.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003316/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="IvPv9JNBUW1Zb4CtcG4ReT8H0Wrj8ZV7H2hgSBB5L5Y=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003316/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003316/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003316/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=index.html>Concepts</a>
+<ul>
+<li><a href=features.html>Features</a></li>
+<li><a href=architecture.html>Physical Architecture</a></li>
+<li><a href=table.groups.html>Table-Groups</a></li>
+<li><a href=mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=known.limitations.html>Known Limitations</a></li>
+<li><a href=glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href=../SQL/index.html>SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="query-execution">
+<h1>Query Execution<a class="headerlink" href="#query-execution" title="Permalink to this headline">∞</a></h1>
+<p>In order to efficiently execute queries, the SQL Layer uses a sophisticated query optimizer to produce an execution plan. This document describes the query optimization and execution process.</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">∞</a></h2>
+<p>A basic knowledge of the SQL Layer is required in order to fully understand query execution. This section reviews the SQL Layer Architecture to establish terminology and introduce an example to be used in the rest of the document.</p>
+<div class="section" id="table-groups">
+<h3>Table-Groups<a class="headerlink" href="#table-groups" title="Permalink to this headline">∞</a></h3>
+<p>In the SQL Layer, a group organizes a set of user-defined tables into a hierarchy based on selected foreign key definitions. Here is the familiar customer-order-item example, nicknamed CAOI, to be used throughout this document:</p>
+<p>The customers is the root table:</p>
+<p>To create the base <tt class="docutils literal"><span class="pre">customers</span></tt> table, issue the following DDL:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">customers</span>
+<span class="p">(</span> 
+   <span class="n">customer_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">rand_id</span>       <span class="nb">INT</span><span class="p">,</span>
+   <span class="n">name</span>          <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+   <span class="n">customer_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+   <span class="n">birthdate</span>     <span class="nb">DATE</span><span class="p">,</span>
+   <span class="k">INDEX</span> <span class="p">(</span><span class="n">birthdate</span><span class="p">)</span>   
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>It has an <tt class="docutils literal"><span class="pre">addresses</span></tt> child table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">addresses</span>
+<span class="p">(</span>
+   <span class="n">address_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">customer_id</span>  <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">address_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">city</span>         <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">state</span>        <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">customers</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>It also has an <tt class="docutils literal"><span class="pre">orders</span></tt> child table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">orders</span>
+<span class="p">(</span>
+   <span class="n">order_id</span>    <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">customer_id</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">order_info</span>  <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span>
+   <span class="n">order_date</span>  <span class="n">DATETIME</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">customers</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">orders</span></tt> table has an <tt class="docutils literal"><span class="pre">items</span></tt> child tables, which is the grandchild of the <tt class="docutils literal"><span class="pre">customers</span></tt> root table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">items</span>
+<span class="p">(</span>
+   <span class="n">item_id</span>  <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">order_id</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">price</span>    <span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">quantity</span> <span class="nb">INT</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">order_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">orders</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>The <strong>GROUPING FOREIGN KEYS</strong> in all the <tt class="docutils literal"><span class="pre">CREATE</span> <span class="pre">TABLE</span></tt> statements above (except in the &#8220;root&#8221; customers table) define the hierarchy that will be used to store the data. This concept called <strong>Table-Groups</strong> is central to the function of the SQL Layer. If you haven&#8217;t already, take a moment to read the <a class="reference internal" href="table.groups.html#table-groups-intro"><em>Introduction to Table-Groups</em></a>.</p>
+<p>If all of these <strong>GROUPING FOREIGN KEYS</strong> are used to define a group, then the group structure is as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre>    Customers
+    /      \
+Addresses  Orders
+              \
+              Items
+</pre></div>
+</div>
+<p>It can be displayed as follows:</p>
+<img alt="../_images/caoi.png" class="align-center" src=../../../../im_/caoi.png />
+</div>
+<div class="section" id="horizontal-organization-of-data">
+<h3>Horizontal Organization of Data<a class="headerlink" href="#horizontal-organization-of-data" title="Permalink to this headline">∞</a></h3>
+<p>The horizontal (H) organization of data interleaves rows according to group structure. In the CAOI group, a Customer is followed by his Addresses and then his Orders. Each Order is followed by the constituent Items. This ordering is realized by assigning an <strong>hkey</strong> to each row. Hkeys are defined so that ordering by hkey produces the desired interleaving of rows.</p>
+<p>For the root table, Customer, the hkey is <tt class="docutils literal"><span class="pre">[C,</span> <span class="pre">[cid]]</span></tt>, where C identifies the Customer type and cid is the value of the cid column for the row. An Address hkey would be <tt class="docutils literal"><span class="pre">[C,</span> <span class="pre">[cid],</span> <span class="pre">A,</span> <span class="pre">[aid]]</span></tt>. (A identifies the Address type). In general, a table&#8217;s hkey includes the parent&#8217;s hkey as a prefix, guaranteeing that parents are ordered before their children. Similarly, the Order hkey is <tt class="docutils literal"><span class="pre">[C,</span> <span class="pre">[cid],</span> <span class="pre">O,</span> <span class="pre">[oid]]</span></tt>. Both Order and Address rows appear after the corresponding Customer. The ordering between Order and Address is arbitrary. If types are identified by integers (C, A, O) then the ordering depends on the values of these integers. In any case, all the Addresses appear before all the Orders, or vice versa. Finally, the hkey of Item is <tt class="docutils literal"><span class="pre">[C,</span> <span class="pre">[cid],</span> <span class="pre">O,</span> <span class="pre">[oid],</span> <span class="pre">I,</span> <span class="pre">[iid]]</span></tt>.</p>
+<p>In practice, an H is stored in the FoundationDB Key-Value store, in which the key part has several segments preceding the hkey to identify the SQL Layer and the schema, followed by an hkey, and the value part is the entire row. For example:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>hkey</td>
+<td>row</td>
+</tr>
+<tr class="row-even"><td>c1</td>
+<td>c1, &#8216;ori&#8217;</td>
+</tr>
+<tr class="row-odd"><td>c1o1</td>
+<td>o1c1, &#8216;2010/1/1&#8217;</td>
+</tr>
+<tr class="row-even"><td>c1o1i1</td>
+<td>i1, o1, $10.00, 5</td>
+</tr>
+<tr class="row-odd"><td>c1o1i2</td>
+<td>i2, o1, $20.00, 10</td>
+</tr>
+<tr class="row-even"><td>c1o2</td>
+<td>o2, c1, &#8216;2010/3/15&#8217;</td>
+</tr>
+<tr class="row-odd"><td>c1o2i3</td>
+<td>i3, o2, $5.00, 100</td>
+</tr>
+<tr class="row-even"><td>c1o2i4</td>
+<td>i4, o2, $17.00, 3</td>
+</tr>
+<tr class="row-odd"><td>c1a1</td>
+<td>a1, c1, 101 Main Street, Cambridge MA</td>
+</tr>
+<tr class="row-even"><td>c2</td>
+<td>c2, &#8216;david&#8217;</td>
+</tr>
+<tr class="row-odd"><td>c2o3</td>
+<td>o3, c2, &#8216;2010/6/4&#8217;</td>
+</tr>
+<tr class="row-even"><td>c2o3i5</td>
+<td>i5, o3, $50.00, 8</td>
+</tr>
+<tr class="row-odd"><td>c2a2</td>
+<td>a2, c2, Corner, VA</td>
+</tr>
+<tr class="row-even"><td>c2a3</td>
+<td>a3, c2, Cape Cod, MA</td>
+</tr>
+</tbody>
+</table>
+<p>Some of the <tt class="docutils literal"><span class="pre">c1</span></tt>, <tt class="docutils literal"><span class="pre">i3</span></tt>, etc. identifiers that appear in the hkey repeat in the the row because the primary key and foreign Key field appears in the rows. In some cases, the hkey fields are not fully present in the row. For example, the items may have a foreign key to an order (say <tt class="docutils literal"><span class="pre">o3</span></tt>) but no customer_id data.</p>
+</div>
+<div class="section" id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this headline">∞</a></h3>
+<p>This section describes the major metadata elements and data structures used to implement H organization.</p>
+<div class="section" id="row-and-field">
+<h4>Row and Field<a class="headerlink" href="#row-and-field" title="Permalink to this headline">∞</a></h4>
+<p>A <em>row</em> is an array of data elements. Each row has a type that determines the number of data elements in the row and the type of each.</p>
+<p>A <em>field</em> is one of the data elements in a row. Each field contains a value of some atomic type (e.g. integer, string, date). Each atomic type includes <em>null</em> as a possible value.
+The order of fields within a row is part of the row&#8217;s type&#8217;s definition.</p>
+</div>
+<div class="section" id="row-type">
+<h4>Row Type<a class="headerlink" href="#row-type" title="Permalink to this headline">∞</a></h4>
+<p>A <em>row type</em> is a sequence of field definitions. Each field definition specifies where the field is located in the row&#8217;s array and an atomic value type. It is also convenient to allow for fields to have names, but names are not strictly necessary. The term <em>type</em> will sometimes be used to mean a row type.
+A row type specifies a <em>key</em>, which is a prefix of the sequence of field definitions. For example, if a row type defines the sequence of fields [a, b, c, d], then [a] and [a, b] are possible keys, but [b, a] and [c] are not.</p>
+</div>
+<div class="section" id="groups-and-tables">
+<h4>Groups and Tables<a class="headerlink" href="#groups-and-tables" title="Permalink to this headline">∞</a></h4>
+<p>A <em>group</em> is a set of rows of one or more types. This definition allows for the storage of Hs and other hybrid structures. The use of this term is possibly confusing, so here is a discussion of the different uses of the word “table” and “group” that we&#8217;ve used, and how they differ from this definition.</p>
+<ul class="simple">
+<li>A <em>user table</em> is a table in a SQL database. As far as we are concerned, a <em>user table</em> is just an abstraction &#8211; it is never stored directly. Instead, the SQL Layer stores group tables, and user table operations can be mapped to group table operations.</li>
+<li>A <em>group table</em> is an H structure, which combines rows from multiple user tables. It is represented in the information_schema and is stored in FoundationDB.</li>
+<li>A <em>group</em>, as defined here, is more general than <em>group table</em>. It is stored in the key-value store and can be used to model Hs and other hybrid organizations. The key of a <em>group</em> is always an hkey and its value is a row.</li>
+</ul>
+</div>
+<div class="section" id="index">
+<h4>Index<a class="headerlink" href="#index" title="Permalink to this headline">∞</a></h4>
+<p>A user table, or group table, may have any number of indexes. An <em>index</em> provides fast lookup for rows given a key and allows for scanning in key order following a lookup. Extending the classic definition of an index, Group indexes can be defined on columns from multiple tables within a group.</p>
+<p>We want to be able to accommodate indexes in the algebra, so it makes sense to define indexes to resemble tables. A table is a source of typed rows, ordered by row key, and exactly the same is true of indexes. However, there are important differences between tables and indexes:</p>
+<ul class="simple">
+<li>A table&#8217;s row type always has an hkey as its first column, and the row type&#8217;s key is the hkey. For an index, the key is the row type&#8217;s entire set of fields.</li>
+<li>The fields of an index row type must contain all of the columns of the table&#8217;s hkey.</li>
+</ul>
+<p>For example, suppose the Item table is declared with an index on <tt class="docutils literal"><span class="pre">(unit_price,</span> <span class="pre">quantity)</span></tt>. The row type for the index would be <tt class="docutils literal"><span class="pre">(unit_price,</span> <span class="pre">quantity,</span> <span class="pre">cid,</span> <span class="pre">oid,</span> <span class="pre">iid)</span></tt>. This allows for lookup on <tt class="docutils literal"><span class="pre">(unit_price,</span> <span class="pre">quantity)</span></tt>, and a lookup will yield <tt class="docutils literal"><span class="pre">cid</span></tt>, <tt class="docutils literal"><span class="pre">oid</span></tt>, and <tt class="docutils literal"><span class="pre">iid</span></tt> values. These values can be used to construct an Item&#8217;s hkey and then locate the appropriate row in the table. It is not a problem that the Item table does not actually contain a <tt class="docutils literal"><span class="pre">cid</span></tt> value. The SQL Layer ensures that it has the <tt class="docutils literal"><span class="pre">cid</span></tt> value when it needs to insert a row into the index.</p>
+</div>
+</div>
+<div class="section" id="hkeys-and-row-types">
+<h3>HKeys and Row Types<a class="headerlink" href="#hkeys-and-row-types" title="Permalink to this headline">∞</a></h3>
+<p>The operators of the SQL Layer algebra depend on how types relate to one another within a group, and how these relationships are reflected in hkeys. This section describes the connections among hkeys, group structure, and row type relationships.</p>
+<div class="section" id="hkeys-and-group-structure">
+<h4>HKeys and Group Structure<a class="headerlink" href="#hkeys-and-group-structure" title="Permalink to this headline">∞</a></h4>
+<p>The structure of a row type&#8217;s hkey depends on its position in the group structure. In the CAOI example, Customer is the table at the root of the group. The Customer rowtype has an hkey of the form <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid]]</span></tt>. (If the primary key of Customer were <tt class="docutils literal"><span class="pre">(cid,</span> <span class="pre">xyz)</span></tt>, then the hkey would be <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid,</span> <span class="pre">xyz]]</span></tt>.)</p>
+<p>In general, the hkey of a type extends the hkey of the parent by adding a type identifier and a list of primary key fields that are <em>not</em> involved in a foreign key with the parent. The hkey of the Order type is <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid],</span> <span class="pre">Order,</span> <span class="pre">[oid]]</span></tt>. Order identifies the type, and <tt class="docutils literal"><span class="pre">[oid]</span></tt> is the part of the Order primary key that is not involved in the parent join. Similarly, the hkey of Item is <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid],</span> <span class="pre">Order,</span> <span class="pre">[oid],</span> <span class="pre">Item,</span> <span class="pre">[iid]]</span></tt>.</p>
+<p>Sometimes a table&#8217;s primary key includes the entire primary key of the parent table. For example, suppose there were a Customer_Care table, whose primary key is <tt class="docutils literal"><span class="pre">(cid,</span> <span class="pre">case_number)</span></tt>. <tt class="docutils literal"><span class="pre">case_number</span></tt> might not be a primary key all by itself, e.g., if <tt class="docutils literal"><span class="pre">case_numbers</span></tt> started at 0 for each customer. The hkey of Customer_Care would be <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid],</span> <span class="pre">Customer_Care,</span> <span class="pre">[case_number]]</span></tt>. The Customer_Care contribution to the hkey is only the <tt class="docutils literal"><span class="pre">case_number</span></tt> column. The <tt class="docutils literal"><span class="pre">cid</span></tt> column, while part of the primary key, was involved in the join to the parent and is therefore already represented in the hkey.</p>
+</div>
+<div class="section" id="row-type-relationships">
+<h4>Row Type Relationships<a class="headerlink" href="#row-type-relationships" title="Permalink to this headline">∞</a></h4>
+<p>In the group structure, it makes sense to talk about parent and child relationships among types. This matches foreign key terminology: Order has a <strong>GROUPING FOREIGN KEY</strong> to Customer, so Order is said to be a child of Customer, and Customer is a parent of Order. In general, the set of GROUPING FOREIGN KEYS defining a group form a tree. In the original schema, The Order table might have a foreign key to Credit_card as well as a foreign key to Customer. Order therefore has two possible parents. However, in defining group structure, a table can have only one parent. In a group, the root has zero parents and zero or more children; a non-root has one parent identified using the GROUPING FOREIGN KEYS and zero or more children.</p>
+<p>Because parent and child relationships exist among row types, the concepts of ancestor and descendant are easy to define, through repeated applications of the parent and child relationships. In the CAOI example:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="35%" />
+<col width="45%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Type</td>
+<td>Ancestors</td>
+<td>Descendants</td>
+</tr>
+<tr class="row-even"><td>Customer</td>
+<td>&nbsp;</td>
+<td>Address, Order, Item</td>
+</tr>
+<tr class="row-odd"><td>Address</td>
+<td>Customer</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Order</td>
+<td>Customer</td>
+<td>Item</td>
+</tr>
+<tr class="row-odd"><td>Item</td>
+<td>Customer, Order</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="hkeys-and-row-type-relationships">
+<h4>HKeys and Row Type Relationships<a class="headerlink" href="#hkeys-and-row-type-relationships" title="Permalink to this headline">∞</a></h4>
+<p>For a given row type, R, the types listed in an hkey are simply the ancestors of R, starting from the root, ending with R itself. The hkey of Item is of the form <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[...],</span> <span class="pre">Order,</span> <span class="pre">[...],</span> <span class="pre">Item,</span> <span class="pre">[...]]</span></tt>. This leads to the following fact: if T1 is an ancestor of T2, then T1&#8217;s hkey is a prefix of T2&#8217;s hkey. For example, Customer and Order are ancestors of Item, and their hkeys are <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[...]]</span></tt> and <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[...],</span> <span class="pre">Order,</span> <span class="pre">[...]]</span></tt>, both of which are prefixes of Item&#8217;s hkey. The hkey of Address is <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[...],</span> <span class="pre">Address,</span> <span class="pre">[...]]</span></tt> which is not a prefix of Item&#8217;s hkey, consistent with the fact that Address is not an ancestor of Item.</p>
+</div>
+<div class="section" id="row-relationships">
+<h4>Row Relationships<a class="headerlink" href="#row-relationships" title="Permalink to this headline">∞</a></h4>
+<p>Rows engage in parent, child, ancestor and descendant relationships, just as their types do. For example, the type Customer is a parent of the Order type, and the Customer hkey is a prefix of the Order hkey. To be precise, this prefix relationship applies to the hkey structure, defined by row types and fields. <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid]]</span></tt> is a prefix of <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[cid],</span> <span class="pre">Order,</span> <span class="pre">[oid]]</span></tt>.</p>
+<p>A Customer row is a parent of an Order row if the hkey <em>values</em> exhibit the prefix relationship. The customer hkey <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[123]]</span></tt> is a parent of the Order hkey <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[123],</span> <span class="pre">Order,</span> <span class="pre">[888]]</span></tt>, but not of <tt class="docutils literal"><span class="pre">[Customer,</span> <span class="pre">[456],</span> <span class="pre">Order,</span> <span class="pre">[888]]</span></tt>, due to the disagreement in cid values (123 vs. 456).</p>
+</div>
+</div>
+</div>
+<div class="section" id="the-query-optimizer">
+<span id="algebra-execution-optimizer"></span><h2>The Query Optimizer<a class="headerlink" href="#the-query-optimizer" title="Permalink to this headline">∞</a></h2>
+<p>The purpose of the SQL Layer optimizer is to determine the most efficient execution approach for a query, and to produce a corresponding execution plan of <a class="reference internal" href="#fdbsql-algebra-operators"><em>operators</em></a>. It makes these decisions based on the SQL Layer data structures and <a class="reference internal" href=../SQL/Indexes/index.statistics.html><em>statistical information</em></a> about indexes and by leveraging unique features such as Table-Groups and <a class="reference internal" href=../SQL/indexes.html><em>group indexes</em></a>.</p>
+<p>It is expected that the optimizer will generate sub-optimal plans for some SQL statements now and then. In cases where there is an alternative plan that performs better than the plan generated by the optimizer, the first step in diagnosing why the optimizer picked the sub-optimal plan is to visually inspect both of the execution plans.</p>
+<p>Examining the different aspects of an execution plan and understanding what information you should be gleaning from the plan can be overwhelming. This section offers an explanation about each aspect of the execution plan and an insight into what caused the SQL Layer optimizer to make the decisions it did.</p>
+<div class="section" id="the-execution-plan">
+<h3>The Execution Plan<a class="headerlink" href="#the-execution-plan" title="Permalink to this headline">∞</a></h3>
+<p>An execution plan shows the detailed steps necessary to execute a SQL statement. These steps are expressed as a set of database operators that consume and produce rows. While the display is commonly shown in a tabular format, the plan is in fact tree-shaped. To display the execution plan of a SQL statement, use the <tt class="docutils literal"><span class="pre">EXPLAIN</span></tt> command. <tt class="docutils literal"><span class="pre">EXPLAIN</span></tt> is used in the <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> command line utility by preceding a SQL statement with it. This does not actually execute the statement but returns the plan slected by the optimizer.</p>
+<p>Each line in the execution plan is an operator that has a specific purpose. Each operator receives input from one or more operator that precede it and operates on the data to create an output stream for the following operator. Operators that have no preceding operators tend to produce their own data either from tables (the GroupScan operator), indexes (the IndexScan operators), or their own internal definitions (the ValuesScan operator).</p>
+</div>
+<div class="section" id="operators">
+<span id="fdbsql-algebra-operators"></span><h3>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">∞</a></h3>
+<p>Queries in the SQL Layer algebra are processed by breaking them into discrete steps called operators. <strong>Many of the SQL Layer operators are unique in that they are designed to process nested data rather than tabular data. An operator stream will often access source data in nested format with many row types, and apply transformations to the data, progressively flattening it to the point that the output is tabular.</strong> Hence, most operators either keep the nesting level intact or flatten it further. We have not yet defined any operators (e.g. nest) that add to the levels of nesting rather than reduce it.</p>
+<p>Generally speaking, execution plans have two levels. The bottom level operates over groups, one group at a time. Examples of these operators include, GroupScan and IndexScan. The top level works across groups to combines group-level intermediate results and produce the final result. Examples of top-level operators include Join, Sort, and Aggregate.</p>
+<p>The <em>group level</em> operators are:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/indexscan.html>Index Scan</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/indexintersect.html>Intersect</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/indexunion.html>Union</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/groupscan.html>Group Scan</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/lookup.html>Lookup</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/flatten.html>Flatten</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/product_nestedloops.html>Product Nested Loops</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/select_hkeyordered.html>Select hKey Ordered</a></li>
+</ul>
+</div>
+<p>The remaining, non-group specific operators are:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/aggregation.html>Aggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/buffer.html>Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/count.html>Count</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/delete.html>Delete</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/distinct.html>Distinct</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/filter.html>Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/insert.html>Insert</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/limit.html>Limit</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/map_nestedloops.html>Map Nested Loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/project.html>Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/select_bloomfilter.html>Select Bloom Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/sort.html>Sort</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/update.html>Update</a></li>
+<li class="toctree-l1"><a class="reference internal" href=../SQL/operators/valuesscan.html>ValuesScan</a></li>
+</ul>
+</div>
+<p>Next we will show how these operators are composed into execution plans. We will use a set of example queries on the CAOI schema with data loaded as presented in the <a class="reference internal" href=../../index.html><em>Getting Started with SQL</em></a> guide.</p>
+</div>
+<div class="section" id="basic-group-queries">
+<h3>Basic group queries<a class="headerlink" href="#basic-group-queries" title="Permalink to this headline">∞</a></h3>
+<p>Consider the simplest query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">caoi</span><span class="o">=&gt;</span> <span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">name</span> <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This query will simply compose the GroupScan operator, Filter operator, and the Project operator as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre>            <span class="n">OPERATORS</span>
+<span class="n">Project_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+  <span class="n">Filter_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span>
+     <span class="n">GroupScan_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">3</span> <span class="k">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The tabular representation is a top-down, left-to-right traversal of the execution tree. When you read a plan tree, you should start from the bottom left and work across and then up.</p>
+<p>Reading from the bottom up, the plan will scan the customers Table-Group using GroupScan, returning all the rows in it, including customers, addresses, orders, and items in the correct interleaved order. Every row is fed into the Filter operator that keeps only rows of type customer and discards all other rows. The Filter feeds the customer rows into the Project operator that merely formats the required columns (in this case only the column customers.name) for output.</p>
+<p>Most realistic queries are more complex and tend to use indexes.</p>
+</div>
+<div class="section" id="index-based-queries">
+<h3>Index-based queries<a class="headerlink" href="#index-based-queries" title="Permalink to this headline">∞</a></h3>
+<p>Let&#8217;s create an index on the customers.name column using the CREATE INDEX syntax:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="s1">&#39;idx_customer_name&#39;</span> <span class="k">ON</span> <span class="n">customers</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">While not necessary here, it is highly recommended to analyze the index to create <a class="reference internal" href=../SQL/Indexes/index.statistics.html><em>statistical information</em></a> about it. Statistics allows the optimizer to make much better decisions. A majority of optimizer problems result from out-dated statistical information. To create this statistical information, type <tt class="docutils literal"><span class="pre">ALTER</span> <span class="pre">TABLE</span> <span class="pre">customers</span> <span class="pre">ALL</span> <span class="pre">UPDATE</span> <span class="pre">STATISTICS;</span></tt></p>
+</div>
+<p>The execution plan will now be different:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">caoi</span><span class="o">=&gt;</span> <span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">name</span> <span class="k">FROM</span> <span class="n">customers</span><span class="p">;</span>
+
+                        <span class="n">OPERATORS</span>
+  <span class="n">Project_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">IndexScan_Default</span><span class="p">(</span><span class="k">Index</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">idx_customer_name</span><span class="p">),</span> <span class="n">name</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">2</span> <span class="k">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The optimizer realized that it has an index data structure that contains all the information that it needs to execute this query. The index contains the names of all the customers (alongside their hkeys). As a result, a much more efficient IndexScan of the new <tt class="docutils literal"><span class="pre">idx_customer_name</span></tt> index is used instead of a full GroupScan. The results of the IndexScan are fed into the Project operator that projects the output columns as before.</p>
+</div>
+<div class="section" id="default-indexes-for-pk-and-fk">
+<h3>Default indexes for PK and FK<a class="headerlink" href="#default-indexes-for-pk-and-fk" title="Permalink to this headline">∞</a></h3>
+<p>Every table has several indexes that are created by default: an index on the primary key columns called PK, and an index on each foreign key including the GROUPING FOREIGN KEY. Therefore, a query that selects a specific row will likely use these indexes:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">customers</span> <span class="k">WHERE</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+
+                             <span class="n">OPERATORS</span>
+  <span class="n">Project_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">,</span> <span class="n">customers</span><span class="p">.</span><span class="n">rand_id</span><span class="p">,</span> <span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">customers</span><span class="p">.</span><span class="n">customer_info</span><span class="p">,</span> <span class="n">customers</span><span class="p">.</span><span class="n">birthdate</span><span class="p">)</span>
+    <span class="n">GroupLookup_Default</span><span class="p">(</span><span class="n">customers</span> <span class="o">-&gt;</span> <span class="n">customers</span><span class="p">)</span>
+      <span class="n">HKeyRow_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+ <span class="p">(</span><span class="mi">3</span> <span class="k">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Reading the plan from the bottom up, it uses the PK index to locate the full hkey for customer 10, followed by a GroupLookup that selects the row of customer 10, followed by a project that formats all the columns (because the SELECT clause asked for * or all the columns) for output.</p>
+</div>
+<div class="section" id="intersecting-and-unioning-indexes">
+<h3>Intersecting and unioning indexes<a class="headerlink" href="#intersecting-and-unioning-indexes" title="Permalink to this headline">∞</a></h3>
+<p>One of the powerful features of the SQL Layer is that indexes across a Table-Group are considered to be related because they share at least a part of their hkey. This means that multiple indexes, from any number of tables within a single Table-Group, can be correlated using intersection or union:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">customer_id</span>
+        <span class="k">FROM</span> <span class="n">customers</span><span class="p">,</span> <span class="n">orders</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">addresses</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="aggregation">
+<h3>Aggregation<a class="headerlink" href="#aggregation" title="Permalink to this headline">∞</a></h3>
+<p>Consider the following query:</p>
+<div class="highlight-sql"><div class="highlight"><pre> <span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="k">COUNT</span><span class="p">(</span><span class="n">orders</span><span class="p">.</span><span class="n">order_id</span><span class="p">)</span>
+         <span class="k">FROM</span>   <span class="n">customers</span><span class="p">,</span> <span class="n">orders</span>
+         <span class="k">WHERE</span>  <span class="n">customer</span><span class="p">.</span><span class="n">customer_id</span> <span class="o">=</span> <span class="n">orders</span><span class="p">.</span><span class="n">customer_id</span>
+         <span class="k">GROUP</span>  <span class="k">BY</span> <span class="n">customer</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
+
+                         <span class="n">OPERATORS</span>
+ <span class="n">project</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Field</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+   <span class="n">Aggregation</span><span class="p">(</span><span class="k">GROUP</span> <span class="k">BY</span> <span class="mi">1</span> <span class="n">field</span><span class="p">,</span> <span class="k">then</span><span class="p">:</span> <span class="p">[</span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)])</span>
+     <span class="n">Sort_Tree</span><span class="p">(</span><span class="n">project</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)]))</span>
+       <span class="n">project</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>
+         <span class="n">Filter_Default</span><span class="p">([</span><span class="n">flatten</span><span class="p">(</span><span class="n">test</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span> <span class="n">test</span><span class="p">.</span><span class="k">order</span><span class="p">)])</span>
+           <span class="n">Flatten_HKeyOrdered</span><span class="p">(</span><span class="n">test</span><span class="p">.</span><span class="n">customer</span> <span class="k">INNER</span> <span class="n">test</span><span class="p">.</span><span class="k">order</span><span class="p">)</span>
+             <span class="n">GroupScan_Default</span><span class="p">(</span><span class="k">full</span> <span class="n">scan</span> <span class="k">on</span> <span class="n">customer</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">7</span> <span class="k">rows</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="evaluating-an-execution-plan">
+<h3>Evaluating an execution plan<a class="headerlink" href="#evaluating-an-execution-plan" title="Permalink to this headline">∞</a></h3>
+<p>In order to determine if you are looking at a good execution plan, you need to understand how the optimizer determined the plan in the first place. You should also be able to look at the execution plan and assess if the optimizer has made any mistake in its estimations or calculations, leading to a sub-optimal plan. The components to evaluate are:</p>
+<ul class="simple">
+<li>Access method - the way in which the data is being accessed, via either a group scan or index access</li>
+<li>Join method - the method used to join groups with each other</li>
+</ul>
+<div class="section" id="access-method">
+<h4>Access Method<a class="headerlink" href="#access-method" title="Permalink to this headline">∞</a></h4>
+<p>The access method shows how the data will be accessed from each group or index.</p>
+<p><strong>Group scan</strong> - Reads all rows in a group in hKey order and filters out those that
+do not satisfy the <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause predicates. It performs a complete scan of a group.
+It can be thought of as the equivalent of a table scan. However, it needs to scan all
+tables that are part of a group.</p>
+<p><strong>Index scan</strong> - Scans an index to locate index records whose keys are inside a given
+range.</p>
+</div>
+<div class="section" id="join-method">
+<h4>Join Method<a class="headerlink" href="#join-method" title="Permalink to this headline">∞</a></h4>
+<p><strong>Nested Loops</strong> - In the SQL Layer, the nested loops join operation is performed using the
+<cite>Map_NestedLoops</cite> operator.  The name <cite>Map_NestedLoops</cite> reflects the view that the
+inner loop implements a function and that the inputs to the function come from the
+outer loop. The output stream from the operator represents the stream of rows
+resulting from applying the function (inner loop) to each row of the outer loop.</p>
+<p><strong>Classify join conditions</strong></p>
+<ul class="simple">
+<li>Make equivalence classes for equality conditions</li>
+<li>Find group joins based on FK - PK conditions, using equivalence classes for aliasing.</li>
+</ul>
+<p><strong>Break up join tree</strong></p>
+<p>The join tree is subdivided into different kinds of joins. In its most general form, it is:</p>
+<ul>
+<li><p class="first">Cross product of:</p>
+<ul>
+<li><p class="first">General joins of:</p>
+<ul>
+<li><p class="first">Groups of:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>Branches</dt>
+<dd><ul class="first last simple">
+<li>(Single table)</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Non-tables (derived tables)</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>In many cases, some of the outer layers are not present. For instance, <tt class="docutils literal"><span class="pre">SELECT</span></tt> from a single table or a single branch or a single group.</p>
+</div>
+<div class="section" id="run-specific-join-algorithms">
+<h4>Run Specific Join Algorithms<a class="headerlink" href="#run-specific-join-algorithms" title="Permalink to this headline">∞</a></h4>
+<p><strong>Cross Products</strong> - There is no good way to do a cross product (pair of relations that has no join condition between them), particularly with only the general NL join and no spooling. Hence, they are just left to the end. Of course, they are very rare in real queries.</p>
+<p><strong>General Joins</strong> - General joins are done using a modern dynamic programming algorithm based on hypergraphs and aware of various kinds of joins (INNER, LEFT, SEMI). The algorithm enumerates the allowed (based on join types and conditions) permutations of the graph, building up larger and larger subgraphs while using costing to keep the number of active alternatives manageable.</p>
+<p><strong>Group Joins</strong> - Joins within a group (sharing a common parent in a group) are done by permuting the branches, aiming to do lowest cost / lowest cardinality first to keep the size of the result product to a minimum.
+Multiple branches are processed together because metering indicates that repeating inside a nested loop is expensive.</p>
+<p>The optimization of a group is memoized based on the outer tables from the general join algorithm. If these tables are in an outer NL general join, their values are available for group index lookup.</p>
+<p><strong>Branch</strong> - A branch is optimized and costed by picking the best index, including group indexes that handle more than one table in the branch. Additional tables are brought in by ancestor/branch lookup. The entire branch is then flattened.</p>
+<p>If all the columns needed are present in the index (i.e., the index is covering), the index row is used in place of the flattened row.</p>
+</div>
+<div class="section" id="sort-order">
+<h4>Sort Order<a class="headerlink" href="#sort-order" title="Permalink to this headline">∞</a></h4>
+<p>If the sort order (including the order required for DISTINCT / GROUP BY) lines up with the nesting order, a subplan is computed that does that sorting, either using an appropriate ordering index, or an explicit sort. The best plan using sorted subplans is cost-compared against doing a sort at the end. This process is recursive, so that the best subplan may have an explicit sort.</p>
+<p><strong>Anticipating Multiple Indexes</strong></p>
+<ul class="simple">
+<li>Multiple indexes can be used in place of a group index for a single branch, either two indexes from the same level or one from an ancestor.</li>
+<li>Indexes for multiple branches can be joined using an algorithm other than NL Product.</li>
+<li>In general, separate groups will have separate indexes. Eventually, these can be used more effectively for some cases (like lookup tables) by having a variety of join algorithm choices.</li>
+</ul>
+<p><strong>Breaking up a Group</strong> - Some queries (usually involving sorting) are better done by joining outside a group and then back again. These seem to require very special conditions, and rather than always expecting them, the idea is to recognize those conditions and break apart the group into separate general join elements.</p>
+</div>
+<div class="section" id="pipelining">
+<h4>Pipelining<a class="headerlink" href="#pipelining" title="Permalink to this headline">∞</a></h4>
+<p>The SQL Layer uses a batch pipelining technique for parallel query execution. More detail can be found in <a class="reference internal" href="features.html#fdbsqllayer-features-batch-pipelining"><em>Features</em></a>.</p>
+</div>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this headline">∞</a></h2>
+<p>From this document, you should understand how the query optimizer takes advantage of Table-Groups and indexes to generate an efficient execution plan.</p>
+<p>Next, you can</p>
+<ul class="simple">
+<li>Explore <a class="reference internal" href="features.html#fdbsqllayer-features"><em>features</em></a> of the SQL Layer.</li>
+<li>Follow the <a class="reference internal" href=../../index.html><em>Getting Started</em></a> guides to install and use the SQL Layer through a variety of ORMs, directly through SQL, or the REST API.</li>
+<li>Learn more about the <a class="reference internal" href="known.limitations.html#fdbsql-known-limitations"><em>Known Limitations</em></a> of the SQL Layer.</li>
+</ul>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Query Execution</a><ul><li><a class="reference internal" href="#prerequisites">Prerequisites</a><ul><li><a class="reference internal" href="#table-groups">Table-Groups</a></li><li><a class="reference internal" href="#horizontal-organization-of-data">Horizontal Organization of Data</a></li><li><a class="reference internal" href="#structures">Structures</a><ul><li><a class="reference internal" href="#row-and-field">Row and Field</a></li><li><a class="reference internal" href="#row-type">Row Type</a></li><li><a class="reference internal" href="#groups-and-tables">Groups and Tables</a></li><li><a class="reference internal" href="#index">Index</a></li></ul></li><li><a class="reference internal" href="#hkeys-and-row-types">HKeys and Row Types</a><ul><li><a class="reference internal" href="#hkeys-and-group-structure">HKeys and Group Structure</a></li><li><a class="reference internal" href="#row-type-relationships">Row Type Relationships</a></li><li><a class="reference internal" href="#hkeys-and-row-type-relationships">HKeys and Row Type Relationships</a></li><li><a class="reference internal" href="#row-relationships">Row Relationships</a></li></ul></li></ul></li><li><a class="reference internal" href="#the-query-optimizer">The Query Optimizer</a><ul><li><a class="reference internal" href="#the-execution-plan">The Execution Plan</a></li><li><a class="reference internal" href="#operators">Operators</a><ul></ul></li><li><a class="reference internal" href="#basic-group-queries">Basic group queries</a></li><li><a class="reference internal" href="#index-based-queries">Index-based queries</a></li><li><a class="reference internal" href="#default-indexes-for-pk-and-fk">Default indexes for PK and FK</a></li><li><a class="reference internal" href="#intersecting-and-unioning-indexes">Intersecting and unioning indexes</a></li><li><a class="reference internal" href="#aggregation">Aggregation</a></li><li><a class="reference internal" href="#evaluating-an-execution-plan">Evaluating an execution plan</a><ul><li><a class="reference internal" href="#access-method">Access Method</a></li><li><a class="reference internal" href="#join-method">Join Method</a></li><li><a class="reference internal" href="#run-specific-join-algorithms">Run Specific Join Algorithms</a></li><li><a class="reference internal" href="#sort-order">Sort Order</a></li><li><a class="reference internal" href="#pipelining">Pipelining</a></li></ul></li></ul></li><li><a class="reference internal" href="#next-steps">Next Steps</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003316/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:16 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:32:03 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

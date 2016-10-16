@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app14.us.archive.org";archive_analytics.values.server_ms=2162;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Consistency &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/consistency' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003201/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='consistency' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003201/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003201/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003201/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003201/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Consistency</h1>
+<h3>Two meanings of consistency</h3>
+<p>
+The concept of
+<em>consistency</em>
+comes up a great deal in the context of distributed databases. However, the term is used in one sense in the context of the ACID properties and in another in the context of the CAP theorem. The two meanings are often confused.
+</p>
+<ul>
+<li>
+The "C" in ACID refers to the property that data remains within an application's
+<a class='external-link' href='/web/20150325003201/http://en.wikipedia.org/wiki/Integrity_constraints'>integrity constraints</a>
+(For example, the constraint that some data and its index are consistent with respect to each other.)
+</li>
+<li>
+The "C" in CAP relates to a
+<a class='external-link' href='/web/20150325003201/http://en.wikipedia.org/wiki/Consistency_model'>consistency model,</a>
+which describes the conditions under which write operations from one client become visible to other clients. (For example, the eventual consistency model, in which writes are expected to be consistent across replicas after a sufficiently long period.)
+</li>
+</ul>
+<p>Integrity constraints relate to the application domain, whereas consistency models relate to the internal operation of the database itself. Both are important in that failure to support them can lead to corrupted data.</p>
+<h3>Integrity constraints</h3>
+<p>Applications typically have integrity constraints defined by their domains. These constraints can take the form of type constraints on certain data values ("domain integrity"), a relation between two or more data values ("referential integrity"), or business rules drawn from the application domain.</p>
+<p>In relational database management systems, integrity constraints are usually specified using SQL when the relational schema is designed. In this approach, the specification and enforcement of integrity constraints is tightly bound to the relational model. At the other extreme, most NoSQL databases simply do not support integrity constraints, shifting the burden of maintaining data integrity entirely onto the application developer.</p>
+<p>
+FoundationDB takes a third approach. Because integrity constraints are defined by the application domain, the FoundationDB core does not directly enforce them. However, FoundationDB's transactions, with their guarantees of atomicity and isolation, give the application developer the power to straightforwardly maintain integrity constraints as the domain requires. In simple terms, so long as each transaction individually maintains the desired constraints, FoundationDB guarantees that multiple clients executing transactions simultaneously will also maintain those constraints. This approach allows a broad range of data models, including document-oriented, graph-oriented, or relational models to be built as
+<a href='/web/20150325003201/https://foundationdb.com/layers'>layers</a>
+which maintain their own integrity constraints.
+</p>
+<h3>Consistency model</h3>
+<p>
+Consistency models serve to define the guarantees the database provides about when concurrent writes become visible to readers. Consistency models fall along a spectrum, depending on the strength of the guarantees. In general, stronger consistency models make reasoning about the database easier and speed development. For example,
+<em>causal</em>
+consistency guarantees that readers see all previously committed writes.
+<em>Eventual</em>
+consistency guarantees only that readers see writes after "sufficient time". Eventual consistency is the model used in many of the first-generation NoSQL systems.
+</p>
+<p>
+FoundationDB provides the strongest possible consistency model,
+<a class='external-link' href='/web/20150325003201/http://en.wikipedia.org/wiki/Sequential_consistency'>sequential consistency</a>
+(closely related to "<a class='external-link' href='/web/20150325003201/http://en.wikipedia.org/wiki/Serializability'>serializability</a>" from the database literature), providing the greatest possible ease of development.
+</p>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003201/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:01 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:39:03 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

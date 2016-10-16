@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app7.us.archive.org";archive_analytics.values.server_ms=123;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+The Future of NoSQL &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/future-of-nosql' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003231/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="bZE8fCzLenDFvhbCBOW48fP38163sl4+3wJK/cvGV2I=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='future_of_nosql' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003231/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003231/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003231/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>The Future of NoSQL</h1>
+<h2>The first generation of NoSQL</h2>
+<p>Database technologies are undergoing rapid evolution, with new approaches being actively explored after decades of relative stability. As late as 2008, relational databases were both commercially dominant and well-entrenched in the development community. However, many large web applications had requirements that were poorly matched to relational databases, and alternative approaches had been demonstrated by Google's Bigtable and Amazon's Dynamo. As a result, new systems that abandoned the relational model were beginning to attract the attention of developers.</p>
+<p>The term "NoSQL" was first used in its current sense in 2009 as a label for a broad class of non-relational, distributed databases. The term quickly gained prominence as a number of open source projects inspired by Bigtable and Dynamo (such as Hbase, Cassandra, and Voldemort) grew in popularity. These databases aimed to achieve a number of goals:</p>
+<ul>
+<li>fault tolerance,</li>
+<li>horizontal scalability,</li>
+<li>good price/performance, and</li>
+<li>flexible data modeling.</li>
+</ul>
+<img alt="1" src=../../../im_/1-961b7586060ff3c7deb44607dc98bd4a.png />
+<h2>The shadow of the CAP theorem</h2>
+<p>
+NoSQL databases of the first generation were designed in the shadow of the
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers/the-cap-theorem'>CAP theorem.</a>
+For a decade after its conjecture by Eric Brewer, CAP was interpreted as having strong implications for distributed systems. The popular, though inaccurate, summary was that designers had to "pick 2 out of 3" of the CAP properties of consistency, availability, and partition-tolerance.
+</p>
+<p>
+Sometimes, the constraints were presented even more starkly. In a paper explaining the design decisions made for Dynamo, Werner Vogels, the CTO of Amazon.com, wrote that "data inconsistency in large-scale reliable distributed systems has to be tolerated"
+<a class='footnote' href='#footnotes'>(1)</a>
+to obtain the needed performance and availability. In many informal expositions, the discussion of the design issues was further complicated by incorrect descriptions of the CAP properties.
+</p>
+<p>
+The result was that the CAP theorem was taken to justify abandonment of strong
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers/consistency'>consistency in order to maximize availability, reversing the prioritization that had been dominant among relational databases. In place of strong consistency, a much weaker model of eventual consistency was often adopted.</a>
+</p>
+<p>
+Even the advocates of eventual consistency argued for it as a necessary evil, not as a feature in itself. Weakening consistency delivers no enhanced functionality but only creates an additional development burden for an application to maintain correct behavior. This additional burden was accepted as a justified engineering tradeoff.
+</p>
+<img alt="2" src=../../../im_/2-2306ec9b79274e9e0545579ff833ddfc.png />
+<h2>Problems with the first generation</h2>
+<p>
+The first generation of NoSQL databases largely achieved the goals of fault tolerance and horizontal scalability. There are now a variety of NoSQL systems with these properties available for deployment on clusters of commodity hardware. Nevertheless, serious engineering challenges relating to price/performance and data modeling remain.
+</p>
+<p>
+With their focus on achieving horizontal scaling, first-generation NoSQL databases were usually not architected to optimize per-node performance. As a result, the overall price/performance of these systems is often higher than necessary.
+</p>
+<p>
+Data modeling is also overly limited in the first generation. To be sure, most of these systems support "schema-less" design, in the sense that a schema need not be declared in advance. Fields can be added or removed without data migrations and can be sparsely populated without storage penalty. Schema-less design allows data to be modeled more flexibly than in relational databases, which lock the developer into a single schema at any given point in operations.
+</p>
+<p>
+Nevertheless, each NoSQL system implements only a single, basic data model, such as the graph, document, or column-family model. Each of these models is optimized for a certain class of use cases and is less well-suited to others. This limitation is compounded by the fact that most NoSQL databases lack
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto'>global transactions,</a>
+making it very difficult for them to reliably implement new abstractions on top of their native dative models.
+</p>
+<p>
+Global transactions are transactions that can be defined by the application developer over any set of data elements. Global transactions are the key to building new abstractions because they allow a higher-level data element to be implemented using a collection of lower-level elements. A single transaction can be used to update the lower-level collection with guaranteed consistency, even with a high degree of concurrent updates. Without global transactions and the abstractions they support, it becomes more difficult to develop successful applications.
+</p>
+<img alt="3" src=../../../im_/3-88a3d7a6377675ea7ec165568d5ac5a5.png />
+<h2>The CAP theorem revisited</h2>
+<p>
+Increasing experience with these challenges has led some of the original thought-leaders of the NoSQL movement to re-examine the CAP theorem and re-assess the space of realistic engineering possibilities. In 2010, Vogels wrote that it is indeed possible to provide strong consistency
+<a class='footnote' href='#footnotes'>(2)</a>
+and that Amazon would add such consistency as an option in their SimpleDB product. He wrote that "achieving strict consistency can come at a cost in update or read latency, and may result in lower throughput." Rather than claiming that data inconsistency simply "has to be tolerated," he now advises that consistency is a design choice to be balanced against performance costs. He does not, however, attempt to characterize the magnitude of these costs.
+</p>
+<p>
+In 2012, Brewer wrote that the CAP theorem has been widely misunderstood.
+<a class='footnote' href='#footnotes'>(3)</a>
+In particular, he noted that "the '2 of 3' formulation was always misleading" and that "CAP prohibits only a tiny part of the design space: perfect availability and consistency in the presence of partitions, which are rare." This point is fundamental because the CAP notion of perfect availability (i.e., availability of all nodes in a cluster for both reads and writes) is very different from availability of the database as a whole to a client. A distributed database can be designed to remain highly available over a broad range of failures without supporting perfect availability in the CAP sense.
+</p>
+<p>
+Google has perhaps gone the furthest in the reconsideration database design with their Spanner database, which is intended to replace Bigtable across a wide range of Google applications. Spanner is a globally distributed database providing ACID transactions. After extensive experience working with Bigtable and other systems lacking cross-node transactions, Google decided that transactions constitute a better engineering design: "We believe it is better to have application programmers deal with performance problems due to overuse of transactions as bottlenecks arise, rather than always coding around the lack of transactions."
+<a class='footnote' href='#footnotes'>(4)</a>
+</p>
+<img alt="4" src=../../../im_/4-6b9e44c7122227e32ba20d9d197222dd.png />
+<h2>A new generation of NoSQL</h2>
+<p>
+This new perspective on CAP suggests an approach for a new generation of NoSQL. Like the first generation, the new systems will employ shared-nothing, distributed architectures with fault tolerance and scalability. However, rather than default to designs with weak consistency, the new generation will aggressively explore the strong-consistency region of the design space actually permitted by the CAP theorem. A key insight is that transactional processing has no necessary coupling with the relational model and can be combined with a unified storage backend supporting only a minimal data model. The power of this combination is that it can then support abstractions for
+<em>many</em>
+data models.
+<p>
+To achieve this design potential, the new generation should follow four broad principles:
+</p>
+<ol>
+<li>
+<strong>Unified storage backend:</strong>
+Using a minimal data model, such as an ordered key-value store, a unified storage backend can efficiently handle both streaming and random-access workloads.
+</li>
+<li>
+<strong>High performance per node:</strong>
+NoSQL designs can get much closer to the
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/performance'>performance</a>
+limits of the hardware. For example, they can employ storage engines optimized for consumer
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers/solid-state-drives'>SSDs,</a>
+which are dramatically improving in ways directly relevant to databases.
+</li>
+<li>
+<strong>Global transactions:</strong>
+<a href='/web/20150325003231/https://foundationdb.com/key-value-store/white-papers/transaction-processing'>Transactional processing</a>
+can be implemented in a distributed, scalable manner that costs only a small percentage of total system workload. Abstractions built on a transactional foundation inherit its properties of strong consistency, scalability, and fault tolerance.
+</li>
+<li>
+<strong>Multiple data models:</strong>
+Abstractions extend the schema-less approach by flexibly supporting a variety of basic data models. Each data model can be exposed as an API, allowing applications to select the models best suited to their problem.
+</li>
+</ol>
+<p>
+By following the above principles, a NoSQL database can provide a solid foundation for a vibrant
+<a href='/web/20150325003231/https://foundationdb.com/layers'>ecosystem of layers</a>
+for data models, frameworks, and applications.
+</p>
+</p>
+<img alt="5" src=../../../im_/5-ec347cfd56e6aaa02ad559eafadd9eca.png />
+<h2>References:</h2>
+<ol id='footnotes'>
+<li>http://queue.acm.org/detail.cfm?id=1466448</li>
+<li>http://www.allthingsdistributed.com/2010/02/strong_consistency_simpledb.html</li>
+<li>http://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed</li>
+<li>http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/spanner-osdi2012.pdf</li>
+</ol>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003231/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:31 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:38:39 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

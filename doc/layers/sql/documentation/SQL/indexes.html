@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app0.us.archive.org";archive_analytics.values.server_ms=305;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Indexing
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/SQL/indexes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003315/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="ZqJCWlDiyFvZfErrVHqe5XHcKD1JCKDKJxzTUsJo7f8=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003315/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003315/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003315/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=../Admin/index.html>Operations</a>
+<ul>
+<li><a href=../Admin/configuration.html>Configuration</a></li>
+<li><a href=../Admin/administration.html>Administration</a></li>
+<li><a href=../Admin/security.html>Security</a></li>
+<li><a href=../Admin/backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href=../Developer/index.html>SQL Layer Developer Reference</a> &raquo;
+    <a href="index.html">SQL Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="id1">
+<h1>Indexing<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h1>
+<p>As with other database systems, the SQL Layer relies on indexes for optimal performance. Four types of indexes are available:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#single-table-index"><em>Single table index</em></a> is a standard relational index and contains one or more columns from a single table</li>
+<li><a class="reference internal" href="#table-group-index"><em>Table-Group indexes</em></a> extend to allow index columns from different tables within a single branch of a Table-Group</li>
+<li><a class="reference internal" href="#fulltext-index"><em>Full-text indexes</em></a> provide integrated full-text searching capabilities through SQL</li>
+<li><a class="reference internal" href="#spatial-indexes"><em>Geospatial indexes</em></a> contain a two dimensional Z-order curve <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003315/http:/en.wikipedia.org/wiki/Z-order_curve>http://en.wikipedia.org/wiki/Z-order_curve</a> index as well as any other regular columns.</li>
+</ul>
+<p>The SQL Layer can use multiple indexes in parallel for the execution of a query.</p>
+<p>To plan your indexing strategy, it&#8217;s important to understand what <a class="reference internal" href="Indexes/index.statistics.html#index-statistics"><em>index statistics</em></a> are gathered and how they are used by the optimizer to construct a good execution plan. This understanding will inform your <a class="reference internal" href="#index-strategy"><em>indexing strategy</em></a> as you choose which indexes to create.</p>
+<div class="section" id="single-table-indexes">
+<span id="single-table-index"></span><h2>Single table indexes<a class="headerlink" href="#single-table-indexes" title="Permalink to this headline">∞</a></h2>
+<p>In standard relational databases, an index is defined on one or more columns in a single table. To create an index, use the <a class="reference internal" href="ddl/create.index.html#create-index-stmt"><em>CREATE INDEX statement</em></a> or the <a class="reference internal" href="ddl/alter.table.html#alter-table-stmt"><em>ALTER TABLE ADD INDEX statement</em></a>.</p>
+<p>As an example, consider the customers table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">customers</span>
+<span class="p">(</span> 
+   <span class="n">customer_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">rand_id</span>       <span class="nb">INT</span><span class="p">,</span>
+   <span class="n">name</span>          <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+   <span class="n">customer_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+   <span class="n">birthdate</span>     <span class="nb">DATE</span><span class="p">,</span>
+   <span class="k">INDEX</span> <span class="p">(</span><span class="n">birthdate</span><span class="p">)</span>   
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>An index can be created on the birthdate column as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx_customers_birthdate</span> <span class="k">ON</span> <span class="n">customers</span> <span class="p">(</span><span class="n">birthdate</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="Indexes/index.statistics.html#index-statistics"><em>Statistics</em></a> about indexes have to be gathered on a regular basis using the <a class="reference internal" href="ddl/alter.table.html#alter-table-stmt"><em>ALTER TABLE statement</em></a>:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">customers</span> <span class="k">UPDATE</span> <span class="k">STATISTICS</span> <span class="n">idx_customers_birthdate</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Statistics can be dropped using the name of the index:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">DROP</span> <span class="k">INDEX</span> <span class="n">customers</span><span class="p">.</span><span class="n">idx_customers_birthdate</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="table-group-indexes">
+<span id="table-group-index"></span><h2>Table-Group Indexes<a class="headerlink" href="#table-group-indexes" title="Permalink to this headline">∞</a></h2>
+<p>In standard relational databases, it is not possible to define an index on more than one table. However, in the SQL Layer, rows from tables in a group are stored clustered together in the FoundationDB key-value space. Because the rows are clustered, it becomes inexpensive to create indexes that contain data from multiple clustered rows. Thus, an index key in the SQL Layer can contain columns that appear in multiple tables within the same Table-Group. Such an index is referred to as a <em>group index</em>.</p>
+<p>Since group indexes can include columns from more than one table, they require the definition of the existence constraints between the tables using a join type ( LEFT | RIGHT [ OUTER ] ). These constraints will inform the construction and maintenance of the group index.</p>
+<div class="section" id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">∞</a></h3>
+<p>The tables upon which you define a <em>group index</em> must be within a single branch of the Table-Group. Consider the following Table-Group:</p>
+<img alt="../_images/caoi.png" class="align-center" src=../../../../im_/caoi.png />
+<p>This schema has two branches:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">customers--&gt;addresses</span></tt>, and</li>
+<li><tt class="docutils literal"><span class="pre">customers--&gt;orders---&gt;items</span></tt></li>
+</ul>
+<p>Valid group indexes for the above scenario can be defined on the following sets of tables:</p>
+<ul class="simple">
+<li>Customers-Addresses (within the <tt class="docutils literal"><span class="pre">customers--&gt;addresses</span></tt> branch)</li>
+<li>Customers-Orders (within the <tt class="docutils literal"><span class="pre">customers--&gt;orders---&gt;items</span></tt> branch)</li>
+<li>Customers-Orders-Items (within the <tt class="docutils literal"><span class="pre">customers--&gt;orders---&gt;items</span></tt> branch)</li>
+<li>Customers-Items (within the <tt class="docutils literal"><span class="pre">customers--&gt;orders---&gt;items</span></tt> branch)</li>
+<li>Orders-Items (within the <tt class="docutils literal"><span class="pre">customers--&gt;orders---&gt;items</span></tt> branch)</li>
+</ul>
+<p>Invalid group indexes for the above scenario include the following sets of tables (because they all cross the Address and Order, Item group boundaries):</p>
+<ul class="simple">
+<li>Addresses-Orders</li>
+<li>Addresses-Items</li>
+<li>Customers-Addresses-Orders</li>
+<li>Customers-Addresses-Items</li>
+<li>Customers-Addresses-Orders-Items</li>
+</ul>
+<p>In addition to the above limitations related to branches, another limitation is:</p>
+<ul class="simple">
+<li>The UNIQUE keyword cannot be used to define a group index</li>
+</ul>
+</div>
+<div class="section" id="creating-a-table-group-index">
+<h3>Creating a Table-Group Index<a class="headerlink" href="#creating-a-table-group-index" title="Permalink to this headline">∞</a></h3>
+<p>Group indexes are also created using standard SQL using the <a class="reference internal" href="ddl/create.index.html#create-index-stmt"><em>CREATE INDEX</em></a> statement or the <a class="reference internal" href="ddl/alter.table.html#alter-table-stmt"><em>ALTER TABLE ADD INDEX statement</em></a> with slight modifications to support maintenance operations. The full syntax is:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx</span> <span class="k">ON</span> <span class="n">tbl</span><span class="p">(</span><span class="n">tbl</span><span class="p">.</span><span class="n">col</span><span class="p">)</span> <span class="k">USING</span> <span class="o">&lt;</span><span class="k">LEFT</span> <span class="o">|</span> <span class="k">RIGHT</span><span class="o">&gt;</span> <span class="k">JOIN</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice the explicit use of a <tt class="docutils literal"><span class="pre">tbl</span></tt> table name preceding each column <tt class="docutils literal"><span class="pre">col</span></tt> to identify which table it belongs to. Also notice the <tt class="docutils literal"><span class="pre">&lt;LEFT</span> <span class="pre">|</span> <span class="pre">RIGHT&gt;</span> <span class="pre">JOIN</span></tt> clause that determines the exact contents of the index.</p>
+<p>For example, let&#8217;s first add the <tt class="docutils literal"><span class="pre">orders</span></tt> table to the customers Table-Group:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">orders</span>
+<span class="p">(</span>
+   <span class="n">order_id</span>    <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">customer_id</span> <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">order_info</span>  <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">),</span>
+   <span class="n">order_date</span>  <span class="n">DATETIME</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">customers</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>Let&#8217;s create a left join group index index on the customer&#8217;s name and the order date:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx_cust_name_order_date_left</span> <span class="k">ON</span> <span class="ss">&quot;orders&quot;</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="ss">&quot;orders&quot;</span><span class="p">.</span><span class="n">order_date</span><span class="p">)</span> <span class="k">USING</span> <span class="k">LEFT</span> <span class="k">JOIN</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>We could also create a right join group index on the customer&#8217;s name and the order date:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx_cust_name_order_date_right</span> <span class="k">ON</span> <span class="ss">&quot;orders&quot;</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="ss">&quot;orders&quot;</span><span class="p">.</span><span class="n">order_date</span><span class="p">)</span> <span class="k">USING</span> <span class="k">RIGHT</span> <span class="k">JOIN</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The difference between the two is similar to the difference between a <tt class="docutils literal"><span class="pre">LEFT</span> <span class="pre">JOIN</span></tt> and a <tt class="docutils literal"><span class="pre">RIGHT</span> <span class="pre">JOIN</span></tt> in a query. With <tt class="docutils literal"><span class="pre">LEFT</span> <span class="pre">JOIN</span></tt>, customer rows with no order rows will still create an entry in the index, with NULL for any orders columns, but order rows that are missing a customer will not create an entry. Conversely, with <tt class="docutils literal"><span class="pre">RIGHT</span> <span class="pre">JOIN</span></tt> order rows with no customer rows will still create an entry in the index, with NULL for any customer columns, but customer rows that have no order rows will not create an entry.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">To view the index names defined on a table, simply use the <tt class="docutils literal"><span class="pre">\dt</span></tt> command through <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> followed by the table name. This will print the table definition, including its indexes. Technically, a group index is attached to the highest table in the group structure included in the index. Usually, that table is the root table. However, the index will also show in the table definitions of all the tables from which the index has columns.</p>
+</div>
+</div>
+</div>
+<div class="section" id="full-text-indexes">
+<span id="fulltext-index"></span><h2>Full-Text Indexes<a class="headerlink" href="#full-text-indexes" title="Permalink to this headline">∞</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Full-text indexes are currently disabled. Please contact us when you intend to use full-text search for your project.</p>
+</div>
+<p>Full-text indexes are designed to allow users to search within text strings. The FoundationDB SQL layer integrates with the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003315/http:/lucene.apache.org>Lucene full-text engine</a> for full-text processing, index maintenance, and querying.</p>
+<p>Let&#8217;s create an index on the <tt class="docutils literal"><span class="pre">name</span></tt> column in the <tt class="docutils literal"><span class="pre">customers</span></tt> table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">ft_idx_cust_name</span> <span class="k">ON</span> <span class="n">customers</span><span class="p">(</span><span class="n">FULL_TEXT</span><span class="p">(</span><span class="n">name</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice that we use the function <tt class="docutils literal"><span class="pre">FULL_TEXT()</span></tt> around the indexed columns. The <tt class="docutils literal"><span class="pre">FULL_TEXT()</span></tt> function identifies the given columns, as the input for the full-text index.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">There is no need to create statistics for full-text indexes as that information is handled by the Lucene engine.</p>
+</div>
+<p>Let&#8217;s perform a full-text query through SQL to search for customers whose name contains the letter <em>d</em>. To use the full-text index, use a function called <tt class="docutils literal"><span class="pre">FULL_TEXT_SEARCH</span></tt> that marks this predicate for full-text processing in Lucene.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">customer_id</span>
+<span class="k">FROM</span>   <span class="n">customers</span>
+<span class="k">WHERE</span>  <span class="n">FULL_TEXT_SEARCH</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href=../Concepts/query.execution.html><em>execution plan</em></a> for the above query looks like:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">Project_Default</span><span class="p">(</span><span class="n">customers</span><span class="p">.</span><span class="n">customer_id</span><span class="p">)</span>
+  <span class="n">GroupLookup_Default</span><span class="p">(</span><span class="n">HKey</span> <span class="o">-&gt;</span> <span class="n">customers</span><span class="p">)</span>
+    <span class="n">IndexScan_FullText</span><span class="p">(</span><span class="k">schema</span><span class="p">.</span><span class="n">customers</span><span class="p">.</span><span class="n">ft_idx_cust_name</span><span class="p">,</span> <span class="nb">text</span><span class="p">:</span><span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This query is using the <tt class="docutils literal"><span class="pre">ft_idx_cust_name</span></tt> full-text index defined on the <tt class="docutils literal"><span class="pre">name</span></tt> column as if it were just another regular index in the system.</p>
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Full text queries can also be done through the <a class="reference internal" href=../REST/rest.api.reference.html><em>REST API</em></a> that exposes the richer <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003315/http:/lucene.apache.org/core/old_versioned_docs/versions/2_9_1/queryparsersyntax.html>Lucene syntax</a>.</p>
+</div>
+</div>
+<div class="section" id="spatial-indexes">
+<span id="id2"></span><h2>Spatial Indexes<a class="headerlink" href="#spatial-indexes" title="Permalink to this headline">∞</a></h2>
+<p>Many applications need an ability to execute spatial queries, such as finding entities located in a given region, or finding the 10 entities whose location is nearest a given point.  The SQL Layer implements a Z-order curve spatial index that supports point-in-region and nearest neighbor queries.</p>
+<div class="section" id="z-order-indexes">
+<h3>Z-order indexes<a class="headerlink" href="#z-order-indexes" title="Permalink to this headline">∞</a></h3>
+<p>The main idea of a <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003315/http:/en.wikipedia.org/wiki/Z-order_(curve)>z-order-based</a> spatial index is to transform two-dimensional data to one dimension. Z-order is an ordering of points such that points that are close in the ordering are likely to be close in space. In our spatial indexes, each lat/lon point is represented by a “z-value”, which is a 64-bit integer. The spatial index is a stored as a conventional index in FoundationDB ordered key-value space, whose key is a z-value. Z-order is obtained by ordering the indexed records by z-values.</p>
+<p>Queries go through a similar transformation. A points-in-region query gives rise to a small set of z-value intervals. Evaluating a points-in-region query involves locating, for each z-value interval, the lower bound of the interval in the index, and scanning records until we reach the upper bound.</p>
+<p>Most other database systems with spatial indexes use the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003315/http:/en.wikipedia.org/wiki/Rtree>R-tree data structure</a> for indexing, (e.g. MySQL, Postgres, Oracle). This approach has two problems. First, while an R-tree is similar to a B-tree in its general operation (balanced, shallow, growth by splitting and promoting nodes), it is not a regular, well-tested B-tree or key-value store. Spatial indexes and conventional indexes are different data structures and typically share little or no code. This is why spatial indexes and conventional indexes often have very different properties. Second, R-trees have a difficult time with nearest neighbor queries. Finding N points near a given point is a new kind of R-tree operation. By contrast, with z-order, it’s just random and sequential access, which is easy because the underlying structure really is a B-tree or key-value store.</p>
+<p>FoundationDB SQL Layer implements both conventional and spatial indexes using the FoundationDB storage substrate.</p>
+</div>
+<div class="section" id="optimizing-spatial-queries">
+<h3>Optimizing Spatial Queries<a class="headerlink" href="#optimizing-spatial-queries" title="Permalink to this headline">∞</a></h3>
+<p>Because z-order builds upon a conventional ordered key-value (or B-tree), the integration of spatial indexes is very straightforward. In particular, the query optimizer treats spatial and non-spatial indexes identically: use the query bounds to estimate index selectivity and use the most selective index or indexes.
+For a spatial index, the query bounds are spatial. The optimizer generate the z-value intervals, uses the statistics to estimate the rows returned by each interval, and sums these estimates.</p>
+<p>There are three general types of queries that are served well by geospatial indexes:</p>
+<p><strong>Points in range:</strong> Find all points in a given box:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="p">...</span>
+<span class="k">from</span> <span class="n">member</span>
+<span class="k">where</span> <span class="n">lat</span> <span class="k">between</span> <span class="mi">42</span> <span class="k">and</span> <span class="mi">48</span>
+<span class="k">and</span>   <span class="n">lon</span> <span class="k">between</span> <span class="mi">71</span> <span class="k">and</span> <span class="mi">77</span>
+</pre></div>
+</div>
+<p><strong>Nearest neighbor:</strong> Find x number of points nearest to a given point:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="p">...</span>
+<span class="k">from</span> <span class="n">member</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">distance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">74</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>hybrid query:</strong> for a query that has spatial and non-spatial parts:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="p">...</span>
+<span class="k">from</span> <span class="n">member</span>
+<span class="k">where</span> <span class="n">gender</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span>
+<span class="k">and</span> <span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">and</span> <span class="n">lat</span> <span class="k">between</span> <span class="mi">42</span> <span class="k">and</span> <span class="mi">48</span>
+<span class="k">and</span> <span class="n">lon</span> <span class="k">between</span> <span class="mi">71</span> <span class="k">and</span> <span class="mi">77</span>
+<span class="k">order</span> <span class="k">by</span> <span class="n">distance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">74</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let&#8217;s define and use a geospatial index by first adding the <tt class="docutils literal"><span class="pre">addresses</span></tt> table to the <tt class="docutils literal"><span class="pre">customers</span></tt> Table-Group:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">addresses</span>
+<span class="p">(</span>
+   <span class="n">address_id</span>   <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+   <span class="n">customer_id</span>  <span class="nb">INT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">address_info</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="n">city</span>         <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">state</span>        <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>   <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+   <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">customer_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">customers</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>Let&#8217;s add <tt class="docutils literal"><span class="pre">lat</span></tt> and <tt class="docutils literal"><span class="pre">lon</span></tt> columns, standing for latitude and longitude respectively:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">addresses</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">lat</span> <span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">7</span><span class="p">);</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">addresses</span> <span class="k">ADD</span> <span class="k">COLUMN</span> <span class="n">lon</span> <span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">7</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Only fixed-point DECIMAL columns can be used in a geospatial index</strong>.</p>
+<p>Let&#8217;s define the geospatial index:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">geo_idx_lat_lon</span> <span class="k">on</span> <span class="n">cities</span><span class="p">(</span><span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>We use the function <tt class="docutils literal"><span class="pre">z_order_lat_lon()</span></tt> around the indexed columns. The <tt class="docutils literal"><span class="pre">z_order_lat_lon</span></tt> function identifies the two given columns, <tt class="docutils literal"><span class="pre">lat</span></tt> and <tt class="docutils literal"><span class="pre">lon</span></tt> in this case,  as the two dimensions of the spatial index. The <tt class="docutils literal"><span class="pre">z_order_lat_lon()</span></tt> function:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Supports a 2d space representing the surface of the earth (latitude, longitude).</li>
+<li>Transforms (y, x) points using the z-ordered space-filling curve to store in a conventional index.</li>
+<li>Where the space is described by latitude, which goes from -90 to 90, and latitude, which goes from -180 to 180 with wraparound.</li>
+</ul>
+</div></blockquote>
+<p>All that remains is to create statistics for the index and we are ready to use it in queries.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">select</span> <span class="n">name</span><span class="p">,</span> <span class="n">rand_id</span><span class="p">,</span> <span class="k">max</span><span class="p">(</span><span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">))</span>
+<span class="k">from</span> <span class="n">customers</span>
+<span class="k">where</span> <span class="n">rand_id</span> <span class="o">&gt;=</span> <span class="mi">99</span>
+<span class="k">and</span>   <span class="n">distance_lat_lon</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="mi">42</span><span class="p">.</span><span class="mi">3583</span><span class="p">,</span> <span class="o">-</span><span class="mi">71</span><span class="p">.</span><span class="mi">0603</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The optimizer will elect to use the index on population, or the spatial index on (lat, lon), depending on which index scan is more selective. This can easily seen by varying the lower bound on rand_id (99), the search radius (2.16), and the location of the search (42.3583, -71.0603).</p>
+</div>
+<div class="section" id="covering-spatial-indexes">
+<h3>Covering Spatial Indexes<a class="headerlink" href="#covering-spatial-indexes" title="Permalink to this headline">∞</a></h3>
+<p>Suppose you have an application tracking your company’s vehicles, which report their location periodically. If you want to locate all the vehicles in a given region, or the 10 vehicles nearest a given point, you can create an index optimizing these queries as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">index</span> <span class="n">idx_spatial</span> <span class="k">on</span> <span class="n">vehicles</span><span class="p">(</span><span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">));</span>
+</pre></div>
+</div>
+<p>The following query reports the drivers of green vehicles in a region, their destination, and the number of passengers being carried:</p>
+<div class="highlight-sql"><div class="highlight"><pre>select driver, destination, passengers
+from vehicle
+where color = ‘green’
+and distance(latitude, longitude, 42.293628, -71.254663) &lt;= 0.0001;
+</pre></div>
+</div>
+<p>This query will execute by searching the spatial index, yielding vehicle primary key values, then retrieve the vehicle rows, check the color, and return the requested columns.</p>
+<p>For conventional (non-spatial) indexes, a common optimization is to include more columns in the index, making the index “covering” for a query. If the index includes all of the columns referenced by the query, then row retrieval can be skipped, relying just on the column values in the index row. This can increase query execution speed by 1-2 orders of magnitude, especially for queries returning many rows.</p>
+<p>To optimize the query above, we can define this covering index:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">create</span> <span class="k">index</span> <span class="n">idx_covering_spatial</span> <span class="k">on</span> <span class="n">vehicles</span><span class="p">(</span>
+  <span class="n">color</span><span class="p">,</span>
+  <span class="n">z_order_lat_lon</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">),</span>
+  <span class="n">driver</span><span class="p">,</span>
+  <span class="n">destination</span><span class="p">,</span>
+  <span class="n">passengers</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The query above has two predicates, restricting color to ‘green’, and restricting latitude and longitude to the circle of 0.0001 degrees around (42.293628, -71.254663). Both of these conditions can be handled by the new index. In general, a spatial index of this kind can be used when the columns preceding the lat/lon part are restricted using equality (color = ‘green’).</p>
+<p>The index rows retrieved include driver, destination and passengers, matching what is needed by the <tt class="docutils literal"><span class="pre">SELECT</span></tt> clause.
+We have an index that can, under the right conditions, handle both spatial and non-spatial restrictions, and provide a covering index optimization as well. Spatial indexes can also benefit from individual and group indexes, which optimize access to Entity information.</p>
+</div>
+</div>
+<div class="section" id="combining-multiple-indexes-for-query-execution">
+<span id="multi-index"></span><h2>Combining multiple indexes for query execution<a class="headerlink" href="#combining-multiple-indexes-for-query-execution" title="Permalink to this headline">∞</a></h2>
+</div>
+<div class="section" id="indexing-strategies">
+<span id="index-strategy"></span><h2>Indexing Strategies<a class="headerlink" href="#indexing-strategies" title="Permalink to this headline">∞</a></h2>
+<p>A few simple strategies can be employed when designing indexes. First, the
+following should be considered when designing an index for a query with no
+range predicate:</p>
+<ul class="simple">
+<li>Pick columns used in equality predicates. Make these columns the first columns of the index in any order.</li>
+<li>If a query to be indexed has <tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> columns, add these columns to the index. Do not change the order of these columns, but ignore columns that were added in the first step.</li>
+<li>Add all the remaining columns from the <tt class="docutils literal"><span class="pre">SELECT</span></tt> statement in any order.</li>
+</ul>
+<p>Please note, the above suggestions are only guidelines and are rather simplistic.
+Any index should be verified to be appropriate by looking at explain plans and
+comparing query response time. If an index is created using the simple
+suggestions above, it is very likely the optimizer will be able to produce a
+query execution plan that uses a covering index.</p>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">∞</a></h3>
+<p>Consider the query below assuming no indexes have been created:</p>
+<div class="highlight-sql"><div class="highlight"><pre>SELECT cid,
+       fname
+FROM   customer
+WHERE  lname = $1
+       AND city = $2
+ORDER  BY fname
+</pre></div>
+</div>
+<p>This query will execute in the SQL Layer as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre>project([Field(0), Field(1)])
+  Sort_Tree(posullivan.customer)
+    Filter_Default([posullivan.customer])
+      Select_HKeyOrdered(posullivan.customer, BoolLogic(AND -&gt; Field(2) == Literal($1), Field(3) == Literal($2) -&gt; BOOL))
+        GroupScan_Default(full scan on _akiban_customer)
+</pre></div>
+</div>
+<p>The above execution plan shows that the SQL Layer optimizer has decided to perform a group scan on the <tt class="docutils literal"><span class="pre">_akiban_customer</span></tt> group. It then filters the rows returned from this group based on the predicates specified in the <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause and then sorts the rows by <tt class="docutils literal"><span class="pre">fname</span></tt>.</p>
+<p>Taking into account the above guidelines, the ideal index for this query would be:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">cust_cov</span> <span class="k">ON</span> <span class="n">customer</span><span class="p">(</span><span class="n">lname</span><span class="p">,</span> <span class="n">city</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">cid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After creating the above index, the execution plan now looks like:</p>
+<div class="highlight-sql"><div class="highlight"><pre>project([Field(3), Field(2)])
+  IndexScan_Default(Index(posullivan.customer.cust_cov[IndexColumn(lname), IndexColumn(city), IndexColumn(fname), IndexColumn(cid)]) (&gt;=UnboundExpressions[Literal($1), Literal($2), Literal(NULL), Literal(NULL)],&lt;=UnboundExpressions[Literal($1), Literal($2), Literal(NULL), Literal(NULL)]))
+</pre></div>
+</div>
+<p>Notice that this execution plan only performs index access (referred to as a covering index). A sort is avoided because the index provides the needed data in the requested order due to the way the index is defined. Finally, the group structure does not need to be probed since all the requested information is in the <cite>cust_cov</cite> index.</p>
+<p>Next, we will consider simple queries with range predicates. In a query with a range predicate, two options exist when considering the three points outlined at the start of this section:</p>
+<blockquote>
+<div><ul class="simple">
+<li>avoid a sort by including columns from the <tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> clause in the index.</li>
+<li>scan less of the index by having all columns used as predicates in the index.</li>
+</ul>
+</div></blockquote>
+<p>Let&#8217;s consider an example query:</p>
+<div class="highlight-sql"><div class="highlight"><pre>SELECT cid,
+       fname
+FROM   customer
+WHERE  lname BETWEEN $1 AND $2
+       AND city = $3
+ORDER  BY fname
+</pre></div>
+</div>
+<p>With only the <tt class="docutils literal"><span class="pre">cust_cov</span></tt> index defined, the execution plan for this query looks like:</p>
+<div class="highlight-sql"><div class="highlight"><pre>project([Field(3), Field(2)])
+  Sort_Tree(Index(posullivan.customer.cust_cov[IndexColumn(lname), IndexColumn(city), IndexColumn(fname), IndexColumn(cid)]))
+    Select_HKeyOrdered(Index(posullivan.customer.cust_cov[IndexColumn(lname), IndexColumn(city), IndexColumn(fname), IndexColumn(cid)]), Field(1) == Literal($3))
+      IndexScan_Default(Index(posullivan.customer.cust_cov[IndexColumn(lname), IndexColumn(city), IndexColumn(fname), IndexColumn(cid)]) (&gt;=UnboundExpressions[Literal($1), Literal(NULL), Literal(NULL), Literal(NULL)],&lt;=UnboundExpressions[Literal($2), Literal(NULL), Literal(NULL), Literal(NULL)]))
+</pre></div>
+</div>
+<p>The SQL Layer chose to perform a range scan of the <tt class="docutils literal"><span class="pre">cust_cov</span></tt> index using
+the <tt class="docutils literal"><span class="pre">lname</span></tt> predicate. When scanning this range, it uses the other predicate
+on the <tt class="docutils literal"><span class="pre">city</span></tt> column to exclude rows (sometimes referred to as a screening
+column) from the sort operator. Finally, the rows from the index scan that
+satisfy all predicates are sorted.</p>
+<p>Two alternative indexes could be created to serve this query better. First,
+let&#8217;s create an index that will eliminate the sort:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">no_sort</span> <span class="k">ON</span> <span class="n">customer</span><span class="p">(</span><span class="n">city</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">cid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With the above index, the execution plan looks like:</p>
+<div class="highlight-sql"><div class="highlight"><pre>project([Field(3), Field(1)])
+  Select_HKeyOrdered(Index(posullivan.customer.no_sort[IndexColumn(city), IndexColumn(fname), IndexColumn(lname), IndexColumn(cid)]), BoolLogic(AND -&gt; Field(2) &gt;= Literal($1), Field(2) &lt;= Literal($2) -&gt; BOOL))
+    IndexScan_Default(Index(posullivan.customer.no_sort[IndexColumn(city), IndexColumn(fname), IndexColumn(lname), IndexColumn(cid)]) (&gt;=UnboundExpressions[Literal($3), Literal(NULL), Literal(NULL), Literal(NULL)],&lt;=UnboundExpressions[Literal($3), Literal(NULL), Literal(NULL), Literal(NULL)]))
+</pre></div>
+</div>
+<p>The SQL Layer chose to perform an index scan using the <cite>no_sort</cite> index, obtaining rows in the requested sort order and avoiding a sort.</p>
+<p>Now, let&#8217;s create an index which does not avoid the sort but scans less of the index:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">more_preds</span> <span class="k">ON</span> <span class="n">customer</span><span class="p">(</span><span class="n">city</span><span class="p">,</span> <span class="n">lname</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">cid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The execution plan looks like:</p>
+<div class="highlight-sql"><div class="highlight"><pre>project([Field(3), Field(2)])
+  Sort_Tree(Index(posullivan.customer.more_preds[IndexColumn(city), IndexColumn(lname), IndexColumn(fname), IndexColumn(cid)]))
+    IndexScan_Default(Index(posullivan.customer.more_preds[IndexColumn(city), IndexColumn(lname), IndexColumn(fname), IndexColumn(cid)]) (&gt;=UnboundExpressions[Literal($3), Literal($2), Literal(NULL), Literal(NULL)],&lt;=UnboundExpressions[Literal($3), Literal($1), Literal(NULL), Literal(NULL)]))
+</pre></div>
+</div>
+<p>In this case, the optimizer chose to perform an index scan using two predicates - <cite>city</cite> and <cite>lname</cite>. A small index scan is performed here, but a sort is still required.</p>
+</div>
+</div>
+<div class="section" id="designing-group-indexes">
+<h2>Designing Group Indexes<a class="headerlink" href="#designing-group-indexes" title="Permalink to this headline">∞</a></h2>
+<p>One advantage of the SQL Layer Table-Group technology is that indexes known as group indexes can be created across multiple tables. The same guidelines outlined above for regular indexes apply for group indexes. However, the guidelines are expanded because group indexes can span multiple tables.</p>
+<p>For example, consider the following query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">o</span><span class="p">.</span><span class="n">order_date</span><span class="p">,</span>
+       <span class="n">o</span><span class="p">.</span><span class="n">amt</span>
+<span class="k">FROM</span>   <span class="n">customer</span> <span class="k">c</span><span class="p">,</span>
+       <span class="ss">&quot;order&quot;</span> <span class="n">o</span>
+<span class="k">WHERE</span>  <span class="n">o</span><span class="p">.</span><span class="n">cid</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">cid</span>
+       <span class="k">AND</span> <span class="k">c</span><span class="p">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s1">&#39;tom&#39;</span>
+       <span class="k">AND</span> <span class="n">o</span><span class="p">.</span><span class="n">ship_to</span> <span class="o">=</span> <span class="s1">&#39;boston&#39;</span>
+<span class="k">ORDER</span>  <span class="k">BY</span> <span class="n">o</span><span class="p">.</span><span class="n">order_date</span>
+</pre></div>
+</div>
+<p>Without any indexes defined, this query will use the following execution plan:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">project</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="n">Field</span><span class="p">(</span><span class="mi">9</span><span class="p">)])</span>
+  <span class="n">Sort_Tree</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">posullivan</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span> <span class="n">posullivan</span><span class="p">.</span><span class="k">order</span><span class="p">))</span>
+    <span class="n">Filter_Default</span><span class="p">([</span><span class="n">flatten</span><span class="p">(</span><span class="n">posullivan</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span> <span class="n">posullivan</span><span class="p">.</span><span class="k">order</span><span class="p">)])</span>
+      <span class="n">Flatten_HKeyOrdered</span><span class="p">(</span><span class="n">posullivan</span><span class="p">.</span><span class="n">customer</span> <span class="k">INNER</span> <span class="n">posullivan</span><span class="p">.</span><span class="k">order</span><span class="p">)</span>
+        <span class="n">Select_HKeyOrdered</span><span class="p">(</span><span class="n">posullivan</span><span class="p">.</span><span class="k">order</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="n">Literal</span><span class="p">(</span><span class="n">boston</span><span class="p">))</span>
+          <span class="n">Select_HKeyOrdered</span><span class="p">(</span><span class="n">posullivan</span><span class="p">.</span><span class="n">customer</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">Literal</span><span class="p">(</span><span class="n">tom</span><span class="p">))</span>
+            <span class="n">GroupScan_Default</span><span class="p">(</span><span class="k">full</span> <span class="n">scan</span> <span class="k">on</span> <span class="n">_akiban_customer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The optimizer chose to perform a group scan on the <tt class="docutils literal"><span class="pre">_akiban_customer</span></tt> group structure. It then filters the rows produced from this group scan using the predicates specified in the <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause. After this, it flattens the rows by combining a customer with its order rows. A sort is then required based on the <tt class="docutils literal"><span class="pre">ORDER</span> <span class="pre">BY</span></tt> clause.</p>
+<p>A covering group index can be designed for this query as follows:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">cov_idx</span> <span class="k">ON</span> <span class="ss">&quot;order&quot;</span><span class="p">(</span><span class="n">customer</span><span class="p">.</span><span class="n">fname</span><span class="p">,</span> <span class="ss">&quot;order&quot;</span><span class="p">.</span><span class="n">ship_to</span><span class="p">,</span> <span class="ss">&quot;order&quot;</span><span class="p">.</span><span class="n">order_date</span><span class="p">,</span> <span class="ss">&quot;order&quot;</span><span class="p">.</span><span class="n">amt</span><span class="p">)</span> <span class="k">USING</span> <span class="k">LEFT</span> <span class="k">JOIN</span>
+</pre></div>
+</div>
+<p>With the above group index created, the execution plan now looks very different:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="n">project</span><span class="p">([</span><span class="n">Field</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">Field</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+  <span class="n">IndexScan_Default</span><span class="p">(</span><span class="k">Index</span><span class="p">(.</span><span class="n">customer</span><span class="p">.</span><span class="n">cov_idx</span><span class="p">[</span><span class="n">IndexColumn</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">IndexColumn</span><span class="p">(</span><span class="n">ship_to</span><span class="p">),</span> <span class="n">IndexColumn</span><span class="p">(</span><span class="n">order_date</span><span class="p">),</span> <span class="n">IndexColumn</span><span class="p">(</span><span class="n">amt</span><span class="p">)])</span> <span class="p">(</span><span class="o">&gt;=</span><span class="n">UnboundExpressions</span><span class="p">[</span><span class="n">Literal</span><span class="p">(</span><span class="n">tom</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="n">boston</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="k">NULL</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="k">NULL</span><span class="p">)],</span><span class="o">&lt;=</span><span class="n">UnboundExpressions</span><span class="p">[</span><span class="n">Literal</span><span class="p">(</span><span class="n">tom</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="n">boston</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="k">NULL</span><span class="p">),</span> <span class="n">Literal</span><span class="p">(</span><span class="k">NULL</span><span class="p">)]))</span>
+</pre></div>
+</div>
+<p>Group indexes, which are unique to the SQL Layer, can have a huge impact on performance.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Indexing</a><ul><li><a class="reference internal" href="#single-table-indexes">Single table indexes</a></li><li><a class="reference internal" href="#table-group-indexes">Table-Group Indexes</a><ul><li><a class="reference internal" href="#limitations">Limitations</a></li><li><a class="reference internal" href="#creating-a-table-group-index">Creating a Table-Group Index</a></li></ul></li><li><a class="reference internal" href="#full-text-indexes">Full-Text Indexes</a></li><li><a class="reference internal" href="#spatial-indexes">Spatial Indexes</a><ul><li><a class="reference internal" href="#z-order-indexes">Z-order indexes</a></li><li><a class="reference internal" href="#optimizing-spatial-queries">Optimizing Spatial Queries</a></li><li><a class="reference internal" href="#covering-spatial-indexes">Covering Spatial Indexes</a></li></ul></li><li><a class="reference internal" href="#combining-multiple-indexes-for-query-execution">Combining multiple indexes for query execution</a></li><li><a class="reference internal" href="#indexing-strategies">Indexing Strategies</a><ul><li><a class="reference internal" href="#examples">Examples</a></li></ul></li><li><a class="reference internal" href="#designing-group-indexes">Designing Group Indexes</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003315/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:33:15 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:32:09 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

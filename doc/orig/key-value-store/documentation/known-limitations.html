@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app11.us.archive.org";archive_analytics.values.server_ms=96;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Known Limitations
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/known-limitations.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003219/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="CHMzx+PxJHQu6Ec1degFzdT8eufY5j6zZ/lm0WczvtE=" name="csrf-token" />
+<link href="/web/20150325003219cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003219cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/known-limitations.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/known-limitations.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003219" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    <a href="/web/20140829032423/https://foundationdb.com/key-value-store/documentation/known-limitations.html" title="29 Aug 2014">AUG</a>
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:19 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150706063110/https://foundationdb.com/key-value-store/documentation/known-limitations.html" title="6 Jul 2015"><strong>JUL</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                   <a href="/web/20140829032423/https://foundationdb.com/key-value-store/documentation/known-limitations.html" title="3:24:23 Aug 29, 2014"><img src="/static/images/toolbar/wm_tb_prv_on.png" alt="Previous capture" width="14" height="16" border="0" /></a>
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:19 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325010622/https://foundationdb.com/key-value-store/documentation/known-limitations.html" title="1:06:22 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:19 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003219*/https://foundationdb.com/key-value-store/documentation/known-limitations.html" title="See a list of every capture for this URL">5 captures</a>
+           <div class="r" title="Timespan for captures of this URL">29 Aug 14 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000010000_2015:2:003000100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003219/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003219/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003219/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003219/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/known-limitations.html" class="active">Known Limitations</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003219/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="known-limitations">
+<span id="id1"></span><h1>Known Limitations<a class="headerlink" href="#known-limitations" title="Permalink to this headline">∞</a></h1>
+<p>FoundationDB has limitations, some of which may be addressed in future versions. If any of these limitations are particularly painful to you, please write us at <a class="reference external" href="mailto:support%40foundationdb.com">support<span>&#64;</span>foundationdb<span>&#46;</span>com</a> so that we can target them in the future.</p>
+<dl class="docutils">
+<dt>For related information, also see:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="platforms.html"><em>Platform Issues</em></a> that affect the operation of FoundationDB.</li>
+<li><a class="reference internal" href="configuration.html#system-requirements"><em>System requirements</em></a> for OS/hardware requirements.</li>
+<li><a class="reference external" href="/web/20150325003219/https://foundationdb.com/white-papers/anti-features">Core Anti-features</a> for limitations of the scope of the FoundationDB core.</li>
+<li><a class="reference internal" href="developer-guide.html#developer-guide-peformance-considerations"><em>Performance considerations</em></a> for how different workloads can limit performance.</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="design-limitations">
+<h2>Design limitations<a class="headerlink" href="#design-limitations" title="Permalink to this headline">∞</a></h2>
+<p>These limitations come from fundamental design decisions and are unlikely to change in the short term. Applications using FoundationDB should plan to work around these limitations. See <a class="reference external" href="/web/20150325003219/https://foundationdb.com/white-papers/anti-features">Core Anti-features</a> for related discussion of our design approach to the FoundationDB core.</p>
+<div class="section" id="long-transactions">
+<span id="id3"></span><h3>Long transactions<a class="headerlink" href="#long-transactions" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB currently does not support transactions running for over five seconds. In particular, after 5 seconds from the first read in a transaction:</p>
+<ul class="simple">
+<li>subsequent reads that go to the database will usually raise a <tt class="docutils literal"><span class="pre">past_version</span></tt> <a class="reference internal" href="api-error-codes.html"><em>error</em></a> (although reads cached by the client will not);</li>
+<li>a commit with any write will raise a <tt class="docutils literal"><span class="pre">past_version</span></tt> or <tt class="docutils literal"><span class="pre">not_committed</span></tt> <a class="reference internal" href="api-error-codes.html"><em>error</em></a>.</li>
+</ul>
+<p>Clients need to avoid these cases. For the design reasons behind this limitation, see the discussion in <a class="reference external" href="/web/20150325003219/https://foundationdb.com/white-papers/anti-features">Core Anti-features</a>.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p>The effect of long and large transactions can be achieved using short and small transactions with a variety of techniques, depending on the desired behavior:</p>
+<ul class="simple">
+<li>If an application wants long transactions because of an external process in the loop, it can perform optimistic validation itself at a higher layer.</li>
+<li>If it needs long-running read snapshots, it can perform versioning in a layer.</li>
+<li>If it needs large bulk inserts, it can use a level of indirection to swap in the inserted data quickly.</li>
+</ul>
+<p class="last">As with all data modeling problems, please ask for help on the community site (or via e-mail) with your specific needs.</p>
+</div>
+</div>
+<div class="section" id="large-transactions">
+<span id="id5"></span><h3>Large transactions<a class="headerlink" href="#large-transactions" title="Permalink to this headline">∞</a></h3>
+<p>Transaction size cannot exceed 10,000,000 bytes of affected data. Keys, values, and ranges that you read or write are all included as affected data. Likewise, conflict ranges that you <a class="reference internal" href="api-python.html#api-python-conflict-ranges"><em>add</em></a> or remove (using a <a class="reference internal" href="api-python.html#api-python-snapshot-reads"><em>snapshot read</em></a> or a <a class="reference internal" href="api-python.html#api-python-no-write-conflict-range"><em>transaction option</em></a>) are also added or removed from the scope of affected data.</p>
+<p>If any single transaction exceeds one megabyte of affected data, you should modify your design. In the current version, these large transactions can cause performance issues and database availability can (briefly) be impacted.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">See the discussion in <a class="reference internal" href="#long-transactions"><em>long transactions</em></a> for applicable workarounds.</p>
+</div>
+</div>
+<div class="section" id="large-keys-and-values">
+<span id="id6"></span><h3>Large keys and values<a class="headerlink" href="#large-keys-and-values" title="Permalink to this headline">∞</a></h3>
+<p>Keys cannot exceed 10,000 bytes in size. Values cannot exceed 100,000 bytes in size. Errors will be raised by the client if these limits are exceeded.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">FoundationDB provides efficient ways to <a class="reference internal" href="largeval.html"><em>design keys and values</em></a> to work around this limitation.</p>
+</div>
+</div>
+<div class="section" id="spinning-hdds">
+<span id="id7"></span><h3>Spinning HDDs<a class="headerlink" href="#spinning-hdds" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB is only designed for good performance with rotational disk drives when using the durable <a class="reference internal" href="configuration.html#configuration-storage-engine-memory"><em>memory</em></a> storage engine. It is not recommended that you run FoundationDB on rotational HDDs when using the <a class="reference internal" href="configuration.html#configuration-storage-engine-ssd"><em>ssd</em></a> storage engine. Many algorithms and optimizations have been made to specifically target good performance on solid-state storage that do not translate well to HDDs. Reduced performance and/or database availability issues can be expected.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">Large disk arrays and abstracted storage subsystems with sufficient I/O performance may be able to overcome this limitation, but testing specific use cases will be required.</p>
+</div>
+</div>
+<div class="section" id="key-selectors-with-large-offsets-are-slow">
+<span id="dont-use-key-selectors-for-paging"></span><h3>Key selectors with large offsets are slow<a class="headerlink" href="#key-selectors-with-large-offsets-are-slow" title="Permalink to this headline">∞</a></h3>
+<p>The current version of FoundationDB resolves key selectors with large offsets in O(offset) time. A common misusage of key selectors is using offsets to page through a large range of data (i.e. reading &#8216;a&#8217;+0 to &#8216;a&#8217;+100, then &#8216;a&#8217;+100 to &#8216;a&#8217;+200, etc.)</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p>An efficient alternative is to use the limit parameter with range reads, starting subsequent reads at the key after the last one returned. You can also use the iterator functionality available in most of the language bindings, which uses this technique internally.</p>
+<p class="last">The RankedSet layer provides a data structure in which large offsets and counting operations require only O(log N) time. It is a good choice for applications such as large leaderboards that require such functionality.</p>
+</div>
+</div>
+</div>
+<div class="section" id="current-limitations">
+<h2>Current limitations<a class="headerlink" href="#current-limitations" title="Permalink to this headline">∞</a></h2>
+<p>These limitations do not reflect fundamental aspects of our design and are likely be resolved or mitigated in future versions. Administrators should be aware of these issues, but longer-term application development should be less driven by them.</p>
+<div class="section" id="cluster-size">
+<h3>Cluster size<a class="headerlink" href="#cluster-size" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB has undergone performance testing and tuning with clusters of up to 500 cores/processes. Significantly larger clusters may experience performance bottlenecks leading to sub-linear scaling or related issues.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">If you are thinking of testing on a cluster larger than 500 cores/processes, we encourage you to contact us so we can help you configure machine classes for best results.</p>
+</div>
+</div>
+<div class="section" id="database-size">
+<h3>Database size<a class="headerlink" href="#database-size" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB has been tested with databases up to 100 TB (total size of key-value pairs &#8211; required disk space will be significantly higher after replication and overhead). If you are thinking of using a database larger than 10 TB, please contact us for configuration recommendations.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">The main limitation here is our testing environment, so if you are interested in and have the budget for a larger SSD-backed system, please contact us so we can work together on the necessary testing.</p>
+</div>
+</div>
+<div class="section" id="slow-machines">
+<h3>Slow machines<a class="headerlink" href="#slow-machines" title="Permalink to this headline">∞</a></h3>
+<p>In some cases, one or more machines that are significantly slower than others in a cluster may reduce the throughput of the entire cluster.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">This limitation applies when a hardware component on a server, e.g., a CPU or SSD, has a very low throughput. Administrators should avoid including machines in a cluster that have much slower hardware than others and should watch for machines that report much higher utilization than others. Due to FoundationDB&#8217;s fault tolerance, this condition can always be resolved simply by shutting down the offending machine(s) via the administration console.</p>
+</div>
+</div>
+<div class="section" id="multi-datacenter-capacity">
+<h3>Multi-datacenter capacity<a class="headerlink" href="#multi-datacenter-capacity" title="Permalink to this headline">∞</a></h3>
+<p>When operating in a multi-datacenter redundancy mode, a datacenter failure is treated in the same manner as the failure of an individual machine, triggering a full replication of data marked as lost. As a result, the storage needs in the remaining datacenter can be instantly doubled. Running out of storage space in this situation can lead to database unavailability.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<ul class="last simple">
+<li>In the current version of FoundationDB, it is best practice to keep <tt class="docutils literal"><span class="pre">three_datacenter</span></tt> systems below 60% disk-space utilization at all times.</li>
+<li>Multiple-datacenter support in this release is immature. If you are considering using multiple datacenters in production, we recommend that you contact us so we can work together for best results.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="write-scalability-with-multiple-datacenters">
+<h3>Write-scalability with multiple datacenters<a class="headerlink" href="#write-scalability-with-multiple-datacenters" title="Permalink to this headline">∞</a></h3>
+<p>When operating in a multi-datacenter redundancy mode, you cannot have more than two log servers per datacenter. This restriction limits the system&#8217;s ability to <a class="reference internal" href="configuration.html#configuration-large-cluster-performance"><em>scale write throughput for large clusters</em></a> in multiple datacenters.</p>
+</div>
+<div class="section" id="no-zero-downtime-upgrades">
+<h3>No Zero-Downtime Upgrades<a class="headerlink" href="#no-zero-downtime-upgrades" title="Permalink to this headline">∞</a></h3>
+<p>Upgrades require installing the new version of FoundationDB on each machine in the cluster. As machines are updated, the cluster will become unavailable until enough machines have been upgraded.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">If you are using the <tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine (which starts up very quickly) and orchestrate the upgrade process carefully (please contact us for details), the downtime will be only a few seconds, similar to that of certain failure recovery scenarios. A more casually performed upgrade may cause minutes of downtime.</p>
+</div>
+</div>
+<div class="section" id="limited-read-load-balancing">
+<h3>Limited read load balancing<a class="headerlink" href="#limited-read-load-balancing" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB load balances reads across the servers with replicas of the data being read. However, it does not currently increase the replication factor of keys that are frequently read. As a result, the aggregate read performance of any given key or small contiguous set of keys in a triple-replicated system is limited to the total performance of three server processes (typically on the order of 100,000 reads per second).</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">If data is accessed exceptionally frequently, an application could avoid this limitation by storing such data in multiple subspaces, effectively increasing its replication factor. If you are considering this workaround, please contact us for guidance.</p>
+</div>
+</div>
+<div class="section" id="running-out-of-disk-space">
+<h3>Running out of disk space<a class="headerlink" href="#running-out-of-disk-space" title="Permalink to this headline">∞</a></h3>
+<p>Common low-disk conditions in FoundationDB are handled gracefully via transaction throttling. However, if disk space is completely exhausted (e.g. by another application), database availability can be compromised.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">In such extreme cases, deleting data from the database or adding new machines may not suffice to solve the problem because these operations require transaction logging that may itself consume disk space. Administrative action to free space will be required.</p>
+</div>
+</div>
+<div class="section" id="slow-return-of-space-to-filesystem">
+<h3>Slow return of space to filesystem<a class="headerlink" href="#slow-return-of-space-to-filesystem" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine can be slow to return space from deleted data to the filesystem when the number of free pages is very large. This condition can arise when you have deleted most of the data in your database or greatly increased the number of processes in your cluster. In this condition, the database is still able to reuse the space, but the disk files may remain large for an extended period.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">Because the database is able to reuse the space, action is required only if your application requires the space for some non-database purpose. In this case, you can reclaim space by <a class="reference internal" href="administration.html#removing-machines-from-a-cluster"><em>excluding affected server processes</em></a> (either singly or a few at a time) and then including them again. Excluding removes the storage server and its data files completely, and when the server is included again, it uses a fresh database file.</p>
+</div>
+</div>
+<div class="section" id="cpu-starvation">
+<h3>CPU starvation<a class="headerlink" href="#cpu-starvation" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB relies on continuous low-latency communication with clients and other processes. If a CPU is highly utilized by other applications, the FoundationDB process can be starved. In this case, the failure detection algorithms can misinterpret non-responsiveness as a machine failure, causing extra data movement and work.</p>
+<div class="admonition-workarounds admonition">
+<p class="first admonition-title">Workarounds</p>
+<p class="last">If FoundationDB server processes coexist on a machine with multithreaded or multiprocess workloads that may suddenly have very high load, consider using operating system affinity features to reserve cores for FoundationDB.</p>
+</div>
+</div>
+<div class="section" id="very-high-latency-networks">
+<h3>Very high-latency networks<a class="headerlink" href="#very-high-latency-networks" title="Permalink to this headline">∞</a></h3>
+<p>FoundationDB includes several internal timeouts which can interfere with cluster availability and performance when operating on very high latency networks.</p>
+<div class="admonition-recommendation admonition">
+<p class="first admonition-title">Recommendation</p>
+<p class="last">If packet delivery times between nodes in the cluster are approaching one second, consider a different network design. (Sorry, spaceships.)</p>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Known Limitations</a><ul><li><a class="reference internal" href="#design-limitations">Design limitations</a><ul><li><a class="reference internal" href="#long-transactions">Long transactions</a></li><li><a class="reference internal" href="#large-transactions">Large transactions</a></li><li><a class="reference internal" href="#large-keys-and-values">Large keys and values</a></li><li><a class="reference internal" href="#spinning-hdds">Spinning HDDs</a></li><li><a class="reference internal" href="#key-selectors-with-large-offsets-are-slow">Key selectors with large offsets are slow</a></li></ul></li><li><a class="reference internal" href="#current-limitations">Current limitations</a><ul><li><a class="reference internal" href="#cluster-size">Cluster size</a></li><li><a class="reference internal" href="#database-size">Database size</a></li><li><a class="reference internal" href="#slow-machines">Slow machines</a></li><li><a class="reference internal" href="#multi-datacenter-capacity">Multi-datacenter capacity</a></li><li><a class="reference internal" href="#write-scalability-with-multiple-datacenters">Write-scalability with multiple datacenters</a></li><li><a class="reference internal" href="#no-zero-downtime-upgrades">No Zero-Downtime Upgrades</a></li><li><a class="reference internal" href="#limited-read-load-balancing">Limited read load balancing</a></li><li><a class="reference internal" href="#running-out-of-disk-space">Running out of disk space</a></li><li><a class="reference internal" href="#slow-return-of-space-to-filesystem">Slow return of space to filesystem</a></li><li><a class="reference internal" href="#cpu-starvation">CPU starvation</a></li><li><a class="reference internal" href="#very-high-latency-networks">Very high-latency networks</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003219/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003219/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003219js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:19 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:29:15 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=339;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Simulation and Testing &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/testing' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003232/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="mPqkfVBI3/N9idwOEBk8mcke2NiT3fUH8ujC2K73G5Q=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='testing' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003232/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003232/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>Simulation and Testing</h1>
+<h3>Correctness and Performance</h3>
+<p>
+Rigorous testing is central to our engineering process. The <a href=../../features/index.html>features of our core</a> are challenging, requiring us to meet exacting standards of correctness and performance. Data guarantees and transactional integrity must be maintained not only during normal operations but over a broad range of failure scenarios. At the same time, we aim to achieve performance goals such as low latencies and near-linear scalability. To meet these challenges, we use a combined regime of robust simulation, live performance testing, and hardware-based failure testing.
+</p>
+<h3>Simulation with Lithium</h3>
+<p>
+Simulation is a powerful tool for testing system correctness. Our simulation technology, called Lithium, is enabled by and tightly integrated with <a href=../flow/index.html>Flow</a>, our programming language for actor-based concurrency. In addition to generating efficient production code, Flow works with Lithium for simulated execution.
+</p>
+<p>
+The major goal of Lithium is to make sure that we find and diagnose issues in
+simulation rather than the real world. Lithium runs tens of thousands of simulations every night, each one simulating large numbers of component failures. Based on the volume of tests that we run and the increased intensity of the failures in our scenarios, we estimate that we have run the equivalent of roughly one trillion CPU-hours of simulation on FoundationDB.
+</p>
+<p>
+Lithium is able to conduct a
+<em>deterministic</em>
+simulation of an entire FoundationDB cluster within a single-threaded process. Determinism is crucial in that it allows perfect repeatability of a simulated run, facilitating controlled experiments to home in on issues. The simulation steps through time, synchronized across the system, representing a larger amount of real time in a smaller amount of simulated time. In practice, our simulations usually have about a 10-1 factor of real-to-simulated time, which is advantageous for the efficiency of testing.
+</p>
+<p>
+We run a broad range of simulations testing various aspects of the system. For example, we run a cycle test that uses key-values pairs arranged in a ring that executes transactions to change the values in a manner designed to maintain the ring's integrity, allowing a clear test of transactional isolation.
+</p>
+<p>
+Lithium simulates all physical components of a FoundationDB system, beginning with the number and type of machines in the cluster. For example, Lithium models drive performance on each machine, including drive space and the possibility of the drive filling up. Lithium also models the network, allowing a small amount of code to specify delivery of packets.
+</p>
+<p>
+We use Lithium to simulate failures modes at the network, machine, and datacenter levels, including connection failures, degradation of machine performance, machine shutdowns or reboots, machines coming back from the dead, etc. We stress-test all of these failure modes, failing machines at very short intervals, inducing unusually severe loads, and delaying communications channels.
+</p>
+<p>For a while, there was an informal competition within the engineering team to design failures that found the toughest bugs and issues the most easily. After a period of one-upsmanship, the reigning champion is called "swizzle-clogging". To swizzle-clog, you first pick a random subset of nodes in the cluster. Then, you "clog" (stop) each of their network connections one by one over a few seconds. Finally, you unclog them in a random order, again one by one, until they are all up. This pattern seems to be particularly good at finding deep issues that only happen in the rarest real-world cases.</p>
+<p>Lithium's success has surpassed our expectation and has been vital to our engineering team. It seems unlikely that we would have been able to build FoundationDB without this technology.</p>
+<h3>Performance testing with Circus</h3>
+<p>In addition to simulation, we continually run systematic performance tests on FoundationDB. Every night, we run an automated suite of performance tests using our "Circus" environment.</p>
+<p>
+For each Circus test, we specify the characteristics of the database to be used, e.g., 2 billion key-value pairs with 16 byte keys and randomly generated 8-100 byte values. The test selects the workloads to run and the cluster to run them on. Workloads specify the characteristics and proportions of reads and writes to be performed. (See our <a href=../../performance/index.html>Performance</a> page for representative examples.) A test can run workloads either in parallel or sequentially. Workloads are specified using the same code as for simulation, which benefits the productivity of our testing.
+</p>
+<p>This process give us a daily comparison of the performance of the current code base to previous days. Performance is measured across many dimensions derived from the output of many tests. Our data exploration technology allows this output to be graphically explored, with the ability to isolate and examine key performance indicators.</p>
+<h3>Failure testing with Quicksand</h3>
+<p>
+As the final leg of our testing regime, we validate that the correctness results demonstrated in simulation can be replicated in a real-world system. For this purpose, we expose FoundationDB to actual hardware failures on our "Quicksand" system, designed to be the worst cluster ever. Quicksand is a heterogeneous cluster running different Linux distributions, kernel versions, file systems, and SSDs. Quicksand runs 24/7, randomly inducing failures by powering down machines, powering down switches, creating network partitions, freezing processes for random durations, filling up drive space, etc. Periodically, the test output is checked to verify that all data guarantees have been maintained throughout the failures.
+</p>
+<p>
+As a rough measure of the effectiveness of our simulation testing framework, Quicksand has only ever found one bug. This bug was in Apache Zookeeper, which we used but couldn't simulate exactly because it is not written with the Flow language and framework. Though the original bug is now fixed, in response to this risk we eliminated Zookeeper from our code base, instead implementing our own disk-based Paxos algorithms for coordination.
+</p>
+<div class='more'>
+<h1>Check out some of our blog posts for more:</h1>
+</div>
+<p><a href=../../../https:/web.archive.org/web/20150325003525/http:/blog.foundationdb.com/call-me-maybe-foundationdb-vs-jepsen>Call me maybe: FoundationDB vs. Jepsen</a></p>
+<p><a href=../../../https:/web.archive.org/web/20150325003524/http:/blog.foundationdb.com/correctness-testing-ii-creating-ridiculously-paranoid-failures-at-foundationdb>Correctness Testing II: Creating Ridiculously Paranoid Failures at FoundationDB</a></p>
+<p><a href=../../../https:/web.archive.org/web/20150325003524/http:/blog.foundationdb.com/correctness-testing-comparing-foundationdb-netflix-chaos-monkey>Correctness Testing: Comparing FoundationDB &amp; Netflix Chaos Monkey</a></p>
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003232/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:32 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:36:50 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

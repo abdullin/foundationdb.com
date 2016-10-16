@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=111;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Release Notes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/2.0/release-notes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003438/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003438/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003438/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003438/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='docs-version-warning'>
+<div class='container'>
+You are currently viewing an older version of the docs. <a href=../index.html>Go to the latest version &rarr;</a>
+</div>
+</div>
+<div id='documentation-inner'>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.0.10',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 2.0</a> &raquo;
+    
+    <a id="mobile-search-link" href=../search.html>
+      <img alt="Magnifying-glass" src=../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="release-notes">
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="id1">
+<h2>2.0.10<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.10 is protocol-compatible with all prior 2.0.x releases. Users should continue to employ the bindings released with 2.0.0, with the exception of the following bindings:</p>
+<ul class="simple">
+<li>Java - updated to 2.0.8</li>
+<li>PHP - updated to 2.0.8</li>
+<li>Python - updated to 2.0.6</li>
+</ul>
+<div class="section" id="fixes">
+<h3>Fixes<a class="headerlink" href="#fixes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Clients running long enough to execute 2<sup>32</sup> internal tasks could experience a reordering of client operations. The outcome of this reordering is undefined and could include crashes or incorrect behavior.</li>
+<li>The <tt class="docutils literal"><span class="pre">fdbcli</span></tt> command-line interface would incorrectly report an internal error when running <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto</span></tt> if there weren&#8217;t enough machines in the cluster.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>2.0.9<a class="headerlink" href="#id2" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.9 is protocol-compatible with all prior 2.0.x releases. Users should continue to employ the bindings released with 2.0.0, with the exception of the following bindings:</p>
+<ul class="simple">
+<li>Java - updated to 2.0.8</li>
+<li>PHP - updated to 2.0.8</li>
+<li>Python - updated to 2.0.6</li>
+</ul>
+<div class="section" id="id3">
+<h3>Fixes<a class="headerlink" href="#id3" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Long-running clusters using the <tt class="docutils literal"><span class="pre">ssd</span></tt> storage engine could eventually deprioritize failure monitoring, causing busy machines to be considered down.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>2.0.8<a class="headerlink" href="#id4" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.8 is protocol-compatible with all prior 2.0.x releases. Users should continue to employ the bindings released with 2.0.0, with the exception of the following bindings:</p>
+<ul class="simple">
+<li>Java - updated to 2.0.8</li>
+<li>PHP - updated to 2.0.8</li>
+<li>Python - updated to 2.0.6</li>
+</ul>
+<div class="section" id="id5">
+<h3>Fixes<a class="headerlink" href="#id5" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Resetting a transaction did not release its memory.</li>
+<li>Windows: FoundationDB client applications could crash when starting up due to a race condition.</li>
+<li>Ubuntu: Ubuntu software center reported that the FoundationDB package was of bad quality.</li>
+</ul>
+</div>
+<div class="section" id="php">
+<h3>PHP<a class="headerlink" href="#php" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Package updated to support PHP 5.4+ (instead of 5.3+).</li>
+<li>Fix: <tt class="docutils literal"><span class="pre">get_boundary_keys()</span></tt> could fail to complete successfully if certain retryable errors were encountered.</li>
+<li>Fix: Bindings set error reporting level, which could interfere with clients that used alternate settings.</li>
+</ul>
+</div>
+<div class="section" id="java">
+<h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: Calling <tt class="docutils literal"><span class="pre">getRange</span></tt> on a <tt class="docutils literal"><span class="pre">Transaction</span></tt> could leak memory.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>2.0.7<a class="headerlink" href="#id6" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.7 is protocol-compatible with all prior 2.0.x releases. Users should continue to employ the bindings released with 2.0.0, with the exception of the following bindings:</p>
+<ul class="simple">
+<li>Java - updated to 2.0.4</li>
+<li>PHP - updated to 2.0.6</li>
+<li>Python - updated to 2.0.6</li>
+</ul>
+<div class="section" id="id7">
+<h3>Fixes<a class="headerlink" href="#id7" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Updated FDBGnuTLS plugin with GnuTLS 3.2.15, incorporating the fix for <a class="reference external" href=../../../https:/web.archive.org/web/20150325003438/http:/gnutls.org/security.html#GNUTLS-SA-2014-3>GNUTLS-SA-2014-3</a>.</li>
+<li>Linux and Mac OS X: Processes configured with a 5-digit port number would listen on the wrong port.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>2.0.6<a class="headerlink" href="#id8" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.6 is protocol-compatible with all prior 2.0.x releases. Users should continue to employ the bindings released with 2.0.0, with the exception of the following bindings:</p>
+<ul class="simple">
+<li>Java - updated to 2.0.4</li>
+<li>PHP - updated to 2.0.6</li>
+<li>Python - updated to 2.0.6</li>
+</ul>
+<div class="section" id="id9">
+<h3>Fixes<a class="headerlink" href="#id9" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Memory storage engine files could grow very large in an idle database.</li>
+</ul>
+</div>
+<div class="section" id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>When disk bound, the storage server would use up to 90% of the disk IOPS on data balancing rather than processing new writes. As a result, the system could perform at about 10% of its maximum speed while restoring durability after a machine failure. The storage server can now use at most 50% of its disk IOPS on data balancing.</li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>PHP<a class="headerlink" href="#id10" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: <tt class="docutils literal"><span class="pre">get_boundary_keys()</span></tt> would throw an error if passed a transaction.</li>
+<li>Fix: Options which take an integer parameter would not use the value supplied.</li>
+</ul>
+</div>
+<div class="section" id="python">
+<h3>Python<a class="headerlink" href="#python" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Fix: Python 3 compatibility was broken.</li>
+<li>Fix: Choosing a custom Python path in the Windows installer would install to the wrong location.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id11">
+<h2>2.0.5<a class="headerlink" href="#id11" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.5 is protocol-compatible with 2.0.0, 2.0.1, 2.0.2, 2.0.3, and 2.0.4. Users should continue to employ the bindings released with 2.0.0, with the exception of the Java bindings, which have been updated to 2.0.4, and the PHP bindings, which have been updated to 2.0.5.</p>
+<div class="section" id="id12">
+<h3>Fixes<a class="headerlink" href="#id12" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Clients and servers that specified a cluster file as a filename only (without path) could crash when the coordinators were changed.</li>
+</ul>
+</div>
+<div class="section" id="id13">
+<h3>PHP<a class="headerlink" href="#id13" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Directory layer partitions created with the PHP bindings were incompatible with other language bindings. Contact us if you have data stored in a directory partition created by PHP that can&#8217;t easily be restored and needs to be migrated.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id14">
+<h2>2.0.4<a class="headerlink" href="#id14" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.4 is protocol-compatible with 2.0.0, 2.0.1, 2.0.2, and 2.0.3. Users should continue to employ the bindings released with 2.0.0, with the exception of the Java bindings, which have been updated to 2.0.4.</p>
+<div class="section" id="id15">
+<h3>Fixes<a class="headerlink" href="#id15" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Clearing a key larger than the legal limit of 10 kB caused the database to crash and become unreadable.</li>
+<li>Explicitly added write conflict ranges were ignored when read-your-writes was disabled.</li>
+</ul>
+</div>
+<div class="section" id="id16">
+<h3>Java<a class="headerlink" href="#id16" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ByteArrayUtil.compareUnsigned()</span></tt> failed to return in some circumstances.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>2.0.3<a class="headerlink" href="#id17" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.3 is protocol-compatible with 2.0.0, 2.0.1, and 2.0.2. There are no updates to the language bindings, so users should continue to employ the bindings released with 2.0.0.</p>
+<div class="section" id="id18">
+<h3>Fixes<a class="headerlink" href="#id18" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Updated FDBGnuTLS plugin with GnuTLS 3.2.12, incorporating fixes for <a class="reference external" href=../../../https:/web.archive.org/web/20150325003438/http:/gnutls.org/security.html#GNUTLS-SA-2014-1>GNUTLS-SA-2014-1</a> and <a class="reference external" href=../../../https:/web.archive.org/web/20150325003438/http:/gnutls.org/security.html#GNUTLS-SA-2014-2>GNUTLS-SA-2014-2</a>.</li>
+<li>When inserting a large number of keys close to the key size limit, server logs were unexpectedly verbose.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id19">
+<h2>2.0.2<a class="headerlink" href="#id19" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.2 is protocol-compatible with 2.0.0 and 2.0.1. There are no updates to the language bindings, so users should continue to employ the bindings released with 2.0.0.</p>
+<div class="section" id="id20">
+<h3>Fixes<a class="headerlink" href="#id20" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Windows: Possible database corruption when the FoundationDB service is stopped but unable to kill its child processes.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id21">
+<h2>2.0.1<a class="headerlink" href="#id21" title="Permalink to this headline">∞</a></h2>
+<p>Release 2.0.1 is protocol-compatible with 2.0.0. There are no updates to the language bindings, so users should continue to employ the bindings released with 2.0.0.</p>
+<div class="section" id="id22">
+<h3>Fixes<a class="headerlink" href="#id22" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>In some cases, a server reincluded after previous exclusion would not participate in data distribution.</li>
+<li>Clients could not reliably connect to multiple clusters.</li>
+<li>The calculation of usable disk space on Linux and Mac OS X improperly included space reserved for superuser.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id23">
+<h2>2.0.0<a class="headerlink" href="#id23" title="Permalink to this headline">∞</a></h2>
+<div class="section" id="new-language-support">
+<h3>New language support<a class="headerlink" href="#new-language-support" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><a class="reference external" href=../../../https:/web.archive.org/web/20150325003438/http:/godoc.org/github.com/FoundationDB/fdb-go/fdb>Go</a></li>
+<li><a class="reference internal" href="api-php.html"><em>PHP</em></a></li>
+</ul>
+</div>
+<div class="section" id="new-layers-available-in-all-languages">
+<h3>New layers available in all languages<a class="headerlink" href="#new-layers-available-in-all-languages" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>The <a class="reference internal" href="developer-guide.html#developer-guide-sub-keyspaces"><em>Subspace</em></a> layer provides a recommended way to define subspaces of keys by managing key prefixes.</li>
+<li>The <a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a> layer provides a tool to manage related subspaces as virtual directories. Recommended as a convenient and high-performance way to organize and layout different kinds of data within a single FoundationDB database.</li>
+</ul>
+</div>
+<div class="section" id="security">
+<h3>Security<a class="headerlink" href="#security" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Added certificate-based <a class="reference internal" href="tls.html"><em>Transport Layer Security</em></a> to encrypt network traffic.</li>
+</ul>
+</div>
+<div class="section" id="monitoring">
+<h3>Monitoring<a class="headerlink" href="#monitoring" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">fdbcli</span></tt> command-line interface reports information and warnings about available memory.</li>
+</ul>
+</div>
+<div class="section" id="id24">
+<h3>Performance<a class="headerlink" href="#id24" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Improved client CPU performance overall.</li>
+<li>Greatly improved client CPU performance for range-read operations.</li>
+<li>Greatly improved concurrency when issuing writes between reads.</li>
+<li>Snapshot reads are now fully cached.</li>
+<li>Trade off: <tt class="docutils literal"><span class="pre">get_key</span></tt> is cached, but <tt class="docutils literal"><span class="pre">get_key</span></tt> now also retrieves the value of the key, using network bandwidth. (Using <tt class="docutils literal"><span class="pre">OPTION_RYW_DISABLE</span></tt> will avoid both the cache and the network bandwidth.)</li>
+<li>Windows: Improved latencies.</li>
+</ul>
+</div>
+<div class="section" id="id25">
+<h3>Fixes<a class="headerlink" href="#id25" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>In rare cases when many keys very close to the maximum key size are inserted, the database could become unavailable.</li>
+<li><tt class="docutils literal"><span class="pre">GetReadVersion</span></tt> did not properly throw <tt class="docutils literal"><span class="pre">transaction_cancelled</span></tt> when called on a transaction that had been cancelled.</li>
+<li>When using the <tt class="docutils literal"><span class="pre">access_system_keys</span></tt> option, a <tt class="docutils literal"><span class="pre">get_range_startswith(\xff)</span></tt> would incorrectly return no results.</li>
+<li><tt class="docutils literal"><span class="pre">get_range_startswith</span></tt>, when invoked using a key ending in the byte <tt class="docutils literal"><span class="pre">\xff</span></tt>, could return results outside the desired range.</li>
+<li>Linux: A process could become unresponsive if unable to find a TCP network device in <tt class="docutils literal"><span class="pre">/proc/net/snmp</span></tt>.</li>
+<li>Destroying client threads leaked memory.</li>
+<li>Database availability could be unnecessarily compromised in certain rare, low-disk conditions on a &#8220;transaction&#8221; class machine.</li>
+<li>Writing a zero-byte value to the key <tt class="docutils literal"><span class="pre">''</span></tt> caused the database to crash.</li>
+<li>Mac OS X: Power loss could cause data corruption.</li>
+</ul>
+</div>
+<div class="section" id="other-changes">
+<h3>Other changes<a class="headerlink" href="#other-changes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>To avoid confusing situations, any use of a transaction that is currently committing will cause both the commit and the use to throw a <tt class="docutils literal"><span class="pre">used_during_commit</span></tt> error.</li>
+<li>The <tt class="docutils literal"><span class="pre">FDB_CLUSTER_FILE</span></tt> environment variable can point to a cluster file that takes precedence over both the current working directory and (e.g., in Linux) <tt class="docutils literal"><span class="pre">/etc/foundationdb/fdb.cluster</span></tt>.</li>
+<li>Disabled unloading the <tt class="docutils literal"><span class="pre">fdb_c</span></tt> library to prevent consequent unavoidable race conditions.</li>
+<li>Discontinued testing and support for Ubuntu 11.04. We continue to support Ubuntu 11.10 and later.</li>
+</ul>
+</div>
+<div class="section" id="id26">
+<h3>Java<a class="headerlink" href="#id26" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+<li>New APIs for allocating and managing keyspace (<a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a>).</li>
+<li>In most cases, exceptions thrown in synchronous-style Java programs will have the original calling line of code in the backtrace.</li>
+<li>Native resources are handled in a safer and more efficient manner.</li>
+<li>Fix: <tt class="docutils literal"><span class="pre">AsyncUtil.whenReady</span></tt> crashed when the future being waited on was an error.</li>
+<li>Fix: Calling <tt class="docutils literal"><span class="pre">strinc</span></tt> on an empty string or a string containing only <tt class="docutils literal"><span class="pre">\xff</span></tt> bytes threw an exception.</li>
+<li>Fix: Trailing null bytes on the result of <tt class="docutils literal"><span class="pre">strinc</span></tt> are removed.</li>
+</ul>
+</div>
+<div class="section" id="node">
+<h3>Node<a class="headerlink" href="#node" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+<li>New APIs for allocating and managing keyspace (<a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a>).</li>
+<li>Support for the <a class="reference internal" href="api-node.html#api-node-promises"><em>Promise/A+ specification</em></a> with supporting utilities.</li>
+<li>Futures can take multiple callbacks. Callbacks can be added if the original function was called with a callback. The Future type is exposed in our binding.</li>
+<li>Added <tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt> and <tt class="docutils literal"><span class="pre">as_foundationdb_value</span></tt> support.</li>
+<li>Node prints a stack trace if an error occurs in a callback from V8.</li>
+<li>Snapshot transactions can be used in retry loops.</li>
+<li>The <a class="reference internal" href="api-node.html#api-node-setandwatch"><em>methods</em></a> <tt class="docutils literal"><span class="pre">db.setAndWatch</span></tt> and <tt class="docutils literal"><span class="pre">db.clearAndWatch</span></tt> now return an object with a watch member instead of a future.</li>
+<li>Fix: Could not use the <tt class="docutils literal"><span class="pre">'this'</span></tt> pointer with the retry decorator.</li>
+<li>Fix: Node transactional decorator didn&#8217;t return a result to the caller if the function was called with a transaction.</li>
+<li>Fix: The program could sometimes crash when watches were manually cancelled.</li>
+</ul>
+</div>
+<div class="section" id="ruby">
+<h3>Ruby<a class="headerlink" href="#ruby" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+<li>New APIs for allocating and managing keyspace (<a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a>).</li>
+<li>Tuple and subspace range assume the empty tuple if none is passed.</li>
+<li>Added <tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt> and <tt class="docutils literal"><span class="pre">as_foundationdb_value</span></tt> support.</li>
+<li>Snapshot transactions can be used in retry loops.</li>
+<li>Allow specifying the API version multiple times, so long as the same version is used each time.</li>
+<li>Fix: <tt class="docutils literal"><span class="pre">FDB.options.set_trace_enable</span></tt> threw an exception when passed a <tt class="docutils literal"><span class="pre">nil</span></tt> value.</li>
+</ul>
+</div>
+<div class="section" id="id27">
+<h3>Python<a class="headerlink" href="#id27" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+<li>New APIs for allocating and managing keyspace (<a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a>).</li>
+<li>Snapshot transactions can be used in retry loops.</li>
+<li>Support for gevent 1.0.</li>
+<li>Renamed the bitwise atomic operations (<tt class="docutils literal"><span class="pre">and</span></tt>, <tt class="docutils literal"><span class="pre">or</span></tt>, <tt class="docutils literal"><span class="pre">xor</span></tt>) to <tt class="docutils literal"><span class="pre">bit_and</span></tt>, <tt class="docutils literal"><span class="pre">bit_or</span></tt>, <tt class="docutils literal"><span class="pre">bit_xor</span></tt>. Added aliases for backwards compatibility.</li>
+<li>Fix: <tt class="docutils literal"><span class="pre">get_range_startswith</span></tt> didn&#8217;t work with <tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt></li>
+<li>Fix: <tt class="docutils literal"><span class="pre">fdb.locality.get_boundary_keys</span></tt> and <tt class="docutils literal"><span class="pre">fdb.locality.get_addresses_for_key</span></tt> did not support <tt class="docutils literal"><span class="pre">as_foundationdb_key</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="c">
+<h3>C<a class="headerlink" href="#c" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+</ul>
+</div>
+<div class="section" id="net">
+<h3>.NET<a class="headerlink" href="#net" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Support for API version 200 and backwards compatibility with previous API versions.</li>
+<li>New APIs for allocating and managing keyspace (<a class="reference internal" href="developer-guide.html#developer-guide-directories"><em>Directory</em></a>).</li>
+</ul>
+</div>
+<div class="section" id="earlier-release-notes">
+<h3>Earlier release notes<a class="headerlink" href="#earlier-release-notes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><a class="reference external" href=../1.0/release-notes.html>1.0 (API Version 100)</a></li>
+<li><a class="reference external" href=../beta3/release-notes.html>Beta 3 (API Version 23)</a></li>
+<li><a class="reference external" href=../beta2/release-notes.html>Beta 2 (API Version 22)</a></li>
+<li><a class="reference external" href=../beta1/release-notes.html>Beta 1 (API Version 21)</a></li>
+<li><a class="reference external" href=../alpha6/release-notes.html>Alpha 6 (API Version 16)</a></li>
+<li><a class="reference external" href=../alpha5/release-notes.html>Alpha 5 (API Version 14)</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Release Notes</a><ul><li><a class="reference internal" href="#id1">2.0.10</a><ul><li><a class="reference internal" href="#fixes">Fixes</a></li></ul></li><li><a class="reference internal" href="#id2">2.0.9</a><ul><li><a class="reference internal" href="#id3">Fixes</a></li></ul></li><li><a class="reference internal" href="#id4">2.0.8</a><ul><li><a class="reference internal" href="#id5">Fixes</a></li><li><a class="reference internal" href="#php">PHP</a></li><li><a class="reference internal" href="#java">Java</a></li></ul></li><li><a class="reference internal" href="#id6">2.0.7</a><ul><li><a class="reference internal" href="#id7">Fixes</a></li></ul></li><li><a class="reference internal" href="#id8">2.0.6</a><ul><li><a class="reference internal" href="#id9">Fixes</a></li><li><a class="reference internal" href="#performance">Performance</a></li><li><a class="reference internal" href="#id10">PHP</a></li><li><a class="reference internal" href="#python">Python</a></li></ul></li><li><a class="reference internal" href="#id11">2.0.5</a><ul><li><a class="reference internal" href="#id12">Fixes</a></li><li><a class="reference internal" href="#id13">PHP</a></li></ul></li><li><a class="reference internal" href="#id14">2.0.4</a><ul><li><a class="reference internal" href="#id15">Fixes</a></li><li><a class="reference internal" href="#id16">Java</a></li></ul></li><li><a class="reference internal" href="#id17">2.0.3</a><ul><li><a class="reference internal" href="#id18">Fixes</a></li></ul></li><li><a class="reference internal" href="#id19">2.0.2</a><ul><li><a class="reference internal" href="#id20">Fixes</a></li></ul></li><li><a class="reference internal" href="#id21">2.0.1</a><ul><li><a class="reference internal" href="#id22">Fixes</a></li></ul></li><li><a class="reference internal" href="#id23">2.0.0</a><ul><li><a class="reference internal" href="#new-language-support">New language support</a></li><li><a class="reference internal" href="#new-layers-available-in-all-languages">New layers available in all languages</a></li><li><a class="reference internal" href="#security">Security</a></li><li><a class="reference internal" href="#monitoring">Monitoring</a></li><li><a class="reference internal" href="#id24">Performance</a></li><li><a class="reference internal" href="#id25">Fixes</a></li><li><a class="reference internal" href="#other-changes">Other changes</a></li><li><a class="reference internal" href="#id26">Java</a></li><li><a class="reference internal" href="#node">Node</a></li><li><a class="reference internal" href="#ruby">Ruby</a></li><li><a class="reference internal" href="#id27">Python</a></li><li><a class="reference internal" href="#c">C</a></li><li><a class="reference internal" href="#net">.NET</a></li><li><a class="reference internal" href="#earlier-release-notes">Earlier release notes</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003438/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:34:38 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:33:52 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app7.us.archive.org";archive_analytics.values.server_ms=616;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Machine-Readable Status
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/mr-status.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003219/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href="/web/20150325003219cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003219cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/mr-status.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/mr-status.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003219" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:19 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150428170146/https://foundationdb.com/key-value-store/documentation/mr-status.html" title="28 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:19 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325014234/https://foundationdb.com/key-value-store/documentation/mr-status.html" title="1:42:34 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:19 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003219*/https://foundationdb.com/key-value-store/documentation/mr-status.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003219/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003219/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003219/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003219/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003219/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003219/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/command-line-interface.html">Command Line Interface</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/mr-status.html" class="active">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003219/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003219im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="machine-readable-status">
+<span id="mr-status"></span><h1>Machine-Readable Status<a class="headerlink" href="#machine-readable-status" title="Permalink to this headline">∞</a></h1>
+<p>FoundationDB provides status information in machine-readable JSON form (in addition to the human-readable form made available by <a class="reference internal" href="command-line-interface.html#cli-status"><em>the command line interface</em></a>). This document explains how to access the machine-readable status, provides guidance for its use, and describes the JSON format used to encode it.</p>
+<div class="section" id="accessing-machine-readable-status">
+<span id="mr-status-key"></span><h2>Accessing machine-readable status<a class="headerlink" href="#accessing-machine-readable-status" title="Permalink to this headline">∞</a></h2>
+<p>You can access machine-readable status in three ways ways:</p>
+<ul>
+<li><p class="first">Within <tt class="docutils literal"><span class="pre">fdbcli</span></tt>, issue the command <tt class="docutils literal"><span class="pre">status</span> <span class="pre">json</span></tt>. This command will output status information in JSON (rather than the human-readable format output by <tt class="docutils literal"><span class="pre">status</span></tt> and <tt class="docutils literal"><span class="pre">status</span> <span class="pre">details</span></tt>). See the <a class="reference internal" href="command-line-interface.html#cli-status"><em>status</em></a> command for more information.</p>
+</li>
+<li><p class="first">From a command shell, use fdbcli by running <tt class="docutils literal"><span class="pre">fdbcli</span> <span class="pre">--exec</span> <span class="pre">&quot;status</span> <span class="pre">json&quot;</span></tt></p>
+</li>
+<li><p class="first">From any client, read the key <tt class="docutils literal"><span class="pre">\xFF\xFF/status/json</span></tt>. The value of this key is a JSON object serialized to a byte string with UTF-8 encoding. In Python, given an open database <tt class="docutils literal"><span class="pre">db</span></tt>, the JSON object can be read and deserialized with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">json</span>
+<span class="n">status</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">db</span><span class="p">[</span><span class="s">&#39;</span><span class="se">\xff\xff</span><span class="s">/status/json&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="guidance-regarding-versioning">
+<h2>Guidance regarding versioning<a class="headerlink" href="#guidance-regarding-versioning" title="Permalink to this headline">∞</a></h2>
+<p>The JSON format of the machine-readable status is not considered part of our API and, in particular, is not governed by the <a class="reference internal" href="api-python.html#api-python-versioning"><em>versioning mechanism</em></a> used to facilitate API upgrades. A client that makes use of the machine-readable status should be prepared to handle possible format changes across versions.</p>
+<p>Format changes will be governed as follows:</p>
+<ul class="simple">
+<li>We will not make arbitrary changes to the JSON format; we will make such changes only as required by changes in the underlying system characteristics relevant to status reporting.</li>
+<li>We may add fields as needed to report new categories of data.</li>
+<li>We may remove a field if a new version of FoundationDB renders the field obsolete.</li>
+<li>We will <em>not</em> change the semantics of an existing field. If the data relating to a field changes in a manner that is incompatible with previous usage, the field will be deleted and replaced by a newly named field.</li>
+</ul>
+</div>
+<div class="section" id="json-format">
+<h2>JSON format<a class="headerlink" href="#json-format" title="Permalink to this headline">∞</a></h2>
+<p>The following format informally describes the JSON containing the status data. The possible values of <tt class="docutils literal"><span class="pre">&lt;name_string&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;description_string&gt;</span></tt> are described in <a class="reference internal" href="#mr-status-message"><em>Message components</em></a>. The format is representative: <em>any field can be missing at any time</em>, depending on the database state. Clients should be prepared to flexibly handle format variations resulting from different database states.</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;client&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;cluster_file&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;path&quot;</span><span class="o">:</span> <span class="s2">&quot;/etc/foundationdb/fdb.cluster&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;up_to_date&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;coordinators&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;coordinators&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s2">&quot;address&quot;</span><span class="o">:</span> <span class="s2">&quot;10.0.4.1:4701&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;reachable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+      <span class="p">],</span>
+      <span class="s2">&quot;quorum_reachable&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;database_status&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;available&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="s2">&quot;healthy&quot;</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;messages&quot;</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;timestamp&quot;</span><span class="o">:</span> <span class="mi">1415650089</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;cluster&quot;</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;cluster_controller_timestamp&quot;</span><span class="o">:</span> <span class="mi">1415650089</span><span class="p">,</span>
+    <span class="s2">&quot;configuration&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;coordinators_count&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;excluded_servers&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="o">:</span> <span class="s2">&quot;10.0.4.1&quot;</span><span class="p">}</span>
+      <span class="p">],</span>
+      <span class="s2">&quot;logs&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span> <span class="c1">// this field will be absent if a value has not been explicitly set</span>
+      <span class="s2">&quot;proxies&quot;</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span> <span class="c1">// this field will be absent if a value has not been explicitly set</span>
+      <span class="s2">&quot;redundancy&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;factor&quot;</span><span class="o">:</span> <span class="o">&lt;</span>  <span class="s2">&quot;single&quot;</span>
+                   <span class="o">|</span> <span class="s2">&quot;double&quot;</span>
+                   <span class="o">|</span> <span class="s2">&quot;triple&quot;</span>
+                   <span class="o">|</span> <span class="s2">&quot;custom&quot;</span>
+                   <span class="o">|</span> <span class="s2">&quot;two_datacenter&quot;</span>
+                   <span class="o">|</span> <span class="s2">&quot;three_datacenter&quot;</span>
+                  <span class="o">&gt;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;resolvers&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="c1">// this field will be absent if a value has not been explicitly set</span>
+      <span class="s2">&quot;storage_engine&quot;</span><span class="o">:</span> <span class="o">&lt;</span>  <span class="s2">&quot;ssd&quot;</span>
+                         <span class="o">|</span> <span class="s2">&quot;memory&quot;</span>
+                         <span class="o">|</span> <span class="s2">&quot;custom&quot;</span>
+                        <span class="o">&gt;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;data&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;average_partition_size_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s2">&quot;least_operating_space_bytes_log_server&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s2">&quot;least_operating_space_bytes_storage_server&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s2">&quot;moving_data&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;in_flight_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;in_queue_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;partitions_count&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+      <span class="s2">&quot;state&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span>  <span class="s2">&quot;initializing&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;missing_data&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;healing&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;healthy_repartitioning&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;healthy_removing_server&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;healthy_rebalancing&quot;</span>
+                 <span class="o">|</span> <span class="s2">&quot;healthy&quot;</span>
+                <span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;healthy&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">&quot;min_replicas_remaining&quot;</span><span class="o">:</span> <span class="mi">0</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;total_disk_used_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s2">&quot;total_kv_size_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span> <span class="c1">// estimated</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;fault_tolerance&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;max_machine_failures_without_losing_availability&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s2">&quot;max_machine_failures_without_losing_data&quot;</span><span class="o">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;latency_probe&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// all measurements are based on a single sample transaction</span>
+      <span class="s2">&quot;commit_seconds&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">// time to commit the sample transaction and start a new one</span>
+      <span class="s2">&quot;read_seconds&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">// time to perform a single read</span>
+      <span class="s2">&quot;transaction_start_seconds&quot;</span><span class="o">:</span> <span class="mf">0.0</span> <span class="c1">// time to start the sample transaction</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;license&quot;</span><span class="o">:</span> <span class="s2">&quot;http://www.foundationdb.com/license&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;machines&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;:</span> <span class="p">{</span>
+        <span class="s2">&quot;address&quot;</span><span class="o">:</span> <span class="s2">&quot;10.0.4.1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;cpu&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;logical_core_utilization&quot;</span><span class="o">:</span> <span class="mf">0.0</span> <span class="c1">// computed as cpu_seconds / elapsed_seconds; value may be capped at 0.5 due to hyper-threading</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;datacenter_id&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;excluded&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;machine_id&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;memory&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;committed_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="s2">&quot;free_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">// an estimate of how many bytes are free to allocate to fdbservers without swapping</span>
+          <span class="s2">&quot;total_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span> <span class="c1">// an estimate of total physical RAM</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;network&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;megabits_received&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+          <span class="s2">&quot;megabits_sent&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+          <span class="s2">&quot;tcp_segments_retransmitted&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;messages&quot;</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;issues&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span>  <span class="s2">&quot;unable_to_write_cluster_file&quot;</span>
+                         <span class="o">|</span> <span class="p">...</span>
+                        <span class="o">&gt;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;Unable to update cluster file.&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;reasons&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;unreachable_processes&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="o">:</span> <span class="s2">&quot;10.0.4.1:4702&quot;</span><span class="p">}</span>
+        <span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;processes&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;:</span> <span class="p">{</span>
+        <span class="s2">&quot;address&quot;</span><span class="o">:</span> <span class="s2">&quot;10.0.4.1:4701&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;command_line&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;cpu&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;usage_cores&quot;</span><span class="o">:</span> <span class="mf">0.0</span> <span class="c1">// average number of logical cores utilized by the process over the recent past; value may be &gt; 1.0</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;disk&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;busy&quot;</span><span class="o">:</span> <span class="mf">0.0</span> <span class="c1">// from 0.0 (idle) to 1.0 (fully busy)</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;excluded&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">&quot;machine_id&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;memory&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;available_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">//an estimate of the process&#39; fair share of the memory available to fdbservers</span>
+          <span class="s2">&quot;used_bytes&quot;</span><span class="o">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;messages&quot;</span><span class="o">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span><span class="p">,</span>
+            <span class="s2">&quot;raw_log_message&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">string</span><span class="o">&gt;</span>
+          <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;network&quot;</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s2">&quot;megabits_received&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+          <span class="s2">&quot;megabits_sent&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;roles&quot;</span><span class="o">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;</span><span class="p">,</span>
+            <span class="s2">&quot;role&quot;</span><span class="o">:</span> <span class="o">&lt;</span>  <span class="s2">&quot;master&quot;</span>
+                     <span class="o">|</span> <span class="s2">&quot;proxy&quot;</span>
+                     <span class="o">|</span> <span class="s2">&quot;log&quot;</span>
+                     <span class="o">|</span> <span class="s2">&quot;storage&quot;</span>
+                     <span class="o">|</span> <span class="s2">&quot;resolver&quot;</span>
+                     <span class="o">|</span> <span class="s2">&quot;cluster_controller&quot;</span>
+                    <span class="o">&gt;</span>
+          <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;version&quot;</span><span class="o">:</span> <span class="s2">&quot;3.0.0&quot;</span> <span class="c1">// a process version will not be reported if it is not protocol-compatible; it will be absent from status</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;qos&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;performance_limited_by&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1">// &quot;workload&quot; when not limiting</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="s2">&quot;reason_server_id&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">id_string</span><span class="o">&gt;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;worst_queue_bytes_log_server&quot;</span><span class="o">:</span> <span class="mi">460</span><span class="p">,</span>
+      <span class="s2">&quot;worst_queue_bytes_storage_server&quot;</span><span class="o">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;recovery_state&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span> <span class="c1">// &quot;fully_recovered&quot; is the healthy state; other states are normal to transition through but not to persist in</span>
+      <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span><span class="p">,</span>
+      <span class="s2">&quot;required_logs&quot;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+      <span class="s2">&quot;required_proxies&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="s2">&quot;required_resolvers&quot;</span><span class="o">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;workload&quot;</span><span class="o">:</span> <span class="p">{</span>
+      <span class="c1">// A given counter can be reset.</span>
+      <span class="c1">// Roughness is a measure of the &quot;bunching&quot; of operations (independent of hz). Perfectly</span>
+      <span class="c1">// spaced operations will have a roughness of 1.0 . Randomly spaced (Poisson-distributed)</span>
+      <span class="c1">// operations will have a roughness of 2.0, with increased bunching resulting in increased</span>
+      <span class="c1">// values. Higher roughness can result in increased latency due to increased queuing.</span>
+      <span class="s2">&quot;bytes&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;written&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;counter&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;roughness&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;operations&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;reads&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+        <span class="s2">&quot;writes&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;counter&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;roughness&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">}</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;transactions&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="s2">&quot;committed&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;counter&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;roughness&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+        <span class="s2">&quot;conflicted&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;counter&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;roughness&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">},</span>
+        <span class="s2">&quot;started&quot;</span><span class="o">:</span> <span class="p">{</span><span class="s2">&quot;counter&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;hz&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s2">&quot;roughness&quot;</span><span class="o">:</span> <span class="mf">0.0</span><span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="message-components">
+<span id="mr-status-message"></span><h3>Message components<a class="headerlink" href="#message-components" title="Permalink to this headline">∞</a></h3>
+<p>Several fields in the JSON object may contain messages in the format:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="s2">&quot;messages&quot;</span><span class="o">:</span> <span class="p">[</span>
+  <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">name_string</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="o">&lt;</span><span class="nx">description_string</span><span class="o">&gt;</span>
+  <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Each message is an Object having at least a <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt> field.  The <tt class="docutils literal"><span class="pre">&quot;description&quot;</span></tt> is present only in some messages.  Other fields may be present based on specific message instance details.  The possible name and description values of a message found at a given location in the JSON object are described in the tables below.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="5%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">JSON Path</th>
+<th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>client.messages</td>
+<td>inconsistent_cluster_file</td>
+<td>Cluster file is not up to date. It contains the connection string ‘&lt;value&gt;’. The current connection string is ‘&lt;value&gt;’. This must mean that file permissions or other platform issues have prevented the file from being updated. To change coordinators without manual intervention, the cluster file and its containing folder must be writable by all servers and clients. If a majority of the coordinators referenced by the old connection string are lost, the database will stop working until the correct cluster file is distributed to all processes.</td>
+</tr>
+<tr class="row-odd"><td>client.messages</td>
+<td>no_cluster_controller</td>
+<td>Unable to locate a cluster controller within 2 seconds. Check that there are server processes running.</td>
+</tr>
+<tr class="row-even"><td>client.messages</td>
+<td>quorum_not_reachable</td>
+<td>Unable to reach a quorum of coordinators.</td>
+</tr>
+<tr class="row-odd"><td>client.messages</td>
+<td>status_incomplete_client</td>
+<td>Could not retrieve client status information.</td>
+</tr>
+<tr class="row-even"><td>client.messages</td>
+<td>status_incomplete_cluster</td>
+<td>Could not retrieve cluster status information.</td>
+</tr>
+<tr class="row-odd"><td>client.messages</td>
+<td>status_incomplete_coordinators</td>
+<td>Could not fetch coordinator info.</td>
+</tr>
+<tr class="row-even"><td>client.messages</td>
+<td>status_incomplete_error</td>
+<td>Cluster encountered an error fetching status.</td>
+</tr>
+<tr class="row-odd"><td>client.messages</td>
+<td>status_incomplete_timeout</td>
+<td>Timed out fetching cluster status.</td>
+</tr>
+<tr class="row-even"><td>client.messages</td>
+<td>unreachable_cluster_controller</td>
+<td>No response received from the cluster controller.</td>
+</tr>
+<tr class="row-odd"><td>cluster.messages</td>
+<td>client_issues</td>
+<td>Some clients of this cluster have issues.</td>
+</tr>
+<tr class="row-even"><td>cluster.messages</td>
+<td>commit_timeout</td>
+<td>Unable to commit after __ seconds.</td>
+</tr>
+<tr class="row-odd"><td>cluster.messages</td>
+<td>read_timeout</td>
+<td>Unable to read after __ seconds.</td>
+</tr>
+<tr class="row-even"><td>cluster.messages</td>
+<td>status_incomplete</td>
+<td>Unable to retrieve all status information.</td>
+</tr>
+<tr class="row-odd"><td>cluster.messages</td>
+<td>storage_servers_error</td>
+<td>Timed out trying to retrieve storage servers.</td>
+</tr>
+<tr class="row-even"><td>cluster.messages</td>
+<td>transaction_start_timeout</td>
+<td>Unable to start transaction after __ seconds.</td>
+</tr>
+<tr class="row-odd"><td>cluster.messages</td>
+<td>unreachable_master_worker</td>
+<td>Unable to locate the master worker.</td>
+</tr>
+<tr class="row-even"><td>cluster.messages</td>
+<td>unreachable_processes</td>
+<td>The cluster has some unreachable processes.</td>
+</tr>
+<tr class="row-odd"><td>cluster.messages</td>
+<td>unreadable_configuration</td>
+<td>Unable to read database configuration.</td>
+</tr>
+<tr class="row-even"><td>cluster.processes.&lt;process&gt;.messages</td>
+<td>file_open_error</td>
+<td>Unable to open ‘&lt;file&gt;’ (&lt;os_error&gt;).</td>
+</tr>
+<tr class="row-odd"><td>cluster.processes.&lt;process&gt;.messages</td>
+<td>unable_to_write_cluster_file</td>
+<td>Unable to update cluster file.</td>
+</tr>
+<tr class="row-even"><td>cluster.processes.&lt;process&gt;.messages</td>
+<td>io_error</td>
+<td>&lt;error&gt; occured in &lt;subsystem&gt;</td>
+</tr>
+<tr class="row-odd"><td>cluster.processes.&lt;process&gt;.messages</td>
+<td>platform_error</td>
+<td>&lt;error&gt; occured in &lt;subsystem&gt;</td>
+</tr>
+<tr class="row-even"><td>cluster.processes.&lt;process&gt;.messages</td>
+<td>process_error</td>
+<td>&lt;error&gt; occured in &lt;subsystem&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>The JSON path <tt class="docutils literal"><span class="pre">cluster.recovery_state</span></tt>, when it exists, is an Object containing at least <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;description&quot;</span></tt>.  The possible values for those fields are in the following table:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>reading_coordinated_state</td>
+<td>Requesting information from coordination servers. Verify that a majority of coordination server processes are active.</td>
+</tr>
+<tr class="row-odd"><td>locking_coordinated_state</td>
+<td>Locking coordination state. Verify that a majority of coordination server processes are active.</td>
+</tr>
+<tr class="row-even"><td>reading_transaction_system_state</td>
+<td>Recovering transaction server state. Verify that the transaction server processes are active.</td>
+</tr>
+<tr class="row-odd"><td>configuration_missing</td>
+<td>There appears to be a database, but its configuration does not appear to be initialized.</td>
+</tr>
+<tr class="row-even"><td>configuration_never_created</td>
+<td>The coordinator(s) have no record of this database. Either the coordinator addresses are incorrect, the coordination state on those machines is missing, or no database has been created.</td>
+</tr>
+<tr class="row-odd"><td>configuration_invalid</td>
+<td>The database configuration is invalid. Set a new, valid configuration to recover the database.</td>
+</tr>
+<tr class="row-even"><td>recruiting_transaction_servers</td>
+<td>Recruiting new transaction servers.</td>
+</tr>
+<tr class="row-odd"><td>initializing_transaction_servers</td>
+<td>Initializing new transaction servers and recovering transaction logs.</td>
+</tr>
+<tr class="row-even"><td>recovery_transaction Performing</td>
+<td>recovery transaction.</td>
+</tr>
+<tr class="row-odd"><td>writing_coordinated_state</td>
+<td>Writing coordinated state. Verify that a majority of coordination server processes are active.</td>
+</tr>
+<tr class="row-even"><td>fully_recovered</td>
+<td>Recovery complete.</td>
+</tr>
+</tbody>
+</table>
+<p>The JSON path <tt class="docutils literal"><span class="pre">cluster.qos.performance_limited_by</span></tt>, when it exists, is an Object containing at least <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;description&quot;</span></tt>.  The possible values for those fields are in the following table:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>workload</td>
+<td>The database is not being saturated by the workload.</td>
+</tr>
+<tr class="row-odd"><td>storage_server_write_queue_size</td>
+<td>Storage server performance (storage queue).</td>
+</tr>
+<tr class="row-even"><td>storage_server_write_bandwidth_mvcc</td>
+<td>Storage server MVCC memory.</td>
+</tr>
+<tr class="row-odd"><td>storage_server_readable_behind</td>
+<td>Storage server version falling behind.</td>
+</tr>
+<tr class="row-even"><td>log_server_mvcc_write_bandwidth</td>
+<td>Log server MVCC memory.</td>
+</tr>
+<tr class="row-odd"><td>log_server_write_queue</td>
+<td>Storage server performance (log queue).</td>
+</tr>
+<tr class="row-even"><td>min_free_space</td>
+<td>Running out of space (approaching 100MB limit).</td>
+</tr>
+<tr class="row-odd"><td>min_free_space_ratio</td>
+<td>Running out of space (approaching 5% limit).</td>
+</tr>
+<tr class="row-even"><td>log_server_min_free_space</td>
+<td>Log server running out of space (approaching 100MB limit).</td>
+</tr>
+<tr class="row-odd"><td>log_server_min_free_space_ratio</td>
+<td>Log server running out of space (approaching 5% limit).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Machine-Readable Status</a><ul><li><a class="reference internal" href="#accessing-machine-readable-status">Accessing machine-readable status</a></li><li><a class="reference internal" href="#guidance-regarding-versioning">Guidance regarding versioning</a></li><li><a class="reference internal" href="#json-format">JSON format</a><ul><li><a class="reference internal" href="#message-components">Message components</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003219/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003219/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003219/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003219js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:19 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:28:26 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

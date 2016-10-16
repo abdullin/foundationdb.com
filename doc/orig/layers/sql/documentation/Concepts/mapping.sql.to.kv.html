@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app10.us.archive.org";archive_analytics.values.server_ms=1086;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Mapping SQL data to the Key-Value Store
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003257/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="8tTU0BpHdPXNvknfNUUuNSMKSWwHpvfiUukgCuNAbwE=" name="csrf-token" />
+<link href="/web/20150325003257cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003257cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003257" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:57 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150427182517/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html" title="27 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:57 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150325015616/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html" title="1:56:16 Mar 25, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:57 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003257*/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html" title="See a list of every capture for this URL">4 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:002100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003257/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003257/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003257/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003257/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html" class="active">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Concepts</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003257/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003257im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="mapping-sql-data-to-the-key-value-store">
+<span id="mapping-sql-to-kv"></span><h1>Mapping SQL data to the Key-Value Store<a class="headerlink" href="#mapping-sql-data-to-the-key-value-store" title="Permalink to this headline">∞</a></h1>
+<p>This document discusses the following topics:</p>
+<ul class="simple">
+<li>How does the SQL Layer store data in the Key-Value Store?</li>
+<li>Can I read SQL data directly using the Key-Value API?</li>
+<li>How are indexes stored in the Key-Value Store?</li>
+<li>How are groups stored in the Key-Value Store?</li>
+<li>How does the Protobuf format store its data?</li>
+<li>Can I write SQL data directly using the Key-Value API?</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The SQL Layer makes heavy use of the Key-Value Store capability to divide keyspace using directories and subspaces. We recommend reviewing the Key-Value Store <a class="reference external" href="/web/20150325003257/https://foundationdb.com/documentation/3.0/developer-guide.html#developer-guide-namespace-management" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Developer Guide Namespace Management</em></a> section before reading this document.</p>
+</div>
+<div class="section" id="how-does-the-sql-layer-store-the-data-in-the-key-value-store">
+<h2>How does the SQL Layer store the data in the Key-Value store?<a class="headerlink" href="#how-does-the-sql-layer-store-the-data-in-the-key-value-store" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer stores metadata and actual data (e.g. table content) in the Key-Value Store. <a class="reference internal" href="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/1.9.2.html#release-notes-1-9-2-storage-format"><em>Table content</em></a> can be stored in three different formats. The default format is the <tt class="docutils literal"><span class="pre">tuple</span></tt> format; alternative formats are the <tt class="docutils literal"><span class="pre">protobuf</span></tt> format and <tt class="docutils literal"><span class="pre">column_keys</span></tt> format.</p>
+<p>Keys in the Key-Value Store are ordered. In the SQL Layer, the selection of key ranges for a given table is performed by the Key-Value Store <a class="reference external" href="/web/20150325003257/https://foundationdb.com/documentation/3.0/developer-guide.html#developer-guide-directories" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Directory Layer</em></a>. The SQL Layer creates directories for every schema, table, and index, which contain their respective data. The Directory Layer assigns short, unique prefixes for every individual directory,  while maintaining separate metadata to facilitate look-up by name. This ordering can be compared with a file system directory structure.</p>
+<p>The example below demonstrates the ordering of the directories, with examples of keys that could be assigned for the given statements:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_1</span><span class="p">(</span><span class="n">id</span> <span class="nb">INT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="k">c</span> <span class="nb">CHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_2</span><span class="p">(</span><span class="n">id</span> <span class="nb">INT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>There is a top-level directory, called &#8216;sql&#8217;, containing all keys used by the SQL Layer. A subdirectory called ‘data’ separates content data from metadata. A subdirectory called ‘table’ separates table content data from sequence data. Within the table directory, each schema links to a separate subdirectory containing subdirectories for every table. Each table directory contains keys for each row of the table.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="73%" />
+<col width="11%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Directory</th>
+<th class="head">Tuple</th>
+<th class="head">Raw Key</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>sql /</td>
+<td>(9)</td>
+<td>\x15\x09</td>
+</tr>
+<tr class="row-odd"><td>sql / data /</td>
+<td>(3)</td>
+<td>\x15\x03</td>
+</tr>
+<tr class="row-even"><td>sql / data / table /</td>
+<td>(31)</td>
+<td>\x15\x1F</td>
+</tr>
+<tr class="row-odd"><td>sql / data / table / schema_a /</td>
+<td>(228)</td>
+<td>\x15\xE4</td>
+</tr>
+<tr class="row-even"><td>sql / data / table / schema_a / table_name_1 /</td>
+<td>(215)</td>
+<td>\x15\xD7</td>
+</tr>
+<tr class="row-odd"><td>sql / data / table / schema_a / table_name_2 /</td>
+<td>(247)</td>
+<td>\x15\xF7</td>
+</tr>
+</tbody>
+</table>
+<p>When using the tuple storage format, a row is stored as a single key-value pair. The key is a tuple formed by concatenating the directory prefix, the position within the Table-Group and the PRIMARY KEY. The value is a tuple formed from all of the columns in the row.</p>
+<p>For example, the following inserts to the tables from the previous example would yield the given keys and values:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_1</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_2</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="16%" />
+<col width="30%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Raw Key</th>
+<th class="head">Tuple Key</th>
+<th class="head">Raw Value</th>
+<th class="head">Tuple Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>\x15\xD7\x15\x01\x15\x01</td>
+<td>(215, 1, 1)</td>
+<td>\x15\x01\x02hello\x00</td>
+<td>(1, &#8216;hello&#8217;)</td>
+</tr>
+<tr class="row-odd"><td>\x15\xD7\x15\x01\x15\x02</td>
+<td>(215, 1, 2)</td>
+<td>\x15\x02\x02world\x00</td>
+<td>(2, &#8216;world&#8217;)</td>
+</tr>
+<tr class="row-even"><td>\x15\xF7\x15\x01\x15\x05</td>
+<td>(247, 1, 5)</td>
+<td>\x15\x05</td>
+<td>(5)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="can-i-read-sql-data-directly-using-the-key-value-api">
+<h2>Can I read SQL data directly using the Key-Value API?<a class="headerlink" href="#can-i-read-sql-data-directly-using-the-key-value-api" title="Permalink to this headline">∞</a></h2>
+<p>Knowing the structure of the keys in the Key-Value Store, one can read data from the store directly. In the SQL Layer, keys and values are encoded with the <tt class="docutils literal"><span class="pre">.pack()</span></tt> method, and can be decoded with the <tt class="docutils literal"><span class="pre">.unpack()</span></tt> method. (See the language-specific Key-Value Store documentation, such as the <a class="reference external" href="/web/20150325003257/https://foundationdb.com/documentation/3.0/api-python.html#api-python-tuple-layer" title="(in FoundationDB v3.0)"><em class="xref std std-ref">Python API Reference</em></a>, for details on these methods). The Python API could be used to retrieve and decode SQL data for the above schema:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">fdb</span>
+<span class="n">fdb</span><span class="o">.</span><span class="n">api_version</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">db</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+<span class="n">directory</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;sql&#39;</span><span class="p">,</span><span class="s">&#39;data&#39;</span><span class="p">,</span><span class="s">&#39;table&#39;</span><span class="p">,</span><span class="s">&#39;schema_a&#39;</span><span class="p">,</span><span class="s">&#39;table_name_1&#39;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="n">directory</span><span class="o">.</span><span class="n">range</span><span class="p">()]:</span>
+    <span class="k">print</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="s">&#39; --&gt; &#39;</span><span class="p">,</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The code above prints something similar to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">u&#39;hello&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">--&gt;</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&#39;world&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-are-table-indexes-stored-by-the-sql-layer">
+<h2>How are table indexes stored by the SQL layer?<a class="headerlink" href="#how-are-table-indexes-stored-by-the-sql-layer" title="Permalink to this headline">∞</a></h2>
+<p>Indexes make use of the fact that keys have ordering. All table indexes only have a key value containing two parts. An index is located in the directory of the table it belongs, in a subdirectory with the name of the index. This is the first part of the key tuple. The second part is a combination of the values of the columns on which the index is set, followed by the remaining values of the columns necessary to identify the row of the entry.</p>
+<p>For example, we add an index to our table on column c.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">index_on_c</span> <span class="k">ON</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_1</span><span class="p">(</span><span class="k">c</span><span class="p">)</span> <span class="n">STORAGE_FORMAT</span> <span class="n">tuple</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Using Python to read the content of the index, we need to add the following in the Python interpreter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">directory</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;sql&#39;</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="s">&#39;table&#39;</span><span class="p">,</span> <span class="s">&#39;schema_a&#39;</span><span class="p">,</span> <span class="s">&#39;table_name_1&#39;</span><span class="p">,</span> <span class="s">&#39;index_on_c&#39;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="n">directory</span><span class="o">.</span><span class="n">range</span><span class="p">()]:</span>
+    <span class="k">print</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="s">&#39; --&gt; &#39;</span><span class="p">,</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will print something similar to the output below. It shows the two parts of the key: the byte value of directory from the index, and the column c value on which the index was created followed by its primary key value. This last part links the indexed value to a specific row. The value belonging to the index key is empty.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="mi">20127</span><span class="p">,</span> <span class="s">u&#39;hello&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="o">--&gt;</span>  <span class="p">()</span>
+<span class="p">(</span><span class="mi">20127</span><span class="p">,</span> <span class="s">u&#39;world&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="o">--&gt;</span>  <span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-are-groups-stored-by-the-sql-layer">
+<h2>How are groups stored by the SQL layer?<a class="headerlink" href="#how-are-groups-stored-by-the-sql-layer" title="Permalink to this headline">∞</a></h2>
+<p>When we add a grouping foreign key to a table, the table is positioned within the directory of the parent table. The data of two different tables are stored together. This enables fast range scans where other technologies need expensive joins.</p>
+<p>To demonstrate the principle, we continue our example with the following SQL statements:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_3</span><span class="p">(</span><span class="n">id</span> <span class="nb">INT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span> <span class="n">id_1</span> <span class="nb">INT</span><span class="p">,</span> <span class="k">GROUPING</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">id_1</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_1</span><span class="p">(</span><span class="n">id</span><span class="p">));</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">schema_a</span><span class="p">.</span><span class="n">table_name_3</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This yields the following results:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">directory</span> <span class="o">=</span> <span class="n">fdb</span><span class="o">.</span><span class="n">directory</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;sql&#39;</span><span class="p">,</span><span class="s">&#39;data&#39;</span><span class="p">,</span><span class="s">&#39;table&#39;</span><span class="p">,</span><span class="s">&#39;schema_a&#39;</span><span class="p">,</span><span class="s">&#39;table_name_1&#39;</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">db</span><span class="p">[</span><span class="n">directory</span><span class="o">.</span><span class="n">range</span><span class="p">()]:</span>
+    <span class="k">print</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="s">&#39; --&gt; &#39;</span><span class="p">,</span> <span class="n">fdb</span><span class="o">.</span><span class="n">tuple</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>          <span class="o">--&gt;</span>  <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">u&#39;hello&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>  <span class="o">--&gt;</span>  <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>          <span class="o">--&gt;</span>  <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&#39;world&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="o">--&gt;</span>  <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">215</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>  <span class="o">--&gt;</span>  <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The inserted rows of the third table are interleaved with the rows in the first table, as the keys of the third table are in the range of the first table rows. The two extra values in the key refer to the position within the Table-Group and the primary key in the third table.</p>
+</div>
+<div class="section" id="how-does-the-protobuf-storage-format-store-its-data">
+<h2>How does the Protobuf storage format store its data?<a class="headerlink" href="#how-does-the-protobuf-storage-format-store-its-data" title="Permalink to this headline">∞</a></h2>
+<p>The Protobuf storage format stores the keys in a similar way as the tuple layer. However, the values are stored as Protobuf messages, each row has a separate message. The Protobuf file descriptions can be read per group using the client-tool <cite>fdbsqlprotod</cite>. To utilize the messages, you need to translate the messages to classes and use them as such. A Python example of reading from a table is given <a class="reference external" href="/web/20150325003257/https://gist.github.com/MMcM/7281756">here</a>.</p>
+</div>
+<div class="section" id="can-i-also-write-data">
+<h2>Can I also write data?<a class="headerlink" href="#can-i-also-write-data" title="Permalink to this headline">∞</a></h2>
+<p>The safe answer is no. Although the data is accessible from the Key-Value Store, adding or modifying data within the key ranges used by the SQL Layer can easily corrupt the system. Some examples of many ways problems can arise are: the lack of maintenance of indexes, lack of constraint enforcement, and lack of verification of data and metadata versions.</p>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003257/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Mapping SQL data to the Key-Value Store</a><ul><li><a class="reference internal" href="#how-does-the-sql-layer-store-the-data-in-the-key-value-store">How does the SQL Layer store the data in the Key-Value store?</a></li><li><a class="reference internal" href="#can-i-read-sql-data-directly-using-the-key-value-api">Can I read SQL data directly using the Key-Value API?</a></li><li><a class="reference internal" href="#how-are-table-indexes-stored-by-the-sql-layer">How are table indexes stored by the SQL layer?</a></li><li><a class="reference internal" href="#how-are-groups-stored-by-the-sql-layer">How are groups stored by the SQL layer?</a></li><li><a class="reference internal" href="#how-does-the-protobuf-storage-format-store-its-data">How does the Protobuf storage format store its data?</a></li><li><a class="reference internal" href="#can-i-also-write-data">Can I also write data?</a></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003257/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003257/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003257/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003257js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:57 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:03 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

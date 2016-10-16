@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app0.us.archive.org";archive_analytics.values.server_ms=410;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+The CAP Theorem &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/white-papers/the-cap-theorem' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003204/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="tYiBR7IanVcX83Mwe/GobtJGq9DMwi6tQatNV5JKprg=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='cap_theorem' id='white_papers'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003204/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../../documentation/index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='container' id='white-paper'>
+<p>
+<a href='/web/20150325003204/https://foundationdb.com/key-value-store/white-papers'>&larr; View all White Papers</a>
+</p>
+<h1>The CAP Theorem</h1>
+<p>A database <em>can</em> provide strong consistency <em>and</em> system availability during network partitions. The common belief that this combination is impossible is based on a misunderstanding of the CAP theorem.</p>
+
+<h3>What is the CAP Theorem?</h3>
+
+<p>In 2000, Eric Brewer conjectured that a distributed system cannot simultaneously provide all three of the following desirable properties:</p>
+<ul>
+  <li><strong>C</strong>onsistency: A read sees all previously completed writes.</li>
+  <li><strong>A</strong>vailability: Reads and writes always succeed.</li>
+  <li><strong>P</strong>artition tolerance: Guaranteed properties are maintained even when network failures prevent some machines from communicating with others.</li>
+</ul>
+
+<p>In 2002, Gilbert and Lynch proved this in the asynchronous and partially synchronous network models, so it is now commonly called the <a class="external-link" href=../../../https:/web.archive.org/web/20150325003204/http:/en.wikipedia.org/wiki/CAP_theorem>CAP Theorem</a>.</p>
+
+<p>Brewer originally described this impossibility result as forcing a choice of "two out of the three" <strong>CAP</strong> properties, leaving three viable design options: <strong>CP</strong>, <strong>AP</strong>, and <strong>CA</strong>. However, further consideration shows that <strong>CA</strong> is not really a coherent option because a system that is not <strong>P</strong>artition-tolerant will, by definition, be forced to give up <strong>C</strong>onsistency or <strong>A</strong>vailability during a partition. Therefore, a more <a class="external-link" href=../../../https:/web.archive.org/web/20150325003204/http:/dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-yahoos-little.html>modern interpretation</a> of the theorem is: <em>during a network partition, a distributed system must choose either <strong>C</strong>onsistency or <strong>A</strong>vailability.</em></p>
+
+<h3>What does choosing Availability mean?</h3>
+
+<p>Let's consider an <strong>AP</strong> database. In such a database, reads and writes would always succeed, even when network connectivity is unavailable between nodes. If possible, these would certainly seem like desirable properties!</p>
+
+<p>However, the downside is stark. Imagine a simple distributed database consisting of two nodes and a network partition making them unable communicate. To be <strong>A</strong>vailable, each of the two nodes must continue to accept writes from clients.</p>
+
+<div class="diagram">
+  <img alt="Divergence during partition" src=../../../im_/AP_Partition-630f62654987ffdbd454c46e2bd360f7.png title="Partition" />
+  <div class="caption">Data divergence in an AP system during partition</div>
+</div>
+
+<p>Of course, because the partition makes communication impossible, a write on one node cannot be seen by the other. Such a system is now "a database" in name only. As long as the partition lasts, the system is fully equivalent to two independent databases whose contents need not even be related, much less consistent.</p>
+
+<h3>Where's the confusion?</h3>
+
+<p>Confusion about the CAP theorem usually involves the interpretation of the <strong>A</strong>vailability property. <strong>A</strong>vailability in the <strong>CAP</strong> sense means that <em>all</em> nodes remain able to read and write even when partitioned. A system that keeps some, but not all, of its nodes able to read and write is not <strong>A</strong>vailable in the <strong>CAP</strong> sense, <em>even if it remains available to clients</em> and satisfies its SLAs for <a class="external-link" href=../../../https:/web.archive.org/web/20150325003204/http:/en.wikipedia.org/wiki/High_availability>high availability</a>.</p>
+
+<h3>What does FoundationDB choose?</h3>
+
+<p>As any ACID database must, during a network partition FoundationDB chooses <strong>C</strong>onsistency over <strong>A</strong>vailability. This does <em>not</em> mean that the database becomes unavailable for clients. When multiple machines or datacenters hosting a FoundationDB database are unable to communicate, <em>some</em> of them will be unable to execute writes. In a wide variety of real-world cases, the database and the application using it will remain up. A network partition affecting some machines is no worse than a failure of those same machines, which FoundationDB handles gracefully due to its fault tolerant design.</p>
+
+<h3>FoundationDB fault tolerance</h3>
+
+<p>FoundationDB's design goal is to make sure that, even if some machines are down or unable to communicate reliably with the network, the database and the application connected to it remain up. This is high availability as usually understood, but it is <em>not</em> <strong>A</strong>vailability in the <strong>CAP</strong> sense because the database will be unavailable <em>on the affected machines</em>.</p>
+
+<p>FoundationDB seeks to present user applications with a single (logical) database. The challenge of handling a partition is to determine which machines should continue to accept reads and writes. To make this determination, FoundationDB is configured with set of <em>coordination servers</em>. FoundationDB selects the partition in which a majority of these servers are available as the one that will remain responsive. If failures are so pervasive that there is <em>no</em> such partition, then the database really will be unavailable.</p>
+
+<p>The coordination servers use the <a class="external-link" href=../../../https:/web.archive.org/web/20150325003204/http:/en.wikipedia.org/wiki/Paxos_(computer_science)>Paxos</a> algorithm to maintain a small amount of shared state that itself is <strong>C</strong>onsistent and <strong>P</strong>artition-tolerant. Like the database as a whole, the shared state is not <strong>A</strong>vailable but <em>is</em> available for reads and writes in the partition containing a majority of the coordination servers.</p>
+
+<p>FoundationDB uses this shared state to maintain and update a replication topology. When a failure occurs, the coordination servers are used to change the replication topology. It's worth noting that the coordination servers aren't involved at all in committing transactions.</p>
+
+<h3>Example: a minimal configuration</h3>
+
+<p>To illustrate how the coordination servers support fault tolerance, let's look at a FoundationDB cluster of the minimal size that allows for data replication. Of course, the fault tolerance and availability provided by coordination are higher when the cluster is larger.</p>
+
+<p>Imagine a small web startup that wants its application, served by FoundationDB within a datacenter, to stay available even if a machine fails. It sets up a cluster of three machines&mdash;A, B, and C&mdash;each running a database server and a coordination server. Applying the majority rule to this cluster, any pair of machines that can communicate will remain available. The startup configures FoundationDB in its <code>double</code> redundancy mode, in which the system will make two copies of each piece of data, each on a different machine.</p>
+
+<p>Imagine that a rack-top switch fails, and A is partitioned from the network. A will be unable to commit new transactions because FoundationDB requires an acknowledgment from B or C. The database server on A can only communicate with the coordination server on A, so it will not be able to achieve a majority to set up a new replication topology. For any client communicating only with A, the database is down.</p>
+
+<p>However, for all other clients, the database servers can reach a majority of coordination servers, B and C. The replication configuration has ensured there is a full copy of the data available even without A. For these clients, the database will remain available for reads and writes and the web servers will continue to serve traffic.</p>
+
+<div class="diagram span8">
+  <img alt="Availability during partition" src=../../../im_/FDB_Partition-fa97e65081174276902c92dd041bb378.png title="Partition" />
+  <div class="caption">Maintenance of availability during partition</div>
+</div>
+
+<p>When the partition ends, A will again be able to communicate with the majority of coordination servers and will rejoin the database. Depending on how long the communications failure lasted, A will rejoin by either receiving transactions that occurred in its absence or, in the worst case, transferring the contents of the database. After A has rejoined the database, all machines will again be able to handle transactions in a fault tolerant manner.</p>
+
+<p>In contrast to the minimal cluster above, an actual production system would typically be configured in <code>triple</code> redundancy mode on five or more machines, giving it correspondingly higher availability. For further details, read our discussion of <a href=../fault-tolerance/index.html>fault tolerance</a>.</p>
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003204/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:04 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:19:54 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

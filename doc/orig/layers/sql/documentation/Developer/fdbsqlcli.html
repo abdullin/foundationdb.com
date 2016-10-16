@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app1.us.archive.org";archive_analytics.values.server_ms=162;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003610" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:36:10 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    Apr
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:36:10 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   <img src="/static/images/toolbar/wm_tb_nxt_off.png" alt="Next capture" width="14" height="16" border="0"/>
+               
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:36:10 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003610*/https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html" title="See a list of every capture for this URL">1 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 25 Mar 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001000000000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+<tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Command Line Tool
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Developer/fdbsqlcli.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003610/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="uR52K4VY2x01CbzKCY9I9UaRQh/V5/8EE7VXoOegR58=" name="csrf-token" />
+<link href="/web/20150325003610cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003610cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003610/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003610/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003610/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003610/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/index.html">Summary</a></li>
+<li>
+<a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/index.html">Concepts</a>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/features.html">Features</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/architecture.html">Physical Architecture</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/table.groups.html">Table-Groups</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/mapping.sql.to.kv.html">Mapping SQL to Key-Value</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/known.limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Concepts/glossary.html">Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Developer/index.html">Developers</a>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Developer/developer.guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Developer/client.tools.html">Client tools</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Developer/performance.guide.html">Performance Guide</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/AppIntegration/index.html">Application Integration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/SQL/index.html">SQL Reference</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/REST/rest.api.reference.html">REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Admin/index.html">Operations</a>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Admin/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Admin/administration.html">Administration</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Admin/security.html">Security</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/Admin/backup.html">Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/ReleaseNotes/index.html">Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/index.html">FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Developer Reference</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003610/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003610im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="fdbsqlcli-command-line-tool">
+<span id="fdbsqlcli"></span><h1><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Command Line Tool<a class="headerlink" href="#fdbsqlcli-command-line-tool" title="Permalink to this headline">∞</a></h1>
+<p>The SQL Layer comes bundled with <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> utility as a command line interface to communicate with any SQL Layer instance. <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> is a terminal-based front-end that enables you to type in queries interactively, issue them to the SQL Layer, and see the query results. In addition, it provides a number of shorthand meta-commands.</p>
+<div class="section" id="how-to-start-fdbsqlcli">
+<span id="starting-fbdsqllayer"></span><h2>How to start <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt><a class="headerlink" href="#how-to-start-fdbsqlcli" title="Permalink to this headline">∞</a></h2>
+<p>After installing the SQL Layer, open a command line terminal window and start the <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> CLI:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fdbsqlcli
+</pre></div>
+</div>
+<p>or if your SQL Layer is installed on a different machine:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fdbsqlcli --host remote_host
+</pre></div>
+</div>
+<p>You will be presented with a prompt similar to:</p>
+<div class="highlight-python"><div class="highlight"><pre>your_name=&gt;
+</pre></div>
+</div>
+<p>The command prompt now says <strong>your_name</strong> because this is the default schema it will use. To start with another schema:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fdbsqlcli schema_name
+</pre></div>
+</div>
+<p>You will be presented with a prompt similar to:</p>
+<div class="highlight-python"><div class="highlight"><pre>schema_name=&gt;
+</pre></div>
+</div>
+<p>You can now type an valid SQL command or use the <a class="reference internal" href="#fdbsqlcli-meta-commands"><em>meta-commands</em></a> enumerated below. Here are a few quick examples:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\lt</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all the tables in all schemas.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\ltS+</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all the tables in all schemas, including system tables, and also
+display extended information.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\lt</span> <span class="pre">getting_started.%</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all tables in the <em>getting_started</em> schema.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\l</span> <span class="pre">get%.%e%</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all (non-system) tables, views and sequences that are in any schema
+whose name starts with <strong>get</strong> and where the object has the letter <strong>e</strong>
+anywhere in it. The <em>getting_started.test1</em> and <em>getting_started.example</em>
+tables both qualify.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\li</span> <span class="pre">test.%</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all (non-system) indexes for any table named <em>test</em> in any schema.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">\li</span> <span class="pre">test%</span></tt></dt>
+<dd><ul class="first last simple">
+<li>List all (non-system) indexes from all tables and all schemas whose
+name starts with <em>test</em>.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Finally to exit type <tt class="docutils literal"><span class="pre">\q</span></tt>.</p>
+</div>
+<div class="section" id="fdbsqlcli-options">
+<span id="id1"></span><h2><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Options<a class="headerlink" href="#fdbsqlcli-options" title="Permalink to this headline">∞</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> command line tool is used to interact with the SQL Layer:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbsqlcli [options...] [schema]
+</pre></div>
+</div>
+<div class="section" id="options">
+<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">∞</a></h3>
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-c">
+<span id="cmdoption-fdbsqlcli--command"></span><tt class="descname">-c</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--command</tt><tt class="descclassname"> &lt;command(s)&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-c" title="Permalink to this definition">∞</a></dt>
+<dd><p>Execute command(s) and then exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-f">
+<span id="cmdoption-fdbsqlcli--file"></span><tt class="descname">-f</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--file</tt><tt class="descclassname"> &lt;filename&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-f" title="Permalink to this definition">∞</a></dt>
+<dd><p>Execute commands from the given file and then exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli--on-error">
+<tt class="descname">--on-error</tt><tt class="descclassname"> &lt;CONTINUE|EXIT&gt; &lt;SUCCESS|FAILURE|SQLCODE|N&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli--on-error" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify error handling with statements. See <a class="reference internal" href="#fdbsqlcli-onerror-handling"><em>On-error handling</em></a> for more details.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-o">
+<span id="cmdoption-fdbsqlcli--output"></span><tt class="descname">-o</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--output</tt><tt class="descclassname"> &lt;filename&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-o" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the output file.</p>
+<p>If the filename is not specified the results will be will be written to standard output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-q">
+<span id="cmdoption-fdbsqlcli--quiet"></span><tt class="descname">-q</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--quiet</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli-q" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output only query results.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli--skip-rc">
+<tt class="descname">--skip-rc</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli--skip-rc" title="Permalink to this definition">∞</a></dt>
+<dd><p>Skip execution of rc file (~/.fdbsqlclirc) at startup.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-s">
+<span id="cmdoption-fdbsqlcli--schema"></span><tt class="descname">-s</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--schema</tt><tt class="descclassname"> &lt;schema_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-s" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the schema to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli--help">
+<tt class="descname">--help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli--help" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output help information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli--version">
+<tt class="descname">--version</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli--version" title="Permalink to this definition">∞</a></dt>
+<dd><p>Output version information and exit.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-h">
+<span id="cmdoption-fdbsqlcli--host"></span><tt class="descname">-h</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--host</tt><tt class="descclassname"> &lt;hostname&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-h" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the host to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-p">
+<span id="cmdoption-fdbsqlcli--port"></span><tt class="descname">-p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--port</tt><tt class="descclassname"> &lt;port_number&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-p" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the port to connect to.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-u">
+<span id="cmdoption-fdbsqlcli--user"></span><tt class="descname">-u</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--user</tt><tt class="descclassname"> &lt;user_name&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-u" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the user to connect as.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-w">
+<span id="cmdoption-fdbsqlcli--password"></span><tt class="descname">-w</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password</tt><tt class="descclassname"> &lt;password&gt;</tt><a class="headerlink" href="#cmdoption-fdbsqlcli-w" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the password for the user.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-W">
+<span id="cmdoption-fdbsqlcli--password-prompt"></span><tt class="descname">-W</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--password-prompt</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli-W" title="Permalink to this definition">∞</a></dt>
+<dd><p>Prompt for the password without echoing.</p>
+</dd></dl>
+
+<div class="admonition tip">
+<p class="first admonition-title">Tip</p>
+<p class="last">Also see <a class="reference internal" href="client.tools.html#fdbsql-client-tools-connection"><em>Connection Details</em></a> for more details.</p>
+</div>
+<dl class="option">
+<dt id="cmdoption-fdbsqlcli-arg-schema">
+<tt class="descname">schema</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-fdbsqlcli-arg-schema" title="Permalink to this definition">∞</a></dt>
+<dd><p>Specify the schema to connect to. This overrides any supplied <a class="reference internal" href="#cmdoption-fdbsqlcli--schema"><em class="xref std std-option">--schema</em></a> option.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="fdbsqlcli-meta-commands">
+<span id="id2"></span><h2><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Meta-Commands<a class="headerlink" href="#fdbsqlcli-meta-commands" title="Permalink to this headline">∞</a></h2>
+<p>Once in the command line, anything starting with an unquoted backslash is a meta-command that <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> processes. Most of these commands are used to view metadata information and will generate SQL queries against the <a class="reference internal" href="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/SQL/index.html#information-schema-index"><em>information_schema</em></a> tables.</p>
+<p>The format of a meta-command is the backslash, followed immediately by a command verb, and then by arguments. To include whitespace in an argument you can quote it with single quotes. To include a single quote in an argument, write two single quotes within single-quoted text.</p>
+<p>As an example, to enumerate the user tables in the database, use the <tt class="docutils literal"><span class="pre">\lt</span></tt> (list-tables) meta-command:</p>
+<div class="highlight-python"><div class="highlight"><pre>schema-name=&gt; \lt
+</pre></div>
+</div>
+<p>And you will see a list of tables, similar to:</p>
+<div class="highlight-python"><div class="highlight"><pre>     Schema      |  Name |       Group Path
+-----------------+-------+-----------------------
+ getting_started | test1 | getting_started.test1
+ getting_started | test2 | getting_started.test2
+(2 rows)
+</pre></div>
+</div>
+<p>The following meta-commands are defined:</p>
+<p>In the commands below, supplying <tt class="docutils literal"><span class="pre">[S]</span></tt> will cause system objects to be
+included and <tt class="docutils literal"><span class="pre">[+]</span></tt> will display extended information about the objects.
+Both are optional.</p>
+<p>For the <em>describe</em> and <em>list</em> commands, all arguments can be used to
+provide a <a class="reference internal" href="#fdbsqlcli-pattern"><em>pattern</em></a> to filter the returned
+objects.</p>
+<dl class="docutils">
+<dt><strong>\c [SCHEMA [USER [HOST [PORT]]]]</strong></dt>
+<dd>Establishes a new connection to a SQL Layer using the given parameters. If a parameter is not given the value from the current connection is reused.</dd>
+<dt><strong>\conninfo</strong></dt>
+<dd>Get information about the current connection including user, host, port and schema in the format: <tt class="docutils literal"><span class="pre">user&#64;host:port/schema</span></tt></dd>
+<dt><strong>\d[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>Describe sequences, tables and views.</dd>
+<dt><strong>\dq[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>Describe sequences.</dd>
+<dt><strong>\dt[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>Describe tables.</dd>
+<dt><strong>\dv[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>Describe views.</dd>
+<dt><strong>\i FILE</strong></dt>
+<dd>Execute commands from a given file.</dd>
+<dt><strong>\o [FILE|-]</strong></dt>
+<dd>Send all query results to file. If <tt class="docutils literal"><span class="pre">FILE</span></tt> is omitted or <tt class="docutils literal"><span class="pre">-</span></tt>, send query results to standard output.</dd>
+<dt><strong>\l[S] [[SCHEMA] NAME]</strong></dt>
+<dd>List sequences, tables and views.</dd>
+<dt><strong>\li[S][+] [[[SCHEMA] TABLE] NAME]</strong></dt>
+<dd>List indexes.</dd>
+<dt><strong>\lq[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>List sequences.</dd>
+<dt><strong>\ls[S][+] [NAME]</strong></dt>
+<dd>List schemas.</dd>
+<dt><strong>\lt[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>List tables.</dd>
+<dt><strong>\lv[S][+] [[SCHEMA] NAME]</strong></dt>
+<dd>List views.</dd>
+<dt><strong>\timing</strong></dt>
+<dd>Toggle printing of query execution time.</dd>
+<dt><strong>\onerror [CONTINUE | EXIT  [SUCCESS|FAILURE|SQLCODE|&lt;N&gt;]]</strong></dt>
+<dd>Sets the processing for handling errors with the statements. With no parameters it prints the current settings. See <a class="reference internal" href="#fdbsqlcli-onerror-handling"><em>On-error handling</em></a> for more details.</dd>
+<dt><strong>\?</strong></dt>
+<dd>Get help on the <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> meta-commands.</dd>
+<dt><strong>\q [CODE]</strong></dt>
+<dd>Exit <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt>. If you supply the optional <tt class="docutils literal"><span class="pre">CODE</span></tt> value, an integer between 0 and 255, <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> uses that as a exit code to the process.</dd>
+<dt><strong>\x</strong></dt>
+<dd>Toggle between regular and expanded output.</dd>
+<dt><strong>\null [STRING]</strong></dt>
+<dd>Show or set the representation of <tt class="docutils literal"><span class="pre">NULL</span></tt> values.</dd>
+<dt><strong>\t [ON|OFF]</strong></dt>
+<dd>Toggle or set tuple only output.</dd>
+<dt><strong>\f [STRING]</strong></dt>
+<dd>Show or set the format separator.</dd>
+<dt><strong>\a [ON|OFF]</strong></dt>
+<dd>Toggle or set alignment.</dd>
+</dl>
+<div class="section" id="meta-commands-filter-pattern">
+<span id="fdbsqlcli-pattern"></span><h3>Meta-Commands filter pattern<a class="headerlink" href="#meta-commands-filter-pattern" title="Permalink to this headline">∞</a></h3>
+<p>Many of the commands accept a pattern in the form of <tt class="docutils literal"><span class="pre">[SCHEMA</span> <span class="pre">[NAME]]</span></tt> to
+filter the objects that are returned. A period (<tt class="docutils literal"><span class="pre">.</span></tt>) or space can be used
+to separate the schema and name. Enclose patterns in double-quotes to match
+names containing a period or space. Whenever the pattern is omitted
+completely, the commands display all objects that are visible.</p>
+<p>In its simplest form, a pattern is just the exact name of an object. The
+characters within a pattern are case sensitive and can use SQL-style
+wildcards (<tt class="docutils literal"><span class="pre">%</span></tt> and <tt class="docutils literal"><span class="pre">_</span></tt>) to match multiple names. Precede wildcard
+characters with a backslash (<tt class="docutils literal"><span class="pre">\</span></tt>) to match names containing them
+literally.</p>
+</div>
+<div class="section" id="on-error-handling">
+<span id="fdbsqlcli-onerror-handling"></span><h3>On-error handling<a class="headerlink" href="#on-error-handling" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">--on-error</span></tt> command line option and <tt class="docutils literal"><span class="pre">\onerror</span></tt> meta-command define the processing for errors. The error handling is for use in sql scripts, processed through the <tt class="docutils literal"><span class="pre">-f</span></tt> command line option or the <tt class="docutils literal"><span class="pre">\i</span></tt> meta-command. When on-error is enabled and <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> encounters an error in execution of a SQL statement, processing stops and the <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> sets an exit code.</p>
+<p>The settings for the <tt class="docutils literal"><span class="pre">--on-error</span></tt> command line option and <tt class="docutils literal"><span class="pre">\onerror</span></tt> meta-command have two parts, a type and a status.</p>
+<p>Error handling type is:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">CONTINUE</span></tt></dt>
+<dd><ul class="first last simple">
+<li>The default setting. Processing does not stop when an error occurs, but continues to the next statement. Error handling status is always <tt class="docutils literal"><span class="pre">SUCCESS</span></tt>.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">EXIT</span></tt></dt>
+<dd><ul class="first last simple">
+<li>Processing stops when an error is encountered. <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> sets an exit code based upon the error handling status.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Error handling status is one of:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">SUCCESS</span></tt></dt>
+<dd><ul class="first last simple">
+<li>The default settings. The exit code set is 0, implying a successful execution.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">FAILURE</span></tt></dt>
+<dd><ul class="first last simple">
+<li>The exit code set is 1, implying a failed execution.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">SQLCODE</span></tt></dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> determines the exit code from the specific error that occurs. This is a value between 1 and 255.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">&lt;N&gt;</span></tt></dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">&lt;N&gt;</span></tt> is an integer between 0 and 255. When <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> encounters an error this value is used as the exit code</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="/web/20150325003610/https://foundationdb.com/layers/sql/documentation/search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Command Line Tool</a><ul><li><a class="reference internal" href="#how-to-start-fdbsqlcli">How to start <tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt></a></li><li><a class="reference internal" href="#fdbsqlcli-options"><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Options</a><ul><li><a class="reference internal" href="#options">Options</a></li></ul></li><li><a class="reference internal" href="#fdbsqlcli-meta-commands"><tt class="docutils literal"><span class="pre">fdbsqlcli</span></tt> Meta-Commands</a><ul><li><a class="reference internal" href="#meta-commands-filter-pattern">Meta-Commands filter pattern</a></li><li><a class="reference internal" href="#on-error-handling">On-error handling</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003610/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003610/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003610/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003610js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:36:10 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:32:44 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=189;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+Key-Value Store &mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003158/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="FQz3b+O3cd8w3jedpwdEUtxObnwVVpDVGsYo49HC8mE=" name="csrf-token" />
+<link href=../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='index' id='key_value'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003158/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=index.html class="active">Overview</a></li>
+<li><a href=documentation/index.html>Documentation</a></li>
+<li><a href=performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../layers/sql/index.html>Overview</a></li>
+<li><a href=../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../https:/web.archive.org/web/20150325003158/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../https:/web.archive.org/web/20150325003158/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../about/index.html>About Us</a></li>
+<li><a href=../contact/index.html>Contact Us</a></li>
+<li><a href=../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div class='key-value-store' id='product-intro'>
+<section id='intro'>
+<div class='container'>
+<div id='icon'><img alt="Icon" src=../im_/icon-f556eb30f7254520bb94c6be23f4bd61.png /></div>
+<div class='text'>
+<h1>Key-Value Store</h1>
+<h2>The core of FoundationDB</h2>
+<p>The Key-Value Store is where all data in FoundationDB is stored. It can be distributed across many machines and has a simple but powerful key-value API with full <a href=../index.html>ACID transactions</a>.</p>
+<p><a href=../files/FoundationDB-KeyValueStore-Spec-Sheet-3.0.x.pdf>View the Spec Sheet (PDF)</a></p>
+</div>
+</div>
+</section>
+<section id='summary'>
+<div class='container'>
+<ul>
+<li>
+<h1>Multi-model</h1>
+<img alt="Multi-model" src=../im_/multi-model-5dfa1d7d40ed47df3bdb7ff1269b3e8b.png />
+<p>The Key-Value Store's full multi-node ACID transactions allow developers to "layer" multiple data models on top of a single scalable database.</p>
+<a class='button' href='/web/20150325003158/https://foundationdb.com/key-value-store/architecture'>See how this works &rarr;</a>
+</li>
+<li>
+<h1>Scalable &amp; fast</h1>
+<img alt="Performance" src=../im_/performance-00fb675261563de623d4609a5b006ba4.png />
+<p>Key-Value Store provides amazing performance on commodity hardware and makes it incredibly easy to add more machines as your needs grow.</p>
+<a class='button' href='/web/20150325003158/https://foundationdb.com/key-value-store/performance'>See how it performs &rarr;</a>
+</li>
+<li>
+<h1>Fault-tolerant</h1>
+<img alt="Fault-tolerance" src=../im_/fault-tolerance-850040f5309177ea2b02c32b72cd9efd.png />
+<p>No more worrying about down time. Key-Value Store divides your data into chunks and distributes multiple copies of each chunk onto different storage servers.</p>
+<a class='button' href='/web/20150325003158/https://foundationdb.com/key-value-store/white-papers/fault-tolerance'>See why this matters &rarr;</a>
+</li>
+</ul>
+</div>
+</section>
+<section class='with-editor split' id='examples'>
+<div class='container'>
+<div class='text'>
+<div class='inner'>
+<h1>Strong language support</h1>
+<p>We have supported language bindings for Python, Ruby, node.js, PHP, Java, Go, .NET, and C, and our community continues to build more.</p>
+<p>
+<a href='/web/20150325003158/https://foundationdb.com/key-value-store/documentation/building-with-the-api.html'>Check out Building with the API &rarr;</a>
+</p>
+</div>
+</div>
+<div class='graphic'>
+<div class='inner'>
+<div class='editor'>
+<div class='bar'>
+<div class='dot'></div>
+<div class='dot'></div>
+<div class='dot'></div>
+</div>
+<div class='window'></div>
+</div>
+<a class='previous' href='#previous'></a>
+<a class='next' href='#next'></a>
+<div class='code'>
+<ul class='dark'>
+<li>
+<div class='filename'>transactions.rb</div>
+<pre class='prettyprint lang-ruby'>require 'fdb'&#x000A;FDB.api_version 200&#x000A;db = FDB.open&#x000A;db.transact do |tr|&#x000A;    # Read two values from the database&#x000A;    a = tr['a']&#x000A;    b = tr['b']&#x000A;    # Write a key-value pair to the database&#x000A;    tr['c'] = a + b&#x000A;end</pre>
+<a href='/web/20150325003158/https://foundationdb.com/key-value-store/documentation/developer-guide.html#transactions-in-foundationdb'>Read the transaction docs &rarr;</a>
+</li>
+<li>
+<div class='filename'>watches.py</div>
+<pre class='prettyprint lang-python'># watch for changes to certain keys&#x000A;def watching_loop(db, keys):&#x000A;&#x000A;    @fdb.transactional&#x000A;    def watch_keys(tr):&#x000A;        return [tr.watch(k) for k in keys]&#x000A;&#x000A;    while True:&#x000A;        fdb.Future.wait_for_any(*watch_keys(db))&#x000A;        yield</pre>
+<a href='/web/20150325003158/https://foundationdb.com/key-value-store/documentation/developer-guide.html#watches'>Read the watches docs &rarr;</a>
+</li>
+<li>
+<div class='filename'>lazy_iteration.js</div>
+<pre class='prettyprint lang-javascript'>var itr = tr.getRange('apple', 'cherry');&#x000A;&#x000A;// print out each key-value pair&#x000A;itr.forEach(function(kv, callback) {&#x000A;    console.log(kv.key, kv.value);&#x000A;    callback();&#x000A;&#x000A;}, function(error) {&#x000A;    if (error) console.log(error);&#x000A;})</pre>
+<a href='/web/20150325003158/https://foundationdb.com/key-value-store/documentation/api-node.html#lazy-iterators'>Read the LazyIterator Node.js docs &rarr;</a>
+</li>
+<li>
+<div class='filename'>atomic_operations.go</div>
+<pre class='prettyprint lang-go'>_, e := db.Transact(&#x000A;    func (tr fdb.Transaction) (interface{}, error) {&#x000A;        // Increment high-contention counter&#x000A;        tr.Add(fdb.Key("counter"), []byte{1,0,0,0})&#x000A;&#x000A;        return nil, nil&#x000A;    })&#x000A;if e != nil {&#x000A;    fmt.Println("Failed to update counter!")&#x000A;}</pre>
+<a href='/web/20150325003158/https://foundationdb.com/key-value-store/documentation/developer-guide.html#atomic-operations'>Read the Atomic Operations docs &rarr;</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../https:/web.archive.org/web/20150325003158/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+<script>
+  setup_product_intro()
+</script>
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:31:58 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:11:12 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

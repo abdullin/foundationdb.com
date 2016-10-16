@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app6.us.archive.org";archive_analytics.values.server_ms=550;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Command Line Interface
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/command-line-interface.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003222/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png" rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href="/web/20150325003222cs_/https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Gentium+Book+Basic:400,400italic" media="screen" rel="stylesheet" type="text/css" />
+<link href="/web/20150325003222cs_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-5cc81fa97aedacb1157cce0e30895a04.css" media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+<!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<script type="text/javascript" src="/static/js/disclaim-element.js" ></script>
+<script type="text/javascript" src="/static/js/graph-calc.js" ></script>
+<script type="text/javascript">//<![CDATA[
+var __wm = (function(imgWidth,imgHeight,yearImgWidth,monthImgWidth){
+var wbPrefix = "/web/";
+var wbCurrentUrl = "https://foundationdb.com/key-value-store/documentation/command-line-interface.html";
+
+var firstYear = 1996;
+var displayDay = "25";
+var displayMonth = "Mar";
+var displayYear = "2015";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $D=document,$=function(n){return document.getElementById(n)};
+var trackerVal,curYear = -1,curMonth = -1;
+var yearTracker,monthTracker;
+function showTrackers(val) {
+  if (val===trackerVal) return;
+  var $ipp=$("wm-ipp");
+  var $y=$("displayYearEl"),$m=$("displayMonthEl"),$d=$("displayDayEl");
+  if (val) {
+    $ipp.className="hi";
+  } else {
+    $ipp.className="";
+    $y.innerHTML=displayYear;$m.innerHTML=displayMonth;$d.innerHTML=displayDay;
+  }
+  yearTracker.style.display=val?"inline":"none";
+  monthTracker.style.display=val?"inline":"none";
+  trackerVal = val;
+}
+function trackMouseMove(event,element) {
+  var eventX = getEventX(event);
+  var elementX = getElementX(element);
+  var xOff = Math.min(Math.max(0, eventX - elementX),imgWidth);
+  var monthOff = xOff % yearImgWidth;
+
+  var year = Math.floor(xOff / yearImgWidth);
+  var monthOfYear = Math.min(11,Math.floor(monthOff / monthImgWidth));
+  // 1 extra border pixel at the left edge of the year:
+  var month = (year * 12) + monthOfYear;
+  var day = monthOff % 2==1?15:1;
+  var dateString = zeroPad(year + firstYear) + zeroPad(monthOfYear+1,2) +
+    zeroPad(day,2) + "000000";
+
+  $("displayYearEl").innerHTML=year+firstYear;
+  $("displayMonthEl").innerHTML=prettyMonths[monthOfYear];
+  // looks too jarring when it changes..
+  //$("displayDayEl").innerHTML=zeroPad(day,2);
+  var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+  $("wm-graph-anchor").href=url;
+
+  if(curYear != year) {
+    var yrOff = year * yearImgWidth;
+    yearTracker.style.left = yrOff + "px";
+    curYear = year;
+  }
+  if(curMonth != month) {
+    var mtOff = year + (month * monthImgWidth) + 1;
+    monthTracker.style.left = mtOff + "px";
+    curMonth = month;
+  }
+}
+function hideToolbar() {
+  $("wm-ipp").style.display="none";
+}
+function bootstrap() {
+  var $spk=$("wm-ipp-sparkline");
+  yearTracker=$D.createElement('div');
+  yearTracker.className='yt';
+  with(yearTracker.style){
+    display='none';width=yearImgWidth+"px";height=imgHeight+"px";
+  }
+  monthTracker=$D.createElement('div');
+  monthTracker.className='mt';
+  with(monthTracker.style){
+    display='none';width=monthImgWidth+"px";height=imgHeight+"px";
+  }
+  $spk.appendChild(yearTracker);
+  $spk.appendChild(monthTracker);
+
+  var $ipp=$("wm-ipp");
+  $ipp&&disclaimElement($ipp);
+}
+return{st:showTrackers,mv:trackMouseMove,h:hideToolbar,bt:bootstrap};
+})(525, 27, 25, 2);//]]>
+</script>
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  min-width:800px !important;
+}
+</style>
+<div id="wm-ipp" lang="en" style="display:none;">
+
+<div style="position:fixed;left:0;top:0;width:100%!important">
+<div id="wm-ipp-inside">
+   <table style="width:100%;"><tbody><tr>
+   <td id="wm-logo">
+       <a href="/web/" title="Wayback Machine home page"><img src="/static/images/toolbar/wayback-toolbar-logo.png" alt="Wayback Machine" width="110" height="39" border="0" /></a>
+   </td>
+   <td class="c">
+       <table style="margin:0 auto;"><tbody><tr>
+       <td class="u" colspan="2">
+       <form target="_top" method="get" action="/web/form-submit.jsp" name="wmtb" id="wmtb"><input type="text" name="url" id="wmtbURL" value="https://foundationdb.com/key-value-store/documentation/command-line-interface.html" style="width:400px;" onfocus="this.focus();this.select();" /><input type="hidden" name="type" value="replay" /><input type="hidden" name="date" value="20150325003222" /><input type="submit" value="Go" /><span id="wm_tb_options" style="display:block;"></span></form>
+       </td>
+       <td class="n" rowspan="2">
+           <table><tbody>
+           <!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+           <tr class="m">
+           	<td class="b" nowrap="nowrap">
+		
+		    Feb
+		
+		</td>
+		<td class="c" id="displayMonthEl" title="You are here: 0:32:22 Mar 25, 2015">MAR</td>
+		<td class="f" nowrap="nowrap">
+		
+		    <a href="/web/20150428230453/https://foundationdb.com/key-value-store/documentation/command-line-interface.html" title="28 Apr 2015"><strong>APR</strong></a>
+		
+                </td>
+	    </tr>
+           <!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+           <tr class="d">
+               <td class="b" nowrap="nowrap">
+               
+                       <img src="/static/images/toolbar/wm_tb_prv_off.png" alt="Previous capture" width="14" height="16" border="0" />
+               
+               </td>
+               <td class="c" id="displayDayEl" style="width:34px;font-size:24px;" title="You are here: 0:32:22 Mar 25, 2015">25</td>
+	       <td class="f" nowrap="nowrap">
+               
+		   <a href="/web/20150428230453/https://foundationdb.com/key-value-store/documentation/command-line-interface.html" title="23:04:53 Apr 28, 2015"><img src="/static/images/toolbar/wm_tb_nxt_on.png" alt="Next capture" width="14" height="16" border="0" /></a>
+	       
+	       </td>
+           </tr>
+           <!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+           <tr class="y">
+	       <td class="b" nowrap="nowrap">
+               
+                   2014
+               
+               </td>
+               <td class="c" id="displayYearEl" title="You are here: 0:32:22 Mar 25, 2015">2015</td>
+	       <td class="f" nowrap="nowrap">
+               
+                   2016
+               
+	       </td>
+           </tr>
+           </tbody></table>
+       </td>
+       </tr>
+       <tr>
+       <td class="s">
+           <a class="t" href="/web/20150325003222*/https://foundationdb.com/key-value-store/documentation/command-line-interface.html" title="See a list of every capture for this URL">3 captures</a>
+           <div class="r" title="Timespan for captures of this URL">25 Mar 15 - 6 Jul 15</div>
+       </td>
+       <td class="k">
+       <a href="" id="wm-graph-anchor">
+       <div id="wm-ipp-sparkline" title="Explore captures for this URL">
+	 <img id="sparklineImgId" alt="sparklines"
+		 onmouseover="__wm.st(1)" onmouseout="__wm.st(0)"
+		 onmousemove="__wm.mv(event,this)"
+		 width="525"
+		 height="27"
+		 border="0"
+		 src="/web/jsp/graph.jsp?graphdata=525_27_1996:-1:000000000000_1997:-1:000000000000_1998:-1:000000000000_1999:-1:000000000000_2000:-1:000000000000_2001:-1:000000000000_2002:-1:000000000000_2003:-1:000000000000_2004:-1:000000000000_2005:-1:000000000000_2006:-1:000000000000_2007:-1:000000000000_2008:-1:000000000000_2009:-1:000000000000_2010:-1:000000000000_2011:-1:000000000000_2012:-1:000000000000_2013:-1:000000000000_2014:-1:000000000000_2015:2:001100100000_2016:-1:000000000000" />
+       </div>
+       </a>
+       </td>
+       </tr></tbody></table>
+   </td>
+   <td class="r">
+       <a href="#close" onclick="__wm.h();return false;" style="background-image:url(/static/images/toolbar/wm_tb_close.png);top:5px;" title="Close the toolbar">Close</a>
+       <a href="http://faq.web.archive.org/" style="background-image:url(/static/images/toolbar/wm_tb_help.png);bottom:5px;" title="Get some help using the Wayback Machine">Help</a>
+   </td>
+   </tr></tbody></table>
+</div>
+</div>
+</div>
+<script type="text/javascript">__wm.bt();</script>
+<!-- END WAYBACK TOOLBAR INSERT -->
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003222/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/hamburger-bbd9560947385da4445b540086f10c9b.png" /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href="/web/20150325003222/https://foundationdb.com/"><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/key-value-store"><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store">Overview</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation">Documentation</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/layers/sql"><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql">Overview</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql/documentation">Documentation</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/layers/sql/performance">Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/community"><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/http://community.foundationdb.com/">Community</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/courses">Education</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/videos">Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href="/web/20150325003222/https://foundationdb.com/about"><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href="/web/20150325003222/https://foundationdb.com/about">About Us</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/contact">Contact Us</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/jobs">Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/index.html">Summary</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/getting-started.html">Getting Started</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/tutorials.html">Tutorials</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/developer-guide.html">Developer Guide</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/data-modeling.html">Data Modeling</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/recipes">Design Recipes</a></li>
+<li>
+<a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-reference.html">API Reference</a>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-python.html">Python API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-ruby.html">Ruby API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-node.html">Node.js API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-php.html">PHP API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/javadoc/index.html">Java API</a></li>
+<li><a href="/web/20150325003222/http://godoc.org/github.com/FoundationDB/fdb-go/fdb">Go API</a></li>
+<li><a href="/web/20150325003222/https://github.com/Doxense/foundationdb-dotnet-client">.NET API</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/api-c.html">C API</a></li>
+</ul>
+</li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/building-cluster.html">Building a Cluster</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/configuration.html">Configuration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/administration.html">Administration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/command-line-interface.html" class="active">Command Line Interface</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/mr-status.html">Machine-Readable Status</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/tls.html">Transport Layer Security</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/backups.html">Backup and Restoration</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/known-limitations.html">Known Limitations</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/platforms.html">Platform Issues</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/release-notes.html">Release Notes</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/documentation/older">Older Versions</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/key-value-store/white-papers">White Papers</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '3.0.7',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">FoundationDB 3.0</a> &raquo;
+    <a href="operations.html">Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href="/web/20150325003222/https://foundationdb.com/documentation/latest/search.html">
+      <img alt="Magnifying-glass" src="/web/20150325003222im_/https://d3glfbbr3jeumb.cloudfront.net/assets/icons/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png" />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="command-line-interface">
+<span id="id1"></span><h1>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">∞</a></h1>
+<p>FoundationDB comes with a command line interface tool called <tt class="docutils literal"><span class="pre">fdbcli</span></tt>. This document describes basic usage of <tt class="docutils literal"><span class="pre">fdbcli</span></tt> and the commands it supports. The use of <tt class="docutils literal"><span class="pre">fdbcli</span></tt> while <a class="reference internal" href="configuration.html"><em>configuring</em></a> and <a class="reference internal" href="administration.html"><em>administering</em></a> FoundationDB clusters is described in more detail in the documents on those topics and will be referenced as appropriate.</p>
+<div class="section" id="invocation-at-the-command-line">
+<span id="cli-invocation"></span><h2>Invocation at the Command Line<a class="headerlink" href="#invocation-at-the-command-line" title="Permalink to this headline">∞</a></h2>
+<p>You can invoke <tt class="docutils literal"><span class="pre">fdbcli</span></tt> at the command line simply by typing it. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>user@host$ fdbcli
+Using cluster file `/etc/foundationdb/fdb.cluster&#39;.
+
+The database is available.
+
+Welcome to the fdbcli. For help, type `help&#39;.
+fdb&gt;
+</pre></div>
+</div>
+<p>This will result in <tt class="docutils literal"><span class="pre">fdbcli</span></tt> connecting to the <a class="reference internal" href="administration.html#default-cluster-file"><em>default cluster file</em></a> (<tt class="docutils literal"><span class="pre">/etc/foundationdb/fdb.cluster</span></tt> for Linux.) You can also specify a cluster file as an argument to <tt class="docutils literal"><span class="pre">fdbcli</span></tt> using the <tt class="docutils literal"><span class="pre">-C</span></tt> option. For further information, see <a class="reference internal" href="administration.html#specifying-a-cluster-file"><em>Specifying the cluster file</em></a>.</p>
+</div>
+<div class="section" id="commands-within-fdbcli">
+<h2>Commands within <tt class="docutils literal"><span class="pre">fdbcli</span></tt><a class="headerlink" href="#commands-within-fdbcli" title="Permalink to this headline">∞</a></h2>
+<p>The following commands can be issued from within <tt class="docutils literal"><span class="pre">fdbcli</span></tt> at the internal <tt class="docutils literal"><span class="pre">fdb&gt;</span></tt> prompt:</p>
+<div class="section" id="begin">
+<h3>begin<a class="headerlink" href="#begin" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">begin</span></tt> command begins a new transaction. By default, <tt class="docutils literal"><span class="pre">fdbcli</span></tt> operates in autocommit mode. All operations are performed in their own transaction and are automatically committed. By explicitly beginning a transaction, successive operations are all performed as part of a single transaction.</p>
+<p>To commit the transaction, use the <tt class="docutils literal"><span class="pre">commit</span></tt> command. To discard the transaction, use the <tt class="docutils literal"><span class="pre">reset</span></tt> command.</p>
+</div>
+<div class="section" id="clear">
+<h3>clear<a class="headerlink" href="#clear" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">clear</span></tt> command clears a key from the database. Its syntax is <tt class="docutils literal"><span class="pre">clear</span> <span class="pre">&lt;KEY&gt;</span></tt>. This command succeeds even if the specified key is not present but may fail due to conflicts.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="clearrange">
+<h3>clearrange<a class="headerlink" href="#clearrange" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">clearrange</span></tt> command clears a range of keys from the database. Its syntax is <tt class="docutils literal"><span class="pre">clearrange</span> <span class="pre">&lt;BEGINKEY&gt;</span> <span class="pre">&lt;ENDKEY&gt;</span></tt>. All keys between <tt class="docutils literal"><span class="pre">&lt;BEGINKEY&gt;</span></tt> (inclusive) and <tt class="docutils literal"><span class="pre">&lt;ENDKEY&gt;</span></tt> (exclusive) are cleared from the database. This command succeeds even if the specified range is empty but may fail due to conflicts.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="commit">
+<h3>commit<a class="headerlink" href="#commit" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">commit</span></tt> command commits the current transaction. Any sets or clears executed after the start of the current transaction will be committed to the database. On success, the committed version number is displayed. If commit fails, the error is displayed and the transaction must be retried.</p>
+</div>
+<div class="section" id="configure">
+<h3>configure<a class="headerlink" href="#configure" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">configure</span></tt> command changes the database configuration. Its syntax is <tt class="docutils literal"><span class="pre">configure</span> <span class="pre">[new]</span> <span class="pre">[single|double|triple|three_datacenter]</span> <span class="pre">[ssd|memory]</span> <span class="pre">[proxies=&lt;N&gt;]</span> <span class="pre">[resolvers=&lt;N&gt;]</span> <span class="pre">[logs=&lt;N&gt;]</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">new</span></tt> option, if present, initializes a new database with the given configuration rather than changing the configuration of an existing one. When <tt class="docutils literal"><span class="pre">new</span></tt> is used, both a redundancy mode and a storage engine must be specified.</p>
+<div class="section" id="redundancy-mode">
+<h4>redundancy mode<a class="headerlink" href="#redundancy-mode" title="Permalink to this headline">∞</a></h4>
+<p>Redundancy modes define storage requirements, required cluster size, and resilience to failure. The available redundancy modes are:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">single</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">double</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">triple</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">three_datacenter</span></tt></li>
+</ul>
+<p>For descriptions of redundacy modes, see <a class="reference internal" href="configuration.html#configuration-choosing-redundancy-mode"><em>Choosing a redundancy mode</em></a>.</p>
+</div>
+<div class="section" id="storage-engine">
+<h4>storage engine<a class="headerlink" href="#storage-engine" title="Permalink to this headline">∞</a></h4>
+<p>The storage engine is responsible for durably storing data. FoundationDB has two storage engines:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">ssd</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">memory</span></tt></li>
+</ul>
+<p>For descriptions of storage engines, see <a class="reference internal" href="configuration.html#configuration-storage-engine"><em>Storage engines</em></a>.</p>
+</div>
+<div class="section" id="process-types">
+<h4>process types<a class="headerlink" href="#process-types" title="Permalink to this headline">∞</a></h4>
+<p>A FoundationDB cluster employs server processes of different types. It automatically allocates these processes in default numbers appropriate for small-to-medium sized clusters.</p>
+<p>For large clusters, you can manually set the allocated number of processes of a given type. Valid process types are:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">proxies</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">resolvers</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">logs</span></tt></li>
+</ul>
+<p>Set the process using <tt class="docutils literal"><span class="pre">configure</span> <span class="pre">[proxies|resolvers|logs]=&lt;N&gt;</span></tt>, where <tt class="docutils literal"><span class="pre">&lt;N&gt;</span></tt> is an integer greater than 0, or -1 to reset the value to its default.</p>
+<p>For recommendations on appropriate values for process types in large clusters, see <a class="reference internal" href="configuration.html#configuration-large-cluster-performance"><em>Large cluster performance</em></a>.</p>
+</div>
+</div>
+<div class="section" id="coordinators">
+<h3>coordinators<a class="headerlink" href="#coordinators" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">coordinators</span></tt> command is used to change cluster coordinators or description. Its syntax is <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">auto|&lt;ADDRESS...&gt;</span> <span class="pre">[description=&lt;DESC&gt;]</span></tt>.</p>
+<p>Addresses may be specified as a list of IP:port pairs (such as <tt class="docutils literal"><span class="pre">coordinators</span> <span class="pre">10.0.0.1:4000</span> <span class="pre">10.0.0.2:4000</span> <span class="pre">10.0.0.3:4000</span></tt>). If addresses are specified, the coordinators will be set to them. An <tt class="docutils literal"><span class="pre">fdbserver</span></tt> process must be running on each of the specified addresses.</p>
+<p>If <tt class="docutils literal"><span class="pre">auto</span></tt> is specified, coordinator addresses will be choosen automatically to support the configured redundancy level. (If the current set of coordinators are healthy and already support the configured redundancy level, nothing will be changed.)</p>
+<p>For more information on setting coordinators, see <a class="reference internal" href="configuration.html#configuration-changing-coordination-servers"><em>Changing coordination servers</em></a>.</p>
+<p>If <tt class="docutils literal"><span class="pre">description=&lt;DESC&gt;</span></tt> is specified, the description field in the cluster file is changed to <tt class="docutils literal"><span class="pre">&lt;DESC&gt;</span></tt>, which must match <tt class="docutils literal"><span class="pre">[A-Za-z0-9_]+</span></tt>.</p>
+<p>For more information on setting the cluster description, see <a class="reference internal" href="configuration.html#configuration-setting-cluster-description"><em>Changing the cluster description</em></a>.</p>
+</div>
+<div class="section" id="exclude">
+<h3>exclude<a class="headerlink" href="#exclude" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">exclude</span></tt> command excludes servers from the database. Its syntax is <tt class="docutils literal"><span class="pre">exclude</span> <span class="pre">&lt;ADDRESS...&gt;</span></tt>. If no addresses are specified, the command provides the set of excluded servers.</p>
+<p>For each IP address or IP:port pair in <tt class="docutils literal"><span class="pre">&lt;ADDRESS...&gt;</span></tt>, the command adds the address to the set of excluded servers. It then waits until all database state has been safely moved off the specified servers.</p>
+<p>For more information on excluding servers, see <a class="reference internal" href="administration.html#removing-machines-from-a-cluster"><em>Removing machines from a cluster</em></a>.</p>
+</div>
+<div class="section" id="exit">
+<h3>exit<a class="headerlink" href="#exit" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">exit</span></tt> command exits <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="get">
+<h3>get<a class="headerlink" href="#get" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">get</span></tt> command fetches the value of a given key. Its syntax is <tt class="docutils literal"><span class="pre">get</span> <span class="pre">&lt;KEY&gt;</span></tt>. It displays the value of <tt class="docutils literal"><span class="pre">&lt;KEY&gt;</span></tt> if <tt class="docutils literal"><span class="pre">&lt;KEY&gt;</span></tt> is present in the database and <tt class="docutils literal"><span class="pre">not</span> <span class="pre">found</span></tt> otherwise.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="getrange">
+<h3>getrange<a class="headerlink" href="#getrange" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">getrange</span></tt> command fetches key-value pairs in a range. Its syntax is <tt class="docutils literal"><span class="pre">getrange</span> <span class="pre">&lt;BEGINKEY&gt;</span> <span class="pre">[ENDKEY]</span> <span class="pre">[LIMIT]</span></tt>. It displays up to <tt class="docutils literal"><span class="pre">&lt;LIMIT&gt;</span></tt> keys and values for keys between <tt class="docutils literal"><span class="pre">&lt;BEGINKEY&gt;</span></tt> (inclusive) and <tt class="docutils literal"><span class="pre">&lt;ENDKEY&gt;</span></tt> (exclusive). If <tt class="docutils literal"><span class="pre">&lt;ENDKEY&gt;</span></tt> is omitted, then the range will include all keys starting with <tt class="docutils literal"><span class="pre">&lt;BEGINKEY&gt;</span></tt>. <tt class="docutils literal"><span class="pre">&lt;LIMIT&gt;</span></tt> defaults to 25 if omitted.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="getrangekeys">
+<h3>getrangekeys<a class="headerlink" href="#getrangekeys" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">getrangekeys</span></tt> command fetches keys in a range. Its syntax is <tt class="docutils literal"><span class="pre">getrangekeys</span> <span class="pre">&lt;BEGINKEY&gt;</span> <span class="pre">[ENDKEY]</span> <span class="pre">[LIMIT]</span></tt>. It displays up to <tt class="docutils literal"><span class="pre">&lt;LIMIT&gt;</span></tt> keys for keys between <tt class="docutils literal"><span class="pre">&lt;BEGINKEY&gt;</span></tt> (inclusive) and <tt class="docutils literal"><span class="pre">&lt;ENDKEY&gt;</span></tt> (exclusive). If <tt class="docutils literal"><span class="pre">&lt;ENDKEY&gt;</span></tt> is omitted, then the range will include all keys starting with <tt class="docutils literal"><span class="pre">&lt;BEGINKEY&gt;</span></tt>. <tt class="docutils literal"><span class="pre">&lt;LIMIT&gt;</span></tt> defaults to 25 if omitted.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="help">
+<h3>help<a class="headerlink" href="#help" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">help</span></tt> command provides information on specific commands. Its syntax is <tt class="docutils literal"><span class="pre">help</span> <span class="pre">&lt;TOPIC&gt;</span></tt>, where <tt class="docutils literal"><span class="pre">&lt;TOPIC&gt;</span></tt> is any of the commands in this section, <tt class="docutils literal"><span class="pre">escaping</span></tt>, or <tt class="docutils literal"><span class="pre">options</span></tt>. The latter two topics are described below:</p>
+<div class="section" id="help-escaping">
+<span id="cli-escaping"></span><h4>help escaping<a class="headerlink" href="#help-escaping" title="Permalink to this headline">∞</a></h4>
+<p><tt class="docutils literal"><span class="pre">help</span> <span class="pre">escaping</span></tt> provides the following information on escaping keys and values within <tt class="docutils literal"><span class="pre">fdbcli</span></tt>:</p>
+<p>When parsing commands, <tt class="docutils literal"><span class="pre">fdbcli</span></tt> considers a space to delimit individual tokens. To include a space in a single value, you may either enclose the token in quotation marks <tt class="docutils literal"><span class="pre">&quot;</span></tt>, prefix the space with a backslash <tt class="docutils literal"><span class="pre">\</span></tt>, or encode the space as a hex character.</p>
+<p>To include a literal quotation mark in a token, precede it with a backslash <tt class="docutils literal"><span class="pre">\&quot;</span></tt>.</p>
+<p>To express a binary value, encode each byte as a two-digit hex value, preceded by <tt class="docutils literal"><span class="pre">\x</span></tt> (e.g. <tt class="docutils literal"><span class="pre">\x20</span></tt> for a space character, or <tt class="docutils literal"><span class="pre">\x0a\x00\x00\x00</span></tt> for a 32-bit, little-endian representation of the integer 10).</p>
+<p>All keys and values are displayed by <tt class="docutils literal"><span class="pre">fdbcli</span></tt> with non-printable characters and spaces encoded as two-digit hex bytes.</p>
+</div>
+<div class="section" id="help-options">
+<span id="cli-options"></span><h4>help options<a class="headerlink" href="#help-options" title="Permalink to this headline">∞</a></h4>
+<p>The following options are available for use with the <tt class="docutils literal"><span class="pre">option</span></tt> command:</p>
+<p><tt class="docutils literal"><span class="pre">ACCESS_SYSTEM_KEYS</span></tt> - Allows this transaction to read and modify system keys (those that start with the byte <tt class="docutils literal"><span class="pre">0xFF</span></tt>).</p>
+<p><tt class="docutils literal"><span class="pre">CAUSAL_READ_RISKY</span></tt> - The read version will be committed. It will usually will be the latest committed but might not be in the event of a fault or partition.</p>
+<p><tt class="docutils literal"><span class="pre">CAUSAL_WRITE_RISKY</span></tt> - The transaction, if not self-conflicting, may be committed a second time after commit succeeds, in the event of a fault.</p>
+<p><tt class="docutils literal"><span class="pre">INITIALIZE_NEW_DATABASE</span></tt> - This is a write-only transaction which sets the initial configuration.</p>
+<p><tt class="docutils literal"><span class="pre">NEXT_WRITE_NO_WRITE_CONFLICT_RANGE</span></tt> - The next write performed on this transaction will not generate a write conflict range. As a result, other transactions which read the key(s) being modified by the next write will not conflict with this transaction. Care needs to be taken when using this option on a transaction that is shared between multiple threads. When setting this option, write conflict ranges will be disabled on the next write operation, regardless of what thread it is on.</p>
+<p><tt class="docutils literal"><span class="pre">PRIORITY_BATCH</span></tt> - Specifies that this transaction should be treated as low priority and that default priority transactions should be processed first. Useful for doing batch work simultaneously with latency-sensitive work.</p>
+<p><tt class="docutils literal"><span class="pre">PRIORITY_SYSTEM_IMMEDIATE</span></tt> - Specifies that this transaction should be treated as highest priority and that lower priority transactions should block behind this one. Use is discouraged outside of low-level tools.</p>
+<p><tt class="docutils literal"><span class="pre">READ_AHEAD_DISABLE</span></tt> - Disables read-ahead caching for range reads. Under normal operation, a transaction will read extra rows from the database into cache if range reads are used to page through a series of data one row at a time (i.e. if a range read with a one row limit is followed by another one row range read starting immediately after the result of the first).</p>
+<p><tt class="docutils literal"><span class="pre">READ_YOUR_WRITES_DISABLE</span></tt> - Reads performed by a transaction will not see any prior mutations that occured in that transaction, instead seeing the value which was in the database at the transaction&#8217;s read version. This option may provide a small performance benefit for the client, but also disables a number of client-side optimizations which are beneficial for transactions which tend to read and write the same keys within a single transaction.</p>
+<p><tt class="docutils literal"><span class="pre">RETRY_LIMIT</span></tt> - Set a maximum number of retries after which additional calls to <tt class="docutils literal"><span class="pre">onError</span></tt> will throw the most recently seen error code. Valid parameter values are <tt class="docutils literal"><span class="pre">[-1,</span> <span class="pre">INT_MAX]</span></tt>. If set to -1, will disable the retry limit. Like all transaction options, the retry limit must be reset after a call to <tt class="docutils literal"><span class="pre">onError</span></tt>. This behavior allows the user to make the retry limit dynamic.</p>
+<p><tt class="docutils literal"><span class="pre">TIMEOUT</span></tt> - Set a timeout in milliseconds which, when elapsed, will cause the transaction automatically to be cancelled. Valid parameter values are <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">INT_MAX]</span></tt>. If set to 0, will disable all timeouts. All pending and any future uses of the transaction will throw an exception. The transaction can be used again after it is reset. Like all transaction options, a timeout must be reset after a call to <tt class="docutils literal"><span class="pre">onError</span></tt>. This behavior allows the user to make the timeouts dynamic.</p>
+</div>
+</div>
+<div class="section" id="include">
+<h3>include<a class="headerlink" href="#include" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">include</span></tt> command permits previously excluded servers to rejoin the database. Its syntax is <tt class="docutils literal"><span class="pre">include</span> <span class="pre">all|&lt;ADDRESS...&gt;</span></tt>.</p>
+<p>If <tt class="docutils literal"><span class="pre">all</span></tt> is specified, the excluded servers list is cleared.</p>
+<p>For each IP address or IP:port pair in <tt class="docutils literal"><span class="pre">&lt;ADDRESS...&gt;</span></tt>, the command removes any matching exclusions from the excluded servers list. (A specified IP will match all <tt class="docutils literal"><span class="pre">IP:*</span></tt> exclusion entries).</p>
+<p>For information on adding machines to a cluster, see <a class="reference internal" href="administration.html#adding-machines-to-a-cluster"><em>Adding machines to a cluster</em></a>.</p>
+</div>
+<div class="section" id="option">
+<h3>option<a class="headerlink" href="#option" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">option</span></tt> command enables or disables an option. Its syntax is <tt class="docutils literal"><span class="pre">option</span> <span class="pre">&lt;STATE&gt;</span> <span class="pre">&lt;OPTION&gt;</span> <span class="pre">[ARG]</span></tt>. Descriptions of <a class="reference internal" href="#cli-options"><em>the available options</em></a> can be obtained within <tt class="docutils literal"><span class="pre">fdbcli</span></tt> by typing <tt class="docutils literal"><span class="pre">help</span> <span class="pre">options</span></tt>.</p>
+<p>If <tt class="docutils literal"><span class="pre">&lt;STATE&gt;</span></tt> is <tt class="docutils literal"><span class="pre">on</span></tt>, then <tt class="docutils literal"><span class="pre">&lt;OPTION&gt;</span></tt> will be enabled with optional parameter <tt class="docutils literal"><span class="pre">&lt;ARG&gt;</span></tt>, if required. If <tt class="docutils literal"><span class="pre">&lt;STATE&gt;</span></tt> is <tt class="docutils literal"><span class="pre">off</span></tt>, then <tt class="docutils literal"><span class="pre">&lt;OPTION&gt;</span></tt> will be disabled.</p>
+<p>If there is no active transaction, then the option will be applied to all operations as well as all subsequently created transactions (using <tt class="docutils literal"><span class="pre">begin</span></tt>).</p>
+<p>If there is an active transaction (one created with <tt class="docutils literal"><span class="pre">begin</span></tt>), then enabled options apply only to that transaction. Options cannot be disabled on an active transaction.</p>
+<p>Calling the <tt class="docutils literal"><span class="pre">option</span></tt> command with no parameters prints a list of all enabled options.</p>
+</div>
+<div class="section" id="reset">
+<h3>reset<a class="headerlink" href="#reset" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">reset</span></tt> command resets the current transaction. Any sets or clears executed after the start of the active transaction will be discarded.</p>
+</div>
+<div class="section" id="rollback">
+<h3>rollback<a class="headerlink" href="#rollback" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">rollback</span></tt> command rolls back the current transaction. The active transaction will be discarded, including any sets or clears executed since the transaction was started.</p>
+</div>
+<div class="section" id="set">
+<h3>set<a class="headerlink" href="#set" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">set</span></tt> command sets a value for a given key. Its syntax is <tt class="docutils literal"><span class="pre">set</span> <span class="pre">&lt;KEY&gt;</span> <span class="pre">&lt;VALUE&gt;</span></tt>. If <tt class="docutils literal"><span class="pre">&lt;KEY&gt;</span></tt> is not already present in the database, it will be created.</p>
+<p>Note that <a class="reference internal" href="#cli-escaping"><em>characters can be escaped</em></a> when specifying keys (or values) in <tt class="docutils literal"><span class="pre">fdbcli</span></tt>.</p>
+</div>
+<div class="section" id="status">
+<span id="cli-status"></span><h3>status<a class="headerlink" href="#status" title="Permalink to this headline">∞</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">status</span></tt> command reports the status of the FoundationDB cluster to which <tt class="docutils literal"><span class="pre">fdbcli</span></tt> is connected. Its syntax is <tt class="docutils literal"><span class="pre">status</span> <span class="pre">[minimal|details|json]</span></tt>.</p>
+<p>If the cluster is down, this command will print a diagnostic which may be useful
+in figuring out what is wrong. If the cluster is running, this command will
+print cluster statistics.</p>
+<div class="section" id="status-minimal">
+<h4>status minimal<a class="headerlink" href="#status-minimal" title="Permalink to this headline">∞</a></h4>
+<p><tt class="docutils literal"><span class="pre">status</span> <span class="pre">minimal</span></tt> will provide only an indication of whether the database is available.</p>
+</div>
+<div class="section" id="status-details">
+<h4>status details<a class="headerlink" href="#status-details" title="Permalink to this headline">∞</a></h4>
+<p><tt class="docutils literal"><span class="pre">status</span> <span class="pre">details</span></tt> will provide load information for individual workers.</p>
+<p>For a detailed description of <tt class="docutils literal"><span class="pre">status</span></tt> output, see <a class="reference internal" href="administration.html#administration-monitoring-cluster-status"><em>Monitoring cluster status</em></a>.</p>
+</div>
+<div class="section" id="status-json">
+<h4>status json<a class="headerlink" href="#status-json" title="Permalink to this headline">∞</a></h4>
+<p><tt class="docutils literal"><span class="pre">status</span> <span class="pre">json</span></tt> will provide the cluster status in its JSON format. For a detailed description of this format, see <a class="reference internal" href="mr-status.html"><em>Machine-Readable Status</em></a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Command Line Interface</a><ul><li><a class="reference internal" href="#invocation-at-the-command-line">Invocation at the Command Line</a></li><li><a class="reference internal" href="#commands-within-fdbcli">Commands within <tt class="docutils literal"><span class="pre">fdbcli</span></tt></a><ul><li><a class="reference internal" href="#begin">begin</a></li><li><a class="reference internal" href="#clear">clear</a></li><li><a class="reference internal" href="#clearrange">clearrange</a></li><li><a class="reference internal" href="#commit">commit</a></li><li><a class="reference internal" href="#configure">configure</a><ul><li><a class="reference internal" href="#redundancy-mode">redundancy mode</a></li><li><a class="reference internal" href="#storage-engine">storage engine</a></li><li><a class="reference internal" href="#process-types">process types</a></li></ul></li><li><a class="reference internal" href="#coordinators">coordinators</a></li><li><a class="reference internal" href="#exclude">exclude</a></li><li><a class="reference internal" href="#exit">exit</a></li><li><a class="reference internal" href="#get">get</a></li><li><a class="reference internal" href="#getrange">getrange</a></li><li><a class="reference internal" href="#getrangekeys">getrangekeys</a></li><li><a class="reference internal" href="#help">help</a><ul><li><a class="reference internal" href="#help-escaping">help escaping</a></li><li><a class="reference internal" href="#help-options">help options</a></li></ul></li><li><a class="reference internal" href="#include">include</a></li><li><a class="reference internal" href="#option">option</a></li><li><a class="reference internal" href="#reset">reset</a></li><li><a class="reference internal" href="#rollback">rollback</a></li><li><a class="reference internal" href="#set">set</a></li><li><a class="reference internal" href="#status">status</a><ul><li><a class="reference internal" href="#status-minimal">status minimal</a></li><li><a class="reference internal" href="#status-details">status details</a></li><li><a class="reference internal" href="#status-json">status json</a></li></ul></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href="/web/20150325003222/https://foundationdb.com/contact">Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href="/web/20150325003222/https://twitter.com/foundationdb">Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/privacy">Privacy Policy</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/terms">Terms of Service</a></li>
+<li><a href="/web/20150325003222/https://foundationdb.com/legal/trademark">Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src="/web/20150325003222js_/https://d3glfbbr3jeumb.cloudfront.net/assets/application-a7f51eff68dda15563d95dd6b13ee7ae.js" type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:22 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 10:28:21 Sep 23, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

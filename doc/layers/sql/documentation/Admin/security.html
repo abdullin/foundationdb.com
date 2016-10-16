@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app17.us.archive.org";archive_analytics.values.server_ms=1308;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+SQL Layer &mdash;
+Security
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content='SQL, layer, foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='The FoundationDB SQL Layer is a scalable, fault tolerant, ANSI SQL engine.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/layers/sql/documentation/Admin/security.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003258/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="p4qD2eiF70rhyMI4SxMYjaFk83EMNb6+TGavYR2U72E=" name="csrf-token" />
+<link href=../../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='documentation' id='sql'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003258/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../../index.html><span>H</span>ome</a>
+</li>
+<li class='with-subnav'>
+<a href=../../../../key-value-store/index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../../../key-value-store/index.html>Overview</a></li>
+<li><a href=../../../../key-value-store/documentation/index.html>Documentation</a></li>
+<li><a href=../../../../key-value-store/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../../about/index.html>About Us</a></li>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='documentation-inner'>
+<div id='docs-global-nav-content'>
+<ul>
+<li><a href=../index.html>Summary</a></li>
+<li>
+<a href=../Concepts/index.html>Concepts</a>
+<ul>
+<li><a href=../Concepts/features.html>Features</a></li>
+<li><a href=../Concepts/architecture.html>Physical Architecture</a></li>
+<li><a href=../Concepts/table.groups.html>Table-Groups</a></li>
+<li><a href=../Concepts/mapping.sql.to.kv.html>Mapping SQL to Key-Value</a></li>
+<li><a href=../Concepts/known.limitations.html>Known Limitations</a></li>
+<li><a href=../Concepts/glossary.html>Glossary</a></li>
+</ul>
+</li>
+<li>
+<a href=../Developer/index.html>Developers</a>
+<ul>
+<li><a href=../Developer/developer.guide.html>Developer Guide</a></li>
+<li><a href=../Developer/client.tools.html>Client tools</a></li>
+<li><a href=../Developer/performance.guide.html>Performance Guide</a></li>
+<li><a href=../AppIntegration/index.html>Application Integration</a></li>
+<li><a href=../SQL/index.html>SQL Reference</a></li>
+<li><a href=../REST/rest.api.reference.html>REST API Reference</a></li>
+</ul>
+</li>
+<li>
+<a href=index.html>Operations</a>
+<ul>
+<li><a href=configuration.html>Configuration</a></li>
+<li><a href=administration.html>Administration</a></li>
+<li><a href=security.html class="active">Security</a></li>
+<li><a href=backup.html>Backup and Restoration</a></li>
+</ul>
+</li>
+<li><a href=../ReleaseNotes/index.html>Release Notes</a></li>
+</ul>
+</div>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '2.1.2',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href=../index.html>FoundationDB SQL Layer 2.1</a> &raquo;
+    <a href="index.html">SQL Layer Operations</a> &raquo;
+    
+    <a id="mobile-search-link" href=../../../../key-value-store/documentation/search.html>
+      <img alt="Magnifying-glass" src=../../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="security">
+<span id="fdbsql-security"></span><h1>Security<a class="headerlink" href="#security" title="Permalink to this headline">∞</a></h1>
+<p>This document covers 3 aspects of security in the SQL Layer:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#fdbsql-authentication"><em>authentication</em></a> of users in the system</li>
+<li><a class="reference internal" href="#fdbsql-tls"><em>transport layer security</em></a> to encrypt network communications</li>
+<li><a class="reference internal" href="#fdbsql-authorization"><em>authorization</em></a> or permission options that restricts the resources available to users</li>
+</ul>
+<p>We recommend you read this document before setting up a cluster for production use.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In FoundationDB, a &#8220;SQL Layer instance&#8221; refers to one SQL Layer process installed on one physical or virtual machine. It is possible to deploy multiple SQL Layer instances against a single FoundationDB Key-Value cluster, and each SQL Layer instance can have its own configuration.</p>
+</div>
+<div class="section" id="authentication">
+<span id="fdbsql-authentication"></span><h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">∞</a></h2>
+<p>The SQL Layer supports basic user/password authentication, as well as the <a class="reference internal" href="#fdbsql-kerberos"><em>Kerberos</em></a> authentication protocol that uses a third-party authentication service. Note that this will only authenticate that the user is who they say they are. It will not limit their access to resources in any way based on that identity. In order to limit the resources available to a user, see the <a class="reference internal" href="#fdbsql-authorization"><em>authorization</em></a> section below.</p>
+<div class="section" id="basic-authentication">
+<span id="fdbsql-user-pass"></span><h3>Basic authentication<a class="headerlink" href="#basic-authentication" title="Permalink to this headline">∞</a></h3>
+<p>With basic authentication we can add and remove users from the database, and restrict access to these users only.</p>
+<div class="section" id="adding-an-admin-user">
+<h4>Adding an Admin user<a class="headerlink" href="#adding-an-admin-user" title="Permalink to this headline">∞</a></h4>
+<p>We first add an admin user to ensure we can keep operating the system, add and remove users, etc. To add an admin user to the system, we must first add the <tt class="docutils literal"><span class="pre">admin</span></tt> role by running the command below (only once):</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_role(&#39;admin&#39;)&quot;
+</pre></div>
+</div>
+<p>And then add one or more admin level users, by running the command below:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_user(&#39;auser&#39;, &#39;apassword&#39;, &#39;admin&#39;)&quot;
+</pre></div>
+</div>
+<p>This will add both the <tt class="docutils literal"><span class="pre">admin</span></tt> role and the users to the security_schema.</p>
+<p>Any number of roles and users can be added using these functions.</p>
+</div>
+<div class="section" id="activating-authentication">
+<h4>Activating authentication<a class="headerlink" href="#activating-authentication" title="Permalink to this headline">∞</a></h4>
+<p>To activate authorization add the following to the <a class="reference internal" href="configuration.html#fdbsql-config-files"><em>configuration file</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">postgres</span><span class="o">.</span><span class="n">login</span><span class="o">=</span><span class="n">password</span>
+<span class="n">fdbsql</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">login</span><span class="o">=</span><span class="n">basic</span>
+</pre></div>
+</div>
+<p>The first configuration option activates authentication through the SQL interface, and the second for the REST API. Restricting REST access requires setting the <tt class="docutils literal"><span class="pre">fdbsql.http.login</span></tt> config option. Valid values are <tt class="docutils literal"><span class="pre">none</span></tt>, <tt class="docutils literal"><span class="pre">basic</span></tt>, <tt class="docutils literal"><span class="pre">digest</span></tt> and <tt class="docutils literal"><span class="pre">spnego</span></tt>. For the SQL Login <tt class="docutils literal"><span class="pre">fdbsql.postgres.login</span></tt> also supports <tt class="docutils literal"><span class="pre">md5</span></tt> (i.e. send digest instead of plain text). You can read more about these options in the <a class="reference internal" href="configuration.html#fdbsql-configuration"><em>configuration section</em></a>.</p>
+<p>Now <a class="reference internal" href="administration.html#fdbsql-administration-startstop"><em>restart</em></a> the SQL Layer. Only the user(s) created above will be able to connect using their username/password combination:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fdbsqlcli
+FATAL:  Authentication failed: invalid username or password
+
+$ fdbsqlcli -u auser -W
+Password:
+auser=&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="security-schema">
+<h4>Security schema<a class="headerlink" href="#security-schema" title="Permalink to this headline">∞</a></h4>
+<p>Data about users is stored in the security_schema. To view the <tt class="docutils literal"><span class="pre">users</span></tt> in the system:</p>
+<div class="highlight-python"><div class="highlight"><pre>schema=&gt; select * from security_schema.users;
+ id | name  |            password_basic            |           password_digest            |            password_md5
+----+-------+--------------------------------------+--------------------------------------+-------------------------------------
+  1 | auser | MD5:04F0CEF3E4796F6967FD5BAE6E2C9113 | MD5:36CCAA73EE9F0F567F9D8B2F25D13798 | md5cadcf14bc3758f1351e61e83d44bc96f
+(1 row)
+</pre></div>
+</div>
+</div>
+<div class="section" id="deactivating-authentication">
+<h4>Deactivating authentication<a class="headerlink" href="#deactivating-authentication" title="Permalink to this headline">∞</a></h4>
+<p>To disable basic authentication, remove the lines we added from the configuration file and <a class="reference internal" href="administration.html#fdbsql-administration-startstop"><em>restart</em></a> the SQL Layer.</p>
+</div>
+<div class="section" id="other-consideration">
+<h4>Other consideration<a class="headerlink" href="#other-consideration" title="Permalink to this headline">∞</a></h4>
+<ul class="simple">
+<li>Make sure users can not alter the configuration file of a SQL Layer instance, otherwise they will be able to remove the authorization themselves.</li>
+<li>Each SQL Layer will need the same configuration. It is recommended to copy the configuration file from a master location to all the SQL Layer instances.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="ldap-support">
+<span id="ldap-kerberos"></span><h3>LDAP support<a class="headerlink" href="#ldap-support" title="Permalink to this headline">∞</a></h3>
+<p>In addition to the security schema, the SQL layer can authenticate users or users and roles from an LDAP server over the network.</p>
+<div class="section" id="configure-jaas-using-sun-class">
+<h4>Configure JAAS using Sun class<a class="headerlink" href="#configure-jaas-using-sun-class" title="Permalink to this headline">∞</a></h4>
+<p>This will define how Java security libraries access the LDAP server.</p>
+<p>In a file called <tt class="docutils literal"><span class="pre">jaas.conf</span></tt> in the config directory (<tt class="docutils literal"><span class="pre">/etc/foundationdb/sql</span></tt> on Linux), add an entry like this:</p>
+<div class="highlight-python"><div class="highlight"><pre>ldap1 {
+    com.sun.security.auth.module.LdapLoginModule REQUIRED
+    userProvider=&quot;ldap://ldap1.example.com/ou=people,dc=example,dc=com&quot;
+    userFilter=&quot;(&amp;(uid={USERNAME})(objectClass=inetOrgPerson))&quot;
+    useSSL=false
+    debug=true;
+};
+</pre></div>
+</div>
+<p>This will search under <tt class="docutils literal"><span class="pre">ou=people,dc=example,dc=com</span></tt> for the DN of an <tt class="docutils literal"><span class="pre">inetOrgPerson</span></tt> with a <tt class="docutils literal"><span class="pre">uid</span></tt> matching the username given by the client. It will then try to bind as that DN to authenticate.</p>
+<p>Other modes are possible. See the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/https:/docs.oracle.com/javase/7/docs/jre/api/security/jaas/spec/com/sun/security/auth/module/LdapLoginModule.html>Oracle documentation</a> for details.</p>
+<p>User roles assignments will still need to be stored in the security schema.</p>
+</div>
+<div class="section" id="configure-jaas-using-jetty-classes">
+<h4>Configure JAAS using Jetty classes<a class="headerlink" href="#configure-jaas-using-jetty-classes" title="Permalink to this headline">∞</a></h4>
+<p>Alternatively, the configuration can use similar Jetty classes:</p>
+<div class="highlight-python"><div class="highlight"><pre>ldap2 {
+    org.eclipse.jetty.plus.jaas.spi.LdapLoginModule required
+    contextFactory=&quot;com.sun.jndi.ldap.LdapCtxFactory&quot;
+    hostname=&quot;ldap.example.com&quot;
+    port=&quot;389&quot;
+    authenticationMethod=&quot;simple&quot;
+    forceBindingLogin=true
+    userBaseDn=&quot;ou=people,dc=example,dc=com&quot;
+    userRdnAttribute=&quot;uid&quot;
+    userIdAttribute=&quot;uid&quot;
+    userPasswordAttribute=&quot;userPassword&quot;
+    userObjectClass=&quot;inetOrgPerson&quot;
+    roleBaseDn=&quot;ou=groups,dc=example,dc=com&quot;
+    roleNameAttribute=&quot;cn&quot;
+    roleMemberAttribute=&quot;uniqueMember&quot;
+    roleObjectClass=&quot;groupOfUniqueNames&quot;
+    useLdaps=false
+    debug=true;
+};
+</pre></div>
+</div>
+<p>This does a similar search, but also retrieves roles from groups. Again, see the <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/https:/wiki.eclipse.org/Jetty/Tutorial/JAAS#LdapLoginModule>Jetty documentation</a> for details.</p>
+</div>
+<div class="section" id="configure-the-server">
+<h4>Configure the Server<a class="headerlink" href="#configure-the-server" title="Permalink to this headline">∞</a></h4>
+<p>To get JAAS to know about the configuration file, a system property needs to be set. It is easiest to specify this in <a class="reference internal" href="configuration.html#fdbsql-config-jvm-options"><em>jvm.options</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JVM_OPTS</span><span class="o">=</span><span class="s">&quot;$JVM_OPTS -Djava.security.auth.login.config=/etc/foundationdb/sql/jaas.conf&quot;</span>
+</pre></div>
+</div>
+<p>To enable this configuration for Postgres and REST access, specify the following in <a class="reference internal" href="configuration.html#fdbsql-config-files"><em>server.properties</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">jaas</span><span class="o">.</span><span class="n">configName</span><span class="o">=</span><span class="n">ldap1</span>
+</pre></div>
+</div>
+<p>If roles are defined using Jetty, specify how they are found in the Subject&#8217;s Principals:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">sql</span><span class="o">.</span><span class="n">jaas</span><span class="o">.</span><span class="n">roleClasses</span><span class="o">=</span><span class="n">org</span><span class="o">.</span><span class="n">eclipse</span><span class="o">.</span><span class="n">jetty</span><span class="o">.</span><span class="n">plus</span><span class="o">.</span><span class="n">jaas</span><span class="o">.</span><span class="n">JAASRole</span>
+</pre></div>
+</div>
+<p>To only use LDAP for Postgres, use <tt class="docutils literal"><span class="pre">fdbsql.postgres.jaas.</span></tt>. For only REST, use <tt class="docutils literal"><span class="pre">fdbsql.http.jaas.</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="kerberos-support">
+<span id="fdbsql-kerberos"></span><h3>Kerberos support<a class="headerlink" href="#kerberos-support" title="Permalink to this headline">∞</a></h3>
+<p>The Postgres and HTTP protocols allow for authentication using a variety of methods, including <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/https:/en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface>GSSAPI</a>. The SQL Layer can be configured to require GSS authentication.</p>
+<div class="section" id="register-the-services-with-the-kdc-and-get-keytabs-for-them">
+<h4>Register the services with the KDC and get keytabs for them<a class="headerlink" href="#register-the-services-with-the-kdc-and-get-keytabs-for-them" title="Permalink to this headline">∞</a></h4>
+<p>Servers are named <tt class="docutils literal"><span class="pre">service/qualified_host&#64;realm</span></tt>. For example, <tt class="docutils literal"><span class="pre">fdbsql/sql1.example.com&#64;EXAMPLE.COM</span></tt>. The service name can be anything but has to be used consistently, including in the client (see below). Standard names are <tt class="docutils literal"><span class="pre">fdbsql</span></tt> for the Postgres server and <tt class="docutils literal"><span class="pre">HTTP</span></tt> for the REST server.</p>
+<p>How to do this depends on the Kerberos implementation in use.</p>
+<p>The following are the steps for Active Directory on Windows Server:</p>
+<ol class="arabic">
+<li><p class="first">From Active Directory Users and Computers, add a User. Give it some name suggesting the server it will be running on. For instance, <tt class="docutils literal"><span class="pre">sql1-fdbsql</span></tt>.</p>
+</li>
+<li><p class="first">Give it any password. It is going to be changed in the next step.</p>
+</li>
+<li><p class="first">Map this user to the service name and generate a keytab file for it:</p>
+<div class="highlight-python"><div class="highlight"><pre>ktpass /princ fdbsql/sql1.example.com@EXAMPLE.COM /mapuser sql1-fdbsql@EXAMPLE.COM /crypto All /out sql1-fdbsql.keytab +rndPass
+</pre></div>
+</div>
+</li>
+</ol>
+<p>And for MIT Kerberos:</p>
+<div class="highlight-python"><div class="highlight"><pre>kadmin -p user/admin
+Authenticating as principal user/admin with password.
+Password for user/admin@EXAMPLE.COM:
+kadmin:  add_principal -randkey fdbsql/sql1.example.com
+kadmin:  ktadd -k sql1-fdbsql.keytab fdbsql/sql1.example.com
+kadmin:  add_principal -randkey HTTP/sql1.example.com
+kadmin:  ktadd -k sql1-rest.keytab HTTP/sql1.example.com
+</pre></div>
+</div>
+<p>Copy the .keytab file(s) into the config directory for SQL Layer. They must be readable by the operating system user running the SQL layer, which is normally <cite>foundationdb</cite>. They should not be generally readable, so it is simplest to make them owned by that user.</p>
+</div>
+<div class="section" id="configure-jaas">
+<h4>Configure JAAS<a class="headerlink" href="#configure-jaas" title="Permalink to this headline">∞</a></h4>
+<p>This will associate the service principal and the keytab so that the service can authenticate with the KDC.</p>
+<p>In a file called <tt class="docutils literal"><span class="pre">jaas.conf</span></tt> in the config directory (<tt class="docutils literal"><span class="pre">/etc/foundationdb/sql</span></tt> on Linux), add an entry like this for Postgres:</p>
+<div class="highlight-python"><div class="highlight"><pre>krb5 {
+    com.sun.security.auth.module.Krb5LoginModule required
+    storeKey=true
+    useKeyTab=true
+    keyTab=&quot;/etc/foundationdb/sql/sql1-fdbsql.keytab&quot;
+    principal=&quot;fdbsql/sql1.example.com&quot;
+    isInitiator=false;
+};
+</pre></div>
+</div>
+<p>And a similar one for REST:</p>
+<div class="highlight-python"><div class="highlight"><pre>com.sun.security.jgss.accept {
+    com.sun.security.auth.module.Krb5LoginModule required
+    storeKey=true
+    useKeyTab=true
+    keyTab=&quot;/etc/foundationdb/sql/sql1-rest.keytab&quot;
+    principal=&quot;HTTP/sql1.example.com&quot;
+    isInitiator=false;
+};
+</pre></div>
+</div>
+<p>The Postgres entry can be named anything (see below). The REST one must be named <tt class="docutils literal"><span class="pre">com.sun.security.jgss.accept</span></tt>.</p>
+</div>
+<div class="section" id="upgrade-java-to-support-hard-encryption">
+<h4>Upgrade Java to support hard encryption<a class="headerlink" href="#upgrade-java-to-support-hard-encryption" title="Permalink to this headline">∞</a></h4>
+<p>Depending on the encryption algorithms used by the Kerberos setup, it may be necessary to download and install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files.</p>
+</div>
+<div class="section" id="id1">
+<h4>Configure the Server<a class="headerlink" href="#id1" title="Permalink to this headline">∞</a></h4>
+<p>To get JAAS to know about the configuration file, a system property needs to be set. It is easiest to specify this in <a class="reference internal" href="configuration.html#fdbsql-config-jvm-options"><em>jvm.options</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JVM_OPTS</span><span class="o">=</span><span class="s">&quot;$JVM_OPTS -Djava.security.auth.login.config=/etc/foundationdb/jaas.conf&quot;</span>
+</pre></div>
+</div>
+<p>If the operating system does not have Kerberos already configured, you can tell JAAS what the default realm is without having to set it all up:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">...</span> <span class="o">-</span><span class="n">Djava</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">krb5</span><span class="o">.</span><span class="n">realm</span><span class="o">=</span><span class="n">EXAMPLE</span><span class="o">.</span><span class="n">COM</span> <span class="o">-</span><span class="n">Djava</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">krb5</span><span class="o">.</span><span class="n">kdc</span><span class="o">=</span><span class="n">kdc1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>Then the configuration to use within the given configuration file needs to be specified in <a class="reference internal" href="configuration.html#fdbsql-config-files"><em>server.properties</em></a>. For Postgres:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">postgres</span><span class="o">.</span><span class="n">gssConfigName</span><span class="o">=</span><span class="n">krb5</span>
+</pre></div>
+</div>
+<p>For REST:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsql.http.login=spnego
+fdbsql.http.spnego.targetName=HTTP/sql1.example.com@EXAMPLE.COM
+fdbsql.security.realm=EXAMPLE.COM
+</pre></div>
+</div>
+</div>
+<div class="section" id="configure-the-client">
+<h4>Configure the Client<a class="headerlink" href="#configure-the-client" title="Permalink to this headline">∞</a></h4>
+<p>The client will need to be told about the service name. Many Postgres-compatible clients will assume &#8220;postgres&#8221;. Clients based on <tt class="docutils literal"><span class="pre">libpq</span></tt>, such as <tt class="docutils literal"><span class="pre">psycopg2</span></tt>, <tt class="docutils literal"><span class="pre">ruby-pg</span></tt> and <tt class="docutils literal"><span class="pre">psql</span></tt> itself, use the PGKRBSRVNAME environment variable:</p>
+<div class="highlight-python"><div class="highlight"><pre>PGKRBSRVNAME=fdbsql psql &quot;host=sql1.example.com port=15432 dbname=test&quot;
+</pre></div>
+</div>
+<p>PHP is similar:</p>
+<div class="highlight-php"><div class="highlight"><pre><span class="x">putenv(&quot;PGKRBSRVNAME=fdbsql&quot;);</span>
+<span class="x">$dbh = pg_connect(&quot;host=sql1.example.com port=15432 dbname=test&quot;);</span>
+</pre></div>
+</div>
+<p>JDBC uses the <tt class="docutils literal"><span class="pre">kerberosServerName</span></tt> connection property:</p>
+<div class="highlight-python"><div class="highlight"><pre>jdbc:fdbsql://sql1.example.com:15432/test?kerberosServerName=fdbsql
+</pre></div>
+</div>
+<p>It also requires a minimal JAAS login configuration, named by the <tt class="docutils literal"><span class="pre">jaasApplicationName</span></tt> property and defaulting to <tt class="docutils literal"><span class="pre">fdbsql</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsql {
+     com.sun.security.auth.module.Krb5LoginModule required;
+};
+</pre></div>
+</div>
+<p>By default, this file should be in the user&#8217;s home directory and named <tt class="docutils literal"><span class="pre">.java.login.config</span></tt>.</p>
+<p>To use any ticket cache from the local system, add the following option:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsql {
+     com.sun.security.auth.module.Krb5LoginModule required
+     useTicketCache=true;
+};
+</pre></div>
+</div>
+<p>The SQL Layer command line tools <a class="reference internal" href=../Developer/fdbsqlcli.html><em>fdbsqlcli</em></a>, <a class="reference internal" href="backup.html#fdbsqlload"><em>fdbsqlload</em></a> and <a class="reference internal" href="backup.html#fdbsqldump"><em>fdbsqldump</em></a> take these are options, with appropriate defaults:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli --host sql1.example.com --jaas-config-file ~/.java.login.config --jaas-application-name fdbsql --kerberos-kdc kdc.example.com --kerberos-realm EXAMPLE.COM --kerberos-service fdbsql
+</pre></div>
+</div>
+<p>Other clients that support GSS should have a similar setup.</p>
+</div>
+<div class="section" id="troubleshooting">
+<h4>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">∞</a></h4>
+<p>To get a trace from JAAS, add <tt class="docutils literal"><span class="pre">debug=true</span></tt> to the JAAS configuration file and/or specify this system property in <a class="reference internal" href="configuration.html#fdbsql-config-jvm-options"><em>jvm.options</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">-</span><span class="n">Dsun</span><span class="o">.</span><span class="n">security</span><span class="o">.</span><span class="n">krb5</span><span class="o">.</span><span class="n">debug</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="transport-layer-security">
+<span id="fdbsql-tls"></span><h2>Transport Layer security<a class="headerlink" href="#transport-layer-security" title="Permalink to this headline">∞</a></h2>
+<p>Transport Layer Security (TLS) and its predecessor, Secure Sockets Layer (SSL), are protocols designed to provide communication security over public networks. Users exchange a symmetric session key that is used to encrypt data exchanged between the parties.</p>
+<p>By default, a FoundationDB Key-Value cluster and SQL Layer instances use <em>unencrypted</em> connections among client and server processes. It is possible to enable <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/en.wikipedia.org/wiki/Transport_Layer_Security>Transport Layer Security</a> (TLS) security and authentication through a public/private key infrastructure. TLS can be enabled at two levels, first among the FoundationDB Key-Value cluster server and client processes, and second between the SQL Layer and its SQL clients.</p>
+<div class="section" id="enable-tls-in-a-foundationdb-key-value-cluster">
+<h3>Enable TLS in a FoundationDB Key-Value cluster<a class="headerlink" href="#enable-tls-in-a-foundationdb-key-value-cluster" title="Permalink to this headline">∞</a></h3>
+<p>If desired, TLS can be enabled in a FoundationDB Key-Value cluster. In this mode, each Key-Value server and client, is configured to authenticate all peers with which it communicates. The SQL Layer, for example, uses the Key-Value client to communicate with the Key-Value cluster. See the <a class="reference external" href=../../../../key-value-store/documentation/3.0/tls.html title="(in FoundationDB v3.0)"><em>Enabling TLS in a new cluster</em></a> guide for more details.</p>
+</div>
+<div class="section" id="enable-tls-in-the-sql-layer">
+<h3>Enable TLS in the SQL Layer<a class="headerlink" href="#enable-tls-in-the-sql-layer" title="Permalink to this headline">∞</a></h3>
+<p>The SQL Layer supports SSL as the standard protocol for secure communication with SQL Layer clients, such as JDBC and other drivers. Successful SSL negotiation requires that the SQL Layer process have a certificate, which is not present by default. After the certificate is added, a client may decide to use SSL to communicate with the SQL Layer instances. There is currently no provision for requiring SSL.</p>
+<p>A Java <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/en.wikipedia.org/wiki/Keystore>KeyStore</a> (JKS) is a repository of security certificates, either authorization certificates or public key certificates, the SQL Layer uses for SSL. The <a class="reference external" href=../../../../https:/web.archive.org/web/20150325003258/http:/en.wikipedia.org/wiki/JDK>JDKs</a> provide a tool named keytool to manipulate the keystore. To create a Keystore, use the keytool as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>keytool -genkey -keystore some_filename
+</pre></div>
+</div>
+<p>The tool will prompt for a password and various identity fields to go into the certificates. If there is already an externally generated certificate, import it instead:</p>
+<div class="highlight-python"><div class="highlight"><pre>keytool -importkeystore -srckeystore existing.pkcs12 -srcstoretype PKCS12 -destkeystore new_filename
+</pre></div>
+</div>
+<p>The key file and certificate file may need to be combined if they aren&#8217;t already:</p>
+<div class="highlight-python"><div class="highlight"><pre>cat my.crt ca.crt &gt;cert-chain.txt
+openssl pkcs12 -export -inkey my.key -in cert-chain.txt -out something.pkcs12
+</pre></div>
+</div>
+<p>Next configure the SQL Layer instance to get JSSE to use the new keystore. Its pathname and password should be given as system properties. It is easiest to specify these in <a class="reference internal" href="configuration.html#fdbsql-config-jvm-options"><em>jvm.options</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">JVM_OPTS</span><span class="o">=</span><span class="s">&quot;$JVM_OPTS -Djavax.net.ssl.keyStore=same_filename -Djavax.net.ssl.keyStorePassword=same_password&quot;</span>
+</pre></div>
+</div>
+<p>To troubleshoot, get a trace from Java&#8217;s SSL. To do this, also specify in <a class="reference internal" href="configuration.html#fdbsql-config-jvm-options"><em>jvm.options</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">-</span><span class="n">Djavax</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">debug</span><span class="o">=</span><span class="n">ssl</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="authorization">
+<span id="fdbsql-authorization"></span><h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">∞</a></h2>
+<p>Currently, the system has three different levels of authorizations. These are enabled by the role assigned to a user. Two role names will result in specific behavior, namely <tt class="docutils literal"><span class="pre">admin</span></tt> and <tt class="docutils literal"><span class="pre">rest-user</span></tt>. All other role names will result in a certain default behaviour which is active when authentication and authorization are enabled.</p>
+<p>Authorization and permission support in the SQL Layer provides limited schema privileges, targeting a multi-tenant use case. If activated, each tenant with a username/password combination, owns exactly one schema named with the username. It is not currently possible to share a schema with another user, except by sharing the username/password combination.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are interested in expanding this functionality. If you have have concrete requirements in this area please post on our <a class="reference external" href=../../../../community/index.html>Community Site</a>.</p>
+</div>
+<p>To activate authorization, you must first enable <a class="reference internal" href="#fdbsql-authentication"><em>authentication</em></a> using one of the ways described above, and make sure at least one <tt class="docutils literal"><span class="pre">admin</span></tt> user is defined in the system. Once authorization is activated an <tt class="docutils literal"><span class="pre">admin</span></tt> user will have access to:</p>
+<ul class="simple">
+<li>Any schema in the SQL Layer</li>
+<li>System procedures</li>
+</ul>
+<div class="section" id="id3">
+<h3>Adding an Admin user<a class="headerlink" href="#id3" title="Permalink to this headline">∞</a></h3>
+<p>If you have not done so already in the <a class="reference internal" href="#fdbsql-authentication"><em>authentication</em></a> section, add an admin user to the system. First, add the <tt class="docutils literal"><span class="pre">admin</span></tt> role by running the command below once:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_role(&#39;admin&#39;)&quot;
+</pre></div>
+</div>
+<p>And then add one or more admin level users, by running the command below for each user:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_user(&#39;auser&#39;, &#39;apassword&#39;, &#39;admin&#39;)&quot;
+</pre></div>
+</div>
+<p>This will add both the <tt class="docutils literal"><span class="pre">admin</span></tt> role and the user to the security_schema.</p>
+</div>
+<div class="section" id="activating-authorization">
+<h3>Activating authorization<a class="headerlink" href="#activating-authorization" title="Permalink to this headline">∞</a></h3>
+<p>To activate authorization, add the following to the <a class="reference internal" href="configuration.html#fdbsql-config-files"><em>configuration file</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fdbsql</span><span class="o">.</span><span class="n">restrict_user_schema</span><span class="o">=</span><span class="n">true</span>
+</pre></div>
+</div>
+<p>Now <a class="reference internal" href="administration.html#fdbsql-administration-startstop"><em>restart</em></a> the SQL Layer.</p>
+</div>
+<div class="section" id="adding-non-admin-users">
+<h3>Adding non-admin users<a class="headerlink" href="#adding-non-admin-users" title="Permalink to this headline">∞</a></h3>
+<p>To add more users we need to create another role. The name is not important as long as it is not admin:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_role(&#39;regular-user&#39;)&quot;
+</pre></div>
+</div>
+<p>And then add users, by running the command below:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_user(&#39;buser&#39;, &#39;bpassword&#39;, &#39;regular-user&#39;)&quot;
+</pre></div>
+</div>
+<p>This will add both the <tt class="docutils literal"><span class="pre">regular-user</span></tt> role and the <tt class="docutils literal"><span class="pre">buser</span></tt> to the security_schema.</p>
+<p>Because <tt class="docutils literal"><span class="pre">auser</span></tt> is an <tt class="docutils literal"><span class="pre">admin</span></tt> user it retains access to everything in the system. <tt class="docutils literal"><span class="pre">buser</span></tt> is not an admin and its access is limited to the schema called <tt class="docutils literal"><span class="pre">buser</span></tt>.</p>
+</div>
+<div class="section" id="id4">
+<h3>Security schema<a class="headerlink" href="#id4" title="Permalink to this headline">∞</a></h3>
+<p>Authentication data in also stored in the security_schema. The <tt class="docutils literal"><span class="pre">users</span></tt> and <tt class="docutils literal"><span class="pre">roles</span></tt> tables contain the users and roles respectively:</p>
+<div class="highlight-python"><div class="highlight"><pre>security_schema=&gt; select * from users;
+ id | name  |            password_basic            |           password_digest            |            password_md5
+----+-------+--------------------------------------+--------------------------------------+-------------------------------------
+  1 | auser | MD5:04F0CEF3E4796F6967FD5BAE6E2C9113 | MD5:36CCAA73EE9F0F567F9D8B2F25D13798 | md5cadcf14bc3758f1351e61e83d44bc96f
+ 23 | buser | MD5:D4865A8D699A70CF0BECED66BC1D8036 | MD5:87930003E19FA5C4FBEA56A13CD90AF6 | md5930c02194d4bde7e375e6c1cca11bdca
+(2 rows)
+
+security_schema=&gt; select * from roles;
+ id | name
+----+-------
+  1 | admin
+ 21 | regular-user
+(2 rows)
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">user_roles</span></tt> table defines the list of roles each user has:</p>
+<div class="highlight-python"><div class="highlight"><pre>security_schema=&gt; select * from user_roles;
+ id | role_id | user_id
+----+---------+---------
+  1 |       1 |       1
+ 23 |      21 |      23
+(2 rows)
+</pre></div>
+</div>
+</div>
+<div class="section" id="rest-authentication-and-authorization">
+<h3>Rest authentication and authorization<a class="headerlink" href="#rest-authentication-and-authorization" title="Permalink to this headline">∞</a></h3>
+<p>When the authentication is enabled, only users with the role <tt class="docutils literal"><span class="pre">rest-user</span></tt> will have access to data using the :ref: <cite>rest-api &lt;rest-api-reference&gt;</cite>. Together with the restrict user schema flag set to true, users will only see their own schema, named after their own user name. Users are created in the following way:</p>
+<blockquote>
+<div>fdbsqlcli -c &#8220;CALL security_schema.add_role(&#8216;rest-user&#8217;)&#8221;</div></blockquote>
+<p>And then add users, by running the command below:</p>
+<div class="highlight-python"><div class="highlight"><pre>fdbsqlcli -c &quot;CALL security_schema.add_user(&#39;cuser&#39;, &#39;cpassword&#39;, &#39;rest-user&#39;)&quot;
+</pre></div>
+</div>
+</div>
+<div class="section" id="deactivating-authorization">
+<h3>Deactivating authorization<a class="headerlink" href="#deactivating-authorization" title="Permalink to this headline">∞</a></h3>
+<p>To disable authorization, remove the line we added to the configuration file and <a class="reference internal" href="administration.html#fdbsql-administration-startstop"><em>restart</em></a> the SQL Layer.</p>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action=../search.html method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Security</a><ul><li><a class="reference internal" href="#authentication">Authentication</a><ul><li><a class="reference internal" href="#basic-authentication">Basic authentication</a><ul><li><a class="reference internal" href="#adding-an-admin-user">Adding an Admin user</a></li><li><a class="reference internal" href="#activating-authentication">Activating authentication</a></li><li><a class="reference internal" href="#security-schema">Security schema</a></li><li><a class="reference internal" href="#deactivating-authentication">Deactivating authentication</a></li><li><a class="reference internal" href="#other-consideration">Other consideration</a></li></ul></li><li><a class="reference internal" href="#ldap-support">LDAP support</a><ul><li><a class="reference internal" href="#configure-jaas-using-sun-class">Configure JAAS using Sun class</a></li><li><a class="reference internal" href="#configure-jaas-using-jetty-classes">Configure JAAS using Jetty classes</a></li><li><a class="reference internal" href="#configure-the-server">Configure the Server</a></li></ul></li><li><a class="reference internal" href="#kerberos-support">Kerberos support</a><ul><li><a class="reference internal" href="#register-the-services-with-the-kdc-and-get-keytabs-for-them">Register the services with the KDC and get keytabs for them</a></li><li><a class="reference internal" href="#configure-jaas">Configure JAAS</a></li><li><a class="reference internal" href="#upgrade-java-to-support-hard-encryption">Upgrade Java to support hard encryption</a></li><li><a class="reference internal" href="#id1">Configure the Server</a></li><li><a class="reference internal" href="#configure-the-client">Configure the Client</a></li><li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li></ul></li></ul></li><li><a class="reference internal" href="#transport-layer-security">Transport Layer security</a><ul><li><a class="reference internal" href="#enable-tls-in-a-foundationdb-key-value-cluster">Enable TLS in a FoundationDB Key-Value cluster</a></li><li><a class="reference internal" href="#enable-tls-in-the-sql-layer">Enable TLS in the SQL Layer</a></li></ul></li><li><a class="reference internal" href="#authorization">Authorization</a><ul><li><a class="reference internal" href="#id3">Adding an Admin user</a></li><li><a class="reference internal" href="#activating-authorization">Activating authorization</a></li><li><a class="reference internal" href="#adding-non-admin-users">Adding non-admin users</a></li><li><a class="reference internal" href="#id4">Security schema</a></li><li><a class="reference internal" href="#rest-authentication-and-authorization">Rest authentication and authorization</a></li><li><a class="reference internal" href="#deactivating-authorization">Deactivating authorization</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../../https:/web.archive.org/web/20150325003258/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:32:58 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:28:56 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+
+
+<script type="text/javascript" src="/static/js/analytics.js"></script>
+<script type="text/javascript">archive_analytics.values.server_name="wwwb-app8.us.archive.org";archive_analytics.values.server_ms=164;</script>
+<link type="text/css" rel="stylesheet" href="/static/css/banner-styles.css"/>
+
+
+<title>
+
+Release Notes
+
+&mdash; FoundationDB
+</title>
+<meta charset='utf-8'>
+<meta content=' foundationdb, database, nosql, scalable, fault tolerant, acid, transactions' name='keywords'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='description'>
+<meta content='FoundationDB' name='author'>
+<meta content='IE=edge' http-equiv='x-ua-compatible'>
+<meta content='173350679' property='twitter:account_id'>
+<meta content='FoundationDB' property='og:title'>
+<meta content='https://foundationdb.com' property='og:url'>
+<meta content='https://foundationdb.com/images/stacks.png' property='og:image'>
+<meta content='FoundationDB is a database that combines NoSQL scalability with true multikey ACID transactions.' name='og:description'>
+<meta content='2j_g9LCoS3SGSPULb2MLPGk2raKkFd4hPOuWWM5AsVw' name='google-site-verification'>
+<link href='https://foundationdb.com/key-value-store/documentation/beta3/release-notes.html' rel='canonical'>
+<!--[if lt IE 9]>
+<script src='/web/20150325003435/https://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+<![endif]-->
+<meta content='width=device-width, initial-scale=1.0' name='viewport'>
+<link href=../../../im_/favicon-eea8382cf5c35e23f9fb4273c134b2c0.png rel="shortcut icon" type="image/png" />
+<meta content="authenticity_token" name="csrf-param" />
+<meta content="wcVH0qYrgIDal8Kx10xmZIzNgnD0d0/RXPTIqTtufYE=" name="csrf-token" />
+<link href=../../../cs_/google.css media="screen" rel="stylesheet" type="text/css" />
+<link href=../../../cs_/application-5cc81fa97aedacb1157cce0e30895a04.css media="all" rel="stylesheet" type="text/css" />
+
+</head>
+<body class='show' id='documentation'>
+
+
+
+<header id='header'>
+<div class='container'>
+<a href='/web/20150325003435/https://foundationdb.com/' id='logo'></a>
+<a id='mobile-nav-toggle'><img alt="Hamburger" src=../../../im_/hamburger-bbd9560947385da4445b540086f10c9b.png /></a>
+<a id='mobile-auth-toggle'>
+<i class='icon-user'></i>
+</a>
+<div id='auth-links'></div>
+</div>
+</header>
+<nav id='nav'>
+<div class='container'>
+<ul>
+<li class=''>
+<a href=../../../index.html><span>H</span>ome</a>
+</li>
+<li class='active with-subnav'>
+<a href=../../index.html><span>K</span>ey-Value Store</a>
+<ul class='subnav'>
+<li><a href=../../index.html>Overview</a></li>
+<li><a href=../index.html>Documentation</a></li>
+<li><a href=../../performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../layers/sql/index.html><span>S</span>QL Layer</a>
+<ul class='subnav'>
+<li><a href=../../../layers/sql/index.html>Overview</a></li>
+<li><a href=../../../layers/sql/documentation/index.html>Documentation</a></li>
+<li><a href=../../../layers/sql/performance/index.html>Performance</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../community/index.html><span>R</span>esources</a>
+<ul class='subnav'>
+<li><a href=../../../https:/web.archive.org/web/20150325003435/http:/community.foundationdb.com>Community</a></li>
+<li><a href=../../../https:/web.archive.org/web/20150325003435/https:/foundationdb.com/courses>Education</a></li>
+<li><a href=../../../videos/index.html>Videos</a></li>
+</ul>
+</li>
+<li class='with-subnav'>
+<a href=../../../about/index.html><span>C</span>ompany</a>
+<ul class='subnav'>
+<li><a href=../../../about/index.html>About Us</a></li>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+<li><a href=../../../jobs/index.html>Jobs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div id='flash'>
+<div class='notice'></div>
+<div class='alert'></div>
+</div>
+<div id='docs-version-warning'>
+<div class='container'>
+You are currently viewing an older version of the docs. <a href=../index.html>Go to the latest version &rarr;</a>
+</div>
+</div>
+<div id='documentation-inner'>
+
+<script type="text/javascript">
+  var DOCUMENTATION_OPTIONS = {
+  	URL_ROOT:    '',
+  	VERSION:     '0.3.0',
+  	COLLAPSE_INDEX: false,
+  	FILE_SUFFIX: '.html',
+  	HAS_SOURCE:  true
+  };
+</script>
+
+<div id="breadcrumbs" class="container">
+  <div id="breadcrumbs-inner">
+    
+    <a href="index.html">Beta 3 Documentation</a> &raquo;
+    
+    <a id="mobile-search-link" href=../latest/search.html>
+      <img alt="Magnifying-glass" src=../../../im_/magnifying-glass-1e869de9fc6b47eca22fbd10a9d914a3.png />
+    </a>
+  </div>
+</div>
+<div id="documentation" class="container">
+  <div class="body sphinx">
+    
+  <div class="section" id="release-notes">
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">∞</a></h1>
+<div class="section" id="beta-3">
+<h2>Beta 3<a class="headerlink" href="#beta-3" title="Permalink to this headline">∞</a></h2>
+<p>The Beta 3 release focuses on major improvements across our language APIs, including new capabilities for locality, watches, transaction cancellation and timeouts, explicit conflict ranges, and atomic operations. It also improves performance and removes known limitations.</p>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Discover where keys are physically stored using the new <a class="reference internal" href="api-python.html#api-python-locality"><em>locality</em></a> API.</li>
+<li>Create <a class="reference internal" href="api-python.html#api-python-watches"><em>watches</em></a> that asynchronously report changes to the values of specified keys.</li>
+<li><a class="reference internal" href="api-python.html#api-python-cancel"><em>Cancel</em></a> transactions or set them to automatically <a class="reference internal" href="api-python.html#api-python-timeout"><em>timeout</em></a> and cancel.</li>
+<li>Explicitly add read or write <a class="reference internal" href="api-python.html#api-python-conflict-ranges"><em>conflict ranges</em></a>.</li>
+<li>Perform <a class="reference internal" href="api-python.html#api-python-transaction-atomic-operations"><em>atomic operations</em></a> that transform a value (e.g. incrementing it) without client reads to avoid transaction conflicts.</li>
+<li>API version updated to 23.</li>
+</ul>
+</div>
+<div class="section" id="java">
+<h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">∞</a></h3>
+<p>Based on customer feedback and internal testing, the API has been significantly revised for increased performance and ease of use. This is a <strong>breaking</strong> API change. We will continue to make the previous JAR
+available for the time being.</p>
+<ul class="simple">
+<li>The asynchronous programming library has been moved to its own package (<tt class="docutils literal"><span class="pre">com.foundationdb.async</span></tt>). The library has a host of new members for greater flexibility and more predictable error handling.</li>
+<li><tt class="docutils literal"><span class="pre">Database.run(...)</span></tt> can now return an arbitrary object from user code, simplifying use of this recommended retry loop.</li>
+<li>The new interface <tt class="docutils literal"><span class="pre">Function</span></tt> replaces several interfaces: <tt class="docutils literal"><span class="pre">Mapper</span></tt>, <tt class="docutils literal"><span class="pre">Block</span></tt>, <tt class="docutils literal"><span class="pre">Retryable</span></tt>, and <tt class="docutils literal"><span class="pre">AsyncRetryable</span></tt>.</li>
+<li>Added the ability to cancel any <tt class="docutils literal"><span class="pre">Future</span></tt> instance, even one not backed with native resources.</li>
+<li>Removed <tt class="docutils literal"><span class="pre">onSuccess()</span></tt> and <tt class="docutils literal"><span class="pre">onFailure()</span></tt> in favor of <tt class="docutils literal"><span class="pre">map()</span></tt> and <tt class="docutils literal"><span class="pre">flatMap()</span></tt>. If code needs simple triggering, <tt class="docutils literal"><span class="pre">onReady()</span></tt> is still available.</li>
+<li>Range iteration via <tt class="docutils literal"><span class="pre">Transaction.getRange(...)</span></tt> starts fetching data immediately upon invocation. This simplifies development of code that reads ranges in parallel.</li>
+<li>Many other changes that facilitate writing fast, efficient, and correct Java applications!</li>
+</ul>
+</div>
+<div class="section" id="python">
+<h3>Python<a class="headerlink" href="#python" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Python API methods that <a class="reference internal" href="api-python.html#api-python-keys"><em>accept a key</em></a> will also accept a Python object with an <tt class="docutils literal"><span class="pre">as_foundationdb_key()</span></tt> method that returns a key. Likewise, methods that accept a value will also accept a Python object with an <tt class="docutils literal"><span class="pre">as_foundationdb_value()</span></tt> method that returns a value.</li>
+</ul>
+</div>
+<div class="section" id="performance">
+<h3>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>Clients can preferentially communicate with servers on the same machine or in the same datacenter for <a class="reference internal" href="api-python.html#api-python-database-options"><em>location-aware load balancing</em></a>.</li>
+<li>Removed from the client library debugging code included in versions up through Beta 2, leading to higher, more predictable performance.</li>
+<li>Improved data distribution algorithms to optimize data movement during failure scenarios.</li>
+<li>Improved range-read iterators in Node.js using lazy evaluation.</li>
+<li>Improved client-side range-read prefetching in Node.js, Ruby, and Python.</li>
+<li>Incrementally improved performance across all language bindings.</li>
+</ul>
+</div>
+<div class="section" id="fixes">
+<h3>Fixes<a class="headerlink" href="#fixes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li>A storage node could be prevented from rejoining the cluster until the process was restarted.</li>
+<li>A reverse <tt class="docutils literal"><span class="pre">GetRange</span></tt> request using a row limit and an end key selector that enters the system keyspace could return too few results.</li>
+<li>A machine power loss immediately following a process restart could result in an invalid transaction log. (See <a class="reference external" href=../../../https:/web.archive.org/web/20150325003435/http:/community.foundationdb.com/questions/440/upgrade-to-022-4-database-not-available>this question</a> on the Community Q&amp;A site .)</li>
+<li><tt class="docutils literal"><span class="pre">GetRange</span></tt> could improperly cache too large a range of data when the end key selector resolved past the end of user keyspace, temporarily resulting in incorrect answers to read requests.</li>
+<li>In Node.js, reusing a range iterator for a second request could result in an incomplete result set.</li>
+</ul>
+</div>
+<div class="section" id="earlier-release-notes">
+<h3>Earlier release notes<a class="headerlink" href="#earlier-release-notes" title="Permalink to this headline">∞</a></h3>
+<ul class="simple">
+<li><a class="reference external" href=../beta2/release-notes.html>Beta 2 (API Version 22)</a></li>
+<li><a class="reference external" href=../beta1/release-notes.html>Beta 1 (API Version 21)</a></li>
+<li><a class="reference external" href=../alpha6/release-notes.html>Alpha 6 (API Version 16)</a></li>
+<li><a class="reference external" href=../alpha5/release-notes.html>Alpha 5 (API Version 14)</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+  </div>
+  <div id="search-documentation">
+    <form action="search.html" method="get">
+      <input type="text" name="q" class="search-query" placeholder="Search Documentation" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <div id="docs-page-nav">
+      <h3>Navigate this page</h3>
+      <ul><li><a class="reference internal" href="#">Release Notes</a><ul><li><a class="reference internal" href="#beta-3">Beta 3</a><ul><li><a class="reference internal" href="#features">Features</a></li><li><a class="reference internal" href="#java">Java</a></li><li><a class="reference internal" href="#python">Python</a></li><li><a class="reference internal" href="#performance">Performance</a></li><li><a class="reference internal" href="#fixes">Fixes</a></li><li><a class="reference internal" href="#earlier-release-notes">Earlier release notes</a></li></ul></li></ul></li></ul>
+    </div>
+    <div id="docs-global-nav">
+      <h3>Navigate All Docs</h3>
+    </div>
+  </div>
+</div>
+
+
+</div>
+<footer id='footer'>
+<div class='container'>
+<ul>
+<li>
+<h3>Get Help</h3>
+<ul id='get-help-list'>
+<li><a href=../../../contact/index.html>Contact Us</a></li>
+</ul>
+</li>
+<li>
+<h3>Social</h3>
+<ul>
+<li><a href=../../../https:/web.archive.org/web/20150325003435/https:/twitter.com/foundationdb>Twitter</a></li>
+</ul>
+</li>
+<li>
+<h3>Legal</h3>
+<ul>
+<li><a href=../../../legal/privacy/index.html>Privacy Policy</a></li>
+<li><a href=../../../files/TermsOfService.pdf>Terms of Service</a></li>
+<li><a href=../../../legal/trademark/index.html>Trademark Disclaimer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div id='copyright'>&copy; 2015 FoundationDB</div>
+</footer>
+<div class='modal' id='login-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>FoundationDB Log In</h2>
+<div class='content'>
+<div id='explanation'></div>
+<form>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input id='email' type='email' value=''>
+</li>
+<li>
+<label for="password">Password</label>
+<input id='password' type='password'>
+</li>
+<li class='actions'>
+<button>
+Log In
+<span class='spinner'></span>
+</button>
+<a href="#signup">Need an account?</a>
+<a href="#reset-password" id="login-reset-link">Need to reset your password?</a>
+</li>
+</ul>
+</fieldset>
+</form>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='reset-password-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<h2>Reset Your Password</h2>
+<div class='content'>
+<form>
+<p class='note'>Enter your email address below and we'll send you password reset instructions.</p>
+<fieldset>
+<div class='errors'></div>
+<ul>
+<li>
+<label for="email">Email Address</label>
+<input autocapitalize="false" id="email" name="email" type="email" value="" />
+</li>
+<li class='actions'>
+<button>
+Send Instructions
+<span class='spinner'></span>
+</button>
+<a href="#cancel">Cancel</a>
+</li>
+</ul>
+</fieldset>
+</form>
+<div id='done'>
+<p>Please check your email. Your password reset instructions have been emailed to you.</p>
+</div>
+</div>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+<div class='modal' id='video-modal'>
+<div class='cover'></div>
+<div class='inner'>
+<iframe></iframe>
+<a class='close' href='#close'>
+<i class='icon-cancel'></i>
+</a>
+</div>
+</div>
+
+<script src=../../../js_/application-a7f51eff68dda15563d95dd6b13ee7ae.js type="text/javascript"></script>
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+</body>
+</html>
+
+
+
+
+
+<!--
+     FILE ARCHIVED ON 0:34:35 Mar 25, 2015 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 15:34:16 Oct 16, 2016.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
