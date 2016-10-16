@@ -2,6 +2,7 @@
 
 
 pages = [
+    'https://web.archive.org/web/20150325003201/https://foundationdb.com/key-value-store/documentation/index.html',
     'https://web.archive.org/web/20150319133839/https://foundationdb.com/key-value-store/white-papers/the-transaction-manifesto',
     'https://web.archive.org/web/20150319133839/https://foundationdb.com/key-value-store/white-papers/the-layer-concept',
     'https://web.archive.org/web/20150319133839/https://foundationdb.com/key-value-store/white-papers/the-cap-theorem',
@@ -75,33 +76,45 @@ pages = [
     'https://web.archive.org/web/20150325003252/https://labs.foundationdb.com/node-js-chat-app'
 ]
 
-
+from util import ensure_file,ensure_path
 from urllib.parse import urlparse
-from os.path import split,isfile
+from os.path import split,isfile, join,splitext,relpath,dirname
 from pathlib import Path
+
+import re
 import os
 
+map_regex = re.compile('(?P<url>\/web\/[\d]+(?P<kind>js_|cs_|im_|)\/(?P<src>.+?))')
 
-import urllib.request
 
-def ensure_path(path):
-    directory = os.path.dirname(path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+def map_match(m):
+    dict = m.groupdict()
+    url = dict["src"]
+    return url
+
 
 def map_local_path(url):
     p = urlparse(url)
-    head, tail = split(p.path)
-    return tail
+    # remove wayaback prefix
+    clean = map_regex.sub(map_match,p.path)
+    # parse the rest
+    p2 = urlparse(clean)
 
-def ensure_file(url,local):
-    if isfile(local):
-        return local
-    else:
-        print("Doesn't exist", local)
-        ensure_path(local)
-        urllib.request.urlretrieve(url, local)
-    return local
+    _,ext = splitext(p2.path)
+
+    if len(ext) > 0:
+        head, tail = split(p2.path)
+        # filename, relpath
+        return tail, p2.path.strip('/')
+
+    # this could be google css
+    if p2.path.endswith("css"):
+        return "google.css",p2.path
+    # no ext, then probably index.html
+
+    joined = join(p2.path.strip('/'), "index.html")
+    return 0,joined
+   
 
 wayback_start = '<!-- BEGIN WAYBACK TOOLBAR INSERT -->'
 
@@ -120,43 +133,82 @@ def clean_wb(lst):
         return lst
     del lst[out[0]:out[1]+1]
     return lst
-import re
-pattern = re.compile('"(?P<url>\/web\/[\d]+(?P<kind>js_|cs_|im_)\/(?P<src>.+?))"')
-def match(m):
-    dict = m.groupdict()
-    url = dict["url"]
-    kind = dict["kind"]
-    name = map_local_path(url)
-    full_url = "https://web.archive.org" + url
-    full_local = kind + "/" + name
 
-    ensure_file(full_url,"doc/" + full_local)
-    print(full_local)
+
+ref_regex = re.compile('"(?P<url>\/web\/[\d]+(?P<kind>js_|cs_|im_|)\/(?P<src>.+?))"')
+
+
+
+
+htmls = set()
+
+def download_page(page):
     
+    mapped = map_local_path(page)
+    clean = mapped[0]
+    target = join("doc",mapped[1])
+    
+    src = join("doc/orig", mapped[1])
+
+
+    print("Downloading",page)
+    if page in htmls:
+        print("  skip inc")
+        return mapped[1]
+    if "//foundationdb.com" not in page:
+        print("  skip not fdb")
+        return page
+    if ".pdf" in page:
+        print("   skip pdf")
+        return page
+    if "javadoc" in page:
+        print(" skip javadoc")
+        return page
 
     
-    return full_local
-
-    
-
-for page in pages:
-    clean = map_local_path(page)
-    target = "doc/" + clean 
-    src = "doc/orig/" + clean
     ensure_file(page, src)
+    
+    htmls.add(page)
 
-    if not(target.endswith(".html")):
-        target = target + ".html"
+    links = set()
+
+
+    
+    def match(m):
+        dict = m.groupdict()
+        url = dict["url"]
+        kind = dict["kind"]
+
+        
+        name = map_local_path(url)[0]
+        full_url = "https://web.archive.org" + url
+
+        if kind == "":
+            print("Recur!!", full_url)
+            full_local = download_page(full_url)
+            print("Map", full_url, "to", full_local)
+             
+        else:
+            full_local = kind + "/" + name
+            ensure_file(full_url,"doc/" + full_local)
+            print(full_local)
+
+        # matching local path
+        return relpath(full_local,dirname(mapped[1]))
 
     with open(src, 'r') as r:
         lines = list(r)
         clean_wb(lines)
         result = []
         for i,l in enumerate(lines):
-            result.append(pattern.sub(match,l))
+            result.append(ref_regex.sub(match,l))
 
         print("Saving to ",target)
+        ensure_path(target)
             
         with open(target, 'w') as w:
             w.writelines(result)
+        return mapped[1]
             
+for page in pages:
+    download_page(page)
